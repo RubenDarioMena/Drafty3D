@@ -1,0 +1,12 @@
+{
+  "name": "drafty3d",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Drafty3D: investigación y prototipos de interfaz para un editor CAD y de malla.",
+  "type": "module",
+  "engines": { "node": ">=22" },
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "preview": "python3 -m http.server 4188 --bind 127.0.0.1 --directory dist"
+  }
+}

@@ -1,0 +1,161 @@
+{
+  "documento": "Drafty3D — Investigación de alcance",
+  "consulta": "2026-10-16",
+  "tipo": "seleccion personal; no implementación",
+  "familias": [
+    {
+      "id": "seleccion",
+      "familia": "Selección y acceso a herramientas",
+      "propuesta": "incluir",
+      "seleccion": "incluir",
+      "nota": "Creo que la barra superior debería llevar buena carga de poner casi todas las herramientas ahí. Luego quiza una top tabs, para cambiar entre draft, herramientas de modelado CAD, CAD menos restrictivo (con un mejor nombre), modelado directo, poligonal, ensamblajes y cualquier otra que falte y al seleccionar cada uno se vean todas las herramientas a detalle"
+    },
+    {
+      "id": "croquis",
+      "familia": "Dibujar perfiles y curvas",
+      "propuesta": "incluir",
+      "seleccion": "incluir",
+      "nota": ""
+    },
+    {
+      "id": "cotas",
+      "familia": "Cotas y restricciones",
+      "propuesta": "incluir",
+      "seleccion": "incluir",
+      "nota": ""
+    },
+    {
+      "id": "historial",
+      "familia": "Historial, variables y variantes",
+      "propuesta": "incluir",
+      "seleccion": "incluir",
+      "nota": ""
+    },
+    {
+      "id": "transformar",
+      "familia": "Mover, girar, repetir y reflejar",
+      "propuesta": "incluir",
+      "seleccion": "incluir",
+      "nota": ""
+    },
+    {
+      "id": "extrusion",
+      "familia": "Extrusión y revolución",
+      "propuesta": "incluir",
+      "seleccion": "incluir",
+      "nota": ""
+    },
+    {
+      "id": "loft",
+      "familia": "Barrido, loft y tubos",
+      "propuesta": "explorar",
+      "seleccion": "explorar",
+      "nota": ""
+    },
+    {
+      "id": "booleanas",
+      "familia": "Unir, restar, intersectar y recortar",
+      "propuesta": "incluir",
+      "seleccion": "incluir",
+      "nota": ""
+    },
+    {
+      "id": "redondeos",
+      "familia": "Redondeos y chaflanes",
+      "propuesta": "incluir",
+      "seleccion": "incluir",
+      "nota": ""
+    },
+    {
+      "id": "vaciado",
+      "familia": "Vaciado, espesor y desmoldeo",
+      "propuesta": "explorar",
+      "seleccion": "explorar",
+      "nota": ""
+    },
+    {
+      "id": "superficies",
+      "familia": "Superficies NURBS y continuidad",
+      "propuesta": "explorar",
+      "seleccion": "explorar",
+      "nota": ""
+    },
+    {
+      "id": "caras",
+      "familia": "Edición directa de caras CAD",
+      "propuesta": "explorar",
+      "seleccion": "explorar",
+      "nota": ""
+    },
+    {
+      "id": "topologia",
+      "familia": "Edición de topología poligonal",
+      "propuesta": "incluir",
+      "seleccion": "incluir",
+      "nota": ""
+    },
+    {
+      "id": "esculpir",
+      "familia": "Esculpir, subdividir y suavizar",
+      "propuesta": "explorar",
+      "seleccion": "explorar",
+      "nota": ""
+    },
+    {
+      "id": "hibrido",
+      "familia": "Pasar entre CAD y malla",
+      "propuesta": "explorar",
+      "seleccion": "explorar",
+      "nota": ""
+    },
+    {
+      "id": "inspeccion",
+      "familia": "Medir, inspeccionar y dar apariencia",
+      "propuesta": "incluir",
+      "seleccion": "incluir",
+      "nota": ""
+    },
+    {
+      "id": "ensamblajes",
+      "familia": "Ensamblajes y relaciones de movimiento",
+      "propuesta": "posponer",
+      "seleccion": "posponer",
+      "nota": ""
+    },
+    {
+      "id": "chapa",
+      "familia": "Chapa y desarrollo plano",
+      "propuesta": "posponer",
+      "seleccion": "posponer",
+      "nota": ""
+    },
+    {
+      "id": "planos",
+      "familia": "Planos técnicos 2D",
+      "propuesta": "posponer",
+      "seleccion": "posponer",
+      "nota": ""
+    },
+    {
+      "id": "archivos",
+      "familia": "Intercambio de archivos",
+      "propuesta": "incluir",
+      "seleccion": "incluir",
+      "nota": ""
+    },
+    {
+      "id": "colaboracion",
+      "familia": "Guardado, versiones y colaboración",
+      "propuesta": "incluir",
+      "seleccion": "incluir",
+      "nota": ""
+    },
+    {
+      "id": "extensiones",
+      "familia": "Herramientas propias y automatización",
+      "propuesta": "posponer",
+      "seleccion": "posponer",
+      "nota": ""
+    }
+  ]
+}
