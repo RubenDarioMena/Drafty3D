@@ -1,3 +1,5 @@
+import { formatNumber, t } from './i18n.js';
+
 const $ = (selector) => document.querySelector(selector);
 const distance = (a, b) => Math.hypot(a[0] - b[0], a[1] - b[1]);
 
@@ -10,7 +12,7 @@ export class SketchSession {
     this.closed = Boolean(object);
     this.tool = this.circle ? 'circle' : object ? 'lines' : 'rectangle';
     this.anchor = null; this.hover = null;
-    $('#sketch-plane-name').textContent = name;
+    this.name = name;
     $('#sketch-height').value = object?.params.height || 15;
     $('#sketch-reverse').checked = object ? object.params.reverse === true : Boolean(support);
     const select = $('#sketch-target'); select.replaceChildren();
@@ -50,7 +52,6 @@ export class SketchSession {
       point.forEach((value, i) => { point[i] = this.anchor[i] + (value >= this.anchor[i] ? side : -side); });
     }
     this.hover = point;
-    $('#sketch-coordinates').textContent = `U: ${point[0].toFixed(1)} · V: ${point[1].toFixed(1)} mm`;
     if (type === 'down') {
       this.down = [event.clientX, event.clientY]; this.startedNow = false;
       if (this.closed) {
@@ -92,15 +93,28 @@ export class SketchSession {
       if (this.tool === 'circle') circle = { type: 'circle', center: this.anchor, radius: distance(this.anchor, this.hover) };
       else points = this.rectangle(this.anchor, this.hover);
     } else if (!this.closed && this.tool === 'lines' && this.hover && points.length) points = [...points, this.hover];
+    this.displayPoints = points;
+    this.displayCircle = circle;
     this.viewport.drawProfile({ points, circle, closed: this.closed || Boolean(this.anchor) }, Number($('#sketch-height').value), $('#sketch-reverse').checked);
+    this.refreshLabels();
+  }
+
+  refreshLabels() {
     document.querySelectorAll('[data-profile]').forEach((button) => button.setAttribute('aria-pressed', String(button.dataset.profile === this.tool)));
-    $('#sketch-instructions').textContent = this.closed ? 'Arrastra los vértices o el centro/radio para ajustar el perfil. Aplica la operación cuando esté listo.' : { rectangle: 'Marca dos esquinas o arrastra. Mantén Mayús para dibujar un cuadrado.', circle: 'Marca el centro y el radio, o arrastra desde el centro.', lines: 'Haz clic para unir segmentos. Termina sobre el primer punto o pulsa Cerrar contorno.' }[this.tool];
-    $('#sketch-status').textContent = this.closed ? 'Contorno cerrado' : this.points.length ? `${this.points.length} vértices · contorno abierto` : 'Dibuja en el plano de la vista 3D';
-    $('#sketch-measures').textContent = circle ? `Radio: ${circle.radius.toFixed(2)} mm · Ø ${(circle.radius * 2).toFixed(2)} mm` : points.length ? `U: ${(Math.max(...points.map((p) => p[0])) - Math.min(...points.map((p) => p[0]))).toFixed(2)} mm · V: ${(Math.max(...points.map((p) => p[1])) - Math.min(...points.map((p) => p[1]))).toFixed(2)} mm` : '';
+    $('#sketch-plane-name').textContent = t(this.name);
+    $('#sketch-instructions').textContent = t(this.closed ? 'sketch.instructionsClosed' : `sketch.instructions${this.tool[0].toUpperCase()}${this.tool.slice(1)}`);
+    $('#sketch-status').textContent = this.closed ? t('sketch.closed') : this.points.length ? t('sketch.open', { count: formatNumber(this.points.length) }) : t('sketch.drawOnPlane');
+    const points = this.displayPoints || this.points;
+    const circle = this.displayCircle || this.circle;
+    $('#sketch-measures').textContent = circle
+      ? t('sketch.radiusMeasure', { radius: formatNumber(circle.radius, { minimumFractionDigits: 2, maximumFractionDigits: 2 }), diameter: formatNumber(circle.radius * 2, { minimumFractionDigits: 2, maximumFractionDigits: 2 }) })
+      : points.length ? t('sketch.boundsMeasure', { width: formatNumber(Math.max(...points.map(point => point[0])) - Math.min(...points.map(point => point[0])), { minimumFractionDigits: 2, maximumFractionDigits: 2 }), height: formatNumber(Math.max(...points.map(point => point[1])) - Math.min(...points.map(point => point[1])), { minimumFractionDigits: 2, maximumFractionDigits: 2 }) }) : '';
+    const coordinates = this.hover || [0, 0];
+    $('#sketch-coordinates').textContent = t('canvas.axisU', { u: formatNumber(coordinates[0], { minimumFractionDigits: 1, maximumFractionDigits: 1 }), v: formatNumber(coordinates[1], { minimumFractionDigits: 1, maximumFractionDigits: 1 }) });
     $('#sketch-close').disabled = this.closed || this.tool !== 'lines' || this.points.length < 3;
     $('#sketch-create').disabled = !this.closed;
     const effect = $('#sketch-effect').value;
     $('#sketch-target-field').hidden = effect === 'new';
-    $('#sketch-create').textContent = this.object ? 'Actualizar perfil' : { new: 'Extruir perfil', cut: 'Cortar pieza', fuse: 'Añadir a la pieza' }[effect];
+    $('#sketch-create').textContent = t(this.object ? 'sketch.updateProfile' : { new: 'sketch.extrude', cut: 'sketch.cutSolid', fuse: 'sketch.addSolid' }[effect]);
   }
 }

@@ -343,7 +343,9 @@ test('reabre STEP y un STL exportado de miles de triángulos sin reconstruir car
       await expect(page.locator('.stats-card')).toHaveCount(0);
       await expect(page.locator('#inspector-content')).toContainText(/malla/i);
       await page.locator('#fillet-button').click();
-      await page.locator('#operation-form-panel').getByRole('button', { name: 'Aplicar', exact: true }).click();
+      const fillet = page.locator('#operation-form-panel');
+      await expect(fillet.locator('select[name="source"]')).toHaveValue(imported.objects[0].id);
+      await fillet.getByRole('button', { name: 'Aplicar', exact: true }).click();
       await expect(page.locator('#message')).toContainText('STL son mallas');
       await ready(page);
       expect(await storedDocument(page)).toEqual(imported);

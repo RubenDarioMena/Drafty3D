@@ -11,6 +11,7 @@ export default defineConfig({
   reporter: [['list'], ['html', { outputFolder: 'artifacts/browser/report', open: 'never' }]],
   use: {
     ...devices['Desktop Chrome'], viewport: { width: 1440, height: 1000 },
+    locale: 'es-MX',
     baseURL: 'http://127.0.0.1:4193',
     trace: { mode: 'retain-on-failure', screenshots: false }, screenshot: 'only-on-failure',
     launchOptions: {

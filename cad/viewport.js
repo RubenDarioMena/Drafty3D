@@ -5,6 +5,7 @@ import { Line2 } from 'three/addons/lines/Line2.js';
 import { LineGeometry } from 'three/addons/lines/LineGeometry.js';
 import { LineMaterial } from 'three/addons/lines/LineMaterial.js';
 import { WORK_PLANES, cross, onPlane } from './planes.js';
+import { t } from './i18n.js';
 
 export class CadViewport {
   constructor(container, onSelect, callbacks = {}) {
@@ -23,7 +24,7 @@ export class CadViewport {
     this.renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false });
     this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     this.renderer.outputColorSpace = THREE.SRGBColorSpace;
-    this.renderer.domElement.setAttribute('aria-label', 'Vista 3D de las piezas. Arrastra para girar; rueda para acercar; botón derecho para desplazar.');
+    this.renderer.domElement.setAttribute('aria-label', t('canvas.aria'));
     this.renderer.domElement.tabIndex = 0;
     container.prepend(this.renderer.domElement);
     this.controls = new OrbitControls(this.camera, this.renderer.domElement);

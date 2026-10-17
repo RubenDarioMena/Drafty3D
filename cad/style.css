@@ -11,3 +11,4 @@
 .is-sketch #viewport-empty,.is-sketch .view-controls,.is-sketch .viewport-hint{display:none}
 .viewport-empty,.gesture-readout,.sketch-coordinates{pointer-events:none}
 .viewport-empty button{pointer-events:auto}
+.modebar-actions{display:flex;align-items:center;gap:14px}.locale-switch{display:flex;align-items:center;gap:6px;color:var(--muted);font-size:10px}.locale-switch select{width:auto;min-width:94px;padding:5px 7px;font-size:11px}

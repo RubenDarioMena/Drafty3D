@@ -1,3 +1,5 @@
+import { onLocaleChange, t } from './i18n.js';
+
 const $ = selector => document.querySelector(selector);
 const paths = {
   box: 'M4 8l8-4 8 4v9l-8 4-8-4z M4 8l8 4 8-4 M12 12v9',
@@ -10,29 +12,45 @@ const paths = {
   mesh: 'M3 7l9-4 9 4v11l-9 4-9-4z M3 7l9 5 9-5 M12 12v10 M3 7l9 15 9-15 M12 3v9',
 };
 export const commands = [
-  { id: 'create-box', label: 'Bloque', icon: 'box', group: 'CREAR SÓLIDOS', spaces: ['cad'], create: 'box' },
-  { id: 'create-cylinder', label: 'Cilindro', icon: 'cylinder', group: 'CREAR SÓLIDOS', spaces: ['cad'], create: 'cylinder' },
-  { id: 'create-sphere', label: 'Esfera', icon: 'sphere', group: 'CREAR SÓLIDOS', spaces: ['cad'], create: 'sphere' },
-  { id: 'sketch-button', label: 'Dibujar perfil', search: 'croquis extruir extrusión círculo rectángulo', icon: 'sketch', group: 'CROQUIS Y VOLUMEN', spaces: ['cad', 'sketch'] },
-  { id: 'boolean-button', label: 'Combinar', search: 'unir restar cortar intersección', icon: 'boolean', group: 'MODIFICAR', spaces: ['cad'] },
-  { id: 'fillet-button', label: 'Redondear', icon: 'fillet', group: 'MODIFICAR', spaces: ['cad'] },
-  { id: 'transform-button', label: 'Mover / girar', icon: 'transform', group: 'TRANSFORMAR', spaces: ['cad', 'sketch', 'mesh'] },
-  { id: 'mesh-button', label: 'Convertir a malla', icon: 'mesh', group: 'REPRESENTACIÓN', spaces: ['cad', 'mesh'] },
+  { id: 'create-box', labelKey: 'piece.box', icon: 'box', groupKey: 'group.solids', spaces: ['cad'], create: 'box', aliases: ['bloque', 'block'] },
+  { id: 'create-cylinder', labelKey: 'piece.cylinder', icon: 'cylinder', groupKey: 'group.solids', spaces: ['cad'], create: 'cylinder', aliases: ['cilindro', 'cylinder'] },
+  { id: 'create-sphere', labelKey: 'piece.sphere', icon: 'sphere', groupKey: 'group.solids', spaces: ['cad'], create: 'sphere', aliases: ['esfera', 'sphere'] },
+  { id: 'sketch-button', labelKey: 'command.sketch', icon: 'sketch', groupKey: 'group.sketch', spaces: ['cad', 'sketch'], aliases: ['croquis', 'perfil', 'extruir', 'extrusión', 'sketch', 'profile', 'extrude'] },
+  { id: 'boolean-button', labelKey: 'tool.combine', icon: 'boolean', groupKey: 'group.modify', spaces: ['cad'], aliases: ['unir', 'restar', 'cortar', 'intersección', 'union', 'subtract', 'intersect'] },
+  { id: 'fillet-button', labelKey: 'tool.roundEdges', icon: 'fillet', groupKey: 'group.modify', spaces: ['cad'], aliases: ['redondear', 'redondeo', 'fillet', 'round'] },
+  { id: 'transform-button', labelKey: 'piece.transform', icon: 'transform', groupKey: 'group.transform', spaces: ['cad', 'sketch', 'mesh'], aliases: ['mover', 'girar', 'transformar', 'move', 'rotate', 'transform'] },
+  { id: 'mesh-button', labelKey: 'mesh.confirm', icon: 'mesh', groupKey: 'group.representation', spaces: ['cad', 'mesh'], aliases: ['malla', 'poligonal', 'mesh', 'polygon'] },
 ];
 let space = 'cad';
-for (const group of new Set(commands.map(command => command.group))) {
+const groupElements = new Map();
+const commandButtons = new Map();
+for (const groupKey of new Set(commands.map(command => command.groupKey))) {
   const container = document.createElement('div');
   container.className = 'tool-group';
-  container.innerHTML = `<div></div><small>${group}</small>`;
-  for (const command of commands.filter(command => command.group === group)) {
+  container.innerHTML = '<div></div><small></small>';
+  container.lastElementChild.textContent = t(groupKey);
+  groupElements.set(groupKey, container.lastElementChild);
+  for (const command of commands.filter(item => item.groupKey === groupKey)) {
     const button = document.createElement('button');
     button.id = command.id;
     button.dataset.edit = '';
     if (command.create) button.dataset.create = command.create;
-    button.innerHTML = `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="${paths[command.icon]}"/></svg><span>${command.label}</span>`;
+    button.innerHTML = `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="${paths[command.icon]}"/></svg><span></span>`;
+    button.lastElementChild.textContent = t(command.labelKey);
+    button.setAttribute('aria-label', t(command.labelKey));
+    commandButtons.set(command.id, button);
     container.firstElementChild.append(button);
   }
   $('#command-groups').append(container);
+}
+function refreshCommandLabels() {
+  for (const [key, element] of groupElements) element.textContent = t(key);
+  for (const command of commands) {
+    const button = commandButtons.get(command.id);
+    button.lastElementChild.textContent = t(command.labelKey);
+    button.setAttribute('aria-label', t(command.labelKey));
+  }
+  if ($('#command-palette').open) search();
 }
 function setSpace(next) {
   space = next;
@@ -43,16 +61,20 @@ function setSpace(next) {
 for (const button of document.querySelectorAll('[data-space]')) button.onclick = () => setSpace(button.dataset.space);
 setSpace('cad');
 function search() {
-  const query = $('#command-query').value.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLocaleLowerCase('es');
+  const normalize = value => value.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLocaleLowerCase();
+  const query = normalize($('#command-query').value);
   $('#command-results').replaceChildren();
-  for (const command of commands.filter(command => `${command.label} ${command.search || ''}`.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLocaleLowerCase('es').includes(query))) {
+  for (const command of commands.filter(command => [t(command.labelKey), ...command.aliases].some(value => normalize(value).includes(query)))) {
     const button = document.createElement('button');
-    button.innerHTML = `<span>${command.label}</span><small>${command.group}</small>`;
+    button.innerHTML = '<span></span><small></small>';
+    button.firstElementChild.textContent = t(command.labelKey);
+    button.lastElementChild.textContent = t(command.groupKey);
     button.disabled = $(`#${command.id}`).disabled;
     button.onclick = () => { $('#command-palette').close(); setSpace(command.spaces[0]); $(`#${command.id}`).click(); };
     $('#command-results').append(button);
   }
 }
+onLocaleChange(refreshCommandLabels);
 $('#open-search').onclick = () => { $('#command-query').value = ''; search(); $('#command-palette').showModal(); $('#command-query').focus(); };
 $('#command-query').oninput = search;
 document.addEventListener('keydown', event => { if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'k') { event.preventDefault(); if (!document.querySelector('dialog[open]')) $('#open-search').click(); } });

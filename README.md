@@ -23,6 +23,7 @@ La vista compilada usa el puerto **4188**. El primer build descarga archivos fue
 ## Qué se puede hacer
 
 - **Atlas:** cinta superior por disciplinas, Documento y Operación a la izquierda, paneles plegables y tamaños ajustables con ratón o flechas sobre los separadores. La búsqueda (`Ctrl+K`) y la cinta activan los mismos comandos.
+- **Idiomas:** cambia entre español e inglés desde la barra superior. La preferencia se conserva en este navegador; los nombres de piezas y proyectos permanecen como los escribió el usuario. Las traducciones se centralizan en `cad/i18n.js` y los textos de la interfaz usan claves semánticas, incluidos términos de croquis, operaciones paramétricas, BRep y malla poligonal.
 - **CAD:** crear bloques, cilindros y esferas; editar dimensiones, posición y color; combinar sólidos y redondear. Las herramientas se configuran en Operación, sin tapar el modelo con un diálogo.
 - **Croquis:** dibujar en XY/XZ/YZ o en una cara plana, arrastrar puntos y radios, extruir, añadir o cortar. Mover puntos de un croquis conserva el modelo paramétrico.
 - **Manipulación:** G para mover y R para girar; arrastrar el cuerpo o sus ejes/anillos, ajuste de 1 mm / 15°, Esc para cancelar. F encuadra; Ctrl+Z / Ctrl+Y deshacen y rehacen.
@@ -35,7 +36,7 @@ El proyecto se guarda localmente en el navegador. Si el almacenamiento está lle
 
 ## Rendimiento
 
-El viewport dibuja bajo demanda y agrupa solicitudes en un solo frame. No mantiene un bucle permanente al estar quieto. Girar la cámara y previsualizar un movimiento no llaman a OpenCascade; soltar el gesto confirma una operación geométrica. Los cambios de nombre, visibilidad o color reutilizan la geometría. El worker devuelve buffers solo de las piezas modificadas y sus dependencias; los demás objetos conservan sus buffers y aristas en GPU. En mallas densas se evita construir una red adicional de aristas. Los croquis agrupan sus actualizaciones por frame.
+El viewport dibuja bajo demanda y agrupa solicitudes en un solo frame. No mantiene un bucle permanente al estar quieto. Girar la cámara y previsualizar un movimiento no llaman a OpenCascade; soltar el gesto confirma una operación geométrica. Los cambios de nombre, visibilidad o color reutilizan la geometría. Cambiar el idioma actualiza solo texto, accesibilidad y etiquetas; no reconstruye la geometría ni solicita otro frame WebGL. El worker devuelve buffers solo de las piezas modificadas y sus dependencias; los demás objetos conservan sus buffers y aristas en GPU. En mallas densas se evita construir una red adicional de aristas. Los croquis agrupan sus actualizaciones por frame.
 
 WebGL2 ya utiliza la GPU. OpenCascade se ejecuta en CPU/WASM; cambiar a WebGPU no lo aceleraría automáticamente. La medición de conversión sincroniza brevemente la GPU para obtener una muestra de trabajo real; la navegación normal no lo hace.
 

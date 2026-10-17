@@ -98,3 +98,36 @@ test('el render descansa en reposo y reutiliza geometría al editar nombre/color
   expect(moved.frames).toBeGreaterThan(cosmetic.frames);
   await testInfo.attach('render-metrics', { body: Buffer.from(JSON.stringify({ first, cosmetic, moved }, null, 2)), contentType: 'application/json' });
 });
+
+test('cambiar idioma actualiza la interfaz sin reconstruir ni volver a dibujar la escena', async ({ page }) => {
+  await open(page);
+  await page.locator('[data-id="base"]').click();
+  await page.locator('#param-width').fill('73');
+  await page.waitForTimeout(200);
+  const before = await page.evaluate(() => window.draftyDiagnostics());
+
+  await page.locator('#locale-select').selectOption('en');
+  await expect(page.locator('html')).toHaveAttribute('lang', 'en');
+  await expect(page.locator('[data-space="cad"]')).toHaveText('Parametric CAD');
+  await expect(page.locator('#inspector-kind')).toHaveText('BLOCK');
+  await expect(page.locator('label[for="param-width"]')).toHaveText('Width X');
+  await expect(page.locator('#object-count')).toHaveText('1 visible');
+  await expect(page.locator('#message')).toContainText('Ready.');
+  await expect(page.locator('#param-width')).toHaveValue('73');
+  await expect(page.locator('#create-box')).toContainText('Block');
+
+  const english = await page.evaluate(() => window.draftyDiagnostics());
+  expect(english.engineRequests).toBe(before.engineRequests);
+  expect(english.geometryUploads).toBe(before.geometryUploads);
+  expect(english.frames).toBe(before.frames);
+
+  await page.locator('#open-search').click();
+  await page.locator('#command-query').fill('sketch');
+  await expect(page.locator('#command-results')).toContainText('Sketch profile');
+  await page.locator('#command-palette').getByRole('button', { name: 'Close' }).click();
+  await page.locator('#locale-select').selectOption('es');
+  await expect(page.locator('html')).toHaveAttribute('lang', 'es');
+  await expect(page.locator('label[for="param-width"]')).toHaveText('Ancho X');
+  await expect(page.locator('#locale-select')).toHaveValue('es');
+  expect(await page.evaluate(() => localStorage.getItem('drafty3d.language.v1'))).toBe('es');
+});
