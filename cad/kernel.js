@@ -2,13 +2,14 @@
 // Este módulo no interpreta ni ejecuta código procedente de documentos importados.
 import { cross, onPlane, extrusionPlane } from './planes.js';
 import { meshQuality, binaryStl, bytesToBase64, MAX_MESH_TRIANGLES } from './mesh-quality.js';
+import { validateSketchParameters } from './document.js';
 export const KERNEL_CAPABILITIES = Object.freeze({
   engine: 'OpenCascade.js',
   version: '2.0.0-beta.b5ff984',
   bindings: 'full',
   units: 'mm',
   local: true,
-  operations: ['box', 'cylinder', 'sphere', 'extrusion', 'cut', 'fuse', 'common', 'fillet', 'transform'],
+  operations: ['box', 'cylinder', 'sphere', 'sketch', 'extrusion', 'cut', 'fuse', 'common', 'fillet', 'transform'],
   import: ['step', 'stl'],
   export: ['step', 'stl'],
 });
@@ -80,7 +81,8 @@ function pointCoordinates(params) {
 }
 
 function dependencyIds(object) {
-  if (object.type === 'extrusion' && object.params.support) return [object.params.support.source];
+  if (object.type === 'extrusion' && object.params.sketch !== undefined) return [object.params.sketch];
+  if (['extrusion', 'sketch'].includes(object.type) && object.params.support) return [object.params.support.source];
   if (object.type === 'boolean') return [object.params.left, object.params.right];
   if (object.type === 'transform' || object.type === 'fillet') return [object.params.source];
   return [];
@@ -152,15 +154,27 @@ class CadKernel {
         this.onProgress?.(`Calculando ${object.name || object.id}…`);
         let shape;
         try {
+          const isSketch = object.type === 'sketch';
           const isMesh = object.type === 'mesh' || (object.type === 'import' && object.params.format === 'stl') ||
             (object.type === 'transform' && dependencies[0].isMesh);
+          if (['boolean', 'fillet', 'transform'].includes(object.type) && dependencies.some((entry) => entry.isSketch)) {
+            throw new Error('Esta operación necesita piezas con volumen. Extruye primero el croquis.');
+          }
+          if (object.type === 'extrusion' && object.params.sketch !== undefined) {
+            if (!dependencies[0].isSketch) throw new Error('La extrusión debe referenciar un croquis independiente.');
+            if (['points', 'profile', 'plane', 'support'].some((key) => object.params[key] !== undefined)) {
+              throw new Error('Una extrusión vinculada usa el perfil y el plano de su croquis; no puede definir otro perfil ni apoyo.');
+            }
+          }
           if (['boolean', 'fillet'].includes(object.type) && dependencies.some((entry) => entry.isMesh)) {
             throw new Error('Las piezas STL son mallas. Cortar, unir, intersectar y redondear requieren sólidos BRep; importa STEP para editar sólidos.');
           }
-          shape = this.makeShape(object, dependencies, isMesh);
+          if (isSketch || (object.type === 'extrusion' && object.params.sketch === undefined)) validateSketchParameters(object.params);
+          const sketchPlane = isSketch ? extrusionPlane(object.params, object.params.support ? this.supportPlane(dependencies[0], object.params.support) : null) : null;
+          shape = this.makeShape(object, dependencies, isMesh, sketchPlane);
           if (shape.IsNull()) throw new Error('La operación produjo una forma vacía.');
           // Los resultados vacíos de una intersección son válidos, aunque no tengan caras.
-          entry = { key, dependencies, shape, isMesh, mesh: null, revision: `${this.epoch}:${++this.revision}` };
+          entry = { key, dependencies, shape, isMesh, isSketch, sketchPlane, mesh: null, revision: `${this.epoch}:${++this.revision}` };
           created.push(entry);
         } catch (error) {
           shape?.delete();
@@ -185,7 +199,7 @@ class CadKernel {
     return nextCache;
   }
 
-  makeShape(object, dependencies, isMesh = false) {
+  makeShape(object, dependencies, isMesh = false, sketchPlane = null) {
     const oc = this.oc;
     const p = object.params;
     return withResources((r) => {
@@ -204,6 +218,30 @@ class CadKernel {
         trsf.SetTranslation_1(own(new oc.gp_Vec_4(...coordinates)));
         return resultOf(new oc.BRepBuilderAPI_Transform_2(shape, trsf, true));
       };
+      const profileFace = (plane) => {
+        let wire;
+        if (p.profile?.type === 'circle') {
+          const axes = own(new oc.gp_Ax2_2(own(new oc.gp_Pnt_3(...onPlane(plane, ...p.profile.center))),
+            own(new oc.gp_Dir_4(...cross(plane.u, plane.v))), own(new oc.gp_Dir_4(...plane.u))));
+          const circle = own(new oc.gp_Circ_2(axes, positive(p.profile.radius, 'El radio')));
+          const edgeBuilder = own(new oc.BRepBuilderAPI_MakeEdge_8(circle));
+          if (!edgeBuilder.IsDone()) throw new Error('No se pudo construir el círculo.');
+          const wireBuilder = own(new oc.BRepBuilderAPI_MakeWire_2(own(edgeBuilder.Edge())));
+          if (!wireBuilder.IsDone()) throw new Error('No se pudo cerrar el círculo.');
+          wire = own(wireBuilder.Wire());
+        } else {
+          const polygon = own(new oc.BRepBuilderAPI_MakePolygon_1());
+          for (const pair of p.points) {
+            polygon.Add_1(own(new oc.gp_Pnt_3(...onPlane(plane, ...pair))));
+          }
+          polygon.Close();
+          if (!polygon.IsDone()) throw new Error('No se pudo cerrar el croquis.');
+          wire = own(polygon.Wire());
+        }
+        const builder = own(new oc.BRepBuilderAPI_MakeFace_15(wire, true));
+        if (!builder.IsDone()) throw new Error('El croquis no define una superficie plana válida.');
+        return own(builder.Face());
+      };
       let shape;
       switch (object.type) {
         case 'box':
@@ -215,31 +253,22 @@ class CadKernel {
         case 'sphere':
           shape = resultOf(new oc.BRepPrimAPI_MakeSphere_5(origin(), positive(p.radius, 'El radio')));
           break;
+        case 'sketch':
+          shape = profileFace(sketchPlane);
+          break;
         case 'extrusion': {
+          const linked = p.sketch !== undefined;
           const support = p.support ? this.supportPlane(dependencies[0], p.support) : null;
-          const plane = extrusionPlane(p, support);
+          const plane = linked ? dependencies[0].sketchPlane : extrusionPlane(p, support);
           const normal = cross(plane.u, plane.v).map((value) => value * (p.reverse ? -1 : 1));
           const height = positive(p.height, 'La altura');
-          if (p.profile?.type === 'circle') {
+          if (!linked && p.profile?.type === 'circle') {
             const center = onPlane(plane, ...p.profile.center);
             const axes = own(new oc.gp_Ax2_2(own(new oc.gp_Pnt_3(...center)), own(new oc.gp_Dir_4(...normal)), own(new oc.gp_Dir_4(...plane.u))));
             shape = resultOf(new oc.BRepPrimAPI_MakeCylinder_3(axes, positive(p.profile.radius, 'El radio'), height));
             break;
           }
-          if (!Array.isArray(p.points) || p.points.length < 3 || p.points.length > 1024) {
-            throw new Error('El croquis necesita entre 3 y 1024 puntos.');
-          }
-          const polygon = own(new oc.BRepBuilderAPI_MakePolygon_1());
-          for (const pair of p.points) {
-            if (!Array.isArray(pair) || pair.length !== 2) throw new Error('Cada punto del croquis necesita dos coordenadas.');
-            polygon.Add_1(own(new oc.gp_Pnt_3(...onPlane(plane, number(pair[0], 'U del croquis'), number(pair[1], 'V del croquis')))));
-          }
-          polygon.Close();
-          if (!polygon.IsDone()) throw new Error('No se pudo cerrar el croquis.');
-          const wire = own(polygon.Wire());
-          const faceBuilder = own(new oc.BRepBuilderAPI_MakeFace_15(wire, true));
-          if (!faceBuilder.IsDone()) throw new Error('El croquis no define una superficie plana válida.');
-          const face = own(faceBuilder.Face());
+          const face = linked ? translated(dependencies[0].shape) : profileFace(plane);
           shape = resultOf(new oc.BRepPrimAPI_MakePrism_1(face, own(new oc.gp_Vec_4(...normal.map((value) => value * height))), true, true));
           break;
         }
@@ -383,8 +412,10 @@ class CadKernel {
   }
 
   supportPlane(entry, support) {
+    if (entry.isSketch) throw new Error('La cara de apoyo debe pertenecer a un sólido CAD, no a un croquis.');
     if (entry.isMesh) throw new Error('Una malla STL no contiene caras planas BRep para apoyar un croquis.');
     const mesh = entry.mesh || (entry.mesh = this.tessellate(entry.shape, false));
+    if (!mesh.solidCount) throw new Error('La cara de apoyo debe pertenecer a un sólido CAD.');
     const face = mesh.faces.find((face) => face.index === support.face);
     if (mesh.faceCount !== support.faceCount || !face?.plane) throw new Error('La cara de apoyo ha cambiado. Vuelve a seleccionar un plano para este perfil.');
     return face.plane;
@@ -462,9 +493,10 @@ class CadKernel {
       // El worker puede transferir estos buffers sin separar los almacenados en caché.
       return { id: object.id, revision: entry.revision, triangleCount: mesh.indices.length / 3,
         ...(knownRevisions.get(object.id) === entry.revision ? {} : { positions: mesh.positions.slice(), normals: mesh.normals.slice(), indices: mesh.indices.slice() }),
-        volume: mesh.volume, bounds: mesh.bounds, faces: mesh.faces, faceCount: mesh.faceCount, solidCount: mesh.solidCount, isMesh: entry.isMesh };
+        volume: mesh.volume, bounds: mesh.bounds, faces: mesh.faces, faceCount: mesh.faceCount, solidCount: mesh.solidCount, isMesh: entry.isMesh, isSketch: entry.isSketch };
     });
     const visible = meshes.filter((mesh) => document.objects.find((object) => object.id === mesh.id).visible !== false);
+    const pieces = visible.filter((mesh) => !mesh.isSketch);
     const boxes = visible.map((mesh) => mesh.bounds).filter(Boolean);
     let bounds = null;
     if (boxes.length) {
@@ -476,7 +508,7 @@ class CadKernel {
       meshes,
       stats: { objectCount: document.objects.length, visibleCount: visible.length,
         triangles: visible.reduce((total, mesh) => total + mesh.triangleCount, 0),
-        volume: visible.some((mesh) => mesh.volume === null) ? null : visible.reduce((total, mesh) => total + mesh.volume, 0),
+        volume: pieces.some((mesh) => mesh.volume === null) ? null : pieces.reduce((total, mesh) => total + mesh.volume, 0),
         bounds, milliseconds: performance.now() - start, units: 'mm' },
     };
   }
@@ -484,7 +516,7 @@ class CadKernel {
   convertToMesh(document, { id, quality = 1, maxTriangles = MAX_MESH_TRIANGLES } = {}) {
     if (!Number.isInteger(maxTriangles) || maxTriangles < 1 || maxTriangles > MAX_MESH_TRIANGLES) throw new Error('El presupuesto de malla no es válido.');
     const entry = this.resolve(document).get(id);
-    if (!entry || entry.isMesh) throw new Error('Selecciona un sólido CAD para convertirlo a malla.');
+    if (!entry || entry.isMesh || entry.isSketch) throw new Error('Selecciona un sólido CAD para convertirlo a malla.');
     const properties = this.shapeProperties(entry.shape);
     if (!properties.solidCount) throw new Error('La pieza no contiene un sólido convertible.');
     const settings = meshQuality(quality, Math.max(...properties.bounds.size));
@@ -507,7 +539,7 @@ class CadKernel {
   exportDocument(document, format) {
     if (!['step', 'stl'].includes(format)) throw new Error('El formato de exportación debe ser STEP o STL.');
     const entries = this.resolve(document);
-    const visible = document.objects.filter((object) => object.visible !== false);
+    const visible = document.objects.filter((object) => object.visible !== false && !entries.get(object.id).isSketch);
     if (!visible.length) throw new Error('Muestra al menos una pieza para exportar.');
     if (format === 'step' && visible.some((object) => entries.get(object.id).isMesh)) {
       throw new Error('Las piezas STL son mallas y no contienen sólidos BRep para STEP. Ocúltalas o exporta STL.');

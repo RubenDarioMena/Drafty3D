@@ -1,6 +1,6 @@
 # Atlas · Primera integración CAD
 
-Decisiones aceptadas: Atlas, Documento sobre Operación en el panel izquierdo, conversión explícita por pieza con posibilidad de guardar antes y conservar el CAD original, resolución ajustable según la escena y edición directa limitada a parámetros/croquis compatibles. El despliegue espera a la prueba local del usuario.
+Decisiones aceptadas: Atlas, Documento sobre Operación en el panel izquierdo, conversión explícita por pieza con posibilidad de guardar antes y conservar el CAD original, resolución ajustable según la escena y edición directa limitada a parámetros/croquis compatibles. La primera integración se mantuvo en revisión local; la segunda entrega cuenta con autorización para publicar en `main` y Netlify.
 
 ## Separación de responsabilidades
 
@@ -27,3 +27,7 @@ La renderización real de una cámara que se mueve sigue siendo necesaria: el en
 Las pruebas unitarias ejercitan el motor WASM real, perfiles, dependencias, transformación, persistencia, conversión, límites y caché. Las de navegador prueban la disposición izquierda, herramientas inline, búsqueda, manipulación, croquis, recuperación, STEP/STL, conversión/cancelación/guardado/deshacer/recarga y ausencia de trabajo geométrico al cambiar la cámara o la apariencia. Linux Chromium con render por software es la comprobación cloud; las pruebas del antiguo repositorio en Windows no certifican esta interfaz nueva.
 
 Revisar localmente a escala 100 % y en un portátil antes de publicar. El arrastre libre de paneles, edición poligonal y referencias topológicas persistentes quedan para entregas posteriores. La migración conserva las páginas de investigación y no modifica el sitio de cursos.
+
+## Segunda entrega: croquis independientes
+
+El documento ya distingue perfiles guardados (`sketch`) y extrusiones que los referencian (`params.sketch`). La navegación de cámara se mantiene activa al dibujar y los rectángulos/círculos admiten medidas exactas. [Detalle, compatibilidad y continuación](CROQUIS.md).

@@ -14,6 +14,7 @@ const labels = {
   box: "Caja",
   cylinder: "Cilindro",
   sphere: "Esfera",
+  sketch: "Croquis",
   extrusion: "Extrusión",
   boolean: "Operación booleana",
   fillet: "Redondeo",
@@ -25,7 +26,8 @@ const parameterKeys = {
   box: ["width", "depth", "height", "x", "y", "z"],
   cylinder: ["radius", "height", "x", "y", "z"],
   sphere: ["radius", "x", "y", "z"],
-  extrusion: ["points", "profile", "plane", "support", "reverse", "height", "x", "y", "z"],
+  sketch: ["points", "profile", "plane", "support", "x", "y", "z"],
+  extrusion: ["sketch", "points", "profile", "plane", "support", "reverse", "height", "x", "y", "z"],
   boolean: ["operation", "left", "right"],
   fillet: ["source", "radius"],
   transform: ["source", "x", "y", "z", "rx", "ry", "rz"],
@@ -68,7 +70,8 @@ function dimension(value, label) {
 }
 
 function references(object) {
-  if (object.type === "extrusion" && object.params.support) return [object.params.support.source];
+  if (object.type === "extrusion" && object.params.sketch !== undefined) return [object.params.sketch];
+  if (["extrusion", "sketch"].includes(object.type) && object.params.support) return [object.params.support.source];
   if (object.type === "boolean") return [object.params.left, object.params.right];
   if (object.type === "fillet" || object.type === "transform") return [object.params.source];
   return [];
@@ -125,7 +128,7 @@ function validateProfile(points) {
     const next = points[(index + 1) % points.length];
     return sum + (point[0] - originX) * (next[1] - originY) - (next[0] - originX) * (point[1] - originY);
   }, 0);
-  if (!Number.isFinite(area) || Math.abs(area) < 1e-12) throw new Error("El perfil de extrusión debe tener un área mayor que cero.");
+  if (!Number.isFinite(area) || Math.abs(area) < 1e-12) throw new Error("El perfil debe tener un área mayor que cero.");
   for (let i = 0; i < points.length; i++) {
     const a = points[(i + points.length - 1) % points.length];
     const b = points[i];
@@ -137,11 +140,54 @@ function validateProfile(points) {
   }
 }
 
-function validateParameters(object, previousIds) {
+/** Perfil cerrado compartido por el documento portable y el núcleo geométrico. */
+export function validateSketchParameters(params) {
+  if (params.plane !== undefined) {
+    record(params.plane, 'El plano');
+    keys(params.plane, ['origin', 'u', 'v'], 'El plano');
+    for (const key of ['origin', 'u', 'v']) {
+      if (!Array.isArray(params.plane[key]) || params.plane[key].length !== 3) throw new Error('El plano necesita origen y dos ejes de tres coordenadas.');
+      params.plane[key].forEach((value) => number(value, 'La coordenada del plano'));
+    }
+    const { u, v } = params.plane;
+    if (Math.abs(Math.hypot(...u) - 1) > 1e-7 || Math.abs(Math.hypot(...v) - 1) > 1e-7 || Math.abs(u.reduce((sum, value, i) => sum + value * v[i], 0)) > 1e-7) throw new Error('Los ejes del plano deben ser unitarios y perpendiculares.');
+  }
+  if (params.support !== undefined) {
+    record(params.support, 'La cara de apoyo');
+    keys(params.support, ['source', 'face', 'faceCount'], 'La cara de apoyo');
+    if (!Number.isInteger(params.support.face) || params.support.face < 0 || !Number.isInteger(params.support.faceCount) || params.support.faceCount <= params.support.face) throw new Error('La cara de apoyo no es válida.');
+  }
+  if (params.profile != null) {
+    record(params.profile, 'El círculo');
+    keys(params.profile, ['type', 'center', 'radius'], 'El círculo');
+    if (params.profile.type !== 'circle' || !Array.isArray(params.profile.center) || params.profile.center.length !== 2) throw new Error('El perfil circular necesita centro y radio.');
+    params.profile.center.forEach((value) => number(value, 'El centro del círculo'));
+    dimension(params.profile.radius, 'El radio del círculo');
+    if (!Array.isArray(params.points) || params.points.length) throw new Error('Un círculo no debe contener también un contorno poligonal.');
+  } else {
+    if (!Array.isArray(params.points) || params.points.length < 3 || params.points.length > DOCUMENT_LIMITS.points) {
+      throw new Error(`El perfil debe contener entre 3 y ${DOCUMENT_LIMITS.points} puntos.`);
+    }
+    for (const point of params.points) {
+      if (!Array.isArray(point) || point.length !== 2) throw new Error("Cada punto del perfil debe contener x e y.");
+      number(point[0], "La coordenada x del perfil");
+      number(point[1], "La coordenada y del perfil");
+    }
+    validateProfile(params.points);
+  }
+  for (const axis of [0, 1]) {
+    const values = params.points.map((point) => point[axis]);
+    if (Math.max(...values) - Math.min(...values) > DOCUMENT_LIMITS.dimension) {
+      throw new Error(`El perfil supera la dimensión máxima de ${DOCUMENT_LIMITS.dimension} mm.`);
+    }
+  }
+}
+
+function validateParameters(object, previousObjects) {
   const { type, params } = object;
   record(params, `Los parámetros de «${object.name}»`);
   keys(params, parameterKeys[type], `Los parámetros de «${object.name}»`);
-  if (["box", "cylinder", "sphere", "extrusion", "transform"].includes(type)) {
+  if (["box", "cylinder", "sphere", "sketch", "extrusion", "transform"].includes(type)) {
     for (const axis of ["x", "y", "z"]) number(params[axis], `La posición ${axis}`);
   }
   if (type === "box") {
@@ -154,45 +200,13 @@ function validateParameters(object, previousIds) {
   } else if (type === "extrusion") {
     dimension(params.height, "La altura");
     if (params.reverse !== undefined && typeof params.reverse !== 'boolean') throw new Error('El sentido de extrusión debe ser booleano.');
-    if (params.plane !== undefined) {
-      record(params.plane, 'El plano');
-      keys(params.plane, ['origin', 'u', 'v'], 'El plano');
-      for (const key of ['origin', 'u', 'v']) {
-        if (!Array.isArray(params.plane[key]) || params.plane[key].length !== 3) throw new Error('El plano necesita origen y dos ejes de tres coordenadas.');
-        params.plane[key].forEach((value) => number(value, 'La coordenada del plano'));
+    if (params.sketch !== undefined) {
+      if (["points", "profile", "plane", "support"].some((key) => params[key] !== undefined)) {
+        throw new Error("Una extrusión vinculada usa el perfil y el plano de su croquis; no puede definir otro perfil ni apoyo.");
       }
-      const { u, v } = params.plane;
-      if (Math.abs(Math.hypot(...u) - 1) > 1e-7 || Math.abs(Math.hypot(...v) - 1) > 1e-7 || Math.abs(u.reduce((sum, value, i) => sum + value * v[i], 0)) > 1e-7) throw new Error('Los ejes del plano deben ser unitarios y perpendiculares.');
-    }
-    if (params.support !== undefined) {
-      record(params.support, 'La cara de apoyo');
-      keys(params.support, ['source', 'face', 'faceCount'], 'La cara de apoyo');
-      if (!Number.isInteger(params.support.face) || params.support.face < 0 || !Number.isInteger(params.support.faceCount) || params.support.faceCount <= params.support.face) throw new Error('La cara de apoyo no es válida.');
-    }
-    if (params.profile != null) {
-      record(params.profile, 'El círculo');
-      keys(params.profile, ['type', 'center', 'radius'], 'El círculo');
-      if (params.profile.type !== 'circle' || !Array.isArray(params.profile.center) || params.profile.center.length !== 2) throw new Error('El perfil circular necesita centro y radio.');
-      params.profile.center.forEach((value) => number(value, 'El centro del círculo'));
-      dimension(params.profile.radius, 'El radio del círculo');
-      if (!Array.isArray(params.points) || params.points.length) throw new Error('Un círculo no debe contener también un contorno poligonal.');
-    } else {
-      if (!Array.isArray(params.points) || params.points.length < 3 || params.points.length > DOCUMENT_LIMITS.points) {
-        throw new Error(`El perfil debe contener entre 3 y ${DOCUMENT_LIMITS.points} puntos.`);
-      }
-      for (const point of params.points) {
-        if (!Array.isArray(point) || point.length !== 2) throw new Error("Cada punto del perfil debe contener x e y.");
-        number(point[0], "La coordenada x del perfil");
-        number(point[1], "La coordenada y del perfil");
-      }
-      validateProfile(params.points);
-    }
-    for (const axis of [0, 1]) {
-      const values = params.points.map((point) => point[axis]);
-      if (Math.max(...values) - Math.min(...values) > DOCUMENT_LIMITS.dimension) {
-        throw new Error(`El perfil supera la dimensión máxima de ${DOCUMENT_LIMITS.dimension} mm.`);
-      }
-    }
+    } else validateSketchParameters(params);
+  } else if (type === "sketch") {
+    validateSketchParameters(params);
   } else if (type === "boolean") {
     if (!["cut", "fuse", "common"].includes(params.operation)) {
       throw new Error("La operación booleana debe ser cut, fuse o common.");
@@ -213,8 +227,21 @@ function validateParameters(object, previousIds) {
     }
   }
   for (const id of references(object)) {
-    if (typeof id !== "string" || !previousIds.has(id)) {
+    if (typeof id !== "string" || !previousObjects.has(id)) {
       throw new Error(`«${object.name}» debe referenciar una pieza anterior existente.`);
+    }
+  }
+  if (type === "extrusion" && params.sketch !== undefined && previousObjects.get(params.sketch).type !== "sketch") {
+    throw new Error("La extrusión debe referenciar un croquis independiente.");
+  }
+  if (["boolean", "fillet", "transform"].includes(type) && references(object).some((id) => previousObjects.get(id).type === "sketch")) {
+    throw new Error("Esta operación necesita piezas con volumen. Extruye primero el croquis.");
+  }
+  if (["sketch", "extrusion"].includes(type) && params.support) {
+    let source = previousObjects.get(params.support.source);
+    while (source.type === "transform") source = previousObjects.get(source.params.source);
+    if (source.type === "sketch" || source.type === "mesh" || (source.type === "import" && source.params.format === "stl")) {
+      throw new Error("La cara de apoyo debe pertenecer a un sólido CAD, no a un croquis ni a una malla.");
     }
   }
 }
@@ -241,22 +268,22 @@ export function validateDocument(document) {
   if (!Array.isArray(document.objects) || document.objects.length > DOCUMENT_LIMITS.objects) {
     throw new Error(`El proyecto puede contener hasta ${DOCUMENT_LIMITS.objects} operaciones.`);
   }
-  const previousIds = new Set();
+  const previousObjects = new Map();
   for (const object of document.objects) {
     record(object, "Cada pieza");
     keys(object, ["id", "name", "type", "params", "visible", "color"], "La pieza");
     if (typeof object.id !== "string" || !/^[A-Za-z0-9_-]{1,80}$/.test(object.id)) {
       throw new Error("El identificador debe tener hasta 80 letras, números, guiones o guiones bajos.");
     }
-    if (previousIds.has(object.id)) throw new Error(`El identificador «${object.id}» está duplicado.`);
+    if (previousObjects.has(object.id)) throw new Error(`El identificador «${object.id}» está duplicado.`);
     title(object.name, "El nombre de la pieza");
     if (!Object.hasOwn(labels, object.type)) throw new Error(`El tipo de pieza «${String(object.type)}» no es compatible.`);
     if (typeof object.visible !== "boolean") throw new Error("La visibilidad de la pieza debe ser true o false.");
     if (typeof object.color !== "string" || !/^#[a-f0-9]{6}$/i.test(object.color)) {
       throw new Error("El color de la pieza debe usar el formato #RRGGBB.");
     }
-    validateParameters(object, previousIds);
-    previousIds.add(object.id);
+    validateParameters(object, previousObjects);
+    previousObjects.set(object.id, object);
   }
   json(document);
   return document;
@@ -280,6 +307,7 @@ function defaults(type) {
     case "box": return { width: 30, depth: 20, height: 10, ...position };
     case "cylinder": return { radius: 10, height: 20, ...position };
     case "sphere": return { radius: 12, ...position };
+    case "sketch": return position;
     case "extrusion": return { height: 10, ...position };
     case "fillet": return { radius: 2 };
     case "transform": return { ...position, rx: 0, ry: 0, rz: 0 };

@@ -7,8 +7,8 @@ import { createDocument, createExampleDocument, validateDocument, addObject, upd
 const $ = (selector) => document.querySelector(selector);
 const $$ = (selector) => [...document.querySelectorAll(selector)];
 const escape = (value) => String(value).replace(/[&<>"']/g, (character) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[character]);
-const labels = { box: 'Bloque', cylinder: 'Cilindro', sphere: 'Esfera', extrusion: 'Extrusión', boolean: 'Combinación', fillet: 'Redondeo', transform: 'Mover / girar', import: 'Pieza importada', mesh: 'Malla convertida' };
-const icons = { box: '▱', cylinder: '◉', sphere: '◌', extrusion: '⌁', boolean: '⊖', fillet: '◜', transform: '✥', import: '↳', mesh: '◇' };
+const labels = { sketch: 'Croquis', box: 'Bloque', cylinder: 'Cilindro', sphere: 'Esfera', extrusion: 'Extrusión', boolean: 'Combinación', fillet: 'Redondeo', transform: 'Mover / girar', import: 'Pieza importada', mesh: 'Malla convertida' };
+const icons = { sketch: '⌁', box: '▱', cylinder: '◉', sphere: '◌', extrusion: '⌁', boolean: '⊖', fillet: '◜', transform: '✥', import: '↳', mesh: '◇' };
 const fieldNames = { width: 'Ancho X', depth: 'Fondo Y', height: 'Altura Z', radius: 'Radio', x: 'Posición X', y: 'Posición Y', z: 'Posición Z', rx: 'Giro X', ry: 'Giro Y', rz: 'Giro Z' };
 const storageKey = 'drafty3d.document.v1';
 let project = createExampleDocument();
@@ -223,11 +223,12 @@ function syncControls() {
   $('#mesh-confirm').disabled = Boolean(busy || !meshSession?.result);
   const selectedMesh = geometry.meshes.find(mesh => selection.has(mesh.id));
   $('#mesh-button').disabled = Boolean(locked || selection.size !== 1 || selectedMesh?.isMesh || !selectedMesh?.solidCount || !project.objects.find(object => selection.has(object.id))?.visible);
+  $('#extrude-sketch-button').disabled = Boolean(locked || selection.size !== 1 || !project.objects.some(object => selection.has(object.id) && object.type === 'sketch'));
   $('#mesh-button').title = 'Selecciona un sólido CAD visible. La malla conservará el original oculto.';
   $('#undo').disabled = locked || !history.canUndo;
   $('#redo').disabled = locked || !history.canRedo;
   $$('#sketch-panel button, #sketch-panel input, #sketch-panel select').forEach((element) => { element.disabled = busy; });
-  if (interactions?.session && !busy) { interactions.session.draw(); $('#sketch-effect').disabled = Boolean(interactions.session.object); }
+  if (interactions?.session && !busy) { interactions.session.draw(); }
 }
 
 function saveLocal() {
@@ -262,7 +263,7 @@ function renderPanels() {
   $('#object-count').textContent = `${project.objects.filter((object) => object.visible).length} visibles`;
   $('#empty-tree').hidden = project.objects.length > 0;
   $('#viewport-empty').hidden = project.objects.some((object) => object.visible);
-  $('#object-list').innerHTML = project.objects.map((object) => `<div class="object-row ${selection.has(object.id) ? 'selected' : ''} ${object.visible ? '' : 'source'}"><button class="object-select" data-id="${object.id}" title="${escape(object.name)}" ${busy ? 'disabled' : ''}><span class="node-icon" aria-hidden="true">${icons[object.type]}</span><span class="node-name">${escape(object.name)}</span><span class="type-badge">${geometry.meshes.find(mesh => mesh.id === object.id)?.isMesh ? 'MALLA' : 'CAD'}</span></button><button class="visibility-button" data-visible="${object.id}" title="${object.visible ? 'Ocultar' : 'Mostrar'} ${escape(object.name)}" aria-label="${object.visible ? 'Ocultar' : 'Mostrar'} ${escape(object.name)}" ${busy ? 'disabled' : ''}>${object.visible ? '◉' : '○'}</button></div>`).join('');
+  $('#object-list').innerHTML = project.objects.map((object) => `<div class="object-row ${selection.has(object.id) ? 'selected' : ''} ${object.visible ? '' : 'source'}"><button class="object-select" data-id="${object.id}" title="${escape(object.name)}" ${busy ? 'disabled' : ''}><span class="node-icon" aria-hidden="true">${icons[object.type]}</span><span class="node-name">${escape(object.name)}</span><span class="type-badge">${object.type === 'sketch' ? 'CROQUIS' : geometry.meshes.find(mesh => mesh.id === object.id)?.isMesh ? 'MALLA' : 'CAD'}</span></button><button class="visibility-button" data-visible="${object.id}" title="${object.visible ? 'Ocultar' : 'Mostrar'} ${escape(object.name)}" aria-label="${object.visible ? 'Ocultar' : 'Mostrar'} ${escape(object.name)}" ${busy ? 'disabled' : ''}>${object.visible ? '◉' : '○'}</button></div>`).join('');
   $$('.object-select').forEach((button) => button.onclick = (event) => select(button.dataset.id, event.ctrlKey || event.metaKey || event.shiftKey));
   $$('.visibility-button').forEach((button) => button.onclick = () => mutate((candidate) => {
     const object = candidate.objects.find((item) => item.id === button.dataset.visible);
@@ -280,9 +281,9 @@ function renderPanels() {
   const dimensions = Object.keys(object.params).filter((key) => ['width', 'depth', 'height', 'radius'].includes(key));
   const position = Object.keys(object.params).filter((key) => ['x', 'y', 'z', 'rx', 'ry', 'rz'].includes(key));
   const field = (key) => `<div class="field-row"><label for="param-${key}">${object.type === 'transform' && ['x','y','z'].includes(key) ? `Desplazamiento ${key.toUpperCase()}` : object.type === 'extrusion' && key === 'height' ? 'Profundidad' : fieldNames[key]}</label><div class="number-unit"><input id="param-${key}" name="${key}" type="number" step="any" value="${object.params[key]}" ${dimensions.includes(key) ? `min="${DOCUMENT_LIMITS.minimumDimension}" max="${DOCUMENT_LIMITS.dimension}"` : 'min="-1000000" max="1000000"'} required ${busy ? 'disabled' : ''} /><span>${key.startsWith('r') && key !== 'radius' ? '°' : 'mm'}</span></div></div>`;
-  const references = object.type === 'boolean' ? [object.params.left, object.params.right] : object.params.source ? [object.params.source] : object.params.support ? [object.params.support.source] : [];
+  const references = object.type === 'boolean' ? [object.params.left, object.params.right] : object.params.sketch ? [object.params.sketch] : object.params.source ? [object.params.source] : object.params.support ? [object.params.support.source] : [];
   const volume = geometry.meshes.find((mesh) => mesh.id === object.id)?.volume;
-  inspector.innerHTML = `<form id="properties-form"><div class="section-label">PIEZA</div><input name="name" class="field-input name-field" aria-label="Nombre de la pieza" maxlength="100" value="${escape(object.name)}" required ${busy ? 'disabled' : ''}/>${dimensions.length ? `<div class="section-label">DIMENSIONES</div>${dimensions.map(field).join('')}` : ''}${position.length ? `<div class="section-label">${object.type === 'transform' ? 'DESPLAZAMIENTO Y ROTACIÓN' : 'POSICIÓN'}</div>${position.map(field).join('')}` : ''}${object.type === 'boolean' ? `<div class="section-label">OPERACIÓN</div><select name="operation" aria-label="Tipo de combinación" ${busy ? 'disabled' : ''}>${[['cut','Restar B a A'],['fuse','Unir A y B'],['common','Intersección']].map(([value,label]) => `<option value="${value}" ${object.params.operation === value ? 'selected' : ''}>${label}</option>`).join('')}</select>` : ''}<div class="section-label">APARIENCIA</div><div class="field-row"><label for="piece-color">Color</label><input type="color" id="piece-color" name="color" value="${object.color}" ${busy ? 'disabled' : ''}/></div><button class="button primary" type="submit" ${busy ? 'disabled' : ''}>Aplicar cambios</button></form>${references.length ? `<div class="section-label">PIEZAS DE ORIGEN</div><div class="dependency-list">${references.map((id) => escape(project.objects.find((item) => item.id === id)?.name ?? id)).join('<br>')}</div><p class="inspector-note">Puedes cambiar las medidas de las piezas de origen. Esta operación se reconstruirá automáticamente.</p>` : ''}${object.type === 'extrusion' ? '<div class="inspector-actions"><button id="edit-profile" class="button">Editar perfil</button></div>' : ''}${Number.isFinite(volume) ? `<div class="stats-card"><span>VOLUMEN DEL SÓLIDO</span><strong>${new Intl.NumberFormat('es-MX', { maximumFractionDigits: 2 }).format(volume)} <small>mm³</small></strong></div>` : ''}<div class="inspector-actions"><button id="delete-piece" class="button subtle danger" ${busy ? 'disabled' : ''}>Eliminar operación</button></div>`;
+  inspector.innerHTML = `<form id="properties-form"><div class="section-label">PIEZA</div><input name="name" class="field-input name-field" aria-label="Nombre de la pieza" maxlength="100" value="${escape(object.name)}" required ${busy ? 'disabled' : ''}/>${dimensions.length ? `<div class="section-label">DIMENSIONES</div>${dimensions.map(field).join('')}` : ''}${position.length ? `<div class="section-label">${object.type === 'transform' ? 'DESPLAZAMIENTO Y ROTACIÓN' : 'POSICIÓN'}</div>${position.map(field).join('')}` : ''}${object.type === 'boolean' ? `<div class="section-label">OPERACIÓN</div><select name="operation" aria-label="Tipo de combinación" ${busy ? 'disabled' : ''}>${[['cut','Restar B a A'],['fuse','Unir A y B'],['common','Intersección']].map(([value,label]) => `<option value="${value}" ${object.params.operation === value ? 'selected' : ''}>${label}</option>`).join('')}</select>` : ''}<div class="section-label">APARIENCIA</div><div class="field-row"><label for="piece-color">Color</label><input type="color" id="piece-color" name="color" value="${object.color}" ${busy ? 'disabled' : ''}/></div><button class="button primary" type="submit" ${busy ? 'disabled' : ''}>Aplicar cambios</button></form>${references.length ? `<div class="section-label">PIEZAS DE ORIGEN</div><div class="dependency-list">${references.map((id) => `<button type="button" class="dependency-link" data-reference="${id}">${escape(project.objects.find((item) => item.id === id)?.name ?? id)} →</button>`).join('')}</div><p class="inspector-note">Puedes cambiar las medidas de las piezas de origen. Esta operación se reconstruirá automáticamente.</p>` : ''}${['sketch', 'extrusion'].includes(object.type) ? `<div class="inspector-actions"><button id="edit-profile" class="button">Editar ${object.type === 'sketch' ? 'croquis' : 'perfil'}</button>${object.type === 'sketch' ? '<button id="extrude-profile" class="button primary">Extruir croquis</button>' : ''}</div>` : ''}${Number.isFinite(volume) ? `<div class="stats-card"><span>VOLUMEN DEL SÓLIDO</span><strong>${new Intl.NumberFormat('es-MX', { maximumFractionDigits: 2 }).format(volume)} <small>mm³</small></strong></div>` : ''}<div class="inspector-actions"><button id="delete-piece" class="button subtle danger" ${busy ? 'disabled' : ''}>Eliminar operación</button></div>`;
   $('#properties-form').onsubmit = (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
@@ -298,6 +299,15 @@ function renderPanels() {
     $('#properties-form').after(note);
   }
   $('#delete-piece').onclick = deleteSelected;
+  if ($('#extrude-profile')) $('#extrude-profile').onclick = () => interactions.editSketch(object, 'volume');
+  $$('[data-reference]').forEach(button => button.onclick = () => select(button.dataset.reference));
+  if (object.type === 'sketch') {
+    const dependents = project.objects.filter(item => item.params.sketch === object.id);
+    const note = document.createElement('p');
+    note.className = 'inspector-note';
+    note.textContent = dependents.length ? `Este croquis define: ${dependents.map(item => item.name).join(', ')}. Editar el perfil reconstruye sus operaciones.` : 'Croquis guardado sin volumen. Puedes editar sus medidas o crear una extrusión cuando quieras.';
+    $('#properties-form').after(note);
+  }
   if ($('#edit-profile')) $('#edit-profile').onclick = () => openSketch(object);
   syncControls();
 }
@@ -351,7 +361,7 @@ function download(data, name, mime) {
 }
 function filename() { return project.name.replace(/[^a-zA-Z0-9áéíóúñÁÉÍÓÚÑ_-]+/g, '-').replace(/^-|-$/g, '') || 'pieza'; }
 function numericField(key, value, label = fieldNames[key], positive = false) { return `<label class="dialog-field">${label}<input name="${key}" type="number" step="any" value="${value}" ${positive ? `min="${DOCUMENT_LIMITS.minimumDimension}" max="${DOCUMENT_LIMITS.dimension}"` : 'min="-1000000" max="1000000"'} required /></label>`; }
-function options(selectedId) { return project.objects.map((object) => `<option value="${object.id}" ${object.id === selectedId ? 'selected' : ''}>${escape(object.name)}${object.visible ? '' : ' (origen)'}</option>`).join(''); }
+function options(selectedId, candidates = project.objects.filter(object => object.type !== 'sketch')) { return candidates.map((object) => `<option value="${object.id}" ${object.id === selectedId ? 'selected' : ''}>${escape(object.name)}${object.visible ? '' : ' (origen)'}</option>`).join(''); }
 function openTool(title, fields, note, action) {
   if (busy) return;
   $('#tool-title').textContent = title;
@@ -378,12 +388,13 @@ $$('[data-create]').forEach((button) => button.onclick = () => {
 });
 
 $('#boolean-button').onclick = () => {
-  if (project.objects.length < 2) { message('Crea dos piezas para combinarlas.'); return; }
-  const ids = [...selection];
-  const visible = project.objects.filter((object) => object.visible);
-  const left = ids[0] ?? visible[0]?.id ?? project.objects[0].id;
-  const right = ids[1] ?? visible.find((object) => object.id !== left)?.id ?? project.objects.find((object) => object.id !== left).id;
-  openTool('Combinar piezas', `<label class="dialog-field full">Operación<select name="operation"><option value="cut">Restar B a A</option><option value="fuse">Unir A y B</option><option value="common">Intersección de A y B</option></select></label><label class="dialog-field full">Pieza A<select name="left">${options(left)}</select></label><label class="dialog-field full">Pieza B<select name="right">${options(right)}</select></label>`, 'Las piezas de origen se ocultarán y seguirán disponibles para cambiar sus medidas.', async (data) => {
+  const candidates = project.objects.filter(object => geometry.meshes.some(mesh => mesh.id === object.id && mesh.solidCount && !mesh.isMesh));
+  if (candidates.length < 2) { message('Crea dos sólidos para combinarlos.'); return; }
+  const ids = [...selection].filter(id => candidates.some(object => object.id === id));
+  const visible = candidates.filter(object => object.visible);
+  const left = ids[0] ?? visible[0]?.id ?? candidates[0].id;
+  const right = ids[1] ?? visible.find(object => object.id !== left)?.id ?? candidates.find(object => object.id !== left).id;
+  openTool('Combinar piezas', `<label class="dialog-field full">Operación<select name="operation"><option value="cut">Restar B a A</option><option value="fuse">Unir A y B</option><option value="common">Intersección de A y B</option></select></label><label class="dialog-field full">Pieza A<select name="left">${options(left, candidates)}</select></label><label class="dialog-field full">Pieza B<select name="right">${options(right, candidates)}</select></label>`, 'Las piezas de origen se ocultarán y seguirán disponibles para cambiar sus medidas.', async (data) => {
     let id;
     const applied = await mutate((candidate) => {
       const params = Object.fromEntries(data);
@@ -396,9 +407,10 @@ $('#boolean-button').onclick = () => {
 };
 
 $('#fillet-button').onclick = () => {
-  if (!project.objects.length) { message('Crea una pieza antes de redondearla.'); return; }
-  const source = [...selection][0] ?? project.objects.find((object) => object.visible)?.id ?? project.objects.at(-1).id;
-  openTool('Redondear aristas', `<label class="dialog-field full">Pieza<select name="source">${options(source)}</select></label>${numericField('radius', 1, 'Radio (mm)', true)}`, 'Se intenta redondear todas las aristas compatibles. Un radio demasiado grande puede no formar un sólido válido.', async (data) => {
+  const candidates = project.objects.filter(object => geometry.meshes.some(mesh => mesh.id === object.id && mesh.solidCount && !mesh.isMesh));
+  if (!candidates.length) { message('Crea un sólido antes de redondearlo.'); return; }
+  const source = candidates.find(object => selection.has(object.id))?.id ?? candidates.find(object => object.visible)?.id ?? candidates.at(-1).id;
+  openTool('Redondear aristas', `<label class="dialog-field full">Pieza<select name="source">${options(source, candidates)}</select></label>${numericField('radius', 1, 'Radio (mm)', true)}`, 'Se intenta redondear todas las aristas compatibles. Un radio demasiado grande puede no formar un sólido válido.', async (data) => {
     let id;
     const applied = await mutate((candidate) => {
       id = addObject(candidate, { type: 'fillet', params: { source: data.get('source'), radius: Number(data.get('radius')) } }).id;
@@ -409,9 +421,10 @@ $('#fillet-button').onclick = () => {
 };
 
 $('#transform-button').onclick = () => {
-  if (!project.objects.length) { message('Crea una pieza antes de moverla.'); return; }
-  const source = [...selection][0] ?? project.objects.find((object) => object.visible)?.id ?? project.objects.at(-1).id;
-  openTool('Mover / girar una pieza', `<label class="dialog-field full">Pieza<select name="source">${options(source)}</select></label>${['x','y','z','rx','ry','rz'].map((key) => numericField(key, 0, `${key.startsWith('r') ? fieldNames[key] + ' (°)' : 'Desplazamiento ' + key.toUpperCase() + ' (mm)'}`)).join('')}`, 'Rotaciones alrededor del origen: X, Y y Z; después se aplica el desplazamiento.', async (data) => {
+  const candidates = project.objects.filter(object => object.type !== 'sketch');
+  if (!candidates.length) { message('Crea un volumen antes de moverlo. Para mover el croquis, edita su posición.'); return; }
+  const source = candidates.find(object => selection.has(object.id))?.id ?? candidates.find(object => object.visible)?.id ?? candidates.at(-1).id;
+  openTool('Mover / girar una pieza', `<label class="dialog-field full">Pieza<select name="source">${options(source, candidates)}</select></label>${['x','y','z','rx','ry','rz'].map((key) => numericField(key, 0, `${key.startsWith('r') ? fieldNames[key] + ' (°)' : 'Desplazamiento ' + key.toUpperCase() + ' (mm)'}`)).join('')}`, 'Rotaciones alrededor del origen: X, Y y Z; después se aplica el desplazamiento.', async (data) => {
     let id;
     const applied = await mutate((candidate) => {
       const params = Object.fromEntries([...data.entries()].map(([key,value]) => [key, key === 'source' ? value : Number(value)]));
@@ -442,7 +455,7 @@ document.addEventListener('input', (event) => {
 });
 $('#help-button').onclick = () => $('#help-dialog').showModal();
 $('#export-button').onclick = () => {
-  if (!project.objects.some((object) => object.visible)) { message('Muestra al menos una pieza para exportar.'); return; }
+  if (!project.objects.some((object) => object.visible && object.type !== 'sketch')) { message('Muestra al menos un sólido o una malla para exportar. Guarda el archivo del proyecto para conservar los croquis.'); return; }
   $('#export-dialog').showModal();
 };
 $$('[data-export]').forEach((button) => button.onclick = async () => {
@@ -560,7 +573,7 @@ async function start() {
     message(restoreNotice || 'Listo. Crea piezas o selecciona una operación para cambiar sus medidas.');
     saveLocal();
     window.cadReady = true;
-    window.draftyDiagnostics = () => ({ ...viewport.metrics, engineRequests: engine.sequence, geometries: viewport.renderer.info.memory.geometries, objects: project.objects.length, revisions: geometry.meshes.map(({ id, revision }) => ({ id, revision })) });
+    window.draftyDiagnostics = () => ({ ...viewport.metrics, engineRequests: engine.sequence, sketchProfile: viewport.sketchPlane ? structuredClone(viewport.pendingProfile) : null, camera: { position: viewport.camera.position.toArray(), target: viewport.controls.target.toArray(), up: viewport.camera.up.toArray() }, sketch: interactions.session ? { points: structuredClone(interactions.session.points), circle: structuredClone(interactions.session.circle), anchor: structuredClone(interactions.session.anchor), hover: structuredClone(interactions.session.hover), closed: interactions.session.closed, stage: interactions.session.stage } : null, geometries: viewport.renderer.info.memory.geometries, objects: project.objects.length, revisions: geometry.meshes.map(({ id, revision }) => ({ id, revision })) });
   } catch (error) {
     $('#loading-title').textContent = 'No se pudo iniciar el editor';
     $('#loading-detail').textContent = error.message || 'Este navegador necesita WebGL 2 y WebAssembly. Prueba una versión reciente de Edge, Chrome o Firefox.';
