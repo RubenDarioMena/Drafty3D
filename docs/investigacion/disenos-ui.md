@@ -1,6 +1,8 @@
 # Drafty3D · Cinco propuestas de interfaz
 
-Documento de trabajo · 16 de octubre de 2026 · Estado: propuesta para probar, no decisión final.
+Documento de investigación · 16 de octubre de 2026.
+
+**Actualización:** el usuario eligió Atlas, con Operación debajo de Documento a la izquierda. La primera integración real y su alcance están en [Atlas CAD](../cad/ATLAS.md). Las cinco variantes que siguen son antecedentes del laboratorio; no implican cinco editores en producción.
 
 Prototipo: [propuestas-ui.html](propuestas-ui.html). Investigación previa: [comparativa-cad.html](comparativa-cad.html). Respuesta del usuario: [drafty3d-seleccion-funciones-1.json](drafty3d-seleccion-funciones-1.json).
 

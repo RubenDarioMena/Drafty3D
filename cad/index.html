@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="Drafty3D Atlas: CAD paramétrico en tu navegador, croquis, sólidos y conversión controlada a malla." />
+  <meta name="theme-color" content="#f5f7f2" />
+  <title>Drafty3D · Atlas CAD</title>
+  <link rel="stylesheet" href="./style.css" />
+</head>
+<body>
+<div class="app">
+  <header class="topbar">
+    <a class="brand" href="/cad/" aria-label="Drafty3D Atlas"><span class="brand-mark" aria-hidden="true">◈</span><span>Drafty<b>3D</b><small>ATLAS</small></span></a>
+    <div class="document-name"><input id="document-name" aria-label="Nombre del proyecto" maxlength="100" value="Soporte mecánico" /><span class="local-badge"><i></i> LOCAL</span></div>
+    <nav class="file-actions" aria-label="Proyecto">
+      <button id="new-project" class="button subtle" data-edit>Nuevo</button>
+      <button id="open-project" class="button subtle" data-edit>Abrir</button>
+      <button id="save-project" class="button" data-edit>Guardar archivo</button>
+      <button id="export-button" class="button primary" data-edit>Exportar</button>
+    </nav>
+  </header>
+  <div class="modebar">
+    <nav aria-label="Espacio de modelado"><button data-space="cad" aria-pressed="true">CAD paramétrico</button><button data-space="sketch" aria-pressed="false">Croquis</button><button data-space="mesh" aria-pressed="false">Malla</button></nav>
+    <button id="open-search" class="search-button">Buscar herramienta <kbd>Ctrl K</kbd></button>
+  </div>
+  <div class="ribbon" role="toolbar" aria-label="Herramientas de modelado">
+    <div class="tool-group history-tools"><div><button id="undo" title="Deshacer (Ctrl+Z)" aria-label="Deshacer" disabled>↶</button><button id="redo" title="Rehacer (Ctrl+Y)" aria-label="Rehacer" disabled>↷</button></div><small>HISTORIAL</small></div>
+    <div id="command-groups"></div>
+    <div class="ribbon-end"><span>mm</span><button id="help-button" class="button subtle">? Ayuda</button></div>
+  </div>
+  <main class="workspace">
+    <div class="sidebar">
+      <aside class="model-panel" aria-label="Documento y operaciones">
+        <div class="panel-heading"><button id="toggle-document" class="section-toggle" aria-expanded="true" aria-controls="document-content">⌄ Documento</button><span id="object-count">0 piezas</span></div>
+        <div id="document-content"><div class="tree-label">PIEZAS Y OPERACIONES</div><div id="object-list" class="object-list"></div><div id="empty-tree" class="empty-tree" hidden>Crea un sólido o dibuja tu primer perfil.</div><button id="recover-project" class="button subtle" hidden>Descargar copia anterior</button></div>
+      </aside>
+      <div id="panel-splitter" class="panel-splitter" role="separator" aria-label="Ajustar altura de Documento" aria-orientation="horizontal" aria-valuemin="80" aria-valuemax="600" aria-valuenow="200" tabindex="0"><span></span></div>
+      <aside class="inspector" aria-label="Operación y propiedades de la pieza">
+        <div class="panel-heading"><button id="toggle-operation" class="section-toggle" aria-expanded="true" aria-controls="operation-content">⌄ Operación</button><span id="inspector-kind">SELECCIÓN</span></div>
+        <div id="operation-content">
+          <div id="inspector-content" class="inspector-content"></div>
+          <section id="operation-form-panel" class="operation-form-panel" hidden>
+            <form id="tool-form"><h2 id="tool-title"></h2><div id="tool-fields"></div><p id="tool-note" class="inspector-note"></p><p id="tool-error" class="sketch-error" role="alert"></p><div class="operation-actions"><button type="button" id="cancel-tool" class="button">Cancelar</button><button type="submit" class="button primary">Aplicar</button></div></form>
+          </section>
+          <section id="mesh-panel" class="mesh-panel" hidden>
+            <div class="section-label">CAD → MALLA</div><h2>Convertir pieza</h2><p id="mesh-source-name"></p>
+            <p class="conversion-notice">La malla queda independiente y pierde las medidas, operaciones y superficies exactas del CAD. Conservaremos el original oculto.</p>
+            <button id="mesh-save-first" class="button save-first">Guardar archivo antes</button>
+            <label class="dialog-field" for="mesh-quality">Resolución <strong id="mesh-quality-label">Estándar</strong><input id="mesh-quality" type="range" min="0" max="4" step="1" value="1" /></label>
+            <div class="range-labels"><span>Mínima</span><span>Muy alta</span></div>
+            <p id="mesh-estimate" role="status">Prepara una vista previa antes de convertir.</p>
+            <button id="mesh-preview" class="button">Previsualizar resolución</button>
+            <p id="mesh-performance" class="inspector-note">La recomendación se mide con esta escena y este equipo; puede variar al añadir piezas.</p>
+            <p id="mesh-error" class="sketch-error" role="alert"></p>
+            <div class="operation-actions"><button id="mesh-cancel" class="button">Cancelar</button><button id="mesh-confirm" class="button primary" disabled>Convertir a malla</button></div>
+          </section>
+<div id="sketch-panel" class="sketch-panel" hidden>
+        <div class="sketch-settings"><div class="section-label">CROQUIS EN EL MODELO</div><h3 id="sketch-plane-name">Plano XY</h3><p id="sketch-instructions">Marca dos esquinas del rectángulo.</p>
+        <div class="profile-tools" role="toolbar" aria-label="Formas de croquis"><button id="sketch-rectangle" data-profile="rectangle" aria-pressed="true" title="Rectángulo">▱ Rectángulo</button><button id="sketch-circle" data-profile="circle" aria-pressed="false" title="Círculo">◯ Círculo</button><button id="sketch-lines" data-profile="lines" aria-pressed="false" title="Líneas conectadas">⌁ Líneas</button></div>
+        <div class="sketch-actions"><button id="sketch-close" class="button">Cerrar contorno</button><button id="sketch-undo" class="button subtle">Quitar punto</button><button id="sketch-clear" class="button subtle">Borrar</button></div>
+        <label class="dialog-field">Ajuste a cuadrícula<select id="sketch-snap"><option value="0">Libre</option><option value="0.5">0,5 mm</option><option value="1" selected>1 mm</option><option value="5">5 mm</option></select></label>
+        <p id="sketch-status" role="status">Sin perfil</p><p id="sketch-measures"></p><button id="sketch-preset" class="button subtle">Rectángulo 40 × 30</button>
+        <div class="section-label">OPERACIÓN DEL PERFIL</div><label class="dialog-field">Resultado<select id="sketch-effect"><option value="new">Nuevo sólido</option><option value="fuse">Añadir a una pieza</option><option value="cut">Cortar una pieza</option></select></label>
+        <label id="sketch-target-field" class="dialog-field" hidden>Pieza de destino<select id="sketch-target"></select></label>
+        <label class="dialog-field">Profundidad (mm)<input id="sketch-height" type="number" min="0.00001" max="100000" step="any" value="15" required /></label><label class="reverse-field"><input id="sketch-reverse" type="checkbox" /> Invertir la normal del plano</label>
+        <p id="sketch-error" class="sketch-error" role="alert"></p></div><div class="sketch-submit"><button id="sketch-create" class="button primary" disabled>Extruir perfil</button><button id="sketch-cancel" class="button subtle">Cancelar croquis</button></div>
+      </div>
+        </div>
+        <div class="sidebar-footer"><span>Atlas · mm</span><a href="./legal.html">Licencias</a></div>
+      </aside>
+    </div>
+    <div id="sidebar-resize" role="separator" aria-label="Ajustar ancho del panel" aria-orientation="vertical" aria-valuemin="260" aria-valuemax="460" aria-valuenow="316" tabindex="0"></div>
+      <section id="viewport" class="viewport" aria-label="Espacio de trabajo 3D">
+        <div class="viewport-title"><span>ESPACIO DE TRABAJO</span><strong id="selection-label">Soporte de ejemplo</strong></div>
+        <nav class="view-controls" aria-label="Vistas de cámara"><button data-view="iso" title="Vista isométrica">3D</button><button data-view="top">Superior</button><button data-view="front">Frontal</button><button data-view="right">Derecha</button><button id="fit-view" title="Encuadrar (F)">Encuadrar</button></nav>
+        <div id="plane-picker" class="plane-picker" hidden><strong>Elige el plano del croquis</strong><p id="plane-note">Haz clic en un plano de origen o selecciona una cara plana.</p><div><button class="button" data-plane="XY">Plano XY</button><button class="button" data-plane="XZ">Plano XZ</button><button class="button" data-plane="YZ">Plano YZ</button><button id="pick-face" class="button primary">Seleccionar cara plana</button><button id="cancel-plane" class="button subtle">Cancelar</button></div></div>
+        <div id="interaction-tools" class="interaction-tools" role="toolbar" aria-label="Manipulación de piezas"><button data-interaction="orbit" aria-pressed="true" title="Seleccionar y navegar (Esc)">Seleccionar</button><button data-interaction="translate" aria-pressed="false" title="Mover con ejes o arrastrar la pieza libremente (G)">✥ Mover</button><button data-interaction="rotate" aria-pressed="false" title="Girar con los anillos (R)">⟳ Girar</button><label title="Movimientos de 1 mm y giros de 15 grados"><input id="transform-snap" type="checkbox" /> Ajustar</label></div>
+        <div id="gesture-readout" class="gesture-readout" hidden></div>
+        <div id="sketch-coordinates" class="sketch-coordinates" hidden>U: 0 · V: 0 mm</div>
+        <div class="axis-key" aria-hidden="true"><span class="axis-x">X</span><span class="axis-y">Y</span><span class="axis-z">Z</span></div>
+        <div id="viewport-empty" class="viewport-empty" hidden><span>◈</span><h2>Tu siguiente pieza empieza aquí</h2><p>Añade un sólido o dibuja un perfil para extruirlo.</p><button id="load-example" class="button" data-edit>Cargar ejemplo</button></div>
+        <div class="viewport-hint">Arrastrar: girar <span>·</span> Botón derecho: desplazar <span>·</span> Rueda: zoom <span>·</span> Ctrl + clic: seleccionar varias</div>
+        <button id="grid-toggle" class="grid-toggle" title="Mostrar u ocultar cuadrícula" aria-pressed="true">▦ Cuadrícula</button>
+        <div id="loading-overlay" class="loading-overlay"><div class="loading-card"><span class="spinner"></span><h2 id="loading-title">Preparando OpenCascade</h2><p id="loading-detail">El motor CAD se carga en tu navegador. La primera descarga puede tardar.</p><button id="cancel-operation" class="button subtle" hidden>Cancelar operación</button></div></div>
+      </section>
+
+  </main>
+  <footer class="statusbar"><span id="engine-status">Cargando motor…</span><span id="message" role="status" aria-live="polite">Tu proyecto permanece en este navegador.</span><span id="scene-stats"></span><span id="save-status">Guardado local</span></footer>
+</div>
+<input id="file-input" type="file" accept=".json,.cad,.step,.stp,.stl" hidden />
+<dialog id="command-palette"><div class="dialog-heading"><h2>Buscar herramienta</h2><button class="close-dialog" aria-label="Cerrar búsqueda">×</button></div><label for="command-query">Nombre o acción</label><input id="command-query" type="search" placeholder="Extruir, combinar, mover…" autocomplete="off" /><div id="command-results"></div></dialog>
+  <dialog id="export-dialog"><div class="dialog-heading"><h2>Exportar piezas</h2><button class="close-dialog" aria-label="Cerrar">×</button></div><p>Se exportan las piezas visibles. El archivo del proyecto conserva todas las operaciones editables.</p><div class="export-options"><button data-export="step"><strong>STEP <span>↗</span></strong><span>Sólidos exactos para otros programas CAD</span></button><button data-export="stl"><strong>STL <span>↗</span></strong><span>Malla para impresión 3D · medidas en mm</span></button></div></dialog>
+  <dialog id="help-dialog"><div class="dialog-heading"><h2>Dibujar, mover y dar forma</h2><button class="close-dialog" aria-label="Cerrar">×</button></div><p>Trabaja en milímetros. Selecciona una pieza en el lienzo o en la lista y cambia sus medidas en Operación.</p><ol><li>Crea un <strong>bloque, cilindro o esfera</strong>. Usa <strong>Mover (G)</strong> para agarrar una pieza o arrastrar sus ejes; <strong>Girar (R)</strong> muestra los anillos. Ajustar limita los pasos a 1 mm o 15°.</li><li>En <strong>Dibujar perfil</strong>, elige XY, XZ, YZ o una cara plana. Dibuja rectángulos (Mayús: cuadrados), círculos o líneas conectadas. Cierra el contorno y elige extruir, añadir o cortar. Puedes arrastrar sus vértices y el centro/radio; el sólido conserva su edición paramétrica.</li><li>Usa <strong>Combinar</strong> para unir piezas, restar una de otra o conservar su intersección.</li><li>Prueba <strong>Redondear</strong> o <strong>Mover / girar</strong>. Las operaciones anteriores se conservan para editar sus medidas.</li><li><strong>Convertir a malla</strong> prepara una copia independiente con resolución ajustable y previsualización. Puedes guardar antes o cancelar; el CAD original queda oculto y recuperable en Documento. Cambiar a la pestaña Malla no convierte ninguna pieza. La edición poligonal de vértices se incorporará más adelante.</li><li>Descarga tu proyecto con <strong>Guardar archivo</strong>. Abrir admite proyectos, STEP y STL.</li></ol><p><kbd>Ctrl</kbd> + <kbd>Z</kbd> deshace · <kbd>Ctrl</kbd> + <kbd>Y</kbd> rehace · <kbd>F</kbd> encuadra · <kbd>Supr</kbd> elimina la selección.</p><p>Sin login ni servidor de geometría. El proyecto se guarda también en este navegador; descarga un archivo para llevarlo a otro equipo.</p><a href="./legal.html">OpenCascade y licencias →</a></dialog>
+
+<script type="module" src="./app.js"></script>
+</body>
+</html>

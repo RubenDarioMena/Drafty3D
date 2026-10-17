@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Licencias y fuentes · Drafty3D</title>
+    <style>
+      :root { color-scheme: dark; font-family: system-ui, sans-serif; background: #10151c; color: #e4eaf2; }
+      body { max-width: 860px; margin: auto; padding: 36px 24px 60px; line-height: 1.6; }
+      a { color: #80c9ff; overflow-wrap: anywhere; }
+      h1, h2 { line-height: 1.2; }
+      h2 { margin-top: 32px; }
+      code { color: #a6dfff; font-size: .9em; overflow-wrap: anywhere; }
+      li { margin: 10px 0; }
+    </style>
+  </head>
+  <body>
+    <a href="/cad/">← Volver al editor</a>
+    <h1>Licencias y código fuente</h1>
+    <p>Drafty3D utiliza Open CASCADE Technology mediante OpenCascade.js para calcular geometría sólida en tu navegador. Three.js representa la geometría. El motor se descarga desde este sitio; tus piezas y archivos se procesan localmente.</p>
+
+    <h2>OpenCascade.js</h2>
+    <p>Autor: Sebastian Alff y colaboradores. Versión distribuida: <code>2.0.0-beta.b5ff984</code>. Licencia: GNU LGPL 2.1, identificador declarado por el paquete <code>LGPL-2.1-only</code>. Distribuimos el módulo <code>opencascade.full</code> publicado por el proyecto, sin modificaciones al código fuente de la biblioteca.</p>
+    <ul>
+      <li><a href="./licenses/source/opencascade.js-b5ff984.tar.gz">Descargar fuentes OpenCascade.js de esta entrega</a> · <a href="./licenses/source/opencascade.js-1544593.tar.gz">fuentes gitHead npm</a></li>
+      <li><a href="/cad/licenses/opencascade.js-LGPL-2.1.txt">Texto completo LGPL 2.1</a></li>
+      <li><a href="https://github.com/donalffons/opencascade.js/tree/b5ff9847200016dce0d92fe747fc38a945771dc5">Fuentes y scripts del motor en la revisión del nombre de la versión</a></li>
+      <li><a href="https://github.com/donalffons/opencascade.js/tree/15445938357138fd30f07a126a9bd874054af7d8">Revisión gitHead declarada por npm</a></li>
+      <li><a href="https://registry.npmjs.org/opencascade.js/-/opencascade.js-2.0.0-beta.b5ff984.tgz">Paquete npm exacto, incluido el módulo distribuido</a></li>
+    </ul>
+
+    <h2>Open CASCADE Technology</h2>
+    <p>Copyright de OPEN CASCADE SAS, Matra Datavision y los demás titulares indicados en sus archivos. El port utiliza la revisión OCCT <code>bb368e271e24f63078129283148ce83db6b9670a</code> de la línea 7.6.2. OCCT se distribuye bajo LGPL 2.1 con la excepción adicional de Open CASCADE.</p>
+    <ul>
+      <li><a href="./licenses/source/occt-bb368e2.tar.gz">Descargar fuentes OCCT de esta entrega</a></li>
+      <li><a href="/cad/licenses/OCCT-LGPL-2.1.txt">Licencia LGPL de OCCT</a> y <a href="/cad/licenses/OCCT-LGPL-exception.txt">excepción adicional</a></li>
+      <li><a href="https://github.com/Open-Cascade-SAS/OCCT/tree/bb368e271e24f63078129283148ce83db6b9670a">Fuentes OCCT de la revisión usada por el port</a></li>
+    </ul>
+
+    <h2>Three.js y componentes de compilación</h2>
+    <p>Three.js <code>0.186.1</code>, copyright de sus autores, usa la licencia MIT. Los scripts upstream del motor usan Emscripten 3.1.14 y referencias a RapidJSON y FreeType. Se conservan también sus avisos de licencia.</p>
+    <ul>
+      <li><a href="/cad/licenses/three-MIT.txt">Three.js — MIT</a> · <a href="https://github.com/mrdoob/three.js/tree/r186">fuentes</a></li>
+      <li><a href="/cad/licenses/emscripten.txt">Emscripten — avisos de licencia</a> · <a href="https://github.com/emscripten-core/emscripten/tree/3.1.14">fuentes 3.1.14</a></li>
+      <li><a href="/cad/licenses/rapidjson.txt">RapidJSON — avisos de licencia</a> · <a href="https://github.com/Tencent/rapidjson">fuentes</a></li>
+      <li><a href="/cad/licenses/freetype-FTL.txt">FreeType Project License</a> · <a href="https://freetype.org/">proyecto</a></li>
+    </ul>
+
+    <h2>Modificar y volver a compilar</h2>
+    <p>Las licencias de las bibliotecas permiten estudiarlas, modificarlas y redistribuirlas bajo sus condiciones. Conserva los avisos, entrega la licencia y facilita el código fuente correspondiente, incluidas las modificaciones y los scripts de compilación. La LGPL también exige que el usuario pueda modificar la biblioteca y volver a enlazar la aplicación, en los términos de su sección 6.</p>
+    <p>Descarga <a href="./licenses/source/cad-application.tar.gz">el código de integración de esta entrega</a>, incluido el manifiesto de dependencias, el worker, la configuración Vite y las instrucciones para reconstruir el editor con un motor compatible. Se permite modificar esta integración para uso propio y depurarla con una biblioteca modificada, conforme a la sección 6 de LGPL 2.1. Consulta <a href="./licenses/source/SHA256SUMS.txt">los hashes SHA-256</a> y <a href="./licenses/source/MANIFEST.json">el manifiesto de procedencia</a>. Las fuentes correspondientes se sirven desde el mismo sitio que el motor.</p>
+    <p>El <a href="https://github.com/RubenDarioMena/Drafty3D">repositorio de Drafty3D</a> contiene su código e historial. La base del editor procede de <a href="https://github.com/RubenDarioMena/Courses-RDM/tree/2e5c5e318d20f1378058dfb9e91447322083dfbd/cad">Courses-RDM</a>; se conservan los avisos de las bibliotecas y sus condiciones de distribución.</p>
+    <p>Las bibliotecas se entregan sin garantía, según los textos de sus licencias.</p>
+  </body>
+</html>

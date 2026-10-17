@@ -7,6 +7,6 @@
 
 [[redirects]]
   from = "/"
-  to = "/docs/investigacion/propuestas-ui.html"
+  to = "/cad/"
   status = 302
   force = true

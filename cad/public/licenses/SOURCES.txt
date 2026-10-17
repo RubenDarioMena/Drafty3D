@@ -1,0 +1,51 @@
+CAD Web — procedencia de bibliotecas (14 de octubre de 2026)
+
+OpenCascade.js
+  Paquete npm: opencascade.js@2.0.0-beta.b5ff984
+  Licencia declarada: LGPL-2.1-only
+  Autor declarado: Sebastian Alff <donalffons@gmail.com>
+  Artefacto: https://registry.npmjs.org/opencascade.js/-/opencascade.js-2.0.0-beta.b5ff984.tgz
+  Integridad npm: sha512-4ZIrYrfrCV7SXvQFSmbHlfueSYngQNWGVrRVloVaAEZHDSY+R1k2htdY4AU5axbIGkbWVmrj+M8nmyeMLAelwA==
+  Commit del nombre de la versión: b5ff9847200016dce0d92fe747fc38a945771dc5
+  gitHead declarado por npm: 15445938357138fd30f07a126a9bd874054af7d8
+  Fuentes: https://github.com/donalffons/opencascade.js/tree/b5ff9847200016dce0d92fe747fc38a945771dc5
+  Dockerfile: https://github.com/donalffons/opencascade.js/blob/b5ff9847200016dce0d92fe747fc38a945771dc5/Dockerfile
+  Configuración completa: https://github.com/donalffons/opencascade.js/blob/b5ff9847200016dce0d92fe747fc38a945771dc5/builds/opencascade.full.yml
+  Se distribuye el módulo full de npm; no se recompila ni modifica la biblioteca en la compilación del sitio.
+  Vite transforma el envoltorio JavaScript para integrarlo en el worker y emite el WASM sin modificarlo.
+
+Open CASCADE Technology
+  Versión indicada por el paquete: 7.6.2
+  Revisión fijada por Dockerfile: bb368e271e24f63078129283148ce83db6b9670a
+  Fuentes: https://github.com/Open-Cascade-SAS/OCCT/tree/bb368e271e24f63078129283148ce83db6b9670a
+  LGPL 2.1 + excepción Open CASCADE.
+  Copyright OPEN CASCADE SAS, Matra Datavision y los titulares indicados en cada archivo fuente.
+  Licencia copiada de: https://raw.githubusercontent.com/Open-Cascade-SAS/OCCT/bb368e271e24f63078129283148ce83db6b9670a/LICENSE_LGPL_21.txt
+  Excepción copiada de: https://raw.githubusercontent.com/Open-Cascade-SAS/OCCT/bb368e271e24f63078129283148ce83db6b9670a/OCCT_LGPL_EXCEPTION.txt
+
+Three.js
+  Paquete: three@0.186.1
+  Licencia: MIT (copia del paquete instalado)
+  Fuentes: https://github.com/mrdoob/three.js/tree/r186
+
+Componentes upstream de compilación
+  Emscripten/emsdk 3.1.14 (fijado por Dockerfile).
+  Fuentes: https://github.com/emscripten-core/emscripten/tree/3.1.14
+  Avisos: https://raw.githubusercontent.com/emscripten-core/emscripten/3.1.14/LICENSE
+  RapidJSON y FreeType: los clones del Dockerfile upstream no fijan una revisión.
+  No se declara reproducibilidad binaria exacta de una recompilación upstream.
+  Avisos RapidJSON: https://raw.githubusercontent.com/Tencent/rapidjson/master/license.txt
+  Avisos FreeType: https://raw.githubusercontent.com/freetype/freetype/master/docs/FTL.TXT
+
+Aplicación
+  https://github.com/RubenDarioMena/Courses-RDM
+  Instrucciones de construcción y sustitución del motor: docs/CAD_WEB.md
+  Copias correspondientes alojadas con el WASM en /cad/licenses/source/:
+    opencascade.js-b5ff984.tar.gz
+    opencascade.js-1544593.tar.gz
+    occt-bb368e2.tar.gz
+    cad-application.tar.gz (integración de esta entrega)
+  SHA256SUMS.txt y MANIFEST.json documentan los archivos publicados.
+  Para distribuir cambios de las bibliotecas, conservar avisos y licencias,
+  ofrecer el código fuente correspondiente y cumplir las condiciones LGPL
+  de modificación y reenlace que figuran en los textos completos incluidos.
