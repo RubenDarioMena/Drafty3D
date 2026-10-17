@@ -16,6 +16,7 @@ export const commands = [
   { id: 'create-cylinder', labelKey: 'piece.cylinder', icon: 'cylinder', groupKey: 'group.solids', spaces: ['cad'], create: 'cylinder', aliases: ['cilindro', 'cylinder'] },
   { id: 'create-sphere', labelKey: 'piece.sphere', icon: 'sphere', groupKey: 'group.solids', spaces: ['cad'], create: 'sphere', aliases: ['esfera', 'sphere'] },
   { id: 'sketch-button', labelKey: 'command.sketch', icon: 'sketch', groupKey: 'group.sketch', spaces: ['cad', 'sketch'], aliases: ['croquis', 'perfil', 'extruir', 'extrusión', 'sketch', 'profile', 'extrude'] },
+  { id: 'extrude-sketch-button', labelKey: 'tool.extrudeSketch', icon: 'box', groupKey: 'group.sketch', spaces: ['cad', 'sketch'], aliases: ['extruir croquis', 'dar volumen', 'extrude sketch', 'add depth'] },
   { id: 'boolean-button', labelKey: 'tool.combine', icon: 'boolean', groupKey: 'group.modify', spaces: ['cad'], aliases: ['unir', 'restar', 'cortar', 'intersección', 'union', 'subtract', 'intersect'] },
   { id: 'fillet-button', labelKey: 'tool.roundEdges', icon: 'fillet', groupKey: 'group.modify', spaces: ['cad'], aliases: ['redondear', 'redondeo', 'fillet', 'round'] },
   { id: 'transform-button', labelKey: 'piece.transform', icon: 'transform', groupKey: 'group.transform', spaces: ['cad', 'sketch', 'mesh'], aliases: ['mover', 'girar', 'transformar', 'move', 'rotate', 'transform'] },

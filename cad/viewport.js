@@ -75,11 +75,24 @@ export class CadViewport {
     this.down = null;
     this.renderer.domElement.addEventListener('pointerdown', (event) => this.pointerDown(event), true);
     this.renderer.domElement.addEventListener('pointermove', (event) => this.pointerMove(event), true);
-    this.renderer.domElement.addEventListener('pointercancel', () => this.cancelGesture(), true);
-    this.renderer.domElement.addEventListener('lostpointercapture', () => { if (this.freeDrag) this.cancelGesture(); });
+    this.renderer.domElement.addEventListener('pointercancel', (event) => this.cancelGesture(event), true);
+    this.renderer.domElement.addEventListener('lostpointercapture', (event) => {
+      if (this.freeDrag || this.sketchPointerId === event.pointerId || this.sketchNavigationId === event.pointerId) this.cancelGesture(event);
+    });
+    this.renderer.domElement.addEventListener('wheel', (event) => {
+      if (this.mode === 'sketch') this.cancelSketchPointer(event);
+    }, true);
     this.renderer.domElement.addEventListener('pointerup', (event) => {
-      if (this.freeDrag) { this.finishTransform(); this.freeDrag = null; this.controls.enabled = true; this.renderer.domElement.releasePointerCapture(event.pointerId); return; }
-      if (this.mode === 'sketch') { this.sketchPointer('up', event); this.down = null; return; }
+      if (this.freeDrag) { this.finishTransform(); this.freeDrag = null; this.controls.enabled = true; this.releasePointer(event.pointerId); return; }
+      if (this.mode === 'sketch') {
+        if (this.sketchNavigationId === event.pointerId) { this.sketchNavigationId = null; this.down = null; return; }
+        if (event.button !== 0 || this.sketchPointerId !== event.pointerId) return;
+        this.sketchPointerId = null;
+        this.sketchPointer('up', event);
+        this.down = null;
+        this.releasePointer(event.pointerId);
+        return;
+      }
       if (this.gesture || this.ignoreUp) { this.ignoreUp = false; this.down = null; return; }
       if (!this.down || event.button !== 0) return;
       const distance = Math.hypot(event.clientX - this.down[0], event.clientY - this.down[1]);
@@ -91,7 +104,7 @@ export class CadViewport {
         if (plane) this.callbacks.onPlane?.(WORK_PLANES[plane.object.userData.plane], plane.object.userData.plane);
         return;
       }
-      const hit = this.partHit();
+      const hit = this.partHit(this.mode === 'face');
       if (this.mode === 'face') {
         const face = this.faceAt(hit);
         if (face?.plane) this.callbacks.onFace?.(hit.object.userData.id, face);
@@ -112,16 +125,22 @@ export class CadViewport {
     if (mesh.normals?.length) geometry.setAttribute('normal', new THREE.BufferAttribute(mesh.normals, 3));
     else geometry.computeVertexNormals();
     geometry.computeBoundingSphere();
-    const body = new THREE.Mesh(geometry, new THREE.MeshStandardMaterial({ color: object.color, roughness: 0.62, metalness: 0.08, flatShading: mesh.isMesh === true, side: THREE.DoubleSide, polygonOffset: true, polygonOffsetFactor: 1, polygonOffsetUnits: 1 }));
-    Object.assign(body.userData, { id: object.id, baseColor: object.color, faces: mesh.faces || [] });
+    const material = mesh.isSketch
+      ? new THREE.MeshBasicMaterial({ color: '#e9914a', transparent: true, opacity: 0.12, depthWrite: false, side: THREE.DoubleSide, polygonOffset: true, polygonOffsetFactor: -1, polygonOffsetUnits: -1 })
+      : new THREE.MeshStandardMaterial({ color: object.color, roughness: 0.62, metalness: 0.08, flatShading: mesh.isMesh === true, side: THREE.DoubleSide, polygonOffset: true, polygonOffsetFactor: 1, polygonOffsetUnits: 1 });
+    const body = new THREE.Mesh(geometry, material);
+    Object.assign(body.userData, { id: object.id, baseColor: object.color, isSketch: Boolean(mesh.isSketch), faces: mesh.isSketch ? [] : mesh.faces || [] });
     const group = new THREE.Group();
     group.userData.id = object.id;
     group.userData.revision = mesh.revision;
+    group.userData.isSketch = Boolean(mesh.isSketch);
     group.add(body);
     // Evitar el caro índice de aristas de una malla densa; sus caras siguen seleccionables.
     if (!mesh.isMesh || mesh.indices.length / 3 <= 20000) {
-      const edges = new THREE.LineSegments(new THREE.EdgesGeometry(geometry, 24), new THREE.LineBasicMaterial({ color: '#456246', transparent: true, opacity: 0.65 }));
+      const edges = new THREE.LineSegments(new THREE.EdgesGeometry(geometry, 24), new THREE.LineBasicMaterial({ color: mesh.isSketch ? '#b76526' : '#456246', transparent: true, opacity: mesh.isSketch ? 0.95 : 0.65, depthTest: !mesh.isSketch }));
       edges.userData.id = object.id;
+      edges.userData.isSketch = Boolean(mesh.isSketch);
+      if (mesh.isSketch) edges.renderOrder = 3;
       group.add(edges);
       this.metrics.edgeBuilds++;
     }
@@ -205,13 +224,22 @@ export class CadViewport {
     this.parts.traverse((object) => {
       if (object.isMesh) {
         const selected = this.selected.has(object.userData.id);
-        object.material.color.set(selected ? '#a8c98c' : object.userData.baseColor);
-        object.material.emissive.set(selected ? '#142908' : '#000000');
+        object.material.color.set(object.userData.isSketch ? (selected ? '#f58635' : '#e9914a') : selected ? '#a8c98c' : object.userData.baseColor);
+        object.material.emissive?.set(selected ? '#142908' : '#000000');
+        this.stylePart(object);
       }
-      if (object.isLineSegments && object.userData.id) object.material.color.set(this.selected.has(object.userData.id) ? '#3c622b' : '#456246');
+      if (object.isLineSegments && object.userData.id) object.material.color.set(object.userData.isSketch ? (this.selected.has(object.userData.id) ? '#e87122' : '#b76526') : this.selected.has(object.userData.id) ? '#3c622b' : '#456246');
     });
     this.attachTransform();
     this.render();
+  }
+
+  stylePart(object) {
+    const sketch = object.userData.isSketch;
+    object.material.transparent = sketch || Boolean(this.sketchPlane);
+    object.material.opacity = sketch ? (this.selected.has(object.userData.id) ? 0.24 : 0.12) : this.sketchPlane ? 0.32 : 1;
+    object.material.depthWrite = !sketch && !this.sketchPlane;
+    object.material.side = !sketch && this.sketchPlane ? THREE.FrontSide : THREE.DoubleSide;
   }
 
   setMode(mode) {
@@ -222,6 +250,11 @@ export class CadViewport {
     this.clearGroup(this.decoration);
     this.controls.enabled = true;
     this.controls.mouseButtons.LEFT = ['orbit', 'face', 'plane'].includes(mode) ? THREE.MOUSE.ROTATE : null;
+    this.controls.mouseButtons.RIGHT = mode === 'sketch' ? THREE.MOUSE.ROTATE : THREE.MOUSE.PAN;
+    this.controls.mouseButtons.MIDDLE = mode === 'sketch' ? THREE.MOUSE.PAN : THREE.MOUSE.DOLLY;
+    this.renderer.domElement.setAttribute('aria-label', mode === 'sketch'
+      ? 'Vista 3D del croquis. Botón izquierdo para dibujar; botón derecho para girar; Mayús y botón derecho o botón central para desplazar; rueda para acercar.'
+      : 'Vista 3D de las piezas. Arrastra para girar; rueda para acercar; botón derecho para desplazar.');
     this.renderer.domElement.style.cursor = ['face', 'plane', 'sketch'].includes(mode) ? 'crosshair' : mode === 'translate' ? 'grab' : 'default';
     if (mode === 'plane') {
       for (const [name, plane] of Object.entries(WORK_PLANES)) {
@@ -245,7 +278,7 @@ export class CadViewport {
     this.transform.detach();
     if (this.blocked || !['translate', 'rotate'].includes(this.mode) || this.selected.size !== 1) return;
     const group = this.parts.children.find((item) => this.selected.has(item.userData.id));
-    if (!group) return;
+    if (!group || group.userData.isSketch) return;
     new THREE.Box3().setFromObject(group).getCenter(this.pivot.position);
     this.pivot.quaternion.identity(); this.pivot.updateMatrixWorld();
     this.transform.setMode(this.mode);
@@ -261,7 +294,7 @@ export class CadViewport {
   beginTransform() {
     if (this.blocked || this.gesture) return;
     const group = this.parts.children.find((item) => this.selected.has(item.userData.id));
-    if (!group) return;
+    if (!group || group.userData.isSketch) return;
     this.pivot.updateMatrix();
     this.gesture = { id: group.userData.id, group, start: this.pivot.matrix.clone(), delta: new THREE.Matrix4() };
     this.callbacks.onGesture?.(true);
@@ -288,14 +321,38 @@ export class CadViewport {
     else this.attachTransform();
   }
 
-  cancelGesture() {
-    const active = Boolean(this.gesture || this.freeDrag || this.transform.dragging);
+  cancelGesture(event) {
+    const active = Boolean(this.gesture || this.freeDrag || this.transform.dragging || this.sketchPointerId != null || this.sketchNavigationId != null);
+    this.cancelSketchPointer(event);
+    if (this.sketchNavigationId != null) {
+      const pointerId = this.sketchNavigationId;
+      this.sketchNavigationId = null;
+      // OrbitControls listens on document during a drag: reset it if capture is lost.
+      this.controls.disconnect(); this.controls.connect(this.renderer.domElement);
+      this.renderer.domElement.style.cursor = 'crosshair';
+      this.releasePointer(pointerId);
+    }
     if (this.gesture) { this.gesture.group.matrix.identity(); this.gesture.group.matrixWorldNeedsUpdate = true; this.gesture = null; }
+    const freePointer = this.freeDrag?.pointerId;
     this.freeDrag = null; this.down = null;
+    if (freePointer != null) this.releasePointer(freePointer);
     this.transform.reset(); this.transform.dragging = false; this.transform.axis = null;
     this.controls.enabled = true;
     if (active) { this.callbacks.onGesture?.(false); this.attachTransform(); this.render(); }
     return active;
+  }
+
+  releasePointer(pointerId) {
+    if (this.renderer.domElement.hasPointerCapture(pointerId)) this.renderer.domElement.releasePointerCapture(pointerId);
+  }
+
+  cancelSketchPointer(event) {
+    if (this.sketchPointerId == null) return;
+    const pointerId = this.sketchPointerId;
+    this.sketchPointerId = null;
+    this.down = null;
+    this.onSketchPointer?.('cancel', null, event);
+    this.releasePointer(pointerId);
   }
 
   updateRay(event) {
@@ -303,13 +360,20 @@ export class CadViewport {
     this.pointer.set((event.clientX - rect.left) / rect.width * 2 - 1, -(event.clientY - rect.top) / rect.height * 2 + 1);
     this.raycaster.setFromCamera(this.pointer, this.camera);
   }
-  partHit() { return this.raycaster.intersectObjects(this.parts.children.filter(group => group.visible).map(group => group.children[0]), false)[0]; }
+  partHit(solidOnly = false) { return this.raycaster.intersectObjects(this.parts.children.filter(group => group.visible && (!solidOnly || !group.userData.isSketch)).map(group => group.children[0]), false)[0]; }
   faceAt(hit) { return hit?.object.userData.faces?.find((face) => hit.faceIndex * 3 >= face.start && hit.faceIndex * 3 < face.start + face.count); }
 
   pointerDown(event) {
+    if (this.mode === 'sketch' && (event.button === 1 || event.button === 2)) {
+      this.cancelSketchPointer(event);
+      this.sketchNavigationId = event.pointerId;
+      this.down = null;
+      return;
+    }
     if (event.button !== 0 || this.blocked) return;
+    if (this.mode === 'sketch' && this.sketchNavigationId != null) return;
     this.down = [event.clientX, event.clientY];
-    if (this.mode === 'sketch') { event.stopImmediatePropagation(); this.renderer.domElement.setPointerCapture(event.pointerId); this.sketchPointer('down', event); return; }
+    if (this.mode === 'sketch') { event.stopImmediatePropagation(); this.sketchPointerId = event.pointerId; this.renderer.domElement.setPointerCapture(event.pointerId); this.sketchPointer('down', event); return; }
     if (this.mode !== 'translate' || this.transform.axis) return;
     this.updateRay(event);
     const hit = this.partHit();
@@ -321,13 +385,17 @@ export class CadViewport {
     event.stopImmediatePropagation();
     const normal = this.camera.getWorldDirection(new THREE.Vector3());
     const plane = new THREE.Plane().setFromNormalAndCoplanarPoint(normal, hit.point);
-    this.freeDrag = { plane, start: hit.point.clone(), position: this.pivot.position.clone() };
+    this.freeDrag = { plane, start: hit.point.clone(), position: this.pivot.position.clone(), pointerId: event.pointerId };
     this.controls.enabled = false;
     this.renderer.domElement.setPointerCapture(event.pointerId);
   }
 
   pointerMove(event) {
     if (this.blocked) return;
+    if (this.mode === 'sketch' && (this.sketchNavigationId != null || event.buttons & 6)) {
+      this.cancelSketchPointer(event);
+      return;
+    }
     if (!this.freeDrag && !['sketch', 'face'].includes(this.mode)) return;
     this.updateRay(event);
     if (this.freeDrag) {
@@ -341,7 +409,7 @@ export class CadViewport {
     }
     if (this.mode === 'sketch') { this.sketchPointer('move', event); return; }
     if (this.mode !== 'face') return;
-    const hit = this.partHit(), face = this.faceAt(hit);
+    const hit = this.partHit(true), face = this.faceAt(hit);
     const key = face?.plane ? `${hit.object.geometry.uuid}:${face.index}` : null;
     if (key === this.hoverFaceKey) return;
     this.hoverFaceKey = key;
@@ -376,14 +444,51 @@ export class CadViewport {
     this.grid.visible = false;
     const target = focus ? new THREE.Vector3(...focus) : new THREE.Vector3(...plane.origin);
     const normal = new THREE.Vector3(...cross(plane.u, plane.v));
-    this.camera.position.copy(target).addScaledVector(normal, Math.max(100, this.camera.position.distanceTo(this.controls.target)));
-    this.camera.up.set(...plane.v); this.controls.target.copy(target); this.controls.update();
+    const distance = Math.max(100, this.camera.position.distanceTo(this.controls.target));
+    this.setCameraUp(new THREE.Vector3(...plane.v));
+    this.camera.position.copy(target).addScaledVector(normal, distance);
+    this.controls.target.copy(target); this.controls.update();
     const grid = new THREE.GridHelper(400, 80, '#557f8c', '#2c414d');
     grid.material.depthTest = false; grid.material.transparent = true; grid.material.opacity = 0.5; grid.renderOrder = 2;
     grid.rotation.x = Math.PI / 2; grid.updateMatrix();
     const group = new THREE.Group(); group.add(grid); group.applyMatrix4(this.planeMatrix(plane));
     this.decoration.add(group);
-    this.parts.traverse((item) => { if (item.isMesh) { item.material.transparent = true; item.material.opacity = 0.32; item.material.depthWrite = false; item.material.side = THREE.FrontSide; } });
+    this.parts.traverse((item) => { if (item.isMesh) this.stylePart(item); });
+    this.render();
+  }
+
+  setCameraUp(up) {
+    if (this.camera.up.equals(up)) return;
+    // OrbitControls caches the camera's up axis at construction. Recreate it when
+    // entering another work plane so right-drag orbit follows that plane reliably.
+    const previous = this.controls;
+    const target = previous.target.clone();
+    previous.dispose();
+    this.camera.up.copy(up);
+    this.controls = new OrbitControls(this.camera, this.renderer.domElement);
+    this.controls.enableDamping = false;
+    this.controls.screenSpacePanning = true;
+    this.controls.enabled = previous.enabled;
+    this.controls.minDistance = previous.minDistance;
+    this.controls.maxDistance = previous.maxDistance;
+    Object.assign(this.controls.mouseButtons, previous.mouseButtons);
+    this.controls.target.copy(target);
+    this.controls.addEventListener('change', () => this.render());
+    this.renderer.domElement.style.cursor = this.mode === 'sketch' ? 'crosshair' : 'default';
+  }
+
+  viewSketchNormal() {
+    if (!this.sketchPlane) return;
+    this.cancelGesture();
+    const plane = this.sketchPlane;
+    const normal = new THREE.Vector3(...cross(plane.u, plane.v));
+    const workPlane = new THREE.Plane().setFromNormalAndCoplanarPoint(normal, new THREE.Vector3(...plane.origin));
+    const target = workPlane.projectPoint(this.controls.target, new THREE.Vector3());
+    const distance = this.camera.position.distanceTo(this.controls.target);
+    this.setCameraUp(new THREE.Vector3(...plane.v));
+    this.controls.target.copy(target);
+    this.camera.position.copy(target).addScaledVector(normal, distance);
+    this.controls.update();
     this.render();
   }
 
@@ -435,13 +540,15 @@ export class CadViewport {
   }
 
   endSketch() {
+    this.cancelGesture();
     this.sketchPlane = null; this.onSketchPointer = null;
     cancelAnimationFrame(this.profileFrame); this.profileFrame = null; this.profileKey = null;
     this.clearGroup(this.sketchDrawing);
-    this.parts.traverse((item) => { if (item.isMesh) { item.material.transparent = false; item.material.opacity = 1; item.material.depthWrite = true; item.material.side = THREE.DoubleSide; } });
+    this.parts.traverse((item) => { if (item.isMesh) this.stylePart(item); });
     if (this.mainGridVisible !== undefined) this.grid.visible = this.mainGridVisible;
     if (this.oldCamera) {
-      this.camera.position.copy(this.oldCamera.position); this.camera.up.copy(this.oldCamera.up); this.controls.target.copy(this.oldCamera.target); this.controls.update(); this.oldCamera = null;
+      this.setCameraUp(this.oldCamera.up);
+      this.camera.position.copy(this.oldCamera.position); this.controls.target.copy(this.oldCamera.target); this.controls.update(); this.oldCamera = null;
     }
     this.setMode('orbit');
   }

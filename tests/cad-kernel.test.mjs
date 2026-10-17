@@ -4,6 +4,7 @@ import { readFile } from 'node:fs/promises';
 import initOpenCascade from 'opencascade.js/dist/node.js';
 import { initKernel, KERNEL_CAPABILITIES } from '../cad/kernel.js';
 import { cross, WORK_PLANES } from '../cad/planes.js';
+import { createDocument, addObject, updateObject, serializeDocument, parseDocument } from '../cad/document.js';
 
 let kernel;
 before(async () => {
@@ -18,6 +19,104 @@ const box = (id, params = {}, visible = true) => ({ id, name: id, type: 'box', p
 function close(actual, expected, tolerance = 1e-7) {
   assert.ok(Math.abs(actual - expected) < tolerance, `${actual} debería ser ${expected}`);
 }
+
+test('un croquis independiente guarda una cara plana y su extrusión sigue las medidas editadas', () => {
+  const doc = createDocument('Base desde cero');
+  addObject(doc, { id: 'perfil', type: 'sketch', params: { points: [[0, 0], [40, 0], [40, 30], [0, 30]], plane: WORK_PLANES.XZ, x: 2, y: 3, z: 4 } });
+  const standalone = kernel.evaluateDocument(parseDocument(serializeDocument(doc)));
+  const sketch = standalone.meshes[0];
+  assert.equal(sketch.isSketch, true);
+  assert.equal(sketch.isMesh, false);
+  assert.equal(sketch.solidCount, 0);
+  assert.equal(sketch.volume, null);
+  assert.equal(sketch.faceCount, 1);
+  assert.ok(sketch.indices.length > 0);
+  assert.ok(sketch.faces[0].plane);
+  assert.deepEqual(sketch.bounds.min, [2, 3, 4]);
+  assert.deepEqual(sketch.bounds.max, [42, 3, 34]);
+  assert.equal(standalone.stats.volume, 0);
+  addObject(doc, { id: 'volumen', type: 'extrusion', params: { sketch: 'perfil', height: 8 } });
+  addObject(doc, { id: 'libre', type: 'box', params: { x: 100 } });
+  const initial = kernel.evaluateDocument(doc);
+  close(initial.meshes[1].volume, 40 * 30 * 8);
+  assert.equal(initial.meshes[1].isSketch, false);
+  assert.deepEqual(initial.meshes[1].bounds.min, [2, -5, 4]);
+  assert.deepEqual(initial.meshes[1].bounds.max, [42, 3, 34]);
+  close(initial.stats.volume, 40 * 30 * 8 + 30 * 20 * 10);
+  const known = initial.meshes.map(({ id, revision }) => ({ id, revision }));
+  updateObject(doc, 'perfil', { params: { points: [[0, 0], [50, 0], [50, 30], [0, 30]] } });
+  const restored = parseDocument(serializeDocument(doc));
+  const edited = kernel.evaluateDocument(restored, { known });
+  close(edited.meshes[1].volume, 50 * 30 * 8);
+  assert.ok(edited.meshes[0].positions instanceof Float32Array);
+  assert.ok(edited.meshes[1].positions instanceof Float32Array);
+  assert.equal(edited.meshes[2].positions, undefined);
+  updateObject(restored, 'volumen', { params: { reverse: true, height: 5, y: 10 } });
+  const reversed = kernel.evaluateDocument(restored);
+  close(reversed.meshes[1].volume, 50 * 30 * 5);
+  assert.deepEqual(reversed.meshes[1].bounds.min, [2, 13, 4]);
+  assert.deepEqual(reversed.meshes[1].bounds.max, [52, 18, 34]);
+});
+
+test('editar un sólido de apoyo recalcula el círculo, su extrusión y el agujero', () => {
+  const doc = createDocument('Placa con agujero');
+  addObject(doc, { ...box('base'), visible: false });
+  const base = kernel.evaluateDocument(doc).meshes[0];
+  const top = base.faces.find((face) => cross(face.plane.u, face.plane.v)[2] > 0.99);
+  addObject(doc, { id: 'circulo', type: 'sketch', params: { points: [], profile: { type: 'circle', center: [10, 15], radius: 3 }, support: { source: 'base', face: top.index, faceCount: base.faceCount } } });
+  addObject(doc, { id: 'broca', type: 'extrusion', params: { sketch: 'circulo', height: 12, reverse: true }, visible: false });
+  addObject(doc, { id: 'corte', type: 'boolean', params: { operation: 'cut', left: 'base', right: 'broca' } });
+  const first = kernel.evaluateDocument(doc);
+  assert.equal(first.meshes[1].faceCount, 1);
+  assert.equal(first.meshes[1].solidCount, 0);
+  close(first.meshes[2].volume, Math.PI * 9 * 12);
+  close(first.meshes[3].volume, 6000 - Math.PI * 9 * 10);
+  close(first.stats.volume, first.meshes[3].volume);
+  updateObject(doc, 'base', { params: { height: 20 } });
+  updateObject(doc, 'circulo', { params: { profile: { type: 'circle', center: [10, 15], radius: 4 } } });
+  const edited = kernel.evaluateDocument(parseDocument(serializeDocument(doc)), { known: first.meshes });
+  close(edited.meshes[1].bounds.min[2], 20);
+  close(edited.meshes[1].bounds.max[2], 20);
+  close(edited.meshes[2].volume, Math.PI * 16 * 12);
+  close(edited.meshes[3].volume, 12000 - Math.PI * 16 * 12);
+  assert.ok(edited.meshes.every((mesh) => mesh.positions instanceof Float32Array));
+});
+
+test('los croquis visibles no se exportan ni se usan como sólidos o caras de apoyo', () => {
+  const sketch = { id: 'perfil', type: 'sketch', params: { points: [[100, 0], [140, 0], [140, 30], [100, 30]] } };
+  const doc = document([sketch, box('base')]);
+  assert.throws(() => kernel.convertToMesh(doc, { id: 'perfil' }), /sólido CAD/);
+  for (const format of ['step', 'stl']) {
+    assert.throws(() => kernel.exportDocument(document([sketch]), format), /al menos una pieza/);
+    const exported = kernel.exportDocument(doc, format);
+    const imported = kernel.evaluateDocument(document([{ id: 'resultado', type: 'import', params: { format, data: Buffer.from(exported.data).toString('base64') } }])).meshes[0];
+    imported.bounds.min.forEach((value) => close(value, 0, 1e-6));
+    imported.bounds.max.forEach((value, axis) => close(value, [20, 30, 10][axis], 1e-6));
+    if (format === 'step') close(imported.volume, 6000);
+    else assert.equal(imported.indices.length / 3, 12);
+  }
+  for (const operation of [
+    { type: 'boolean', params: { operation: 'fuse', left: 'base', right: 'perfil' } },
+    { type: 'fillet', params: { source: 'perfil', radius: 1 } },
+    { type: 'transform', params: { source: 'perfil', x: 10 } },
+  ]) assert.throws(() => kernel.evaluateDocument(document([...doc.objects, { id: 'operacion', ...operation }])), /Extruye primero/);
+  assert.throws(() => kernel.evaluateDocument(document([...doc.objects, { id: 'volumen', type: 'extrusion', params: { sketch: 'base', height: 10 } }])), /croquis independiente/);
+  assert.throws(() => kernel.evaluateDocument(document([...doc.objects, { id: 'volumen', type: 'extrusion', params: { sketch: 'perfil', points: sketch.params.points, height: 10 } }])), /vinculada/);
+  assert.throws(() => kernel.evaluateDocument(document([sketch, { id: 'apoyado', type: 'sketch', params: { ...sketch.params, support: { source: 'perfil', face: 0, faceCount: 1 } } }])), /sólido CAD/);
+});
+
+test('un croquis inválido conserva la geometría calculada y detecta apoyos perdidos', () => {
+  const doc = document([{ id: 'perfil', type: 'sketch', params: { points: [[0, 0], [10, 0], [10, 10], [0, 10]] } },
+    { id: 'volumen', type: 'extrusion', params: { sketch: 'perfil', height: 5 } }]);
+  const initial = kernel.evaluateDocument(doc);
+  const invalid = structuredClone(doc);
+  invalid.objects[0].params.points = [[0, 0], [10, 10], [0, 10], [10, 0]];
+  assert.throws(() => kernel.evaluateDocument(invalid), /auto-intersecciones/);
+  assert.equal(kernel.evaluateDocument(doc).meshes[1].revision, initial.meshes[1].revision);
+  const supported = document([box('base'), { id: 'perfil', type: 'sketch', params: { ...doc.objects[0].params, support: { source: 'base', face: 0, faceCount: 5 } } }]);
+  assert.throws(() => kernel.evaluateDocument(supported), /cara de apoyo ha cambiado/);
+  close(kernel.evaluateDocument(doc).meshes[1].volume, 500);
+});
 
 test('planos BRep y círculos exactos permiten extruir y cortar sobre una cara con dependencias', () => {
   const base = box('base', {}, false);

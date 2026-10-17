@@ -36,7 +36,12 @@ export class CadInteractions {
     };
     $$('[data-interaction]').forEach((button) => { button.onclick = () => this.setMode(button.dataset.interaction); });
     $('#transform-snap').onchange = () => viewport.setSnap($('#transform-snap').checked);
-    $('#sketch-button').onclick = () => this.choosePlane();
+    $('#sketch-button').onclick = $('#start-sketch').onclick = () => this.choosePlane();
+    $('#extrude-sketch-button').onclick = () => {
+      const object = app.project().objects.find(item => app.selection().has(item.id) && item.type === 'sketch');
+      if (object) this.editSketch(object, 'volume');
+      else app.message('sketch.selectToExtrude');
+    };
     $$('[data-plane]').forEach((button) => { button.onclick = () => this.beginSketch({ plane: WORK_PLANES[button.dataset.plane], name: t('view.planeNamed', { plane: button.dataset.plane }) }); });
     $('#pick-face').onclick = () => { viewport.setMode('face'); $('#plane-note').textContent = t('view.pickFaceHint'); };
     $('#cancel-plane').onclick = () => { $('#plane-picker').hidden = true; this.setMode('orbit'); };
@@ -79,16 +84,18 @@ export class CadInteractions {
     $('#plane-note').textContent = t('view.planeNote');
   }
 
-  editSketch(object) {
+  editSketch(object, stage = 'profile') {
+    if (object.params.sketch) object = this.app.project().objects.find(item => item.id === object.params.sketch);
+    if (!object) return;
     const mesh = object.params.support ? this.app.geometry().meshes.find((mesh) => mesh.id === object.params.support.source) : null;
     const supportPlane = mesh?.faces.find((face) => face.index === object.params.support.face)?.plane;
     if (object.params.support && !supportPlane) { this.app.message('mesh.supportFaceChanged'); return; }
     const plane = extrusionPlane(object.params, supportPlane);
     const center = object.params.profile?.center || [0, 1].map((axis) => object.params.points.reduce((sum, point) => sum + point[axis], 0) / object.params.points.length);
-    this.beginSketch({ plane, name: t(object.params.support ? 'view.profileOnFace' : 'view.profilePlane'), object, support: object.params.support, focus: onPlane(plane, ...center) });
+    this.beginSketch({ plane, name: t(object.params.support ? 'view.profileOnFace' : 'view.profilePlane'), object, support: object.params.support, target: object.params.support?.source, stage, focus: onPlane(plane, ...center) });
   }
 
-  beginSketch({ plane, name, object = null, support, target, focus }) {
+  beginSketch({ plane, name, object = null, support, target, focus, stage = 'profile' }) {
     if (this.app.busy() || this.drawing) return;
     $('#plane-picker').hidden = true;
     this.app.closeOperation();
@@ -97,30 +104,43 @@ export class CadInteractions {
     $('.workspace').classList.add('is-sketch');
     $('#sketch-panel').hidden = false; $('#sketch-coordinates').hidden = false;
     const project = this.app.project();
-    const targets = project.objects.filter((object) => object.visible && !this.app.geometry().meshes.find((mesh) => mesh.id === object.id)?.isMesh);
-    this.session = new SketchSession(this.viewport, { plane, name, object, support, targets, target, focus,
+    const targets = project.objects.filter((object) => object.type !== 'sketch' && (object.visible || object.id === target) && this.app.geometry().meshes.some(mesh => mesh.id === object.id && mesh.solidCount && !mesh.isMesh));
+    this.session = new SketchSession(this.viewport, { plane, name, object, support, targets, target, focus, stage,
       onCancel: () => this.closeSketch(),
+      onFinish: async (draft) => {
+        let id = object?.id;
+        const applied = await this.app.mutate(candidate => {
+          if (object) updateObject(candidate, id, { params: { points: draft.points, profile: draft.profile } });
+          else id = addObject(candidate, { type: 'sketch', name: t(draft.profile ? 'sketch.sketchCircle' : 'piece.sketch'), params: { points: draft.points, profile: draft.profile, plane, ...(support ? { support } : {}) } }).id;
+        }, object ? 'sketch.updatedMessage' : 'sketch.savedMessage', { fromSketch: true });
+        if (applied) { this.closeSketch(); this.app.select(id); this.viewport.fit(); }
+        else $('#sketch-error').textContent = $('#message').textContent;
+      },
       onApply: async (draft) => {
         let id = object?.id;
         const applied = await this.app.mutate((candidate) => {
-          const params = { points: draft.points, profile: draft.profile, height: draft.height, reverse: draft.reverse };
-          if (object) updateObject(candidate, object.id, { params });
-          else {
-            id = addObject(candidate, { type: 'extrusion', name: t(draft.profile ? 'sketch.profileCircle' : 'sketch.profileExtruded'), params: { ...params, plane, ...(support ? { support } : {}) } }).id;
-            if (draft.effect !== 'new') {
-              if (!draft.target) throw new Error('Selecciona una pieza de destino para añadir o cortar.');
-              const tool = id;
-              id = addObject(candidate, { type: 'boolean', name: t(draft.effect === 'cut' ? 'sketch.profileCut' : 'sketch.profileRelief'), params: { operation: draft.effect, left: draft.target, right: tool } }).id;
-              updateObject(candidate, draft.target, { visible: false }); updateObject(candidate, tool, { visible: false });
-            }
+          if (object?.type === 'extrusion') {
+            updateObject(candidate, object.id, { params: { points: draft.points, profile: draft.profile, height: draft.height, reverse: draft.reverse } });
+            return;
           }
-        }, object ? 'sketch.profileUpdated' : draft.effect === 'cut' ? 'sketch.cutCreated' : 'sketch.extrusionCreated', { fromSketch: true });
+          let sketchId = object?.id;
+          if (object) updateObject(candidate, sketchId, { params: { points: draft.points, profile: draft.profile } });
+          else sketchId = addObject(candidate, { type: 'sketch', name: t(draft.profile ? 'sketch.sketchCircle' : 'piece.sketch'), params: { points: draft.points, profile: draft.profile, plane, ...(support ? { support } : {}) } }).id;
+          id = addObject(candidate, { type: 'extrusion', name: t(draft.profile ? 'sketch.profileCircle' : 'sketch.profileExtruded'), params: { sketch: sketchId, height: draft.height, reverse: draft.reverse } }).id;
+          updateObject(candidate, sketchId, { visible: false });
+          if (draft.effect !== 'new') {
+            if (!draft.target) throw new Error('Selecciona una pieza de destino para añadir o cortar.');
+            const tool = id;
+            id = addObject(candidate, { type: 'boolean', name: t(draft.effect === 'cut' ? 'sketch.profileCut' : 'sketch.profileRelief'), params: { operation: draft.effect, left: draft.target, right: tool } }).id;
+            updateObject(candidate, draft.target, { visible: false }); updateObject(candidate, tool, { visible: false });
+          }
+        }, object?.type === 'extrusion' ? 'sketch.profileUpdated' : draft.effect === 'cut' ? 'sketch.cutCreated' : 'sketch.extrusionCreated', { fromSketch: true });
         if (applied) { this.closeSketch(); this.app.select(id); this.viewport.fit(); }
         else $('#sketch-error').textContent = $('#message').textContent;
       },
     });
     this.app.syncControls();
-    this.app.message('status.sketchStarted');
+    this.app.message(stage === 'volume' ? 'sketch.volumeStarted' : 'sketch.profileStarted');
   }
 
   closeSketch() {

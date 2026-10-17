@@ -8,8 +8,8 @@ import { applyStaticTranslations, formatNumber, onLocaleChange, t } from './i18n
 const $ = (selector) => document.querySelector(selector);
 const $$ = (selector) => [...document.querySelectorAll(selector)];
 const escape = (value) => String(value).replace(/[&<>"']/g, (character) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[character]);
-const labelKeys = { box: 'piece.box', cylinder: 'piece.cylinder', sphere: 'piece.sphere', extrusion: 'piece.extrusion', boolean: 'piece.boolean', fillet: 'piece.fillet', transform: 'piece.transform', import: 'piece.import', mesh: 'piece.mesh' };
-const icons = { box: '▱', cylinder: '◉', sphere: '◌', extrusion: '⌁', boolean: '⊖', fillet: '◜', transform: '✥', import: '↳', mesh: '◇' };
+const labelKeys = { sketch: 'piece.sketch', box: 'piece.box', cylinder: 'piece.cylinder', sphere: 'piece.sphere', extrusion: 'piece.extrusion', boolean: 'piece.boolean', fillet: 'piece.fillet', transform: 'piece.transform', import: 'piece.import', mesh: 'piece.mesh' };
+const icons = { sketch: '⌁', box: '▱', cylinder: '◉', sphere: '◌', extrusion: '⌁', boolean: '⊖', fillet: '◜', transform: '✥', import: '↳', mesh: '◇' };
 const fieldKeys = { width: 'field.width', depth: 'field.depth', height: 'field.height', radius: 'field.radius', x: 'field.x', y: 'field.y', z: 'field.z', rx: 'field.rx', ry: 'field.ry', rz: 'field.rz' };
 const qualityKeys = ['mesh.minimum', 'mesh.standard', 'mesh.fine', 'mesh.high', 'mesh.veryHigh'];
 const storageKey = 'drafty3d.document.v1';
@@ -282,6 +282,7 @@ function syncControls() {
   const selectedMesh = geometry.meshes.find(mesh => selection.has(mesh.id));
   $('#mesh-button').disabled = Boolean(locked || selection.size !== 1 || selectedMesh?.isMesh || !selectedMesh?.solidCount || !project.objects.find(object => selection.has(object.id))?.visible);
   $('#mesh-button').title = t('mesh.sourceTooltip');
+  $('#extrude-sketch-button').disabled = Boolean(locked || selection.size !== 1 || !project.objects.some(object => selection.has(object.id) && object.type === 'sketch'));
   $('#undo').disabled = locked || !history.canUndo;
   $('#redo').disabled = locked || !history.canRedo;
   $$('#sketch-panel button, #sketch-panel input, #sketch-panel select').forEach((element) => { element.disabled = busy; });
@@ -324,6 +325,14 @@ function refreshLocalizedPanels() {
     : project.objects.find(item => selection.has(item.id))?.name ?? project.name;
   const object = project.objects.find(item => selection.has(item.id));
   $('#inspector-kind').textContent = selection.size === 1 ? t(labelKeys[object.type]).toLocaleUpperCase() : t('operation.selection');
+  const sketchNote = $('#sketch-inspector-note');
+  if (sketchNote) {
+    const sketch = project.objects.find(item => item.id === sketchNote.dataset.sketch);
+    const dependents = project.objects.filter(item => item.params.sketch === sketch?.id);
+    sketchNote.textContent = dependents.length
+      ? t('sketch.dependentNote', { features: dependents.map(item => item.name).join(', ') })
+      : t('sketch.noVolumeNote');
+  }
   for (const button of $$('.visibility-button')) {
     const part = project.objects.find(item => item.id === button.dataset.visible);
     if (!part) continue;
@@ -344,7 +353,8 @@ function renderPanels() {
   $('#viewport-empty').hidden = visibleObjects.length > 0;
   $('#object-list').innerHTML = project.objects.map(object => {
     const isMesh = geometry.meshes.find(mesh => mesh.id === object.id)?.isMesh;
-    return `<div class="object-row ${selection.has(object.id) ? 'selected' : ''} ${object.visible ? '' : 'source'}"><button class="object-select" data-id="${escape(object.id)}" title="${escape(object.name)}" ${busy ? 'disabled' : ''}><span class="node-icon" aria-hidden="true">${icons[object.type]}</span><span class="node-name">${escape(object.name)}</span><span class="type-badge" data-i18n="${isMesh ? 'piece.meshBadge' : 'piece.cad'}">${isMesh ? 'MALLA' : 'CAD'}</span></button><button class="visibility-button" data-visible="${escape(object.id)}" ${busy ? 'disabled' : ''}>${object.visible ? '◉' : '○'}</button></div>`;
+    const badgeKey = object.type === 'sketch' ? 'piece.sketchBadge' : isMesh ? 'piece.meshBadge' : 'piece.cad';
+    return `<div class="object-row ${selection.has(object.id) ? 'selected' : ''} ${object.visible ? '' : 'source'}"><button class="object-select" data-id="${escape(object.id)}" title="${escape(object.name)}" ${busy ? 'disabled' : ''}><span class="node-icon" aria-hidden="true">${icons[object.type]}</span><span class="node-name">${escape(object.name)}</span><span class="type-badge" data-i18n="${badgeKey}">${escape(t(badgeKey))}</span></button><button class="visibility-button" data-visible="${escape(object.id)}" ${busy ? 'disabled' : ''}>${object.visible ? '◉' : '○'}</button></div>`;
   }).join('');
   $$('.object-select').forEach(button => button.onclick = event => select(button.dataset.id, event.ctrlKey || event.metaKey || event.shiftKey));
   $$('.visibility-button').forEach(button => button.onclick = () => mutate(candidate => {
@@ -369,11 +379,11 @@ function renderPanels() {
       : object.type === 'extrusion' && key === 'height' ? 'field.profileDepth' : fieldKeys[key];
     return `<div class="field-row"><label for="param-${key}" data-i18n="${labelKey}">${escape(t(labelKey))}</label><div class="number-unit"><input id="param-${key}" name="${key}" type="number" step="any" value="${object.params[key]}" ${dimensions.includes(key) ? `min="${DOCUMENT_LIMITS.minimumDimension}" max="${DOCUMENT_LIMITS.dimension}"` : 'min="-1000000" max="1000000"'} required ${busy ? 'disabled' : ''} /><span>${key.startsWith('r') && key !== 'radius' ? '°' : 'mm'}</span></div></div>`;
   };
-  const references = object.type === 'boolean' ? [object.params.left, object.params.right] : object.params.source ? [object.params.source] : object.params.support ? [object.params.support.source] : [];
+  const references = object.type === 'boolean' ? [object.params.left, object.params.right] : object.params.sketch ? [object.params.sketch] : object.params.source ? [object.params.source] : object.params.support ? [object.params.support.source] : [];
   const volume = geometry.meshes.find(mesh => mesh.id === object.id)?.volume;
   const booleanOptions = [['cut', 'tool.cutBtoA'], ['fuse', 'tool.unionAB'], ['common', 'tool.intersectionAB']];
   const sections = `<div class="section-label" data-i18n="operation.piece"></div><input name="name" class="field-input name-field" data-i18n-aria="property.name" maxlength="100" value="${escape(object.name)}" required ${busy ? 'disabled' : ''}/>${dimensions.length ? `<div class="section-label" data-i18n="operation.dimensions"></div>${dimensions.map(field).join('')}` : ''}${position.length ? `<div class="section-label" data-i18n="${object.type === 'transform' ? 'operation.transformPosition' : 'operation.position'}"></div>${position.map(field).join('')}` : ''}${object.type === 'boolean' ? `<div class="section-label" data-i18n="field.operation"></div><select name="operation" aria-label="${escape(t('field.operation'))}" ${busy ? 'disabled' : ''}>${booleanOptions.map(([value, key]) => `<option value="${value}" data-i18n="${key}" ${object.params.operation === value ? 'selected' : ''}>${escape(t(key))}</option>`).join('')}</select>` : ''}<div class="section-label" data-i18n="operation.appearance"></div><div class="field-row"><label for="piece-color" data-i18n="operation.color"></label><input type="color" id="piece-color" name="color" value="${object.color}" ${busy ? 'disabled' : ''}/></div><button class="button primary" type="submit" data-i18n="operation.apply" ${busy ? 'disabled' : ''}></button>`;
-  inspector.innerHTML = `<form id="properties-form">${sections}</form>${references.length ? `<div class="section-label" data-i18n="operation.origins"></div><div class="dependency-list">${references.map(id => escape(project.objects.find(item => item.id === id)?.name ?? id)).join('<br>')}</div><p class="inspector-note" data-i18n="operation.dependencies"></p>` : ''}${object.type === 'extrusion' ? '<div class="inspector-actions"><button id="edit-profile" class="button" data-i18n="sketch.editProfile"></button></div>' : ''}${Number.isFinite(volume) ? `<div class="stats-card"><span data-i18n="operation.volume"></span><strong>${escape(formatNumber(volume, { maximumFractionDigits: 2 }))} <small>mm³</small></strong></div>` : ''}<div class="inspector-actions"><button id="delete-piece" class="button subtle danger" data-i18n="operation.delete" ${busy ? 'disabled' : ''}></button></div>`;
+  inspector.innerHTML = `<form id="properties-form">${sections}</form>${references.length ? `<div class="section-label" data-i18n="operation.origins"></div><div class="dependency-list">${references.map(id => `<button type="button" class="dependency-link" data-reference="${escape(id)}">${escape(project.objects.find(item => item.id === id)?.name ?? id)} →</button>`).join('')}</div><p class="inspector-note" data-i18n="operation.dependencies"></p>` : ''}${['sketch', 'extrusion'].includes(object.type) ? `<div class="inspector-actions"><button id="edit-profile" class="button" data-i18n="sketch.editProfile"></button>${object.type === 'sketch' ? '<button id="extrude-profile" class="button primary" data-i18n="tool.extrudeSketch"></button>' : ''}</div>` : ''}${Number.isFinite(volume) ? `<div class="stats-card"><span data-i18n="operation.volume"></span><strong>${escape(formatNumber(volume, { maximumFractionDigits: 2 }))} <small>mm³</small></strong></div>` : ''}<div class="inspector-actions"><button id="delete-piece" class="button subtle danger" data-i18n="operation.delete" ${busy ? 'disabled' : ''}></button></div>`;
   applyStaticTranslations(inspector);
   $('#properties-form').onsubmit = event => {
     event.preventDefault();
@@ -391,6 +401,19 @@ function renderPanels() {
     applyStaticTranslations($('#inspector-content'));
   }
   $('#delete-piece').onclick = deleteSelected;
+  $$('[data-reference]').forEach(button => button.onclick = () => select(button.dataset.reference));
+  if (object.type === 'sketch') {
+    const dependents = project.objects.filter(item => item.params.sketch === object.id);
+    const note = document.createElement('p');
+    note.className = 'inspector-note';
+    note.id = 'sketch-inspector-note';
+    note.dataset.sketch = object.id;
+    note.textContent = dependents.length
+      ? t('sketch.dependentNote', { features: dependents.map(item => item.name).join(', ') })
+      : t('sketch.noVolumeNote');
+    $('#properties-form').after(note);
+  }
+  if ($('#extrude-profile')) $('#extrude-profile').onclick = () => openSketch(object, 'volume');
   if ($('#edit-profile')) $('#edit-profile').onclick = () => openSketch(object);
   refreshLocalizedPanels();
   syncControls();
@@ -445,7 +468,7 @@ function download(data, name, mime) {
 }
 function filename() { return project.name.replace(/[^a-zA-Z0-9áéíóúñÁÉÍÓÚÑ_-]+/g, '-').replace(/^-|-$/g, '') || 'pieza'; }
 function numericField(key, value, label, positive = false) { return `<label class="dialog-field"><span>${escape(label)}</span><input name="${key}" type="number" step="any" value="${value}" ${positive ? `min="${DOCUMENT_LIMITS.minimumDimension}" max="${DOCUMENT_LIMITS.dimension}"` : 'min="-1000000" max="1000000"'} required /></label>`; }
-function options(selectedId) { return project.objects.map((object) => `<option value="${escape(object.id)}" ${object.id === selectedId ? 'selected' : ''}>${escape(object.name)}${object.visible ? '' : ` ${escape(t('piece.sourceSuffix'))}`}</option>`).join(''); }
+function options(selectedId, candidates = project.objects.filter(object => object.type !== 'sketch')) { return candidates.map((object) => `<option value="${escape(object.id)}" ${object.id === selectedId ? 'selected' : ''}>${escape(object.name)}${object.visible ? '' : ` ${escape(t('piece.sourceSuffix'))}`}</option>`).join(''); }
 function openTool(title, fields, note, action) {
   if (busy) return;
   closeOperation();
@@ -479,12 +502,13 @@ $$('[data-create]').forEach((button) => button.onclick = () => {
 });
 
 $('#boolean-button').onclick = () => {
-  if (project.objects.length < 2) { message('tool.createTwoPieces'); return; }
-  const ids = [...selection];
-  const visible = project.objects.filter((object) => object.visible);
-  const left = ids[0] ?? visible[0]?.id ?? project.objects[0].id;
-  const right = ids[1] ?? visible.find((object) => object.id !== left)?.id ?? project.objects.find((object) => object.id !== left).id;
-  openTool(() => t('tool.combine'), () => `<label class="dialog-field full"><span>${t('field.operation')}</span><select name="operation"><option value="cut">${t('tool.cutBtoA')}</option><option value="fuse">${t('tool.unionAB')}</option><option value="common">${t('tool.intersectionAB')}</option></select></label><label class="dialog-field full"><span>${t('field.pieceA')}</span><select name="left">${options(left)}</select></label><label class="dialog-field full"><span>${t('field.pieceB')}</span><select name="right">${options(right)}</select></label>`, () => t('tool.combineSources'), async data => {
+  const candidates = project.objects.filter(object => geometry.meshes.some(mesh => mesh.id === object.id && mesh.solidCount && !mesh.isMesh));
+  if (candidates.length < 2) { message('tool.createTwoSolids'); return; }
+  const ids = [...selection].filter(id => candidates.some(object => object.id === id));
+  const visible = candidates.filter(object => object.visible);
+  const left = ids[0] ?? visible[0]?.id ?? candidates[0].id;
+  const right = ids[1] ?? visible.find(object => object.id !== left)?.id ?? candidates.find(object => object.id !== left).id;
+  openTool(() => t('tool.combine'), () => `<label class="dialog-field full"><span>${t('field.operation')}</span><select name="operation"><option value="cut">${t('tool.cutBtoA')}</option><option value="fuse">${t('tool.unionAB')}</option><option value="common">${t('tool.intersectionAB')}</option></select></label><label class="dialog-field full"><span>${t('field.pieceA')}</span><select name="left">${options(left, candidates)}</select></label><label class="dialog-field full"><span>${t('field.pieceB')}</span><select name="right">${options(right, candidates)}</select></label>`, () => t('tool.combineSources'), async data => {
     let id;
     const applied = await mutate(candidate => {
       const params = Object.fromEntries(data);
@@ -497,9 +521,10 @@ $('#boolean-button').onclick = () => {
 };
 
 $('#fillet-button').onclick = () => {
-  if (!project.objects.length) { message('tool.createBeforeFillet'); return; }
-  const source = [...selection][0] ?? project.objects.find((object) => object.visible)?.id ?? project.objects.at(-1).id;
-  openTool(() => t('tool.roundEdges'), () => `<label class="dialog-field full"><span>${t('field.sourcePiece')}</span><select name="source">${options(source)}</select></label>${numericField('radius', 1, `${t('field.radiusMm')}`, true)}`, () => t('tool.filletHint'), async data => {
+  const candidates = project.objects.filter(object => geometry.meshes.some(mesh => mesh.id === object.id && mesh.solidCount && !mesh.isMesh));
+  if (!candidates.length) { message('tool.createBeforeFillet'); return; }
+  const source = candidates.find(object => selection.has(object.id))?.id ?? candidates.find(object => object.visible)?.id ?? candidates.at(-1).id;
+  openTool(() => t('tool.roundEdges'), () => `<label class="dialog-field full"><span>${t('field.sourcePiece')}</span><select name="source">${options(source, candidates)}</select></label>${numericField('radius', 1, `${t('field.radiusMm')}`, true)}`, () => t('tool.filletHint'), async data => {
     let id;
     const applied = await mutate((candidate) => {
       id = addObject(candidate, { type: 'fillet', name: t('tool.filletDefault'), params: { source: data.get('source'), radius: Number(data.get('radius')) } }).id;
@@ -510,9 +535,10 @@ $('#fillet-button').onclick = () => {
 };
 
 $('#transform-button').onclick = () => {
-  if (!project.objects.length) { message('tool.createBeforeTransform'); return; }
-  const source = [...selection][0] ?? project.objects.find((object) => object.visible)?.id ?? project.objects.at(-1).id;
-  openTool(() => t('tool.transform'), () => `<label class="dialog-field full"><span>${t('field.sourcePiece')}</span><select name="source">${options(source)}</select></label>${['x','y','z','rx','ry','rz'].map(key => numericField(key, 0, key.startsWith('r') ? `${t(fieldKeys[key])} (°)` : `${t(`field.offset${key.toUpperCase()}`)} (mm)`)).join('')}`, () => t('tool.transformHint'), async data => {
+  const candidates = project.objects.filter(object => object.type !== 'sketch');
+  if (!candidates.length) { message('tool.createBeforeTransform'); return; }
+  const source = candidates.find(object => selection.has(object.id))?.id ?? candidates.find(object => object.visible)?.id ?? candidates.at(-1).id;
+  openTool(() => t('tool.transform'), () => `<label class="dialog-field full"><span>${t('field.sourcePiece')}</span><select name="source">${options(source, candidates)}</select></label>${['x','y','z','rx','ry','rz'].map(key => numericField(key, 0, key.startsWith('r') ? `${t(fieldKeys[key])} (°)` : `${t(`field.offset${key.toUpperCase()}`)} (mm)`)).join('')}`, () => t('tool.transformHint'), async data => {
     let id;
     const applied = await mutate((candidate) => {
       const params = Object.fromEntries([...data.entries()].map(([key,value]) => [key, key === 'source' ? value : Number(value)]));
@@ -543,7 +569,7 @@ document.addEventListener('input', (event) => {
 });
 $('#help-button').onclick = () => $('#help-dialog').showModal();
 $('#export-button').onclick = () => {
-  if (!project.objects.some((object) => object.visible)) { message('Muestra al menos una pieza para exportar.'); return; }
+  if (!project.objects.some((object) => object.visible && object.type !== 'sketch')) { message('export.noVisibleSolids'); return; }
   $('#export-dialog').showModal();
 };
 $$('[data-export]').forEach((button) => button.onclick = async () => {
@@ -625,7 +651,7 @@ document.addEventListener('keydown', (event) => {
   else if (event.key === 'Escape') select(null);
 });
 
-function openSketch(object) { interactions?.editSketch(object); }
+function openSketch(object, stage = 'profile') { interactions?.editSketch(object, stage); }
 
 onLocaleChange(() => {
   renderMessage();
@@ -676,7 +702,7 @@ async function start() {
     message(restoreNotice || 'Listo. Crea piezas o selecciona una operación para cambiar sus medidas.');
     saveLocal();
     window.cadReady = true;
-    window.draftyDiagnostics = () => ({ ...viewport.metrics, engineRequests: engine.sequence, geometries: viewport.renderer.info.memory.geometries, objects: project.objects.length, revisions: geometry.meshes.map(({ id, revision }) => ({ id, revision })) });
+    window.draftyDiagnostics = () => ({ ...viewport.metrics, engineRequests: engine.sequence, sketchProfile: viewport.sketchPlane ? structuredClone(viewport.pendingProfile) : null, camera: { position: viewport.camera.position.toArray(), target: viewport.controls.target.toArray(), up: viewport.camera.up.toArray() }, sketch: interactions.session ? { points: structuredClone(interactions.session.points), circle: structuredClone(interactions.session.circle), anchor: structuredClone(interactions.session.anchor), hover: structuredClone(interactions.session.hover), closed: interactions.session.closed, stage: interactions.session.stage } : null, geometries: viewport.renderer.info.memory.geometries, objects: project.objects.length, revisions: geometry.meshes.map(({ id, revision }) => ({ id, revision })) });
   } catch (error) {
     retryMode = true;
     busyText = { title: 'status.editorInitFailed', detail: error.message || 'status.webglRequired' };

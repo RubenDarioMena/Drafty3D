@@ -119,15 +119,16 @@ test('un perfil de 40 × 30 extruido 12 mm produce un sólido de 14400 mm³', as
   await page.locator('[data-plane="XY"]').click();
   await page.locator('#sketch-preset').click();
   await expect(page.locator('#sketch-status')).toContainText('Contorno cerrado');
+  await page.locator('#sketch-next').click();
   await page.locator('#sketch-height').fill('12');
   await page.locator('#sketch-create').click();
   await expect(page.locator('#message')).toHaveText('Perfil extruido.');
   await ready(page);
   expect(await selectedVolume(page)).toBe(14400);
   const saved = await storedDocument(page);
-  expect(saved.objects).toHaveLength(1);
-  expect(saved.objects[0].type).toBe('extrusion');
-  expect(saved.objects[0].params).toMatchObject({ points: [[0, 0], [40, 0], [40, 30], [0, 30]], height: 12 });
+  expect(saved.objects).toHaveLength(2);
+  expect(saved.objects[0]).toMatchObject({ type: 'sketch', visible: false, params: { points: [[0, 0], [40, 0], [40, 30], [0, 30]] } });
+  expect(saved.objects[1]).toMatchObject({ type: 'extrusion', params: { sketch: saved.objects[0].id, height: 12 } });
 });
 
 async function canvasCenter(page) {
@@ -184,11 +185,15 @@ test('dibujar un rectángulo con el ratón en XZ produce una extrusión orientad
   const c = await canvasCenter(page);
   await drag(page, { x: c.x - 100, y: c.y - 80 }, { x: c.x + 100, y: c.y + 80 });
   await expect(page.locator('#sketch-status')).toHaveText('Contorno cerrado');
+  await page.locator('#sketch-next').click();
   await page.locator('#sketch-height').fill('7'); await page.locator('#sketch-create').click(); await ready(page);
-  const object = (await storedDocument(page)).objects[0];
-  expect(object.params.plane).toEqual({ origin: [0, 0, 0], u: [1, 0, 0], v: [0, 0, 1] });
-  const width = Math.abs(object.params.points[1][0] - object.params.points[0][0]);
-  const depth = Math.abs(object.params.points[2][1] - object.params.points[1][1]);
+  const objects = (await storedDocument(page)).objects;
+  const sketch = objects.find((object) => object.type === 'sketch');
+  const extrusion = objects.find((object) => object.type === 'extrusion');
+  expect(sketch.params.plane).toEqual({ origin: [0, 0, 0], u: [1, 0, 0], v: [0, 0, 1] });
+  expect(extrusion.params.sketch).toBe(sketch.id);
+  const width = Math.abs(sketch.params.points[1][0] - sketch.params.points[0][0]);
+  const depth = Math.abs(sketch.params.points[2][1] - sketch.params.points[1][1]);
   expect(await selectedVolume(page)).toBeCloseTo(width * depth * 7, 1);
 });
 
@@ -204,20 +209,26 @@ test('un círculo dibujado en una cara plana corta el sólido y se edita con el 
   c = await canvasCenter(page);
   await drag(page, { x: c.x - 140, y: c.y + 100 }, { x: c.x - 110, y: c.y + 100 });
   await expect(page.locator('#sketch-status')).toHaveText('Contorno cerrado');
+  await page.locator('#sketch-next').click();
   await page.locator('#sketch-height').fill('12');
   await page.screenshot({ path: testInfo.outputPath('croquis-sobre-cara.png') });
   await page.locator('#sketch-create').click(); await ready(page);
   const doc = await storedDocument(page);
+  const source = doc.objects.find((object) => object.type === 'sketch');
   const profile = doc.objects.find((object) => object.type === 'extrusion');
-  expect(profile.params.support.source).toBe('soporte');
-  expect(profile.params.profile.type).toBe('circle');
-  const radius = profile.params.profile.radius;
+  expect(source.params.support.source).toBe('soporte');
+  expect(source.params.profile.type).toBe('circle');
+  expect(profile.params).toMatchObject({ sketch: source.id, height: 12 });
+  const radius = source.params.profile.radius;
   expect(await selectedVolume(page)).toBeCloseTo(initialVolume - Math.PI * radius ** 2 * 8, 1);
   await page.locator(`.object-select[data-id="${profile.id}"]`).click(); await page.locator('#edit-profile').click();
-  await expect(page.locator('#sketch-effect')).toBeDisabled();
-  await page.locator('#sketch-height').fill('3'); await page.locator('#sketch-create').click(); await ready(page);
-  await page.locator(`.object-select[data-id="${doc.objects.at(-1).id}"]`).click();
-  expect(await selectedVolume(page)).toBeCloseTo(initialVolume - Math.PI * radius ** 2 * 3, 1);
+  await expect(page.locator('#sketch-radius')).toHaveValue(String(radius));
+  await page.locator('#sketch-radius').fill('4'); await page.locator('#sketch-apply-dimensions').click();
+  await page.locator('#sketch-finish').click(); await ready(page);
+  const changed = await storedDocument(page);
+  expect(changed.objects.find((object) => object.id === source.id).params.profile.radius).toBe(4);
+  await page.locator(`.object-select[data-id="${changed.objects.at(-1).id}"]`).click();
+  expect(await selectedVolume(page)).toBeCloseTo(initialVolume - Math.PI * 4 ** 2 * 8, 1);
 });
 
 test('líneas conectadas cierran un perfil en YZ y su extrusión conserva el área dibujada', async ({ page }) => {
@@ -227,10 +238,14 @@ test('líneas conectadas cierran un perfil en YZ y su extrusión conserva el ár
   const points = [[-100, 100], [80, 100], [80, 0], [0, -60], [-100, 0], [-100, 100]];
   for (const [x, y] of points) await page.mouse.click(c.x + x, c.y + y);
   await expect(page.locator('#sketch-status')).toHaveText('Contorno cerrado');
+  await page.locator('#sketch-next').click();
   await page.locator('#sketch-height').fill('9'); await page.locator('#sketch-create').click(); await ready(page);
-  const object = (await storedDocument(page)).objects[0];
+  const objects = (await storedDocument(page)).objects;
+  const object = objects.find((item) => item.type === 'sketch');
+  const extrusion = objects.find((item) => item.type === 'extrusion');
   expect(object.params.plane).toEqual({ origin: [0, 0, 0], u: [0, 1, 0], v: [0, 0, 1] });
   expect(object.params.points).toHaveLength(5);
+  expect(extrusion.params).toMatchObject({ sketch: object.id, height: 9 });
   const p = object.params.points;
   const area = Math.abs(p.reduce((sum, point, i) => sum + point[0] * p[(i + 1) % p.length][1] - point[1] * p[(i + 1) % p.length][0], 0)) / 2;
   expect(await selectedVolume(page)).toBeCloseTo(area * 9, 1);
@@ -304,6 +319,7 @@ test('reabre STEP y un STL exportado de miles de triángulos sin reconstruir car
   await page.locator('#sketch-button').click();
   await page.locator('[data-plane="XY"]').click();
   await page.locator('#sketch-preset').click();
+  await page.locator('#sketch-next').click();
   await page.locator('#sketch-height').fill('12');
   await page.locator('#sketch-create').click();
   await expect(page.locator('#message')).toHaveText('Perfil extruido.');
@@ -343,11 +359,8 @@ test('reabre STEP y un STL exportado de miles de triángulos sin reconstruir car
       await expect(page.locator('.stats-card')).toHaveCount(0);
       await expect(page.locator('#inspector-content')).toContainText(/malla/i);
       await page.locator('#fillet-button').click();
-      const fillet = page.locator('#operation-form-panel');
-      await expect(fillet.locator('select[name="source"]')).toHaveValue(imported.objects[0].id);
-      await fillet.getByRole('button', { name: 'Aplicar', exact: true }).click();
-      await expect(page.locator('#message')).toContainText('STL son mallas');
-      await ready(page);
+      await expect(page.locator('#operation-form-panel')).toBeHidden();
+      await expect(page.locator('#message')).toHaveText('Crea una pieza antes de redondearla.');
       expect(await storedDocument(page)).toEqual(imported);
     }
   }

@@ -25,7 +25,8 @@ La vista compilada usa el puerto **4188**. El primer build descarga archivos fue
 - **Atlas:** cinta superior por disciplinas, Documento y Operación a la izquierda, paneles plegables y tamaños ajustables con ratón o flechas sobre los separadores. La búsqueda (`Ctrl+K`) y la cinta activan los mismos comandos.
 - **Idiomas:** cambia entre español e inglés desde la barra superior. La preferencia se conserva en este navegador; los nombres de piezas y proyectos permanecen como los escribió el usuario. Las traducciones se centralizan en `cad/i18n.js` y los textos de la interfaz usan claves semánticas, incluidos términos de croquis, operaciones paramétricas, BRep y malla poligonal.
 - **CAD:** crear bloques, cilindros y esferas; editar dimensiones, posición y color; combinar sólidos y redondear. Las herramientas se configuran en Operación, sin tapar el modelo con un diálogo.
-- **Croquis:** dibujar en XY/XZ/YZ o en una cara plana, arrastrar puntos y radios, extruir, añadir o cortar. Mover puntos de un croquis conserva el modelo paramétrico.
+- **Croquis:** dibujar en XY/XZ/YZ o en una cara plana; introducir esquina, ancho y alto de rectángulos o centro y radio de círculos. **Terminar croquis** guarda un perfil independiente sin volumen. **Extruir croquis** crea una operación vinculada; editar el perfil reconstruye sus extrusiones y cortes. **Continuar a volumen** permite dibujar y extruir en un solo recorrido. Los proyectos anteriores con perfiles dentro de una extrusión siguen siendo editables.
+- **Navegar al dibujar:** botón derecho para girar, Mayús + derecho o botón central para desplazar, rueda para acercar. **Mirar de frente al plano** recupera la vista de dibujo. Navegar conserva el contorno y la previa entre dos clics.
 - **Manipulación:** G para mover y R para girar; arrastrar el cuerpo o sus ejes/anillos, ajuste de 1 mm / 15°, Esc para cancelar. F encuadra; Ctrl+Z / Ctrl+Y deshacen y rehacen.
 - **Malla:** seleccionar un sólido visible y pulsar Convertir a malla. Revisar la advertencia, guardar el proyecto CAD si se desea, ajustar la resolución y previsualizar. Al confirmar, se crea una copia independiente y el CAD original queda oculto y editable en Documento. Se puede deshacer. Cambiar de pestaña nunca convierte una pieza.
 - **Archivos:** guardar/reabrir proyectos JSON, importar STEP y STL, exportar los sólidos visibles como STEP o el conjunto visible como STL. Una malla no recupera automáticamente sus operaciones CAD ni se puede exportar como sólido STEP.
@@ -33,6 +34,19 @@ La vista compilada usa el puerto **4188**. El primer build descarga archivos fue
 La resolución controla la desviación geométrica y el muestreo angular. Se muestra el número real de triángulos y se mide dibujo y selección en la escena actual para estimar el máximo recomendado. Un límite de 250.000 triángulos visibles en la conversión contiene el coste de memoria, guardado y selección. No es una garantía de FPS para cualquier equipo o proyecto; el sistema puede recomendar menos resolución. Las piezas planas pueden necesitar los mismos triángulos en varios niveles.
 
 El proyecto se guarda localmente en el navegador. Si el almacenamiento está lleno, el editor avisa y ofrece guardar un archivo. Los proyectos del editor de origen se pueden abrir como JSON; los almacenes de ambos sitios son independientes.
+
+## Construir desde cero
+
+1. Pulsar **Nuevo → Crear mi primer croquis** y elegir un plano.
+2. Dibujar un rectángulo o introducir ancho **40** y alto **30**; pulsar **Aplicar medidas**.
+3. Pulsar **Terminar croquis**. El perfil queda en Documento y se guarda en el proyecto sin extrusión.
+4. Seleccionarlo y pulsar **Extruir croquis**, introducir profundidad **8** y aplicar.
+5. Crear un croquis sobre una cara, dibujar un círculo y continuar a volumen con resultado **Cortar una pieza**.
+6. Seleccionar la extrusión original y **Editar perfil** para cambiar sus medidas. Al guardar se reconstruyen sus operaciones dependientes.
+
+Los croquis se distinguen con la etiqueta CROQUIS en Documento. Las operaciones muestran enlaces a sus fuentes. STEP/STL exportan los sólidos y las mallas visibles; **Guardar archivo** conserva también los croquis y sus dependencias.
+
+Esta entrega admite un contorno cerrado por croquis. Las medidas son edición exacta del perfil, todavía no un sistema de cotas y restricciones persistentes. [Alcance y continuación](docs/cad/CROQUIS.md).
 
 ## Rendimiento
 
@@ -51,16 +65,13 @@ npm run test:browser
 
 La suite de navegador inicia su propio preview en el puerto 4193 y utiliza un worker. Para usar un Chromium ya instalado, establecer `PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH` a su ejecutable. Los informes, trazas de fallos y descargas quedan en `artifacts/browser/`.
 
-## Publicación aplazada
+## Publicación
 
-**No desplegar hasta la revisión local del usuario.** Los commits de esta entrega llevan `[skip netlify] [skip ci]`. Mantener ambos indicadores en cualquier commit que se suba durante esta fase:
+El sitio de producción es [rdm-drafty3d.netlify.app](https://rdm-drafty3d.netlify.app/cad/), vinculado a la rama `main`. Netlify compila con `npm run build`, publica `dist`, usa Node 22 y abre `/cad/` desde la portada.
 
-```sh
-git commit -m "Descripción del cambio [skip netlify] [skip ci]"
-git push origin HEAD
-```
+Antes de integrar una entrega en `main`, ejecutar las pruebas unitarias, el build y las pruebas de navegador. Verificar después que el deploy de Netlify corresponda al commit publicado y que el editor cargue el motor geométrico en producción.
 
-`[skip netlify]` evita el build automático de Netlify asociado al commit; `[skip ci]` omite los workflows compatibles de CI. No ejecutar deploys manuales, hooks de build ni un nuevo commit sin esos indicadores durante la revisión. La configuración futura de Netlify compila con `npm run build`, publica `dist`, usa Node 22 y abre `/cad/` desde la portada.
+Los indicadores `[skip netlify] [skip ci]` se usaron en las ramas de revisión iniciales. No deben añadirse al commit que deba iniciar un despliegue.
 
 ## Límites y procedencia
 

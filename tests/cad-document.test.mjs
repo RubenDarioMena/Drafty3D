@@ -113,6 +113,49 @@ test("los perfiles cóncavos y los vértices contiguos colineales siguen siendo 
   assert.equal(validateDocument(document), document);
 });
 
+test("un croquis se guarda sin volumen, se extruye por referencia y conserva su historial", () => {
+  const document = createDocument("Desde cero");
+  const points = [[0, 0], [40, 0], [40, 30], [0, 30]];
+  addObject(document, { id: "perfil", type: "sketch", params: { points } });
+  const standalone = parseDocument(serializeDocument(document));
+  assert.equal(standalone.version, 1);
+  assert.equal(standalone.objects[0].type, "sketch");
+  assert.equal(standalone.objects[0].params.height, undefined);
+  const history = new CadHistory(standalone);
+  addObject(document, { id: "volumen", type: "extrusion", params: { sketch: "perfil", height: 8 } });
+  history.commit(document);
+  updateObject(document, "perfil", { params: { points: [[0, 0], [50, 0], [50, 30], [0, 30]] } });
+  history.commit(document);
+  const restored = parseDocument(serializeDocument(document));
+  assert.equal(restored.objects[1].params.sketch, "perfil");
+  assert.equal(restored.objects[1].params.points, undefined);
+  assert.deepEqual(history.undo().objects[0].params.points, points);
+  assert.equal(history.undo().objects.length, 1);
+  assert.equal(history.redo().objects[1].params.sketch, "perfil");
+  assert.throws(() => removeObject(restored, "perfil"), /depende/);
+  assert.deepEqual(removeObject(restored, "perfil", { cascade: true }).map(({ id }) => id), ["perfil", "volumen"]);
+});
+
+test("el apoyo de un croquis propaga dependencias y rechaza referencias incompatibles", () => {
+  const document = createDocument();
+  addObject(document, { id: "base", type: "box" });
+  const params = { points: [], profile: { type: "circle", center: [10, 10], radius: 3 }, support: { source: "base", face: 5, faceCount: 6 } };
+  addObject(document, { id: "circulo", type: "sketch", params });
+  addObject(document, { id: "herramienta", type: "extrusion", params: { sketch: "circulo", height: 12, reverse: true } });
+  addObject(document, { id: "corte", type: "boolean", params: { operation: "cut", left: "base", right: "herramienta" } });
+  const original = serializeDocument(document);
+  assert.throws(() => addObject(document, { type: "extrusion", params: { sketch: "base" } }), /croquis independiente/);
+  assert.throws(() => addObject(document, { type: "extrusion", params: { sketch: "circulo", points: [] } }), /vinculada/);
+  assert.throws(() => addObject(document, { type: "sketch", params: { ...params, support: { source: "circulo", face: 0, faceCount: 1 } } }), /sólido CAD/);
+  assert.throws(() => addObject(document, { type: "fillet", params: { source: "circulo" } }), /Extruye primero/);
+  assert.throws(() => addObject(document, { type: "transform", params: { source: "circulo" } }), /Extruye primero/);
+  assert.throws(() => addObject(document, { type: "boolean", params: { operation: "fuse", left: "base", right: "circulo" } }), /Extruye primero/);
+  assert.throws(() => updateObject(document, "circulo", { params: { profile: { ...params.profile, radius: 0 } } }), /mayor que cero/);
+  assert.throws(() => addObject(document, { type: "sketch", params: { points: [[0, 0], [10, 0]] } }), /entre 3/);
+  assert.equal(serializeDocument(document), original);
+  assert.deepEqual(removeObject(document, "base", { cascade: true }).map(({ id }) => id), ["base", "circulo", "herramienta", "corte"]);
+});
+
 test("las transformaciones usan grados y completan los ejes que la interfaz omite", () => {
   const document = createExampleDocument();
   const transformed = addObject(document, { type: "transform", params: { source: "soporte", x: 12, rz: 90 } });
