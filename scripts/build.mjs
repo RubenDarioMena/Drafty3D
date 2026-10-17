@@ -1,6 +1,8 @@
 import { copyFile, mkdir, readFile, rm } from 'node:fs/promises';
 import { dirname, resolve, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { build } from 'vite';
+import { prepareCadSources } from './cad-sources.mjs';
 
 const root = fileURLToPath(new URL('../', import.meta.url));
 const output = resolve(root, 'dist');
@@ -13,9 +15,11 @@ const files = [
   'docs/investigacion/README.md',
   'docs/investigacion/drafty3d-seleccion-funciones-1.json',
   'docs/investigacion/propuestas-ui-preview.png',
+  'docs/cad/ATLAS.md',
 ];
 const contents = await Promise.all(files.map(file => readFile(resolve(root, file))));
 const published = new Set(files.map(file => resolve(root, file)));
+published.add(resolve(root, 'cad'));
 for (const [index, file] of files.entries()) {
   if (!file.endsWith('.html')) continue;
   const html = contents[index].toString('utf8');
@@ -34,4 +38,6 @@ for (const file of files) {
   await mkdir(dirname(target), { recursive: true });
   await copyFile(resolve(root, file), target);
 }
-console.log(`Drafty3D: ${files.length} static files ready in dist/. Local HTML links checked.`);
+await build({ configFile: resolve(root, 'vite.config.mjs') });
+await prepareCadSources(root, resolve(output, 'cad/licenses/source'));
+console.log(`Drafty3D: CAD Atlas y ${files.length} documentos publicados en dist/. Enlaces locales verificados.`);

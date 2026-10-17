@@ -1,61 +1,81 @@
-# Drafty3D
+# Drafty3D · Atlas
 
-Investigación y prototipos para una aplicación de diseño paramétrico, edición directa CAD y modelado poligonal.
+CAD básico en el navegador: sólidos paramétricos, croquis, edición directa con controles, STEP/STL y conversión controlada a malla. El motor OpenCascade.js funciona en un worker local; Three.js dibuja con WebGL2. No requiere cuenta, claves ni servidor de geometría.
 
-**Estado actual:** laboratorio interactivo de cinco interfaces y documentación de producto. El motor CAD del proyecto de origen aún no se ha migrado a este repositorio. El soporte 3D del laboratorio es una ilustración interactiva, no geometría calculada por OpenCascade.
+## Probar en local
 
-## Contenido
-
-- [Cinco propuestas de UI](docs/investigacion/propuestas-ui.html): Atlas, Foco, Taller, Secuencia y Guía; cambio de diseño con estado compartido, notas y evaluación exportable.
-- [Documento de diseño](docs/investigacion/disenos-ui.md): explicación de cada variante y primeros pasos de implementación.
-- [Comparativa de funciones](docs/investigacion/comparativa-cad.html): investigación, fuentes y viabilidad técnica.
-- [Selección provisional](docs/investigacion/drafty3d-seleccion-funciones-1.json): respuesta de producto utilizada para los diseños.
-
-## Conectar a Netlify
-
-Importar este repositorio de GitHub en Netlify y elegir la rama `main`. La configuración está versionada en [`netlify.toml`](netlify.toml):
-
-| Campo | Valor |
-| --- | --- |
-| Base directory | Vacío (raíz del repositorio) |
-| Package directory | Vacío |
-| Build command | `npm run build` |
-| Publish directory | `dist` |
-| Node.js | 22 |
-| Variables secretas o servicios adicionales | Ninguno |
-
-La portada redirige a `/docs/investigacion/propuestas-ui.html`. Se conservan las rutas de investigación, documentos y JSON. No hay backend ni configuración de SPA. El build publica una lista explícita de archivos estáticos y comprueba sus enlaces HTML locales; el generador Python permanece en el repositorio como herramienta editorial.
-
-Después de conectar GitHub y desplegar, los pushes a la rama de producción configurada en Netlify podrán actualizar el sitio mediante su despliegue continuo. Esta configuración prepara la publicación; el repositorio por sí solo no crea un sitio en la cuenta de Netlify.
-
-Referencia: [configuración por archivo de Netlify](https://docs.netlify.com/build/configure-builds/file-based-configuration/).
-
-## Desarrollo y vista previa
-
-Requiere Node.js 22 o posterior. El build no tiene dependencias npm externas.
+Requisitos: **Node.js 22.23.3 o posterior**, npm y `tar` (Git Bash incluye tar en Windows).
 
 ```sh
 npm ci
+npm run dev
+```
+
+Abrir `http://127.0.0.1:4187/cad/`. `PORT=4190 npm run dev` cambia el puerto. Para probar el paquete que se publicaría:
+
+```sh
 npm run build
 npm run preview
 ```
 
-Abrir `http://127.0.0.1:4188`. La vista previa usa Python 3 y el puerto 4188 para poder coexistir con una vista de trabajo en 4187. El directorio `dist` se regenera y no se versiona.
+La vista compilada usa el puerto **4188**. El primer build descarga archivos fuente de OpenCascade desde GitHub y verifica sus SHA-256; las descargas posteriores reutilizan `.cad-source-cache/`. En el entorno cloud con proxy, activar `NODE_USE_ENV_PROXY=1` con Node 22.23.3 y conservar la configuración de certificados del entorno. En una máquina local sin proxy no hace falta esa variable.
 
-Para servir las fuentes directamente:
+## Qué se puede hacer
+
+- **Atlas:** cinta superior por disciplinas, Documento y Operación a la izquierda, paneles plegables y tamaños ajustables con ratón o flechas sobre los separadores. La búsqueda (`Ctrl+K`) y la cinta activan los mismos comandos.
+- **CAD:** crear bloques, cilindros y esferas; editar dimensiones, posición y color; combinar sólidos y redondear. Las herramientas se configuran en Operación, sin tapar el modelo con un diálogo.
+- **Croquis:** dibujar en XY/XZ/YZ o en una cara plana; introducir esquina, ancho y alto de rectángulos o centro y radio de círculos. **Terminar croquis** guarda un perfil independiente sin volumen. **Extruir croquis** crea una operación vinculada; editar el perfil reconstruye sus extrusiones y cortes. **Continuar a volumen** permite dibujar y extruir en un solo recorrido. Los proyectos anteriores con perfiles dentro de una extrusión siguen siendo editables.
+- **Navegar al dibujar:** botón derecho para girar, Mayús + derecho o botón central para desplazar, rueda para acercar. **Mirar de frente al plano** recupera la vista de dibujo. Navegar conserva el contorno y la previa entre dos clics.
+- **Manipulación:** G para mover y R para girar; arrastrar el cuerpo o sus ejes/anillos, ajuste de 1 mm / 15°, Esc para cancelar. F encuadra; Ctrl+Z / Ctrl+Y deshacen y rehacen.
+- **Malla:** seleccionar un sólido visible y pulsar Convertir a malla. Revisar la advertencia, guardar el proyecto CAD si se desea, ajustar la resolución y previsualizar. Al confirmar, se crea una copia independiente y el CAD original queda oculto y editable en Documento. Se puede deshacer. Cambiar de pestaña nunca convierte una pieza.
+- **Archivos:** guardar/reabrir proyectos JSON, importar STEP y STL, exportar los sólidos visibles como STEP o el conjunto visible como STL. Una malla no recupera automáticamente sus operaciones CAD ni se puede exportar como sólido STEP.
+
+La resolución controla la desviación geométrica y el muestreo angular. Se muestra el número real de triángulos y se mide dibujo y selección en la escena actual para estimar el máximo recomendado. Un límite de 250.000 triángulos visibles en la conversión contiene el coste de memoria, guardado y selección. No es una garantía de FPS para cualquier equipo o proyecto; el sistema puede recomendar menos resolución. Las piezas planas pueden necesitar los mismos triángulos en varios niveles.
+
+El proyecto se guarda localmente en el navegador. Si el almacenamiento está lleno, el editor avisa y ofrece guardar un archivo. Los proyectos del editor de origen se pueden abrir como JSON; los almacenes de ambos sitios son independientes.
+
+## Construir desde cero
+
+1. Pulsar **Nuevo → Crear mi primer croquis** y elegir un plano.
+2. Dibujar un rectángulo o introducir ancho **40** y alto **30**; pulsar **Aplicar medidas**.
+3. Pulsar **Terminar croquis**. El perfil queda en Documento y se guarda en el proyecto sin extrusión.
+4. Seleccionarlo y pulsar **Extruir croquis**, introducir profundidad **8** y aplicar.
+5. Crear un croquis sobre una cara, dibujar un círculo y continuar a volumen con resultado **Cortar una pieza**.
+6. Seleccionar la extrusión original y **Editar perfil** para cambiar sus medidas. Al guardar se reconstruyen sus operaciones dependientes.
+
+Los croquis se distinguen con la etiqueta CROQUIS en Documento. Las operaciones muestran enlaces a sus fuentes. STEP/STL exportan los sólidos y las mallas visibles; **Guardar archivo** conserva también los croquis y sus dependencias.
+
+Esta entrega admite un contorno cerrado por croquis. Las medidas son edición exacta del perfil, todavía no un sistema de cotas y restricciones persistentes. [Alcance y continuación](docs/cad/CROQUIS.md).
+
+## Rendimiento
+
+El viewport dibuja bajo demanda y agrupa solicitudes en un solo frame. No mantiene un bucle permanente al estar quieto. Girar la cámara y previsualizar un movimiento no llaman a OpenCascade; soltar el gesto confirma una operación geométrica. Los cambios de nombre, visibilidad o color reutilizan la geometría. El worker devuelve buffers solo de las piezas modificadas y sus dependencias; los demás objetos conservan sus buffers y aristas en GPU. En mallas densas se evita construir una red adicional de aristas. Los croquis agrupan sus actualizaciones por frame.
+
+WebGL2 ya utiliza la GPU. OpenCascade se ejecuta en CPU/WASM; cambiar a WebGPU no lo aceleraría automáticamente. La medición de conversión sincroniza brevemente la GPU para obtener una muestra de trabajo real; la navegación normal no lo hace.
+
+## Comprobaciones
 
 ```sh
-python3 -m http.server 4187 --bind 127.0.0.1
+npm test
+npm run build
+npx playwright install chromium
+npm run test:browser
 ```
 
-Para regenerar únicamente la comparativa después de editar su generador:
+La suite de navegador inicia su propio preview en el puerto 4193 y utiliza un worker. Para usar un Chromium ya instalado, establecer `PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH` a su ejecutable. Los informes, trazas de fallos y descargas quedan en `artifacts/browser/`.
 
-```sh
-python3 docs/investigacion/generar_informe.py
-```
+## Publicación
 
-Las evaluaciones y notas se guardan en el navegador. El dominio de Netlify tendrá un almacenamiento distinto al de localhost; exportar el JSON permite conservar las evaluaciones para revisión. No hay sincronización entre navegadores ni importador de evaluaciones en el laboratorio actual.
+El sitio de producción es [rdm-drafty3d.netlify.app](https://rdm-drafty3d.netlify.app/cad/), vinculado a la rama `main`. Netlify compila con `npm run build`, publica `dist`, usa Node 22 y abre `/cad/` desde la portada.
 
-## Próxima etapa
+Antes de integrar una entrega en `main`, ejecutar las pruebas unitarias, el build y las pruebas de navegador. Verificar después que el deploy de Netlify corresponda al commit publicado y que el editor cargue el motor geométrico en producción.
 
-Extraer el editor CAD, separar documento/sesión/presentación y conectar un registro común de comandos a la nueva UI. El plan y los criterios para elegir diseño están en [disenos-ui.md](docs/investigacion/disenos-ui.md).
+Los indicadores `[skip netlify] [skip ci]` se usaron en las ramas de revisión iniciales. No deben añadirse al commit que deba iniciar un despliegue.
+
+## Límites y procedencia
+
+La primera versión no incluye un editor poligonal de vértices/aristas, paneles desacoplables, solver de restricciones, identificación topológica general, ensamblajes o WebGPU. La referencia a una cara CAD utiliza índice y número de caras, y puede requerir redefinir el apoyo si cambia la topología. Los controles directos editan parámetros y croquis; no deforman arbitrariamente cualquier sólido BRep.
+
+La base geométrica procede de `RubenDarioMena/Courses-RDM`, commit `2e5c5e318d20f1378058dfb9e91447322083dfbd`. Se conservan sus operaciones, pruebas y avisos upstream. [Arquitectura y decisiones de esta entrega](docs/cad/ATLAS.md). [Documentación de origen](docs/cad/ORIGEN_CAD.md). Las fuentes y licencias de las bibliotecas se publican junto al WASM en `/cad/legal.html`.
+
+El [laboratorio de cinco interfaces](docs/investigacion/propuestas-ui.html) y la [investigación de funciones](docs/investigacion/comparativa-cad.html) siguen disponibles como antecedentes.
