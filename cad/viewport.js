@@ -6,6 +6,7 @@ import { LineGeometry } from 'three/addons/lines/LineGeometry.js';
 import { LineMaterial } from 'three/addons/lines/LineMaterial.js';
 import { WORK_PLANES, cross, onPlane } from './planes.js';
 import { t } from './i18n.js';
+import { ElementSelection } from './element-selection.js';
 
 export class CadViewport {
   constructor(container, onSelect, callbacks = {}) {
@@ -54,6 +55,7 @@ export class CadViewport {
     this.raycaster = new THREE.Raycaster();
     this.pointer = new THREE.Vector2();
     this.selected = new Set();
+    this.elements = new ElementSelection(this);
     this.pivot = new THREE.Object3D();
     this.scene.add(this.pivot);
     this.transform = new TransformControls(this.camera, this.renderer.domElement);
@@ -98,6 +100,7 @@ export class CadViewport {
       const distance = Math.hypot(event.clientX - this.down[0], event.clientY - this.down[1]);
       this.down = null;
       if (distance > 4) return;
+      if (['edge', 'vertex'].includes(this.mode)) { if (this.callbacks.canPickElements?.() !== false) this.elements.pick(event); return; }
       this.updateRay(event);
       if (this.mode === 'plane') {
         const plane = this.raycaster.intersectObjects(this.decoration.children, true).find((hit) => hit.object.userData.plane);
@@ -159,6 +162,10 @@ export class CadViewport {
     this.transform.detach();
     this.hoverFaceKey = null;
     this.faceHighlight.visible = false;
+    if (this.elements.topology && !result.meshes.some(mesh => mesh.id === this.elements.topology.id && mesh.revision === this.elements.topology.revision && document.objects.find(object => object.id === mesh.id)?.visible)) {
+      this.elements.clear();
+      if (['edge', 'vertex'].includes(this.mode)) this.setMode('orbit');
+    }
     const existing = new Map(this.parts.children.map(group => [group.userData.id, group]));
     const objects = new Map(document.objects.map(object => [object.id, object]));
     for (const mesh of result.meshes ?? []) {
@@ -244,18 +251,18 @@ export class CadViewport {
 
   setMode(mode) {
     this.cancelGesture();
+    if (!['edge', 'vertex'].includes(mode) && this.elements.topology) this.elements.clear();
     this.mode = mode;
     this.faceHighlight.visible = false;
     this.hoverFaceKey = null;
     this.clearGroup(this.decoration);
     this.controls.enabled = true;
-    this.controls.mouseButtons.LEFT = ['orbit', 'face', 'plane'].includes(mode) ? THREE.MOUSE.ROTATE : null;
+    this.controls.mouseButtons.LEFT = ['orbit', 'face', 'plane', 'edge', 'vertex'].includes(mode) ? THREE.MOUSE.ROTATE : null;
     this.controls.mouseButtons.RIGHT = mode === 'sketch' ? THREE.MOUSE.ROTATE : THREE.MOUSE.PAN;
     this.controls.mouseButtons.MIDDLE = mode === 'sketch' ? THREE.MOUSE.PAN : THREE.MOUSE.DOLLY;
     this.renderer.domElement.setAttribute('aria-label', mode === 'sketch'
-      ? 'Vista 3D del croquis. Botón izquierdo para dibujar; botón derecho para girar; Mayús y botón derecho o botón central para desplazar; rueda para acercar.'
-      : 'Vista 3D de las piezas. Arrastra para girar; rueda para acercar; botón derecho para desplazar.');
-    this.renderer.domElement.style.cursor = ['face', 'plane', 'sketch'].includes(mode) ? 'crosshair' : mode === 'translate' ? 'grab' : 'default';
+      ? t('canvas.sketchAria') : t('canvas.aria'));
+    this.renderer.domElement.style.cursor = ['face', 'plane', 'sketch', 'edge', 'vertex'].includes(mode) ? 'crosshair' : mode === 'translate' ? 'grab' : 'default';
     if (mode === 'plane') {
       for (const [name, plane] of Object.entries(WORK_PLANES)) {
         const mesh = new THREE.Mesh(new THREE.PlaneGeometry(60, 60), new THREE.MeshBasicMaterial({ color: { XY: '#639af5', XZ: '#6fdca5', YZ: '#ec8b94' }[name], transparent: true, opacity: 0.22, side: THREE.DoubleSide, depthWrite: false }));
@@ -374,6 +381,14 @@ export class CadViewport {
     if (this.mode === 'sketch' && this.sketchNavigationId != null) return;
     this.down = [event.clientX, event.clientY];
     if (this.mode === 'sketch') { event.stopImmediatePropagation(); this.sketchPointerId = event.pointerId; this.renderer.domElement.setPointerCapture(event.pointerId); this.sketchPointer('down', event); return; }
+    if (this.mode === 'orbit' && !event.ctrlKey && !event.metaKey && !event.shiftKey && this.callbacks.canAutoMove?.()) {
+      this.updateRay(event);
+      const hit = this.partHit();
+      if (hit && !hit.object.userData.isSketch) {
+        this.callbacks.onAutoMove?.();
+        this.down = [event.clientX, event.clientY];
+      }
+    }
     if (this.mode !== 'translate' || this.transform.axis) return;
     this.updateRay(event);
     const hit = this.partHit();

@@ -257,6 +257,19 @@ test("el presupuesto del historial retira snapshots antiguos antes de acumular i
   assert.equal(history.byteSize, Buffer.byteLength(serializeDocument(history.current)) + Buffer.byteLength(serializeDocument(history.undo())));
 });
 
+test('las referencias de redondeo local son portables y rechazan índices, duplicados y firmas inválidas', () => {
+  const document = createDocument('Referencias locales');
+  addObject(document, { id: 'base', type: 'box' });
+  const reference = { source: 'base', radius: 1, edgeCount: 12, edges: [{ index: 0, signature: 'edge-0' }] };
+  addObject(document, { id: 'local', type: 'fillet', params: reference });
+  assert.deepEqual(parseDocument(serializeDocument(document)).objects[1].params, reference);
+  for (const patch of [
+    { edges: [] }, { edgeCount: 0 }, { edges: [{ index: 12, signature: 'bad' }] },
+    { edges: [{ index: 0, signature: '' }] }, { edges: [{ index: -1, signature: 'bad' }] },
+    { edges: [reference.edges[0], reference.edges[0]] }, { edges: undefined },
+  ]) assert.throws(() => updateObject(document, 'local', { params: patch }), /selección|Selección/);
+});
+
 test("un snapshot mayor que el presupuesto conserva el documento actual completo", () => {
   const document = createExampleDocument();
   const history = new CadHistory(createDocument(), 50, 100);

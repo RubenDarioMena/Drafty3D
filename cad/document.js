@@ -1,3 +1,4 @@
+import { validateEdgeSelection } from './topology.js';
 /** Modelo paramétrico portable. Distancias en milímetros; rx, ry y rz en grados. */
 export const DOCUMENT_VERSION = 1;
 export const DOCUMENT_LIMITS = Object.freeze({
@@ -29,7 +30,7 @@ const parameterKeys = {
   sketch: ["points", "profile", "plane", "support", "x", "y", "z"],
   extrusion: ["sketch", "points", "profile", "plane", "support", "reverse", "height", "x", "y", "z"],
   boolean: ["operation", "left", "right"],
-  fillet: ["source", "radius"],
+  fillet: ["source", "radius", "edges", "edgeCount"],
   transform: ["source", "x", "y", "z", "rx", "ry", "rz"],
   import: ["format", "data"],
   mesh: ["data", "quality"],
@@ -197,6 +198,7 @@ function validateParameters(object, previousObjects) {
     dimension(params.height, "La altura");
   } else if (type === "sphere" || type === "fillet") {
     dimension(params.radius, "El radio");
+    if (type === 'fillet') validateEdgeSelection(params);
   } else if (type === "extrusion") {
     dimension(params.height, "La altura");
     if (params.reverse !== undefined && typeof params.reverse !== 'boolean') throw new Error('El sentido de extrusión debe ser booleano.');

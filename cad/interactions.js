@@ -12,6 +12,10 @@ export class CadInteractions {
   constructor(viewport, app) {
     this.viewport = viewport; this.app = app;
     viewport.callbacks = {
+      canAutoMove: () => !app.busy() && !this.locked && !app.operationActive() && document.querySelector('.app').dataset.activeSpace !== 'assembly',
+      onAutoMove: () => this.setMode('translate'),
+      onElements: () => app.renderElements(),
+      canPickElements: () => !app.operationActive(),
       onGesture: (value) => { this.dragging = value; $('#gesture-readout').hidden = !value; app.syncControls(); },
       onPreview: (elements) => {
         this.previewElements = elements;
@@ -60,7 +64,7 @@ export class CadInteractions {
   }
 
   refreshLabels() {
-    const hintKey = { orbit: 'canvas.hintOrbit', translate: 'canvas.hintMove', rotate: 'canvas.hintRotate' }[this.viewport.mode];
+    const hintKey = { orbit: 'canvas.hintOrbit', translate: 'canvas.hintMove', rotate: 'canvas.hintRotate', edge: 'selection.edgeHint', vertex: 'selection.vertexHint' }[this.viewport.mode];
     $('.viewport-hint').textContent = hintKey ? t(hintKey) : '';
     if (!$('#plane-picker').hidden) $('#plane-note').textContent = t(this.viewport.mode === 'face' ? 'view.pickFaceHint' : 'view.planeNote');
     this.renderGestureReadout();

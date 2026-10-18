@@ -3,6 +3,7 @@
 import { cross, onPlane, extrusionPlane } from './planes.js';
 import { meshQuality, binaryStl, bytesToBase64, MAX_MESH_TRIANGLES } from './mesh-quality.js';
 import { validateSketchParameters } from './document.js';
+import { collectSubshapes, describeEdge, validateEdgeSelection } from './topology.js';
 export const KERNEL_CAPABILITIES = Object.freeze({
   engine: 'OpenCascade.js',
   version: '2.0.0-beta.b5ff984',
@@ -131,6 +132,7 @@ class CadKernel {
   dispose() {
     for (const entry of this.cache.values()) entry.shape.delete();
     this.cache.clear();
+    this.selectionTopology = null;
   }
 
   resolve(document) {
@@ -287,18 +289,19 @@ class CadKernel {
         }
         case 'fillet': {
           const radius = positive(p.radius, 'El radio del redondeo');
+          validateEdgeSelection(p);
           const builder = own(new oc.BRepFilletAPI_MakeFillet(dependencies[0].shape, oc.ChFi3d_FilletShape.ChFi3d_Rational));
-          const explorer = own(new oc.TopExp_Explorer_2(dependencies[0].shape, oc.TopAbs_ShapeEnum.TopAbs_EDGE, oc.TopAbs_ShapeEnum.TopAbs_SHAPE));
-          const uniqueEdges = [];
-          while (explorer.More()) {
-            const current = own(explorer.Current());
-            const edge = own(oc.TopoDS.Edge_1(current));
-            if (!uniqueEdges.some((previous) => previous.IsSame(edge))) {
-              uniqueEdges.push(edge);
+          const uniqueEdges = collectSubshapes(oc, dependencies[0].shape, oc.TopAbs_ShapeEnum.TopAbs_EDGE, shape => oc.TopoDS.Edge_1(shape), own);
+          if (p.edges) {
+            if (p.edgeCount !== uniqueEdges.length) throw new Error('Las aristas de origen han cambiado. Vuelve a seleccionar el redondeo local.');
+            const bounds = this.shapeProperties(dependencies[0].shape).bounds;
+            for (const reference of p.edges) {
+              const edge = uniqueEdges[reference.index];
+              const signature = withResources(resources => describeEdge(oc, edge, bounds, value => resources.own(value), false).signature);
+              if (signature !== reference.signature) throw new Error('Las aristas de origen han cambiado. Vuelve a seleccionar el redondeo local.');
               builder.Add_2(radius, edge);
             }
-            explorer.Next();
-          }
+          } else for (const edge of uniqueEdges) builder.Add_2(radius, edge);
           if (!uniqueEdges.length) throw new Error('La pieza no tiene aristas para redondear.');
           try { builder.Build(own(new oc.Message_ProgressRange_1())); } catch {
             throw new Error('No se pudo construir el redondeo. Prueba un radio menor.');
@@ -511,6 +514,52 @@ class CadKernel {
         volume: pieces.some((mesh) => mesh.volume === null) ? null : pieces.reduce((total, mesh) => total + mesh.volume, 0),
         bounds, milliseconds: performance.now() - start, units: 'mm' },
     };
+  }
+
+  describeTopology(document, { id } = {}) {
+    const entry = this.resolve(document).get(id);
+    if (!entry) throw new Error('Selecciona una pieza visible para elegir sus elementos.');
+    if (this.selectionTopology?.id === id && this.selectionTopology.revision === entry.revision) return this.selectionTopology;
+    const mesh = entry.mesh || (entry.mesh = this.tessellate(entry.shape, entry.isMesh));
+    let topology;
+    if (entry.isMesh) {
+      const vertices = [], seen = new Set();
+      for (let offset = 0; offset < mesh.positions.length; offset += 3) {
+        const point = Array.from(mesh.positions.subarray(offset, offset + 3)), key = point.join(',');
+        if (seen.has(key)) continue;
+        seen.add(key); vertices.push({ index: vertices.length, point, edges: [] });
+        if (vertices.length > 50000) throw new Error('La malla tiene demasiados vértices para esta selección. Reduce su resolución.');
+      }
+      topology = { edges: [], vertices };
+    } else {
+      const oc = this.oc;
+      topology = withResources(r => {
+        const own = value => r.own(value);
+        const edges = collectSubshapes(oc, entry.shape, oc.TopAbs_ShapeEnum.TopAbs_EDGE, shape => oc.TopoDS.Edge_1(shape), own);
+        const vertices = collectSubshapes(oc, entry.shape, oc.TopAbs_ShapeEnum.TopAbs_VERTEX, shape => oc.TopoDS.Vertex_1(shape), own);
+        const vertexBuckets = new Map();
+        vertices.forEach((vertex, index) => {
+          const hash = vertex.HashCode(2147483647);
+          const bucket = vertexBuckets.get(hash) || [];
+          bucket.push(index); vertexBuckets.set(hash, bucket);
+        });
+        const vertexData = vertices.map((vertex, index) => ({ index, point: coords(own(oc.BRep_Tool.Pnt(vertex))), edges: [] }));
+        let pointCount = 0;
+        const edgeData = edges.map((edge, index) => {
+          const descriptor = withResources(edgeResources => describeEdge(oc, edge, mesh.bounds, value => edgeResources.own(value)));
+          pointCount += descriptor.points.length;
+          if (pointCount > 200000) throw new Error('La pieza contiene demasiados elementos para esta selección. Simplifica la geometría.');
+          const ends = [own(oc.TopExp.FirstVertex(edge, true)), own(oc.TopExp.LastVertex(edge, true))];
+          const indices = [...new Set(ends.filter(vertex => !vertex.IsNull()).map(vertex =>
+            vertexBuckets.get(vertex.HashCode(2147483647))?.find(i => vertices[i].IsSame(vertex))).filter(i => i !== undefined))];
+          if (descriptor.signature) indices.forEach(i => vertexData[i].edges.push(index));
+          return { index, ...descriptor, vertices: indices };
+        });
+        return { edges: edgeData, vertices: vertexData };
+      });
+    }
+    this.selectionTopology = { id, revision: entry.revision, isMesh: entry.isMesh, isSketch: entry.isSketch, ...topology };
+    return this.selectionTopology;
   }
 
   convertToMesh(document, { id, quality = 1, maxTriangles = MAX_MESH_TRIANGLES } = {}) {

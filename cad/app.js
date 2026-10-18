@@ -53,6 +53,52 @@ let meshPerformance = null;
 let meshErrorText = '';
 let toolRenderer = null;
 let retryMode = false;
+let selectionTopology = null;
+let elementRequestToken = 0;
+let elementLoading = false;
+
+function renderElements() {
+  const elements = viewport?.elements, topology = elements?.topology;
+  $('#selection-filter').value = topology ? elements.kind : 'body';
+  $('#element-panel').hidden = !topology || Boolean(toolAction || meshSession || interactions?.drawing);
+  if (!topology) return;
+  const references = elements.edgeReferences();
+  const coordinates = elements.kind === 'vertex' && elements.selected.size === 1
+    ? topology.vertices[[...elements.selected][0]].point.map((value, index) => `${['X', 'Y', 'Z'][index]}: ${formatNumber(value, { maximumFractionDigits: 3 })}`).join(' · ') + ' mm'
+    : '';
+  $('#element-summary').textContent = t(elements.kind === 'vertex' ? 'selection.vertexCount' : 'selection.edgeCount', { count: formatNumber(elements.selected.size) }) + (coordinates ? ` · ${coordinates}` : '');
+  $('#element-note').textContent = t(topology.isMesh ? 'selection.meshNote' : topology.isSketch ? 'selection.sketchNote' : elements.kind === 'vertex' ? 'selection.incidentEdges' : 'selection.edgeNote', { count: formatNumber(references.length) });
+  $('#fillet-elements').disabled = Boolean(busy || !references.length);
+}
+
+async function chooseElements(kind) {
+  const token = ++elementRequestToken;
+  if (kind === 'body') { interactions.setMode('orbit'); renderElements(); return; }
+  const object = project.objects.find(object => selection.has(object.id) && object.visible);
+  if (selection.size !== 1 || !object) { $('#selection-filter').value = 'body'; message('selection.selectPiece'); return; }
+  const revision = geometry.meshes.find(mesh => mesh.id === object.id)?.revision;
+  elementLoading = true; syncControls(); message('selection.loading');
+  try {
+    const topology = selectionTopology?.id === object.id && selectionTopology.revision === revision
+      ? selectionTopology : await engine.request('topology', project, undefined, { id: object.id });
+    if (token !== elementRequestToken || !selection.has(object.id) || geometry.meshes.find(mesh => mesh.id === object.id)?.revision !== topology.revision) return;
+    selectionTopology = topology;
+    if (kind === 'edge' && topology.isMesh) { message('selection.meshNote'); renderElements(); return; }
+    interactions.setMode(kind);
+    viewport.elements.activate(kind, topology);
+    message(kind === 'edge' ? 'selection.edgeHint' : 'selection.vertexHint');
+  } catch (error) { if (token === elementRequestToken) { message(error.message, true); renderElements(); } }
+  finally { if (token === elementRequestToken) { elementLoading = false; syncControls(); } }
+}
+
+$('#selection-filter').onchange = event => chooseElements(event.target.value);
+$('#clear-elements').onclick = () => { viewport.elements.selected.clear(); viewport.elements.paint(); };
+$('#fillet-elements').onclick = () => $('#fillet-button').click();
+window.addEventListener('drafty-space-change', () => {
+  if (!viewport) return;
+  ++elementRequestToken; elementLoading = false;
+  closeOperation(); interactions.setMode('orbit'); syncControls();
+});
 
 function translatedValues(values = {}) {
   return Object.fromEntries(Object.entries(values).map(([key, value]) => [key, value && typeof value === 'object' && value.$t ? t(value.$t) : value]));
@@ -102,6 +148,8 @@ function closeOperation() {
   viewport?.clearMeshPreview();
   viewport?.setBlocked(busy);
   showOperation('properties');
+  renderElements();
+  syncControls();
 }
 
 $('#cancel-tool').onclick = () => { closeOperation(); message('Operación cancelada.'); };
@@ -265,7 +313,7 @@ function setBusy(value, title = 'status.calculatingPart', detail = 'status.rebui
   busy = value;
   busyText = { title, detail };
   syncControls();
-  viewport?.setBlocked(value || Boolean(meshSession));
+  viewport?.setBlocked(value || Boolean(meshSession || toolAction));
   $('#loading-overlay').hidden = !value;
   renderBusyLabels();
   $('#cancel-operation').textContent = t('status.cancelOperation');
@@ -276,6 +324,9 @@ function syncControls() {
   const locked = busy || interactions?.locked || Boolean(meshSession);
   $$('[data-edit], #inspector-content input, #inspector-content button, #inspector-content select, .object-select, .visibility-button, [data-interaction], #transform-snap, [data-plane], #pick-face').forEach((element) => { element.disabled = Boolean(locked); });
   $('#document-name').disabled = Boolean(locked);
+  $('#selection-filter').disabled = Boolean(locked || elementLoading || toolAction);
+  $$('button[data-space]').forEach(button => { button.disabled = Boolean(locked); });
+  $('#clear-elements').disabled = Boolean(locked || toolAction);
   $$('#tool-form input, #tool-form select, #tool-form button').forEach(element => { element.disabled = Boolean(locked); });
   $$('#mesh-panel button, #mesh-panel input').forEach(element => { element.disabled = busy; });
   $('#mesh-confirm').disabled = Boolean(busy || !meshSession?.result);
@@ -304,6 +355,8 @@ function saveLocal() {
 
 function select(id, multiple = false) {
   if (busy || interactions?.locked) return;
+  ++elementRequestToken; elementLoading = false;
+  if (viewport.elements.topology) interactions.setMode('orbit');
   closeOperation();
   if (!multiple) selection.clear();
   if (id) {
@@ -342,6 +395,7 @@ function refreshLocalizedPanels() {
   }
   applyStaticTranslations($('#object-list'));
   applyStaticTranslations($('#inspector-content'));
+  renderElements();
 }
 
 function renderPanels() {
@@ -473,6 +527,7 @@ function openTool(title, fields, note, action) {
   if (busy) return;
   closeOperation();
   toolAction = action;
+  viewport.setBlocked(true);
   let firstRender = true;
   toolRenderer = () => {
     const values = firstRender ? new Map() : new Map([...$('#tool-fields').querySelectorAll('input, select')].filter(element => element.name).map(element => [element.name, element.value]));
@@ -488,6 +543,7 @@ function openTool(title, fields, note, action) {
   showOperation('tool');
   $('#operation-content').scrollTop = 0;
   $('#tool-form input, #tool-form select')?.focus();
+  renderElements(); syncControls();
 }
 
 $$('[data-create]').forEach((button) => button.onclick = () => {
@@ -524,10 +580,13 @@ $('#fillet-button').onclick = () => {
   const candidates = project.objects.filter(object => geometry.meshes.some(mesh => mesh.id === object.id && mesh.solidCount && !mesh.isMesh));
   if (!candidates.length) { message('tool.createBeforeFillet'); return; }
   const source = candidates.find(object => selection.has(object.id))?.id ?? candidates.find(object => object.visible)?.id ?? candidates.at(-1).id;
-  openTool(() => t('tool.roundEdges'), () => `<label class="dialog-field full"><span>${t('field.sourcePiece')}</span><select name="source">${options(source, candidates)}</select></label>${numericField('radius', 1, `${t('field.radiusMm')}`, true)}`, () => t('tool.filletHint'), async data => {
+  const topology = viewport.elements.topology;
+  const local = topology?.id === source ? { edges: viewport.elements.edgeReferences(), edgeCount: topology.edges.length } : null;
+  if (local && !local.edges.length) { message('selection.chooseElements'); return; }
+  openTool(() => t(local ? 'selection.fillet' : 'tool.roundEdges'), () => `${local ? `<input name="source" type="hidden" value="${escape(source)}"/><p class="dialog-field full">${escape(candidates.find(object => object.id === source).name)} · ${escape(t('selection.edgeCount', { count: local.edges.length }))}</p>` : `<label class="dialog-field full"><span>${t('field.sourcePiece')}</span><select name="source">${options(source, candidates)}</select></label>`}${numericField('radius', 1, `${t('field.radiusMm')}`, true)}`, () => t(local ? 'selection.filletHint' : 'tool.filletHint'), async data => {
     let id;
     const applied = await mutate((candidate) => {
-      id = addObject(candidate, { type: 'fillet', name: t('tool.filletDefault'), params: { source: data.get('source'), radius: Number(data.get('radius')) } }).id;
+      id = addObject(candidate, { type: 'fillet', name: t('tool.filletDefault'), params: { source: data.get('source'), radius: Number(data.get('radius')), ...(local || {}) } }).id;
       updateObject(candidate, data.get('source'), { visible: false });
     }, 'tool.filletCreated');
     if (applied) select(id);
@@ -554,7 +613,7 @@ $('#tool-form').onsubmit = async (event) => {
   const data = new FormData(event.currentTarget);
   await toolAction?.(data);
   if ($('#message').classList.contains('error')) $('#tool-error').textContent = $('#message').textContent;
-  else showOperation('properties');
+  else closeOperation();
 };
 $$('.close-dialog').forEach((button) => button.onclick = () => button.closest('dialog').close());
 document.addEventListener('invalid', (event) => {
@@ -663,7 +722,7 @@ onLocaleChange(() => {
   if (toolRenderer && !$('#operation-form-panel').hidden) toolRenderer();
   renderMeshLabels();
   if (currentMessage.error) $('#tool-error').textContent = $('#message').textContent;
-  viewport?.renderer.domElement.setAttribute('aria-label', t('canvas.aria'));
+  viewport?.renderer.domElement.setAttribute('aria-label', t(viewport.mode === 'sketch' ? 'canvas.sketchAria' : 'canvas.aria'));
   interactions?.refreshLabels();
 });
 
@@ -680,7 +739,7 @@ $('#cancel-operation').onclick = async () => {
 async function start() {
   try {
     viewport = new CadViewport($('#viewport'), select);
-    interactions = new CadInteractions(viewport, { project: () => project, geometry: () => geometry, selection: () => selection, busy: () => busy, mutate, select, message, syncControls, closeOperation, showOperation });
+    interactions = new CadInteractions(viewport, { project: () => project, geometry: () => geometry, selection: () => selection, busy: () => busy, operationActive: () => Boolean(toolAction || meshSession), renderElements, mutate, select, message, syncControls, closeOperation, showOperation });
     interactions.refreshLabels();
     engine = new EngineClient();
     renderPanels();
@@ -702,7 +761,7 @@ async function start() {
     message(restoreNotice || 'Listo. Crea piezas o selecciona una operación para cambiar sus medidas.');
     saveLocal();
     window.cadReady = true;
-    window.draftyDiagnostics = () => ({ ...viewport.metrics, engineRequests: engine.sequence, sketchProfile: viewport.sketchPlane ? structuredClone(viewport.pendingProfile) : null, camera: { position: viewport.camera.position.toArray(), target: viewport.controls.target.toArray(), up: viewport.camera.up.toArray() }, sketch: interactions.session ? { points: structuredClone(interactions.session.points), circle: structuredClone(interactions.session.circle), anchor: structuredClone(interactions.session.anchor), hover: structuredClone(interactions.session.hover), closed: interactions.session.closed, stage: interactions.session.stage } : null, geometries: viewport.renderer.info.memory.geometries, objects: project.objects.length, revisions: geometry.meshes.map(({ id, revision }) => ({ id, revision })) });
+    window.draftyDiagnostics = () => ({ ...viewport.metrics, engineRequests: engine.sequence, mode: viewport.mode, elements: viewport.elements.topology ? { id: viewport.elements.topology.id, kind: viewport.elements.kind, selected: [...viewport.elements.selected], edges: viewport.elements.edgeReferences().map(edge => edge.index) } : null, sketchProfile: viewport.sketchPlane ? structuredClone(viewport.pendingProfile) : null, camera: { fov: viewport.camera.fov, aspect: viewport.camera.aspect, position: viewport.camera.position.toArray(), target: viewport.controls.target.toArray(), up: viewport.camera.up.toArray() }, sketch: interactions.session ? { points: structuredClone(interactions.session.points), circle: structuredClone(interactions.session.circle), anchor: structuredClone(interactions.session.anchor), hover: structuredClone(interactions.session.hover), closed: interactions.session.closed, stage: interactions.session.stage } : null, geometries: viewport.renderer.info.memory.geometries, objects: project.objects.length, revisions: geometry.meshes.map(({ id, revision }) => ({ id, revision })) });
   } catch (error) {
     retryMode = true;
     busyText = { title: 'status.editorInitFailed', detail: error.message || 'status.webglRequired' };

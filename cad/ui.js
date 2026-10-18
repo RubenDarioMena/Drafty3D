@@ -55,11 +55,14 @@ function refreshCommandLabels() {
 }
 function setSpace(next) {
   space = next;
-  for (const button of document.querySelectorAll('[data-space]')) button.setAttribute('aria-pressed', String(button.dataset.space === space));
+  $('.app').dataset.activeSpace = space;
+  for (const button of document.querySelectorAll('button[data-space]')) button.setAttribute('aria-pressed', String(button.dataset.space === space));
   for (const command of commands) $(`#${command.id}`).hidden = !command.spaces.includes(space);
   for (const group of document.querySelectorAll('#command-groups .tool-group')) group.hidden = [...group.querySelectorAll('button')].every(button => button.hidden);
+  $('#assembly-placeholder').hidden = space !== 'assembly';
+  window.dispatchEvent(new CustomEvent('drafty-space-change', { detail: space }));
 }
-for (const button of document.querySelectorAll('[data-space]')) button.onclick = () => setSpace(button.dataset.space);
+for (const button of document.querySelectorAll('button[data-space]')) button.onclick = () => setSpace(button.dataset.space);
 setSpace('cad');
 function search() {
   const normalize = value => value.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLocaleLowerCase();

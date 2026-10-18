@@ -24,6 +24,7 @@ self.addEventListener('message', ({ data }) => {
       let result;
       if (type === 'capabilities') result = kernel.capabilities;
       else if (type === 'evaluate') result = kernel.evaluateDocument(document, options);
+      else if (type === 'topology') result = kernel.describeTopology(document, options);
       else if (type === 'mesh-preview') result = kernel.convertToMesh(document, options);
       else if (type === 'export') result = kernel.exportDocument(document, format);
       else throw new Error('La solicitud al motor geométrico no es compatible.');

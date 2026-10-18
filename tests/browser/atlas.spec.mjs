@@ -90,8 +90,8 @@ test('el render descansa en reposo y reutiliza geometría al editar nombre/color
   expect(cosmetic.geometryUploads).toBe(first.geometryUploads);
   expect(cosmetic.engineRequests).toBe(first.engineRequests);
   const box=await page.locator('#viewport>canvas').boundingBox();
-  await page.mouse.move(box.x+box.width*.7,box.y+box.height*.65); await page.mouse.down();
-  await page.mouse.move(box.x+box.width*.7+90,box.y+box.height*.65+40,{steps:12}); await page.mouse.up();
+  await page.mouse.move(box.x+box.width*.12,box.y+box.height*.25); await page.mouse.down();
+  await page.mouse.move(box.x+box.width*.12+75,box.y+box.height*.25+35,{steps:12}); await page.mouse.up();
   const moved=await page.evaluate(()=>window.draftyDiagnostics());
   expect(moved.engineRequests).toBe(first.engineRequests);
   expect(moved.geometryUploads).toBe(first.geometryUploads);
@@ -108,7 +108,7 @@ test('cambiar idioma actualiza la interfaz sin reconstruir ni volver a dibujar l
 
   await page.locator('#locale-select').selectOption('en');
   await expect(page.locator('html')).toHaveAttribute('lang', 'en');
-  await expect(page.locator('[data-space="cad"]')).toHaveText('Parametric CAD');
+  await expect(page.locator('[data-space="cad"]')).toHaveText('Parametric design');
   await expect(page.locator('#inspector-kind')).toHaveText('BLOCK');
   await expect(page.locator('label[for="param-width"]')).toHaveText('Width X');
   await expect(page.locator('#object-count')).toHaveText('1 visible');

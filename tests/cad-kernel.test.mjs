@@ -20,6 +20,58 @@ function close(actual, expected, tolerance = 1e-7) {
   assert.ok(Math.abs(actual - expected) < tolerance, `${actual} debería ser ${expected}`);
 }
 
+test('la selección usa 12 aristas y 8 vértices BRep y redondea solo una arista elegida', () => {
+  const doc = createDocument('Redondeo local');
+  addObject(doc, { ...box('base'), visible: false });
+  const initial = kernel.evaluateDocument(doc);
+  const topology = kernel.describeTopology(doc, { id: 'base' });
+  assert.equal(topology.edges.length, 12);
+  assert.equal(topology.vertices.length, 8);
+  assert.ok(topology.vertices.every(vertex => vertex.edges.length === 3));
+  assert.equal(kernel.describeTopology(doc, { id: 'base' }), topology);
+  const edge = topology.edges.find(edge => edge.points[0][0] === 0 && edge.points[0][1] === 0 && edge.points.at(-1)[2] !== edge.points[0][2]);
+  addObject(doc, { id: 'local', type: 'fillet', params: { source: 'base', radius: 1, edgeCount: 12, edges: [{ index: edge.index, signature: edge.signature }] } });
+  const restored = parseDocument(serializeDocument(doc));
+  const result = kernel.evaluateDocument(restored);
+  close(result.meshes[1].volume, 6000 - (1 - Math.PI / 4) * 10);
+  assert.equal(kernel.evaluateDocument(restored, { known: result.meshes }).meshes[1].positions, undefined);
+  updateObject(restored, 'base', { params: { width: 25, x: 7 } });
+  close(kernel.evaluateDocument(restored).meshes[1].volume, 7500 - (1 - Math.PI / 4) * 10);
+  const invalid = structuredClone(restored);
+  invalid.objects[1].params.edges[0].signature = 'wrong-reference';
+  assert.throws(() => kernel.evaluateDocument(invalid), /aristas de origen han cambiado/);
+  close(kernel.evaluateDocument(restored).meshes[1].volume, 7500 - (1 - Math.PI / 4) * 10);
+  invalid.objects[1].params = { ...doc.objects[1].params, edgeCount: 11 };
+  assert.throws(() => kernel.evaluateDocument(invalid), /aristas de origen han cambiado/);
+  const cornerDoc = createDocument('Redondeo desde un vértice');
+  addObject(cornerDoc, { ...box('base'), visible: false });
+  addObject(cornerDoc, { id: 'corner', type: 'fillet', params: { source: 'base', radius: 1, edgeCount: 12,
+    edges: topology.vertices[0].edges.map(index => ({ index, signature: topology.edges[index].signature })) } });
+  const corner = kernel.evaluateDocument(cornerDoc).meshes[1];
+  const allDoc = structuredClone(cornerDoc);
+  delete allDoc.objects[1].params.edges; delete allDoc.objects[1].params.edgeCount;
+  const all = kernel.evaluateDocument(allDoc).meshes[1];
+  assert.ok(corner.volume < result.meshes[1].volume && corner.volume > all.volume);
+  assert.equal(initial.meshes[0].triangleCount, 12);
+});
+
+test('la topología conserva curvas exactas y permite inspeccionar puntos de mallas sin ofrecer redondeos BRep', () => {
+  const doc = createDocument();
+  addObject(doc, { id: 'cilindro', type: 'cylinder', params: { radius: 10, height: 20 } });
+  const topology = kernel.describeTopology(doc, { id: 'cilindro' });
+  assert.equal(topology.edges.filter(edge => edge.points.length > 2).length, 2);
+  assert.ok(topology.edges.filter(edge => edge.points.length > 2).every(edge => edge.points.length === 65));
+  const converted = kernel.convertToMesh(document([box('base')]), { id: 'base', quality: 0 });
+  const meshDoc = createDocument();
+  addObject(meshDoc, { id: 'malla', type: 'mesh', params: { data: Buffer.from(converted.data).toString('base64'), quality: 0 } });
+  const meshTopology = kernel.describeTopology(meshDoc, { id: 'malla' });
+  assert.equal(meshTopology.isMesh, true);
+  assert.equal(meshTopology.vertices.length, 8);
+  assert.deepEqual(meshTopology.edges, []);
+  assert.ok(meshTopology.vertices.every(vertex => vertex.edges.length === 0));
+  assert.throws(() => kernel.describeTopology(meshDoc, { id: 'missing' }), /pieza visible/);
+});
+
 test('un croquis independiente guarda una cara plana y su extrusión sigue las medidas editadas', () => {
   const doc = createDocument('Base desde cero');
   addObject(doc, { id: 'perfil', type: 'sketch', params: { points: [[0, 0], [40, 0], [40, 30], [0, 30]], plane: WORK_PLANES.XZ, x: 2, y: 3, z: 4 } });
