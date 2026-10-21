@@ -1,4 +1,5 @@
 import { measureRectangle, measureCircle, createRectangleProfile, createCircleProfile } from './profile-dimensions.js';
+import { formatNumber, t } from './i18n.js';
 
 const $ = (selector) => document.querySelector(selector);
 const distance = (a, b) => Math.hypot(a[0] - b[0], a[1] - b[1]);
@@ -13,7 +14,8 @@ export class SketchSession {
     this.closed = Boolean(object);
     this.tool = this.circle ? 'circle' : measureRectangle(this.points) || !object ? 'rectangle' : 'lines';
     this.anchor = null; this.hover = null;
-    $('#sketch-plane-name').textContent = name;
+    this.name = name;
+    $('#sketch-plane-name').textContent = t(name);
     $('#sketch-height').value = object?.params.height || 15;
     $('#sketch-reverse').checked = object?.type === 'extrusion' ? object.params.reverse === true : Boolean(support);
     const select = $('#sketch-target'); select.replaceChildren();
@@ -62,9 +64,8 @@ export class SketchSession {
     $('#sketch-volume-fields').hidden = stage !== 'volume';
     $('#sketch-finish').hidden = $('#sketch-next').hidden = stage !== 'profile';
     $('#sketch-create').hidden = stage !== 'volume';
-    $('#sketch-step').textContent = stage === 'profile' ? '1 · DIBUJAR EL CROQUIS' : '2 · CREAR VOLUMEN';
-    $('#sketch-finish').textContent = this.object ? 'Guardar cambios del perfil' : 'Terminar croquis';
     $('#operation-content').scrollTop = 0;
+    this.refreshLabels();
     this.draw();
   }
 
@@ -113,7 +114,7 @@ export class SketchSession {
     }
     if (type === 'down') this.pressSnapshot = structuredClone(Object.fromEntries(snapshotKeys.map(key => [key, this[key]])));
     this.hover = point;
-    $('#sketch-coordinates').textContent = `U: ${point[0].toFixed(1)} · V: ${point[1].toFixed(1)} mm`;
+    $('#sketch-coordinates').textContent = t('canvas.axisU', { u: formatNumber(point[0], { minimumFractionDigits: 1, maximumFractionDigits: 1 }), v: formatNumber(point[1], { minimumFractionDigits: 1, maximumFractionDigits: 1 }) });
     if (type === 'down') {
       this.down = [event.clientX, event.clientY]; this.startedNow = false;
       if (this.closed) {
@@ -164,18 +165,37 @@ export class SketchSession {
       if (this.tool === 'circle') circle = { type: 'circle', center: this.anchor, radius: distance(this.anchor, this.hover) };
       else points = this.rectangle(this.anchor, this.hover);
     } else if (!this.closed && this.tool === 'lines' && this.hover && points.length) points = [...points, this.hover];
+    this.displayPoints = points;
+    this.displayCircle = circle;
     this.viewport.drawProfile({ points, circle, closed: this.closed || Boolean(this.anchor) }, this.stage === 'volume' ? Number($('#sketch-height').value) : 0, $('#sketch-reverse').checked);
+    this.refreshLabels();
+  }
+
+  refreshLabels() {
     document.querySelectorAll('[data-profile]').forEach((button) => button.setAttribute('aria-pressed', String(button.dataset.profile === this.tool)));
-    $('#sketch-instructions').textContent = this.stage === 'volume' ? 'Elige el resultado y la profundidad. Gira la cámara para revisar la vista previa antes de aplicar.' : this.closed ? 'Ajusta las medidas o arrastra los puntos. Termina el croquis para guardarlo sin volumen.' : { rectangle: 'Dibuja dos esquinas o introduce medidas y pulsa Aplicar medidas. Mayús dibuja un cuadrado.', circle: 'Dibuja el centro y radio o introduce sus medidas exactas.', lines: 'Une segmentos. Termina sobre el primer punto o pulsa Cerrar contorno.' }[this.tool];
-    $('#sketch-status').textContent = this.closed ? 'Contorno cerrado' : this.points.length ? `${this.points.length} vértices · contorno abierto` : 'Dibuja en el plano de la vista 3D';
-    $('#sketch-measures').textContent = circle ? `Radio: ${circle.radius.toFixed(2)} mm · Ø ${(circle.radius * 2).toFixed(2)} mm` : points.length ? `U: ${(Math.max(...points.map((p) => p[0])) - Math.min(...points.map((p) => p[0]))).toFixed(2)} mm · V: ${(Math.max(...points.map((p) => p[1])) - Math.min(...points.map((p) => p[1]))).toFixed(2)} mm` : '';
+    $('#sketch-plane-name').textContent = t(this.name);
+    $('#sketch-step').textContent = t(this.stage === 'profile' ? 'sketch.stepProfile' : 'sketch.stepVolume');
+    $('#sketch-finish').textContent = t(this.object ? 'sketch.saveProfile' : 'sketch.finish');
+    const instructionKey = this.stage === 'volume' ? 'sketch.instructionsVolume'
+      : this.closed ? 'sketch.instructionsClosed'
+        : this.tool === 'lines' ? 'sketch.instructionsLines'
+          : this.tool === 'circle' ? 'sketch.instructionsCircle' : 'sketch.instructionsRectangle';
+    $('#sketch-instructions').textContent = t(instructionKey);
+    $('#sketch-status').textContent = this.closed ? t('sketch.closed') : this.points.length ? t('sketch.open', { count: formatNumber(this.points.length) }) : t('sketch.drawOnPlane');
+    const points = this.displayPoints || this.points;
+    const circle = this.displayCircle || this.circle;
+    $('#sketch-measures').textContent = circle
+      ? t('sketch.radiusMeasure', { radius: formatNumber(circle.radius, { minimumFractionDigits: 2, maximumFractionDigits: 2 }), diameter: formatNumber(circle.radius * 2, { minimumFractionDigits: 2, maximumFractionDigits: 2 }) })
+      : points.length ? t('sketch.boundsMeasure', { width: formatNumber(Math.max(...points.map(point => point[0])) - Math.min(...points.map(point => point[0])), { minimumFractionDigits: 2, maximumFractionDigits: 2 }), height: formatNumber(Math.max(...points.map(point => point[1])) - Math.min(...points.map(point => point[1])), { minimumFractionDigits: 2, maximumFractionDigits: 2 }) }) : '';
+    const coordinates = this.hover || [0, 0];
+    $('#sketch-coordinates').textContent = t('canvas.axisU', { u: formatNumber(coordinates[0], { minimumFractionDigits: 1, maximumFractionDigits: 1 }), v: formatNumber(coordinates[1], { minimumFractionDigits: 1, maximumFractionDigits: 1 }) });
     $('#sketch-close').disabled = this.closed || this.tool !== 'lines' || this.points.length < 3;
     $('#sketch-undo').disabled = this.tool !== 'lines' || !this.points.length;
     $('#sketch-dimensions').hidden = this.tool === 'lines';
     for (const id of ['width', 'depth']) { $(`#sketch-${id}-field`).hidden = this.tool === 'circle'; $(`#sketch-${id}`).disabled = this.tool !== 'rectangle'; }
     $('#sketch-radius-field').hidden = this.tool !== 'circle'; $('#sketch-radius').disabled = this.tool !== 'circle';
-    $('#sketch-u-label').textContent = this.tool === 'circle' ? 'Centro U' : 'Esquina U';
-    $('#sketch-v-label').textContent = this.tool === 'circle' ? 'Centro V' : 'Esquina V';
+    $('#sketch-u-label').textContent = t(this.tool === 'circle' ? 'sketch.centerU' : 'sketch.cornerU');
+    $('#sketch-v-label').textContent = t(this.tool === 'circle' ? 'sketch.centerV' : 'sketch.cornerV');
     const measures = this.circle ? measureCircle(this.circle) : measureRectangle(this.points);
     if (measures && !this.numericDirty) {
       for (const [id, key] of Object.entries({ u: 'u', v: 'v', width: 'width', depth: 'height', radius: 'radius' })) {
@@ -185,7 +205,9 @@ export class SketchSession {
     const effect = $('#sketch-effect').value;
     $('#sketch-effect').disabled = this.object?.type === 'extrusion';
     $('#sketch-target-field').hidden = effect === 'new';
-    $('#sketch-create').textContent = this.object?.type === 'extrusion' ? 'Actualizar extrusión' : { new: 'Extruir perfil', cut: 'Cortar pieza', fuse: 'Añadir a la pieza' }[effect];
+    $('#sketch-create').textContent = t(this.object?.type === 'extrusion' ? 'sketch.updateExtrusion' : { new: 'sketch.extrude', cut: 'sketch.cutSolid', fuse: 'sketch.addSolid' }[effect]);
+    $('#sketch-next').textContent = t('sketch.nextToVolume');
+    $('#sketch-back').textContent = t('sketch.backToDrawing');
     this.updateSubmit();
   }
 }

@@ -25,3 +25,10 @@
 #sketch-back{margin-top:14px}
 #start-sketch{display:block;margin:16px auto 10px}
 .dependency-link{display:block;border:0;background:none;color:var(--accent);text-align:left;padding:5px 0;font:inherit;text-decoration:underline}
+.modebar-actions{display:flex;align-items:center;gap:14px}.locale-switch{display:flex;align-items:center;gap:6px;color:var(--muted);font-size:10px}.locale-switch select{width:auto;min-width:94px;padding:5px 7px;font-size:11px}
+.workspace-placeholder{align-self:center;color:var(--muted);font-size:12px;margin:0 18px}
+.interaction-tools .selection-filter{gap:6px;padding-left:5px;border-right:1px solid var(--line)}
+.selection-filter select{width:auto;max-width:145px;padding:5px;font-size:10px}
+.element-panel{padding:16px 20px;background:#edf5e6;border-bottom:1px solid var(--line)}
+.element-panel p{font-size:11px;line-height:1.6}.element-panel .button{font-size:11px;margin-top:5px}
+.app[data-active-space=assembly] .history-tools,.app[data-active-space=assembly] .interaction-tools,.is-sketch #element-panel{display:none!important}

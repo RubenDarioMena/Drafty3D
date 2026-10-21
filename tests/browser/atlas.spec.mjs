@@ -90,11 +90,44 @@ test('el render descansa en reposo y reutiliza geometría al editar nombre/color
   expect(cosmetic.geometryUploads).toBe(first.geometryUploads);
   expect(cosmetic.engineRequests).toBe(first.engineRequests);
   const box=await page.locator('#viewport>canvas').boundingBox();
-  await page.mouse.move(box.x+box.width*.7,box.y+box.height*.65); await page.mouse.down();
-  await page.mouse.move(box.x+box.width*.7+90,box.y+box.height*.65+40,{steps:12}); await page.mouse.up();
+  await page.mouse.move(box.x+box.width*.12,box.y+box.height*.25); await page.mouse.down();
+  await page.mouse.move(box.x+box.width*.12+75,box.y+box.height*.25+35,{steps:12}); await page.mouse.up();
   const moved=await page.evaluate(()=>window.draftyDiagnostics());
   expect(moved.engineRequests).toBe(first.engineRequests);
   expect(moved.geometryUploads).toBe(first.geometryUploads);
   expect(moved.frames).toBeGreaterThan(cosmetic.frames);
   await testInfo.attach('render-metrics', { body: Buffer.from(JSON.stringify({ first, cosmetic, moved }, null, 2)), contentType: 'application/json' });
+});
+
+test('cambiar idioma actualiza la interfaz sin reconstruir ni volver a dibujar la escena', async ({ page }) => {
+  await open(page);
+  await page.locator('[data-id="base"]').click();
+  await page.locator('#param-width').fill('73');
+  await page.waitForTimeout(200);
+  const before = await page.evaluate(() => window.draftyDiagnostics());
+
+  await page.locator('#locale-select').selectOption('en');
+  await expect(page.locator('html')).toHaveAttribute('lang', 'en');
+  await expect(page.locator('[data-space="cad"]')).toHaveText('Parametric design');
+  await expect(page.locator('#inspector-kind')).toHaveText('BLOCK');
+  await expect(page.locator('label[for="param-width"]')).toHaveText('Width X');
+  await expect(page.locator('#object-count')).toHaveText('1 visible');
+  await expect(page.locator('#message')).toContainText('Ready.');
+  await expect(page.locator('#param-width')).toHaveValue('73');
+  await expect(page.locator('#create-box')).toContainText('Block');
+
+  const english = await page.evaluate(() => window.draftyDiagnostics());
+  expect(english.engineRequests).toBe(before.engineRequests);
+  expect(english.geometryUploads).toBe(before.geometryUploads);
+  expect(english.frames).toBe(before.frames);
+
+  await page.locator('#open-search').click();
+  await page.locator('#command-query').fill('sketch');
+  await expect(page.locator('#command-results')).toContainText('Sketch profile');
+  await page.locator('#command-palette').getByRole('button', { name: 'Close' }).click();
+  await page.locator('#locale-select').selectOption('es');
+  await expect(page.locator('html')).toHaveAttribute('lang', 'es');
+  await expect(page.locator('label[for="param-width"]')).toHaveText('Ancho X');
+  await expect(page.locator('#locale-select')).toHaveValue('es');
+  expect(await page.evaluate(() => localStorage.getItem('drafty3d.language.v1'))).toBe('es');
 });
