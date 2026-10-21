@@ -365,6 +365,9 @@ export class CadViewport {
   updateRay(event) {
     const rect = this.renderer.domElement.getBoundingClientRect();
     this.pointer.set((event.clientX - rect.left) / rect.width * 2 - 1, -(event.clientY - rect.top) / rect.height * 2 + 1);
+    // Picking can happen before the scheduled render after a work-plane/camera change.
+    // Refresh its transform without drawing or rebuilding any geometry.
+    this.camera.updateMatrixWorld();
     this.raycaster.setFromCamera(this.pointer, this.camera);
   }
   partHit(solidOnly = false) { return this.raycaster.intersectObjects(this.parts.children.filter(group => group.visible && (!solidOnly || !group.userData.isSketch)).map(group => group.children[0]), false)[0]; }

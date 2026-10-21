@@ -1,6 +1,6 @@
 # Atlas · Primera integración CAD
 
-Decisiones aceptadas: Atlas, Documento sobre Operación en el panel izquierdo, conversión explícita por pieza con posibilidad de guardar antes y conservar el CAD original, resolución ajustable según la escena y edición directa limitada a parámetros/croquis compatibles. La iteración actual se revisa en `codex/atlas-cad`; su publicación en `main` y Netlify queda pendiente de las pruebas locales del usuario.
+Decisiones aceptadas: Atlas, Documento sobre Operación en el panel izquierdo, conversión explícita por pieza con posibilidad de guardar antes y conservar el CAD original, resolución ajustable según la escena y edición directa limitada a parámetros/croquis compatibles. Atlas se conserva como Draft3D en `/cad/`, dentro de Threeway Avenue. La nueva entrega está autorizada para `main` y Netlify; el logotipo vuelve a la portada de herramientas.
 
 ## Separación de responsabilidades
 

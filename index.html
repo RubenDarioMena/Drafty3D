@@ -3,14 +3,56 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Diseña piezas paramétricas con Drafty3D Atlas: croquis, sólidos CAD, conversión a malla y archivos STEP/STL en tu navegador.">
-  <meta http-equiv="refresh" content="0;url=cad/">
-  <title>Drafty3D · CAD Atlas</title>
+  <meta name="description" content="Un punto de partida para diseñar: SolidCraft, Materializr y Draft3D.">
+  <meta name="theme-color" content="#f5f6f2">
+  <link rel="icon" href="data:,">
+  <title>Drafty3D · Elige tu herramienta</title>
+  <link rel="stylesheet" href="/portal/style.css">
+  <script type="module" src="/portal/app.js"></script>
 </head>
 <body>
-  <h1>Drafty3D</h1>
-  <p><a href="cad/">Abrir el editor CAD Atlas</a></p>
-  <p><a href="docs/investigacion/propuestas-ui.html">Laboratorio de interfaces</a></p>
-  <p><a href="docs/investigacion/comparativa-cad.html">Leer la investigación de funciones</a></p>
+  <header class="site-header">
+    <a class="brand" href="/" aria-label="Drafty3D · inicio"><span class="brand-mark" aria-hidden="true">◇</span> Drafty<span>3D</span></a>
+    <div class="header-right"><span class="header-note" data-copy="header">TU ESPACIO DE DISEÑO</span><label class="language"><span class="sr-only" data-copy="language">Idioma</span><select id="language" aria-label="Idioma"><option value="es">ES</option><option value="en">EN</option></select></label></div>
+  </header>
+  <main class="avenue">
+    <div class="eyebrow"><span></span> THREEWAY AVENUE</div>
+    <h1 data-copy="headline">Una idea.<br>Tres caminos para crear.</h1>
+    <p class="intro" data-copy="intro">Elige tu herramienta y empieza a diseñar. Solo cargamos la que abres.</p>
+    <div class="tool-grid">
+      <article class="tool-card featured">
+        <div class="card-top"><span class="tool-number">01 /</span><span class="badge" data-copy="recommended">RECOMENDADO</span></div>
+        <div class="tool-art solid-art" aria-hidden="true"><svg viewBox="0 0 220 145"><path class="shape-fill" d="m110 12 71 41v68l-71 41-71-41V53Z" transform="translate(0 -14)"/><path d="m39 39 71 41 71-41M110 80v68M76 60V19m70 41V19"/><path class="art-detail" d="m110 46 31 18v29l-31 18-31-18V64Z"/></svg></div>
+        <p class="tool-type" data-copy="solidType">CAD PARAMÉTRICO · EN EL NAVEGADOR</p>
+        <h2>SolidCraft</h2>
+        <p class="card-description" data-copy="solidDescription">Del croquis al sólido. Modelado paramétrico con historial de operaciones y un motor escrito en Rust.</p>
+        <ul class="capabilities"><li data-copy="solidFeature1">Croquis y operaciones</li><li>WebAssembly</li></ul>
+        <a class="open-button primary" href="/solidcraft/"><span data-copy="openSolid">Abrir SolidCraft</span><span aria-hidden="true">→</span></a>
+        <p class="availability"><span class="status-dot"></span><span data-copy="selfHosted">Alojado aquí · sin cuenta</span></p>
+      </article>
+      <article class="tool-card">
+        <div class="card-top"><span class="tool-number">02 /</span><span class="badge neutral" data-copy="desktop">ESCRITORIO</span></div>
+        <div class="tool-art material-art" aria-hidden="true"><svg viewBox="0 0 220 145"><path class="shape-fill" d="m38 51 72-39 72 39-72 40Z"/><path class="shape-fill" d="m38 78 72 39 72-39v26l-72 39-72-39Z"/><path d="m38 51 72 40 72-40M110 91v26M38 78V51m144 27V51"/><path class="art-detail" d="m80 50 30-16 30 16-30 17Z"/></svg></div>
+        <p class="tool-type" data-copy="materialType">CAD PARAMÉTRICO · APLICACIÓN NATIVA</p>
+        <h2>Materializr</h2>
+        <p class="card-description" data-copy="materialDescription">Croquis con restricciones y modelado de sólidos con OpenCascade. Su versión actual se instala en tu equipo.</p>
+        <ul class="capabilities"><li data-copy="materialFeature1">Restricciones de croquis</li><li>STEP / STL</li></ul>
+        <a class="open-button" href="/materializr/"><span data-copy="materialOptions">Ver opciones de Materializr</span><span aria-hidden="true">→</span></a>
+        <p class="availability native"><span class="status-dot"></span><span data-copy="nativeStatus">Versión web no disponible</span></p>
+      </article>
+      <article class="tool-card">
+        <div class="card-top"><span class="tool-number">03 /</span><span class="badge neutral" data-copy="experimental">EXPERIMENTAL</span></div>
+        <div class="tool-art draft-art" aria-hidden="true"><svg viewBox="0 0 220 145"><path class="shape-fill" d="m110 12 73 42-15 65-58 23-73-42 15-65Z"/><path d="m110 12 0 77 73-35M110 89 37 100m73-11 58 30M52 35l58 54M110 89v53"/><g class="vertex"><circle cx="110" cy="12" r="4"/><circle cx="183" cy="54" r="4"/><circle cx="168" cy="119" r="4"/><circle cx="110" cy="142" r="4"/><circle cx="37" cy="100" r="4"/><circle cx="52" cy="35" r="4"/><circle cx="110" cy="89" r="4"/></g></svg></div>
+        <p class="tool-type" data-copy="draftType">ATLAS · CAD Y MALLAS</p>
+        <h2>Draft3D</h2>
+        <p class="card-description" data-copy="draftDescription">Nuestro editor Atlas. Crea sólidos básicos, trabaja con croquis y convierte tus piezas a mallas poligonales.</p>
+        <ul class="capabilities"><li data-copy="draftFeature1">Sólidos y mallas</li><li>STEP / STL</li></ul>
+        <a class="open-button" href="/cad/"><span data-copy="openDraft">Abrir Draft3D</span><span aria-hidden="true">→</span></a>
+        <p class="availability"><span class="status-dot"></span><span data-copy="selfHosted">Alojado aquí · sin cuenta</span></p>
+      </article>
+    </div>
+    <div class="workspace-note"><span aria-hidden="true">→</span><p data-copy="memory">Un editor a la vez. Sin cargas en segundo plano, sin cuentas obligatorias. Guarda tu trabajo antes de cambiar de herramienta.</p></div>
+  </main>
+  <footer class="site-footer"><span>Drafty3D <span class="footer-divider">/</span> Threeway Avenue</span><a href="/about/" data-copy="about">Proyectos y licencias →</a></footer>
 </body>
 </html>

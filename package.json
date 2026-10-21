@@ -2,13 +2,14 @@
   "name": "drafty3d",
   "version": "0.1.0",
   "private": true,
-  "description": "Drafty3D: editor CAD paramétrico local con interfaz Atlas y conversión a malla.",
+  "description": "Threeway Avenue: acceso a SolidCraft, Materializr y Draft3D Atlas.",
   "type": "module",
   "engines": {
     "node": ">=22"
   },
   "scripts": {
     "dev": "node scripts/dev.mjs",
+    "setup:solidcraft": "node scripts/solidcraft.mjs",
     "build": "node scripts/build.mjs",
     "preview": "node scripts/dev.mjs --static",
     "test": "node --test tests/*.test.mjs",
@@ -20,6 +21,7 @@
   },
   "devDependencies": {
     "@playwright/test": "1.64.0",
+    "fflate": "0.8.2",
     "vite": "8.3.4"
   }
 }

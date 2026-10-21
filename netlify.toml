@@ -5,8 +5,18 @@
 [build.environment]
   NODE_VERSION = "22"
 
-[[redirects]]
-  from = "/"
-  to = "/cad/"
-  status = 302
-  force = true
+[[headers]]
+  for = "/solidcraft/app/sw.js"
+  [headers.values]
+    Cache-Control = "no-cache"
+    Service-Worker-Allowed = "/solidcraft/app/"
+
+[[headers]]
+  for = "/solidcraft/app/build.json"
+  [headers.values]
+    Cache-Control = "no-cache"
+
+[[headers]]
+  for = "/solidcraft/app/*.wasm"
+  [headers.values]
+    Content-Type = "application/wasm"
