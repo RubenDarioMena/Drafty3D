@@ -53,6 +53,20 @@ El sitio de producción es [drafty3-d.vercel.app](https://drafty3-d.vercel.app/)
 - `/deployment.json` identifica `VERCEL_GIT_COMMIT_SHA` cuando Vercel compila. Comprobar que coincide con el commit de GitHub antes de dar un despliegue por verificado.
 - Si ya existe un servidor Materializr protegido con HTTPS, la variable opcional de build `MATERIALIZR_WEB_URL` añade un acceso en su página. No crea ni despliega ese servidor y no debe incluir contraseñas o tokens.
 
+### Compartir diseños SolidCraft por correo
+
+La barra exterior de SolidCraft ofrece **Compartir…**. Usa la API oficial del editor para exportar una copia del diseño como proyecto editable `.json`, STEP o STL, lee el archivo temporal desde el almacenamiento privado del navegador y lo elimina al terminar. No cambia el documento abierto. El archivo se envía adjunto; el límite es **3 MiB** para caber en el límite de solicitudes de Vercel. Para diseños mayores, exportar desde el menú File y compartir el archivo por otro medio.
+
+El endpoint `/api/share` es una Vercel Function. Requiere estas variables de entorno en el proyecto, para Production y Preview según corresponda:
+
+| Variable | Uso |
+| --- | --- |
+| `RESEND_API_KEY` | Clave de API de Resend con permiso de envío. Solo en el servidor. |
+| `SHARE_FROM_EMAIL` | Remitente de un dominio verificado en Resend, por ejemplo `Drafty3D <compartir@tudominio.com>`. |
+| `SHARE_ACCESS_TOKEN` | Clave privada larga y aleatoria para autorizar envíos. Se introduce en el diálogo y no se guarda en el navegador. |
+
+La función responde `503` hasta que las tres estén configuradas. Crear la clave de acceso con un generador seguro, por ejemplo `openssl rand -base64 32`; no publicarla en el repositorio. Después de guardar las variables en Vercel, hacer un nuevo despliegue. El endpoint rechaza formatos, nombres, destinatarios y tamaños inválidos antes de llamar al proveedor. No se incluye ninguna credencial en el build estático.
+
 ## Comprobaciones y procedencia
 
 ```sh

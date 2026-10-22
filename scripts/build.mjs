@@ -12,6 +12,7 @@ const files = [
   'index.html',
   'portal/style.css',
   'portal/app.js',
+  'portal/share.js',
   'solidcraft/index.html',
   'materializr/index.html',
   'about/index.html',

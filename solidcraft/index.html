@@ -7,10 +7,23 @@
   <title>SolidCraft · Drafty3D</title>
   <link rel="stylesheet" href="/portal/style.css">
   <script type="module" src="/portal/app.js"></script>
+  <script type="module" src="/portal/share.js"></script>
 </head>
 <body class="editor-page">
-  <header class="editor-bar"><a href="/" data-copy="back">← Todas las herramientas</a><strong>SolidCraft <span>0.18.3</span></strong><nav><a href="/about/" data-copy="about">Proyectos y licencias →</a><label class="language"><select id="language" aria-label="Idioma"><option value="es">ES</option><option value="en">EN</option></select></label></nav></header>
+  <header class="editor-bar"><div class="editor-actions"><a href="/" data-copy="back">← Todas las herramientas</a><button type="button" id="share-open">Compartir…</button></div><strong>SolidCraft <span>0.18.3</span></strong><nav><a href="/about/" data-copy="about">Proyectos y licencias →</a><label class="language"><select id="language" aria-label="Idioma"><option value="es">ES</option><option value="en">EN</option></select></label></nav></header>
   <iframe class="editor-frame" src="/solidcraft/app/" title="SolidCraft · editor CAD" allow="fullscreen; clipboard-read; clipboard-write" allowfullscreen></iframe>
   <div class="editor-help" id="solidcraft-help" role="alert" hidden><span data-copy="solidSlow">SolidCraft sigue cargando. La primera visita descarga un motor de unos 50 MB.</span><a href="/solidcraft/app/" data-copy="solidDirect">Abrir editor directamente ↗</a><button type="button" id="solidcraft-retry" data-copy="solidRetry">Reintentar</button></div>
+  <dialog id="share-dialog" class="share-dialog" aria-labelledby="share-title">
+    <form id="share-form">
+      <div class="share-heading"><h2 id="share-title">Compartir diseño</h2><button type="button" id="share-close" aria-label="Cerrar">×</button></div>
+      <p id="share-description">Envía una copia del diseño abierto como archivo adjunto. El diseño no se modifica.</p>
+      <label for="share-email">Correo destinatario</label><input id="share-email" name="email" type="email" autocomplete="email" required placeholder="persona@ejemplo.com">
+      <label for="share-format">Formato</label><select id="share-format" name="format"><option value="json">Proyecto editable (.json)</option><option value="step">STEP (.step)</option><option value="stl">STL (.stl)</option></select>
+      <label for="share-key">Clave de acceso</label><input id="share-key" name="key" type="password" autocomplete="off" required>
+      <p class="share-hint" id="share-hint">Archivos de hasta 3 MB. La clave se usa solo para autorizar este envío.</p>
+      <p id="share-status" class="share-status" role="status" aria-live="polite"></p>
+      <div class="share-buttons"><button type="button" id="share-cancel">Cancelar</button><button type="submit" id="share-send">Enviar archivo</button></div>
+    </form>
+  </dialog>
 </body>
 </html>
