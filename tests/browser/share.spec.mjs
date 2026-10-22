@@ -2,13 +2,8 @@ import { test, expect } from '@playwright/test';
 
 test('SolidCraft comparte JSON, STEP y STL sin modificar el diseño', async ({ page }) => {
   const requests = [];
-  await page.addInitScript(() => {
-    window.turnstile = {
-      render(_selector, options) { this.options = options; queueMicrotask(() => options.callback('test-token')); return 'test-widget'; },
-      reset() { queueMicrotask(() => this.options.callback('test-token')); },
-    };
-  });
-  await page.route('**/api/share-config', route => route.fulfill({ status: 200, contentType: 'application/json', body: '{"enabled":true,"siteKey":"test-site-key"}' }));
+  await page.route('**/a-4-a/c.js?*', route => route.fulfill({ status: 200, contentType: 'application/javascript', body: 'window.V_C.push({b:1});' }));
+  await page.route('**/api/share-config', route => route.fulfill({ status: 200, contentType: 'application/json', body: '{"enabled":true}' }));
   await page.route('**/api/share', async route => {
     requests.push(route.request().postDataJSON());
     await route.fulfill({ status: 200, contentType: 'application/json', body: '{"sent":true}' });

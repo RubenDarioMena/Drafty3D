@@ -63,10 +63,8 @@ El endpoint `/api/share` es una Vercel Function. Requiere estas variables de ent
 | --- | --- |
 | `BREVO_API_KEY` | Clave de API de Brevo con permiso de correo transaccional. Solo en el servidor. |
 | `SHARE_FROM_EMAIL` | Dirección de remitente verificada en Brevo. Si es de un proveedor gratuito, Brevo puede reemplazarla por una dirección propia para cumplir autenticación. |
-| `TURNSTILE_SITE_KEY` | Clave pública de Cloudflare Turnstile, restringida a los hostnames del sitio. |
-| `TURNSTILE_SECRET_KEY` | Clave privada de Turnstile. Solo en el servidor. |
 
-La función responde `503` hasta que todas estén configuradas. Después de guardar las variables en Vercel, hacer un nuevo despliegue. El navegador solicita un token Turnstile por envío; el servidor lo valida con Cloudflare, comprueba el hostname y la acción, y solo entonces llama a Brevo. El endpoint rechaza formatos, nombres, destinatarios y tamaños inválidos. No se incluye ninguna credencial privada en el build estático. Además, el Firewall de Vercel limita `/api/share` a **10 solicitudes por IP cada 10 minutos**, con respuesta 429 al excederlo; conservar esa regla al migrar de proyecto Vercel.
+La función responde `503` hasta que ambas estén configuradas. Después de guardar las variables en Vercel, hacer un nuevo despliegue. El navegador activa BotID Basic para `/api/share`; el servidor comprueba el resultado antes de llamar a Brevo. Este proyecto usa OIDC de Vercel, necesario para BotID. El endpoint rechaza formatos, nombres, destinatarios y tamaños inválidos. No se incluye ninguna credencial privada en el build estático. Además, el Firewall de Vercel limita `/api/share` a **10 solicitudes por IP cada 10 minutos**, con respuesta 429 al excederlo; conservar esa regla al migrar de proyecto Vercel.
 
 ## Comprobaciones y procedencia
 

@@ -1,4 +1,5 @@
 import { zipSync } from 'fflate';
+import { checkBotId } from 'botid/server';
 
 const maxBytes = 3 * 1024 * 1024;
 const formats = new Set(['json', 'step', 'stl']);
@@ -14,14 +15,14 @@ function matchesFormat(format, bytes) {
   } catch { return false; }
 }
 
-export default async function handler(request, response) {
+export const createHandler = (verifyBot = checkBotId) => async (request, response) => {
   response.setHeader('Cache-Control', 'no-store');
   if (request.method !== 'POST') {
     response.setHeader('Allow', 'POST');
     return response.status(405).json({ error: 'method_not_allowed' });
   }
-  const { BREVO_API_KEY, SHARE_FROM_EMAIL, TURNSTILE_SECRET_KEY, TURNSTILE_SITE_KEY } = process.env;
-  if (!BREVO_API_KEY || !SHARE_FROM_EMAIL || !TURNSTILE_SECRET_KEY || !TURNSTILE_SITE_KEY) {
+  const { BREVO_API_KEY, SHARE_FROM_EMAIL } = process.env;
+  if (!BREVO_API_KEY || !SHARE_FROM_EMAIL) {
     return response.status(503).json({ error: 'not_configured' });
   }
   let body;
@@ -30,7 +31,7 @@ export default async function handler(request, response) {
   if (!body || typeof body !== 'object' || Array.isArray(body)) {
     return response.status(400).json({ error: 'invalid_body' });
   }
-  const { to, filename, format, content, verificationToken } = body;
+  const { to, filename, format, content } = body;
   if (typeof to !== 'string' || to.length > 254 || !address.test(to) ||
       typeof format !== 'string' || !formats.has(format) ||
       typeof filename !== 'string' || filename.length > 100 ||
@@ -44,19 +45,9 @@ export default async function handler(request, response) {
     return response.status(413).json({ error: 'invalid_size' });
   }
   if (!matchesFormat(format, bytes)) return response.status(400).json({ error: 'invalid_attachment' });
-  if (typeof verificationToken !== 'string' || !verificationToken || verificationToken.length > 2048) {
-    return response.status(403).json({ error: 'verification_failed' });
-  }
-  const verification = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', {
-    method: 'POST',
-    signal: AbortSignal.timeout(10000),
-    body: new URLSearchParams({ secret: TURNSTILE_SECRET_KEY, response: verificationToken }),
-  }).catch(() => null);
-  if (!verification?.ok) return response.status(502).json({ error: 'verification_unavailable' });
-  const verdict = await verification.json().catch(() => null);
-  if (!verdict?.success || verdict.action !== 'share_design' || verdict.hostname !== request.headers.host?.split(':')[0]) {
-    return response.status(403).json({ error: 'verification_failed' });
-  }
+  const verdict = await verifyBot({ advancedOptions: { checkLevel: 'basic' } }).catch(() => null);
+  if (!verdict) return response.status(502).json({ error: 'verification_unavailable' });
+  if (!verdict.isHuman || verdict.isBot) return response.status(403).json({ error: 'verification_failed' });
   const zipName = `${filename}.zip`;
   let zip;
   try { zip = zipSync({ [filename]: new Uint8Array(bytes) }, { level: 6 }); }
@@ -82,4 +73,6 @@ export default async function handler(request, response) {
     return response.status(502).json({ error: 'delivery_failed' });
   }
   return response.status(200).json({ sent: true });
-}
+};
+
+export default createHandler();

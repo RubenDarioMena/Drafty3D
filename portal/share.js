@@ -1,3 +1,7 @@
+import { initBotId } from 'botid/client/core';
+
+initBotId({ protect: [{ path: '/api/share', method: 'POST' }] });
+
 const frame = document.querySelector('.editor-frame');
 const dialog = document.querySelector('#share-dialog');
 const form = document.querySelector('#share-form');
@@ -10,22 +14,19 @@ if (frame && dialog && form) {
   const status = document.querySelector('#share-status');
   const format = document.querySelector('#share-format');
   const email = document.querySelector('#share-email');
-  let verificationToken = '';
-  let widgetId = null;
-  let scriptPromise;
   const copy = {
     es: {
       open: 'Compartir…', title: 'Compartir diseño', close: 'Cerrar',
       description: 'Envía una copia del diseño en un ZIP que contiene el formato elegido. El diseño no se modifica.',
       email: 'Correo destinatario', format: 'Formato',
-      hint: 'Archivos de hasta 3 MB. Confirma la verificación antispam para enviar.',
-      cancel: 'Cancelar', send: 'Enviar archivo', configuring: 'Preparando verificación antispam…', verify: 'Completa la verificación antispam.', preparing: 'Preparando archivo…', sending: 'Enviando correo…',
+      hint: 'Archivos de hasta 3 MB. El envío tiene protección contra abuso.',
+      cancel: 'Cancelar', send: 'Enviar archivo', configuring: 'Comprobando correo…', preparing: 'Preparando archivo…', sending: 'Enviando correo…',
       success: 'Archivo enviado. Revisa también la carpeta de correo no deseado.',
       loading: 'SolidCraft todavía está cargando. Intenta de nuevo en unos segundos.',
       tooLarge: 'El archivo supera 3 MB. Expórtalo desde File para compartirlo por otro medio.',
       exportFailed: 'No se pudo exportar el diseño en este formato.',
       timeout: 'La exportación tardó demasiado. Intenta de nuevo.',
-      unauthorized: 'La verificación antispam caducó o fue rechazada. Intenta de nuevo.',
+      unauthorized: 'No se pudo verificar este envío. Intenta de nuevo.',
       unconfigured: 'El correo todavía no está configurado en este sitio.',
       rateLimited: 'Se alcanzó el límite de envíos. Intenta de nuevo más tarde.',
       server: 'No se pudo enviar el correo. Intenta de nuevo.',
@@ -34,14 +35,14 @@ if (frame && dialog && form) {
       open: 'Share…', title: 'Share design', close: 'Close',
       description: 'Email a ZIP containing the design in the selected format. The open design is not changed.',
       email: 'Recipient email', format: 'Format',
-      hint: 'Files up to 3 MB. Complete the anti-spam check before sending.',
-      cancel: 'Cancel', send: 'Send file', configuring: 'Preparing anti-spam check…', verify: 'Complete the anti-spam check.', preparing: 'Preparing file…', sending: 'Sending email…',
+      hint: 'Files up to 3 MB. Sending is protected against abuse.',
+      cancel: 'Cancel', send: 'Send file', configuring: 'Checking email setup…', preparing: 'Preparing file…', sending: 'Sending email…',
       success: 'File sent. Check the spam folder too.',
       loading: 'SolidCraft is still loading. Try again in a few seconds.',
       tooLarge: 'The file exceeds 3 MB. Export it from File to share another way.',
       exportFailed: 'Could not export this design in the selected format.',
       timeout: 'Export took too long. Try again.',
-      unauthorized: 'The anti-spam check expired or was rejected. Try again.',
+      unauthorized: 'This send could not be verified. Try again.',
       unconfigured: 'Email is not configured for this site yet.',
       rateLimited: 'The sending limit was reached. Try again later.',
       server: 'Could not send the email. Try again.',
@@ -68,20 +69,7 @@ if (frame && dialog && form) {
     status.textContent = value;
     status.classList.toggle('error', error);
   };
-  function loadTurnstile() {
-    if (window.turnstile) return Promise.resolve(window.turnstile);
-    if (!scriptPromise) scriptPromise = new Promise((resolve, reject) => {
-      const script = document.createElement('script');
-      script.src = 'https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit';
-      script.async = true;
-      script.onload = () => window.turnstile ? resolve(window.turnstile) : reject(new Error('turnstile'));
-      script.onerror = () => reject(new Error('turnstile'));
-      document.head.append(script);
-    }).catch(error => { scriptPromise = undefined; throw error; });
-    return scriptPromise;
-  }
   open.addEventListener('click', async () => {
-    verificationToken = '';
     send.disabled = true;
     message(t().configuring);
     dialog.showModal();
@@ -90,24 +78,10 @@ if (frame && dialog && form) {
       const configResponse = await fetch('/api/share-config');
       if (!configResponse.ok) throw new Error('unconfigured');
       const config = await configResponse.json();
-      if (!config.enabled || !config.siteKey) throw new Error('unconfigured');
-      const turnstile = await loadTurnstile();
+      if (!config.enabled) throw new Error('unconfigured');
       if (!dialog.open) return;
-      message(t().verify);
-      if (widgetId === null) {
-        widgetId = turnstile.render('#share-turnstile', {
-          sitekey: config.siteKey,
-          action: 'share_design',
-          theme: 'light',
-          callback: token => {
-            verificationToken = token;
-            send.disabled = false;
-            if (status.textContent !== copy.es.success && status.textContent !== copy.en.success) message('');
-          },
-          'expired-callback': () => { verificationToken = ''; send.disabled = true; message(t().verify, true); },
-          'error-callback': () => { verificationToken = ''; send.disabled = true; message(t().verify, true); },
-        });
-      } else turnstile.reset(widgetId);
+      send.disabled = false;
+      message('');
     } catch (error) {
       message(t()[error.message] || t().server, true);
     }
@@ -171,7 +145,6 @@ if (frame && dialog && form) {
   form.addEventListener('submit', async event => {
     event.preventDefault();
     if (!form.reportValidity()) return;
-    if (!verificationToken) { message(t().verify, true); return; }
     send.disabled = true;
     try {
       message(t().preparing);
@@ -187,7 +160,7 @@ if (frame && dialog && form) {
       const response = await fetch('/api/share', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ to: email.value.trim(), verificationToken, ...attachment }),
+        body: JSON.stringify({ to: email.value.trim(), ...attachment }),
       });
       if (!response.ok) {
         if (response.status === 403) throw new Error('unauthorized');
@@ -200,9 +173,7 @@ if (frame && dialog && form) {
     } catch (error) {
       message(t()[error.message] || t().server, true);
     } finally {
-      verificationToken = '';
-      send.disabled = true;
-      if (widgetId !== null) window.turnstile?.reset(widgetId);
+      send.disabled = false;
     }
   });
 }

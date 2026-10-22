@@ -16,7 +16,8 @@
     "test:browser": "playwright test"
   },
   "dependencies": {
-    "fflate": "0.8.2",
+    "botid": "1.5.11",
+    "fflate": "0.8.3",
     "opencascade.js": "2.0.0-beta.b5ff984",
     "three": "0.186.1"
   },
