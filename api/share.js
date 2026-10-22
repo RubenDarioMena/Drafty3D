@@ -5,6 +5,15 @@ const formats = new Set(['json', 'step', 'stl']);
 const address = /^[^\s@<>]+@[^\s@<>]+\.[^\s@<>]+$/;
 const base64 = /^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$/;
 
+function matchesFormat(format, bytes) {
+  if (format === 'step') return bytes.subarray(0, 13).toString('ascii') === 'ISO-10303-21;';
+  if (format === 'stl') return bytes.length >= 84 && bytes.length === 84 + bytes.readUInt32LE(80) * 50;
+  try {
+    const value = JSON.parse(new TextDecoder('utf-8', { fatal: true }).decode(bytes));
+    return value !== null && typeof value === 'object' && !Array.isArray(value);
+  } catch { return false; }
+}
+
 export default async function handler(request, response) {
   response.setHeader('Cache-Control', 'no-store');
   if (request.method !== 'POST') {
@@ -34,6 +43,7 @@ export default async function handler(request, response) {
   if (!bytes.length || bytes.length > maxBytes || bytes.toString('base64') !== content) {
     return response.status(413).json({ error: 'invalid_size' });
   }
+  if (!matchesFormat(format, bytes)) return response.status(400).json({ error: 'invalid_attachment' });
   if (typeof verificationToken !== 'string' || !verificationToken || verificationToken.length > 2048) {
     return response.status(403).json({ error: 'verification_failed' });
   }

@@ -55,6 +55,9 @@ test('share endpoint verifies visitor and attaches selected CAD file inside ZIP'
     const invalid = response();
     await handler({ method: 'POST', headers: { host: 'drafty3-d.vercel.app' }, body: { ...valid, filename: 'bad\nsubject.step' } }, invalid);
     assert.equal(invalid.code, 400);
+    const disguised = response();
+    await handler({ method: 'POST', headers: { host: 'drafty3-d.vercel.app' }, body: { ...valid, content: Buffer.from('arbitrary file').toString('base64') } }, disguised);
+    assert.equal(disguised.code, 400);
     assert.equal(sent.length, 0);
     const success = response();
     await handler({ method: 'POST', headers: { host: 'drafty3-d.vercel.app' }, body: valid }, success);

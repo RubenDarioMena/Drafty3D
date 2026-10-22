@@ -34,6 +34,10 @@ test('SolidCraft comparte JSON, STEP y STL sin modificar el diseño', async ({ p
   expect(requests.map(item => item.format)).toEqual(['json', 'step', 'stl']);
   expect(requests.map(item => item.filename)).toEqual(['Untitled.json', 'Untitled.step', 'Untitled.stl']);
   expect(requests.every(item => Buffer.from(item.content, 'base64').length > 0)).toBe(true);
+  expect(JSON.parse(Buffer.from(requests[0].content, 'base64').toString('utf8'))).toEqual(expect.any(Object));
+  expect(Buffer.from(requests[1].content, 'base64').toString('utf8')).toMatch(/^ISO-10303-21;/);
+  const stl = Buffer.from(requests[2].content, 'base64');
+  expect(stl.length).toBe(84 + stl.readUInt32LE(80) * 50);
   const after = await page.evaluate(async () => {
     const api = document.querySelector('.editor-frame').contentWindow.solidcraft;
     const state = await api.inspect();
