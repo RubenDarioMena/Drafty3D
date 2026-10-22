@@ -12,9 +12,10 @@ const english = {
   draftFeature1: 'Solids and meshes', openDraft: 'Open Draft3D',
   memory: 'One editor at a time. No background loading or required accounts. Save your work before switching tools.',
   about: 'Projects and licenses →', back: '← All tools',
+  solidSlow: 'SolidCraft is still loading. The first visit downloads an engine of about 50 MB.', solidDirect: 'Open editor directly ↗', solidRetry: 'Retry',
   materialTitle: 'Materializr, on your computer.',
   materialIntro: 'Parametric solid modeling with OpenCascade and a sketch constraint solver. The upstream project currently distributes native applications for desktop and mobile.',
-  materialNotice: 'Materializr does not provide a supported web build. Netlify serves static sites and cannot run its native interface. This page does not run Materializr in your browser.',
+  materialNotice: 'Materializr does not provide a supported web build. This static site cannot run its native interface. This page does not run Materializr in your browser.',
   materialDownload: 'Get the official application →', materialSource: 'Source code and build instructions →',
   remoteTitle: 'Use your own server',
   remoteDescription: 'Browser access requires a separate server running Materializr with a protected remote desktop. Once that service is deployed, its HTTPS address can be connected to this page.',
@@ -50,3 +51,34 @@ select?.addEventListener('change', () => {
   apply(select.value);
   try { localStorage.setItem('drafty3d.language.v1', language); } catch {}
 });
+
+const solidFrame = document.querySelector('.editor-frame');
+const solidHelp = document.querySelector('#solidcraft-help');
+if (solidFrame && solidHelp) {
+  let slowTimer;
+  const ready = () => {
+    try {
+      const win = solidFrame.contentWindow;
+      return Boolean(win?.wasmBindings && !win.document.querySelector('#solidcraft_loading'));
+    } catch { return false; }
+  };
+  const check = () => {
+    if (!ready()) return;
+    solidHelp.hidden = true;
+    clearTimeout(slowTimer);
+    clearInterval(poll);
+  };
+  const poll = setInterval(check, 500);
+  const watch = () => {
+    clearTimeout(slowTimer);
+    slowTimer = setTimeout(() => { if (!ready()) solidHelp.hidden = false; }, 20000);
+  };
+  solidFrame.addEventListener('load', check);
+  document.querySelector('#solidcraft-retry')?.addEventListener('click', () => {
+    solidHelp.hidden = true;
+    watch();
+    solidFrame.src = '/solidcraft/app/';
+  });
+  watch();
+  check();
+}

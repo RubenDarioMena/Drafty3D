@@ -8,7 +8,7 @@ Un punto de entrada ligero para elegir una herramienta de diseño. La portada no
 | **Materializr** | Aplicación nativa; acceso a sus descargas oficiales | `/materializr/` |
 | **Draft3D / Atlas** | Editor existente, conservado con sus croquis, sólidos y mallas | `/cad/` |
 
-**Materializr no dispone de un build web soportado.** Su interfaz C++/SDL3/OpenGL y OpenCascade no puede ejecutarse en Netlify. No se presenta un enlace de descarga como si fuera un editor self hosted. Para usarlo desde navegador hace falta otro servidor con escritorio remoto y control de acceso. [Repositorios revisados y límites](docs/HOSTING.md).
+**Materializr no dispone de un build web soportado.** Su interfaz C++/SDL3/OpenGL y OpenCascade no puede ejecutarse en este alojamiento estático. No se presenta un enlace de descarga como si fuera un editor self hosted. Para usarlo desde navegador hace falta otro servidor con escritorio remoto y control de acceso. [Repositorios revisados y límites](docs/HOSTING.md).
 
 ## Local
 
@@ -43,15 +43,14 @@ En el entorno cloud con proxy, usar `NODE_USE_ENV_PROXY=1` con una versión de N
 
 La [guía de Atlas](docs/cad/GUIA.md) conserva las instrucciones de croquis, selección local, STEP/STL y conversión a malla. El editor renderiza bajo demanda y calcula BRep en un worker.
 
-## Netlify
+## Vercel
 
-El sitio existente es [rdm-drafty3d.netlify.app](https://rdm-drafty3d.netlify.app/), vinculado a **`main`**. Un único despliegue sirve la portada y las rutas independientes; no se crean sitios de pago adicionales.
+El sitio de producción es [drafty3-d.vercel.app](https://drafty3-d.vercel.app/), vinculado a **`main`**. Un único despliegue sirve la portada y las rutas independientes. Netlify fue el alojamiento anterior.
 
-- Build: `npm run build`; publicación: `dist`; Node 22.
+- La configuración versionada está en `vercel.json`: build `npm run build`, publicación `dist`, Node 22 según `package.json`.
 - La raíz sirve la portada, sin redirección automática al CAD.
 - Los WASM se sirven localmente. No hay proxy hacia un editor externo ni servidor geométrico obligatorio.
-- Esta entrega está autorizada para `main` y producción. No añadir marcadores para omitir el despliegue al commit de publicación.
-- `/deployment.json` identifica `COMMIT_REF` cuando Netlify compila. Comprobar que coincide con el commit de GitHub antes de dar un despliegue por verificado.
+- `/deployment.json` identifica `VERCEL_GIT_COMMIT_SHA` cuando Vercel compila. Comprobar que coincide con el commit de GitHub antes de dar un despliegue por verificado.
 - Si ya existe un servidor Materializr protegido con HTTPS, la variable opcional de build `MATERIALIZR_WEB_URL` añade un acceso en su página. No crea ni despliega ese servidor y no debe incluir contraseñas o tokens.
 
 ## Comprobaciones y procedencia

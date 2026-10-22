@@ -42,7 +42,7 @@ for (const [index, file] of files.entries()) {
 await build({ configFile: resolve(root, 'vite.config.mjs') });
 await prepareCadSources(root, resolve(output, 'cad/licenses/source'));
 await prepareSolidcraft(root, resolve(output, 'solidcraft/app'));
-await writeFile(resolve(output, 'deployment.json'), JSON.stringify({ commit: process.env.COMMIT_REF || null, solidcraft: '0.18.3' }) + '\n');
+await writeFile(resolve(output, 'deployment.json'), JSON.stringify({ commit: process.env.VERCEL_GIT_COMMIT_SHA || process.env.COMMIT_REF || null, solidcraft: '0.18.3' }) + '\n');
 
 // Verify static links against the actual complete output, including generated apps.
 for (const [index, file] of files.entries()) {
