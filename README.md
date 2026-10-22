@@ -53,6 +53,19 @@ El sitio de producción es [drafty3-d.vercel.app](https://drafty3-d.vercel.app/)
 - `/deployment.json` identifica `VERCEL_GIT_COMMIT_SHA` cuando Vercel compila. Comprobar que coincide con el commit de GitHub antes de dar un despliegue por verificado.
 - Si ya existe un servidor Materializr protegido con HTTPS, la variable opcional de build `MATERIALIZR_WEB_URL` añade un acceso en su página. No crea ni despliega ese servidor y no debe incluir contraseñas o tokens.
 
+### Compartir diseños SolidCraft por correo
+
+La barra exterior de SolidCraft ofrece **Compartir…**. Usa la API oficial del editor para exportar una copia del diseño como proyecto editable `.json`, STEP o STL, lee el archivo temporal desde el almacenamiento privado del navegador y lo elimina al terminar. No cambia el documento abierto. Brevo acepta ZIP como adjunto, por lo que el destinatario recibe un ZIP que contiene el archivo en el formato elegido. El límite es **3 MiB** para caber en el límite de solicitudes de Vercel. Para diseños mayores, exportar desde el menú File y compartir el archivo por otro medio.
+
+El endpoint `/api/share` es una Vercel Function. Requiere estas variables de entorno en el proyecto, para Production y Preview según corresponda:
+
+| Variable | Uso |
+| --- | --- |
+| `BREVO_API_KEY` | Clave de API de Brevo con permiso de correo transaccional. Solo en el servidor. |
+| `SHARE_FROM_EMAIL` | Dirección de remitente verificada en Brevo. Si es de un proveedor gratuito, Brevo puede reemplazarla por una dirección propia para cumplir autenticación. |
+
+La función responde `503` hasta que ambas estén configuradas. Después de guardar las variables en Vercel, hacer un nuevo despliegue. El navegador activa BotID Basic para `/api/share`; el servidor comprueba el resultado antes de llamar a Brevo. Este proyecto usa OIDC de Vercel, necesario para BotID. El endpoint rechaza formatos, nombres, destinatarios y tamaños inválidos. No se incluye ninguna credencial privada en el build estático. Además, el Firewall de Vercel limita `/api/share` a **10 solicitudes por IP cada 10 minutos**, con respuesta 429 al excederlo; conservar esa regla al migrar de proyecto Vercel.
+
 ## Comprobaciones y procedencia
 
 ```sh

@@ -40,6 +40,15 @@ for (const [index, file] of files.entries()) {
   await writeFile(target, data);
 }
 await build({ configFile: resolve(root, 'vite.config.mjs') });
+await build({
+  configFile: false,
+  root,
+  build: {
+    outDir: resolve(output, 'portal'),
+    emptyOutDir: false,
+    lib: { entry: resolve(root, 'portal/share.js'), formats: ['es'], fileName: () => 'share.js' },
+  },
+});
 await prepareCadSources(root, resolve(output, 'cad/licenses/source'));
 await prepareSolidcraft(root, resolve(output, 'solidcraft/app'));
 await writeFile(resolve(output, 'deployment.json'), JSON.stringify({ commit: process.env.VERCEL_GIT_COMMIT_SHA || process.env.COMMIT_REF || null, solidcraft: '0.18.3' }) + '\n');
