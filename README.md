@@ -55,17 +55,18 @@ El sitio de producción es [drafty3-d.vercel.app](https://drafty3-d.vercel.app/)
 
 ### Compartir diseños SolidCraft por correo
 
-La barra exterior de SolidCraft ofrece **Compartir…**. Usa la API oficial del editor para exportar una copia del diseño como proyecto editable `.json`, STEP o STL, lee el archivo temporal desde el almacenamiento privado del navegador y lo elimina al terminar. No cambia el documento abierto. El archivo se envía adjunto; el límite es **3 MiB** para caber en el límite de solicitudes de Vercel. Para diseños mayores, exportar desde el menú File y compartir el archivo por otro medio.
+La barra exterior de SolidCraft ofrece **Compartir…**. Usa la API oficial del editor para exportar una copia del diseño como proyecto editable `.json`, STEP o STL, lee el archivo temporal desde el almacenamiento privado del navegador y lo elimina al terminar. No cambia el documento abierto. Brevo acepta ZIP como adjunto, por lo que el destinatario recibe un ZIP que contiene el archivo en el formato elegido. El límite es **3 MiB** para caber en el límite de solicitudes de Vercel. Para diseños mayores, exportar desde el menú File y compartir el archivo por otro medio.
 
 El endpoint `/api/share` es una Vercel Function. Requiere estas variables de entorno en el proyecto, para Production y Preview según corresponda:
 
 | Variable | Uso |
 | --- | --- |
-| `RESEND_API_KEY` | Clave de API de Resend con permiso de envío. Solo en el servidor. |
-| `SHARE_FROM_EMAIL` | Remitente de un dominio verificado en Resend, por ejemplo `Drafty3D <compartir@tudominio.com>`. |
-| `SHARE_ACCESS_TOKEN` | Clave privada larga y aleatoria para autorizar envíos. Se introduce en el diálogo y no se guarda en el navegador. |
+| `BREVO_API_KEY` | Clave de API de Brevo con permiso de correo transaccional. Solo en el servidor. |
+| `SHARE_FROM_EMAIL` | Dirección de remitente verificada en Brevo. Si es de un proveedor gratuito, Brevo puede reemplazarla por una dirección propia para cumplir autenticación. |
+| `TURNSTILE_SITE_KEY` | Clave pública de Cloudflare Turnstile, restringida a los hostnames del sitio. |
+| `TURNSTILE_SECRET_KEY` | Clave privada de Turnstile. Solo en el servidor. |
 
-La función responde `503` hasta que las tres estén configuradas. Crear la clave de acceso con un generador seguro, por ejemplo `openssl rand -base64 32`; no publicarla en el repositorio. Después de guardar las variables en Vercel, hacer un nuevo despliegue. El endpoint rechaza formatos, nombres, destinatarios y tamaños inválidos antes de llamar al proveedor. No se incluye ninguna credencial en el build estático.
+La función responde `503` hasta que todas estén configuradas. Después de guardar las variables en Vercel, hacer un nuevo despliegue. El navegador solicita un token Turnstile por envío; el servidor lo valida con Cloudflare, comprueba el hostname y la acción, y solo entonces llama a Brevo. El endpoint rechaza formatos, nombres, destinatarios y tamaños inválidos. No se incluye ninguna credencial privada en el build estático. Además, el Firewall de Vercel limita `/api/share` a **10 solicitudes por IP cada 10 minutos**, con respuesta 429 al excederlo; conservar esa regla al migrar de proyecto Vercel.
 
 ## Comprobaciones y procedencia
 

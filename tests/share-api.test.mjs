@@ -1,6 +1,8 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import { unzipSync } from 'fflate';
 import handler from '../api/share.js';
+import configHandler from '../api/share-config.js';
 
 function response() {
   return {
@@ -12,57 +14,81 @@ function response() {
 }
 
 const valid = {
-  to: 'recipient@example.com', accessKey: 'a-long-test-secret',
+  to: 'recipient@example.com', verificationToken: 'token',
   filename: 'Example.step', format: 'step', content: Buffer.from('ISO-10303-21;').toString('base64'),
 };
+const variables = ['BREVO_API_KEY', 'SHARE_FROM_EMAIL', 'TURNSTILE_SECRET_KEY', 'TURNSTILE_SITE_KEY'];
+const previous = Object.fromEntries(variables.map(name => [name, process.env[name]]));
+const setConfigured = () => {
+  process.env.BREVO_API_KEY = 'brevo-test-key';
+  process.env.SHARE_FROM_EMAIL = 'sender@example.com';
+  process.env.TURNSTILE_SECRET_KEY = 'turnstile-test-key';
+  process.env.TURNSTILE_SITE_KEY = 'site-test-key';
+};
+const restore = () => { for (const [name, value] of Object.entries(previous)) { if (value === undefined) delete process.env[name]; else process.env[name] = value; } };
 
-test('share endpoint requires configuration and rejects unauthorized requests', async () => {
-  const previous = { RESEND_API_KEY: process.env.RESEND_API_KEY, SHARE_FROM_EMAIL: process.env.SHARE_FROM_EMAIL, SHARE_ACCESS_TOKEN: process.env.SHARE_ACCESS_TOKEN };
+test('share endpoint stays off without provider and verification credentials', async () => {
   try {
-    delete process.env.RESEND_API_KEY;
+    for (const name of variables) delete process.env[name];
+    const config = response();
+    configHandler({ method: 'GET' }, config);
+    assert.deepEqual(config.payload, { enabled: false, siteKey: null });
     const unavailable = response();
     await handler({ method: 'POST', body: valid }, unavailable);
     assert.equal(unavailable.code, 503);
-    process.env.RESEND_API_KEY = 'test-key';
-    process.env.SHARE_FROM_EMAIL = 'share@example.com';
-    process.env.SHARE_ACCESS_TOKEN = valid.accessKey;
-    const denied = response();
-    await handler({ method: 'POST', body: { ...valid, accessKey: 'wrong' } }, denied);
-    assert.equal(denied.code, 401);
-  } finally {
-    for (const [name, value] of Object.entries(previous)) {
-      if (value === undefined) delete process.env[name]; else process.env[name] = value;
-    }
-  }
+  } finally { restore(); }
 });
 
-test('share endpoint sends only valid requested attachment to Resend', async () => {
-  const previous = { RESEND_API_KEY: process.env.RESEND_API_KEY, SHARE_FROM_EMAIL: process.env.SHARE_FROM_EMAIL, SHARE_ACCESS_TOKEN: process.env.SHARE_ACCESS_TOKEN, fetch: globalThis.fetch };
+test('share endpoint verifies visitor and attaches selected CAD file inside ZIP', async () => {
+  const nativeFetch = globalThis.fetch;
   try {
-    process.env.RESEND_API_KEY = 'test-key';
-    process.env.SHARE_FROM_EMAIL = 'share@example.com';
-    process.env.SHARE_ACCESS_TOKEN = valid.accessKey;
+    setConfigured();
+    const config = response();
+    configHandler({ method: 'GET' }, config);
+    assert.deepEqual(config.payload, { enabled: true, siteKey: 'site-test-key' });
     const sent = [];
     globalThis.fetch = async (url, options) => {
       sent.push({ url, options });
-      return { ok: true, status: 200 };
+      if (url.includes('siteverify')) return { ok: true, json: async () => ({ success: true, action: 'share_design', hostname: 'drafty3-d.vercel.app' }) };
+      return { ok: true, status: 201 };
     };
     const invalid = response();
-    await handler({ method: 'POST', body: { ...valid, filename: 'bad\nsubject.step' } }, invalid);
+    await handler({ method: 'POST', headers: { host: 'drafty3-d.vercel.app' }, body: { ...valid, filename: 'bad\nsubject.step' } }, invalid);
     assert.equal(invalid.code, 400);
     assert.equal(sent.length, 0);
     const success = response();
-    await handler({ method: 'POST', body: valid }, success);
+    await handler({ method: 'POST', headers: { host: 'drafty3-d.vercel.app' }, body: valid }, success);
     assert.equal(success.code, 200);
-    assert.equal(sent.length, 1);
-    assert.equal(sent[0].url, 'https://api.resend.com/emails');
-    const payload = JSON.parse(sent[0].options.body);
-    assert.deepEqual(payload.to, [valid.to]);
-    assert.deepEqual(payload.attachments, [{ filename: valid.filename, content: valid.content }]);
-  } finally {
-    for (const name of ['RESEND_API_KEY', 'SHARE_FROM_EMAIL', 'SHARE_ACCESS_TOKEN']) {
-      if (previous[name] === undefined) delete process.env[name]; else process.env[name] = previous[name];
+    assert.equal(sent.length, 2);
+    assert.equal(sent[0].url, 'https://challenges.cloudflare.com/turnstile/v0/siteverify');
+    assert.equal(sent[1].url, 'https://api.brevo.com/v3/smtp/email');
+    const payload = JSON.parse(sent[1].options.body);
+    assert.deepEqual(payload.to, [{ email: valid.to }]);
+    assert.equal(payload.attachment[0].name, 'Example.step.zip');
+    const archive = unzipSync(Buffer.from(payload.attachment[0].content, 'base64'));
+    assert.equal(Buffer.from(archive['Example.step']).toString(), 'ISO-10303-21;');
+  } finally { globalThis.fetch = nativeFetch; restore(); }
+});
+
+test('share endpoint rejects failed anti-spam verification and mismatched hostname or action', async () => {
+  const nativeFetch = globalThis.fetch;
+  try {
+    setConfigured();
+    const sent = [];
+    for (const verdict of [
+      { success: false },
+      { success: true, action: 'other_action', hostname: 'drafty3-d.vercel.app' },
+      { success: true, action: 'share_design', hostname: 'another-site.example' },
+    ]) {
+      globalThis.fetch = async url => {
+        sent.push(url);
+        return { ok: true, json: async () => verdict };
+      };
+      const denied = response();
+      await handler({ method: 'POST', headers: { host: 'drafty3-d.vercel.app' }, body: valid }, denied);
+      assert.equal(denied.code, 403);
     }
-    globalThis.fetch = previous.fetch;
-  }
+    assert.equal(sent.length, 3);
+    assert.ok(sent.every(url => url.includes('siteverify')));
+  } finally { globalThis.fetch = nativeFetch; restore(); }
 });

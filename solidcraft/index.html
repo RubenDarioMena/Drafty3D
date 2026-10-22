@@ -16,11 +16,11 @@
   <dialog id="share-dialog" class="share-dialog" aria-labelledby="share-title">
     <form id="share-form">
       <div class="share-heading"><h2 id="share-title">Compartir diseño</h2><button type="button" id="share-close" aria-label="Cerrar">×</button></div>
-      <p id="share-description">Envía una copia del diseño abierto como archivo adjunto. El diseño no se modifica.</p>
+      <p id="share-description">Envía una copia del diseño en un ZIP que contiene el formato elegido. El diseño no se modifica.</p>
       <label for="share-email">Correo destinatario</label><input id="share-email" name="email" type="email" autocomplete="email" required placeholder="persona@ejemplo.com">
       <label for="share-format">Formato</label><select id="share-format" name="format"><option value="json">Proyecto editable (.json)</option><option value="step">STEP (.step)</option><option value="stl">STL (.stl)</option></select>
-      <label for="share-key">Clave de acceso</label><input id="share-key" name="key" type="password" autocomplete="off" required>
-      <p class="share-hint" id="share-hint">Archivos de hasta 3 MB. La clave se usa solo para autorizar este envío.</p>
+      <div id="share-turnstile" aria-label="Verificación antispam"></div>
+      <p class="share-hint" id="share-hint">Archivos de hasta 3 MB. Confirma la verificación antispam para enviar.</p>
       <p id="share-status" class="share-status" role="status" aria-live="polite"></p>
       <div class="share-buttons"><button type="button" id="share-cancel">Cancelar</button><button type="submit" id="share-send">Enviar archivo</button></div>
     </form>
