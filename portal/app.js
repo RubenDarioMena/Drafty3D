@@ -2,7 +2,8 @@
 const english = {
   header: 'YOUR DESIGN WORKSPACE', language: 'Language',
   headline: 'One idea.\nThree ways to create.',
-  intro: 'Choose your tool and start designing. Only the one you open will load.',
+  intro: 'Organize your projects or start with a design tool.',
+  openWorkspace: 'Go to the design workspace',
   recommended: 'RECOMMENDED', desktop: 'DESKTOP', experimental: 'EXPERIMENTAL',
   solidType: 'PARAMETRIC CAD · IN YOUR BROWSER', solidDescription: 'From sketch to solid. Parametric modeling with a feature history and a geometry engine written in Rust.',
   solidFeature1: 'Sketches and features', openSolid: 'Open SolidCraft', selfHosted: 'Hosted here · no account',
@@ -10,7 +11,7 @@ const english = {
   materialFeature1: 'Sketch constraints', materialOptions: 'Materializr options', nativeStatus: 'Web version unavailable',
   draftType: 'ATLAS · CAD AND MESHES', draftDescription: 'Our Atlas editor. Create basic solids, work with sketches and convert parts into polygon meshes.',
   draftFeature1: 'Solids and meshes', openDraft: 'Open Draft3D',
-  memory: 'One editor at a time. No background loading or required accounts. Save your work before switching tools.',
+  memory: 'Open one tool at a time. Use the design workspace to keep your files and versions together.',
   about: 'Projects and licenses →', back: '← All tools',
   solidSlow: 'SolidCraft is still loading. The first visit downloads an engine of about 50 MB.', solidDirect: 'Open editor directly ↗', solidRetry: 'Retry',
   materialTitle: 'Materializr, on your computer.',
@@ -25,8 +26,10 @@ const english = {
   solidLicense: 'Official, unmodified web release 0.18.3. MIT or Apache-2.0. Licenses, font notices and third-party attributions are distributed with the application.',
   draftLicense: 'The Atlas editor from this repository uses Three.js (MIT) and OpenCascade.js / OCCT (LGPL and applicable exceptions). Library source archives and integration sources accompany the application.',
   materialLicense: 'Native project, GPL-3.0 with upstream exceptions. We link to its official releases and source; this site does not redistribute its binaries.',
+  workspaceLicenses: 'Design workspace editors',
+  bundledNotices: 'Dependency notices', pinnedSource: 'Pinned source', licenseInfo: 'License information',
   privacyTitle: 'Files and memory',
-  privacy: 'The gateway does not load CAD engines. Switching tools uses full-page navigation. Keep one editor tab open to limit memory use. SolidCraft and Draft3D have separate document formats and storage; export your work before switching. SolidCraft may cache its own files for offline use after opening it.',
+  privacy: 'The design workspace loads one editor at a time. Save to the project or download a copy before leaving. SolidCraft can also keep its own files in the browser for offline work.',
 };
 const nodes = [...document.querySelectorAll('[data-copy]')];
 const spanish = new Map(nodes.map(node => [node, node.textContent]));

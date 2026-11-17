@@ -20,3 +20,14 @@
   for = "/solidcraft/app/*.wasm"
   [headers.values]
     Content-Type = "application/wasm"
+
+[[headers]]
+  for = "/workspace/config.json"
+  [headers.values]
+    Cache-Control = "no-store"
+
+[[headers]]
+  for = "/svg-edit/*"
+  [headers.values]
+    Access-Control-Allow-Origin = "*"
+    Content-Security-Policy = "sandbox allow-scripts allow-downloads allow-modals"
