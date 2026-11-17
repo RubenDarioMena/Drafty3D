@@ -136,7 +136,7 @@ test('el SVG abre en el editor aislado, conserva el original y se respalda con t
   await page.getByRole('button', { name: 'Guardar en proyecto' }).click();
   await expect(page.getByText('Se añadirá una versión de plano.svg.')).toBeVisible();
   await page.getByRole('button', { name: 'Guardar', exact: true }).click();
-  await expect(page.getByRole('status')).toContainText('plano.svg guardado');
+  await expect(page.locator('#editor-status')).toContainText('plano.svg guardado');
   expect(versions).toHaveLength(2);
   expect(blobs.get(versions[0].object_path).toString()).toBe(sourceSvg);
   expect(blobs.get(versions[1].object_path).toString()).toContain('id="original"');
@@ -182,7 +182,7 @@ test('SolidCraft exporta un diseño editable y reabre el mismo archivo desde un 
   await page.getByRole('button', { name: 'Guardar en proyecto' }).click();
   await page.getByLabel('Nombre del archivo').fill('pieza');
   await page.getByRole('button', { name: 'Guardar', exact: true }).click();
-  await expect(page.getByRole('status')).toContainText('pieza.json guardado');
+  await expect(page.locator('#editor-status')).toContainText('pieza.json guardado');
   await page.locator('#back').click();
   await page.getByRole('button', { name: 'Abrir en SolidCraft' }).click();
   await expect(page.locator('#editor-download')).toBeEnabled({ timeout: 90_000 });
@@ -211,7 +211,7 @@ test('SculptGL abre el OBJ de un proyecto y conserva su original al guardar el S
   await page.locator('#format').selectOption('sgl');
   await page.getByRole('button', { name: 'Guardar en proyecto' }).click();
   await page.getByRole('button', { name: 'Guardar', exact: true }).click();
-  await expect(page.getByRole('status')).toContainText('cara.sgl guardado');
+  await expect(page.locator('#editor-status')).toContainText('cara.sgl guardado');
   expect(blobs.get(versions[0].object_path)).toEqual(triangle);
   expect(blobs.get(versions[1].object_path).readUInt32LE(0)).toBe(3);
 });
