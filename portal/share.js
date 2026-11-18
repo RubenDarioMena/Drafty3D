@@ -1,4 +1,5 @@
 import { initBotId } from 'botid/client/core';
+import { exportSolidcraft } from '../workspace/editors.js';
 
 initBotId({ protect: [{ path: '/api/share', method: 'POST' }] });
 
@@ -90,56 +91,25 @@ if (frame && dialog && form) {
   cancel.addEventListener('click', () => dialog.close());
 
   const maxBytes = 3 * 1024 * 1024;
-  const pause = ms => new Promise(resolve => setTimeout(resolve, ms));
   const safeName = value => (value || 'SolidCraft').normalize('NFKD').replace(/[^a-zA-Z0-9_-]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 48) || 'SolidCraft';
   async function exportedFile(selectedFormat) {
     const win = frame.contentWindow;
     if (!win?.solidcraft || win.document.querySelector('#solidcraft_loading')) throw new Error('loading');
     const api = win.solidcraft;
     const design = await api.inspect();
-    const tempName = `drafty3d-share-${crypto.randomUUID()}.${selectedFormat}`;
-    const root = await navigator.storage.getDirectory();
-    let wrote = false;
-    try {
-      const result = await api.execute('file.export', { path: `/opfs/${tempName}`, format: selectedFormat });
-      wrote = true;
-      let file;
-      const deadline = Date.now() + 30000;
-      while (Date.now() < deadline) {
-        try {
-          const handle = await root.getFileHandle(tempName);
-          file = await handle.getFile();
-          if (file.size === result.bytes) break;
-        } catch (error) {
-          if (error.name !== 'NotFoundError' && error.name !== 'NoModificationAllowedError') throw error;
-        }
-        await pause(100);
-      }
-      if (!file || file.size !== result.bytes) throw new Error('timeout');
-      if (file.size > maxBytes) throw new Error('tooLarge');
-      const content = await new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.onload = () => resolve(String(reader.result).split(',')[1]);
-        reader.onerror = () => reject(reader.error);
-        reader.readAsDataURL(file);
-      });
-      return {
-        filename: `${safeName(design.name)}.${selectedFormat}`,
-        format: selectedFormat,
-        content,
-      };
-    } finally {
-      if (wrote) {
-        for (let attempt = 0; attempt < 10; attempt++) {
-          try { await root.removeEntry(tempName); break; }
-          catch (error) {
-            if (error.name === 'NotFoundError') break;
-            if (attempt === 9) console.warn('Temporary SolidCraft export could not be removed', error);
-            else await pause(100);
-          }
-        }
-      }
-    }
+    const file = await exportSolidcraft(frame, selectedFormat, 'drafty3d-share');
+    if (file.size > maxBytes) throw new Error('tooLarge');
+    const content = await new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(String(reader.result).split(',')[1]);
+      reader.onerror = () => reject(reader.error);
+      reader.readAsDataURL(file);
+    });
+    return {
+      filename: `${safeName(design.name)}.${selectedFormat}`,
+      format: selectedFormat,
+      content,
+    };
   }
 
   form.addEventListener('submit', async event => {

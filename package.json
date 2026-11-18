@@ -2,7 +2,7 @@
   "name": "drafty3d",
   "version": "0.1.0",
   "private": true,
-  "description": "Threeway Avenue: acceso a SolidCraft, Materializr y Draft3D Atlas.",
+  "description": "Portal de diseño y gestión de archivos para SolidCraft, SculptGL y SVG-Edit.",
   "type": "module",
   "engines": {
     "node": ">=22"
@@ -16,10 +16,16 @@
     "test:browser": "playwright test"
   },
   "dependencies": {
+    "@supabase/supabase-js": "2.119.0",
     "botid": "1.5.11",
     "fflate": "0.8.3",
+    "file-saver": "2.0.5",
+    "gl-matrix": "3.4.4",
+    "hammerjs": "2.0.8",
     "opencascade.js": "2.0.0-beta.b5ff984",
-    "three": "0.186.1"
+    "svgedit": "7.4.2",
+    "three": "0.186.1",
+    "yagui": "2.0.2"
   },
   "devDependencies": {
     "@playwright/test": "1.64.0",

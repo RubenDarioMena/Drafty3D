@@ -4,6 +4,8 @@ import { fileURLToPath } from 'node:url';
 import { build } from 'vite';
 import { prepareCadSources } from './cad-sources.mjs';
 import { prepareSolidcraft } from './solidcraft.mjs';
+import { prepareSculptgl } from './sculptgl.mjs';
+import { preparePortal } from './portal.mjs';
 
 const root = fileURLToPath(new URL('../', import.meta.url));
 const output = resolve(root, 'dist');
@@ -12,6 +14,10 @@ const files = [
   'index.html',
   'portal/style.css',
   'portal/app.js',
+  'workspace/index.html',
+  'workspace/style.css',
+  'svg-edit/index.html',
+  'svg-edit/editor.js',
   'solidcraft/index.html',
   'materializr/index.html',
   'about/index.html',
@@ -40,17 +46,12 @@ for (const [index, file] of files.entries()) {
   await writeFile(target, data);
 }
 await build({ configFile: resolve(root, 'vite.config.mjs') });
-await build({
-  configFile: false,
-  root,
-  build: {
-    outDir: resolve(output, 'portal'),
-    emptyOutDir: false,
-    lib: { entry: resolve(root, 'portal/share.js'), formats: ['es'], fileName: () => 'share.js' },
-  },
-});
-await prepareCadSources(root, resolve(output, 'cad/licenses/source'));
-await prepareSolidcraft(root, resolve(output, 'solidcraft/app'));
+await Promise.all([
+  prepareCadSources(root, resolve(output, 'cad/licenses/source')),
+  prepareSolidcraft(root, resolve(output, 'solidcraft/app')),
+  prepareSculptgl(root, resolve(output, 'sculptgl')),
+  preparePortal(root, output),
+]);
 await writeFile(resolve(output, 'deployment.json'), JSON.stringify({ commit: process.env.VERCEL_GIT_COMMIT_SHA || process.env.COMMIT_REF || null, solidcraft: '0.18.3' }) + '\n');
 
 // Verify static links against the actual complete output, including generated apps.
@@ -67,4 +68,4 @@ for (const [index, file] of files.entries()) {
     }
   }
 }
-console.log(`Threeway Avenue: portada, SolidCraft, Atlas y ${files.length} archivos estáticos publicados en dist/. Enlaces verificados.`);
+console.log(`Drafty3D: portal y editores preparados en dist/. Enlaces verificados.`);
