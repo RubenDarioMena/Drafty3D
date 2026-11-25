@@ -1,15 +1,11 @@
-# Drafty3D · Threeway Avenue
+# Drafty3D
 
-La portada enlaza al espacio de diseño y a las herramientas existentes. En el espacio de diseño puedes organizar archivos por proyecto y abrir SolidCraft, SculptGL o SVG-Edit. Cada motor se carga al abrir su editor.
+El espacio de diseño es la pantalla principal del sitio. Ahí puedes organizar archivos por proyecto y abrir SolidCraft, SculptGL o SVG-Edit. Cada motor se carga al abrir su editor.
 
 | Acceso | Estado | Ruta |
 | --- | --- | --- |
-| **Espacio de diseño** | Proyectos, archivos y tres editores integrados | `/workspace/` |
+| **Espacio de diseño** | Proyectos, archivos y tres editores integrados | `/` (también disponible en `/workspace/`) |
 | **SolidCraft** | Paquete web oficial 0.18.3, alojado aquí | `/solidcraft/` |
-| **Materializr** | Aplicación nativa; acceso a sus descargas oficiales | `/materializr/` |
-| **Draft3D / Atlas** | Editor existente, conservado con sus croquis, sólidos y mallas | `/cad/` |
-
-**Materializr no dispone de un build web soportado.** Su interfaz C++/SDL3/OpenGL y OpenCascade no puede ejecutarse en este alojamiento estático. No se presenta un enlace de descarga como si fuera un editor self hosted. Para usarlo desde navegador hace falta otro servidor con escritorio remoto y control de acceso. [Repositorios revisados y límites](docs/HOSTING.md).
 
 ## Local
 
@@ -29,36 +25,32 @@ npm run build
 npm run preview
 ```
 
-Abrir **http://127.0.0.1:4188/**. El build descarga las versiones fijadas de SolidCraft y SculptGL y las fuentes LGPL del motor de Atlas, comprueba SHA-256 y reutiliza cachés locales en builds posteriores. Si falla una descarga o el hash, el build falla; no publica accesos rotos silenciosamente.
+Abrir **http://127.0.0.1:4188/**. El build descarga las versiones fijadas de SolidCraft y SculptGL, comprueba SHA-256 y reutiliza cachés locales en builds posteriores. Si falla una descarga o el hash, el build falla; no publica accesos rotos silenciosamente.
 
 En el entorno cloud con proxy, usar `NODE_USE_ENV_PROXY=1` con una versión de Node compatible y conservar los certificados del entorno. No hace falta en una máquina local sin proxy. `npm run setup:solidcraft` permite preparar solo SolidCraft.
 
 ## Espacio de diseño
 
-El dashboard está disponible en `/workspace/`. Los tres editores abren y exportan archivos aunque Supabase esté pendiente de configurar. Con una cuenta puedes subir originales, guardar nuevas versiones, restaurar una anterior como una versión adicional y descargar un respaldo ZIP con un manifiesto. El inicio de sesión se hace con correo y contraseña y se repite al recargar o abrir otra pestaña.
+El dashboard está disponible en `/` (y también en `/workspace/`, que sirve el mismo contenido para no romper enlaces antiguos). Los tres editores abren y exportan archivos aunque Supabase esté pendiente de configurar. Con una cuenta puedes subir originales, guardar nuevas versiones, restaurar una anterior como una versión adicional y descargar un respaldo ZIP con un manifiesto. El inicio de sesión se hace con correo y contraseña y se repite al recargar o abrir otra pestaña.
 
 Consulta la [guía del portal](docs/PORTAL.md) para activar Supabase en el entorno elegido, conocer los formatos y revisar el alcance de Blockbench, Graphite y FreeCAD Web.
 
 ## Memoria y archivos
 
-- La portada usa HTML, CSS y un módulo pequeño para ES/EN, sin dependencias de ejecución ni fuentes externas.
+- El espacio de diseño usa HTML, CSS y un módulo pequeño para ES/EN, sin dependencias de ejecución ni fuentes externas.
 - SolidCraft se ejecuta en un iframe **del mismo sitio**, creado únicamente al abrir `/solidcraft/`. Su paquete oficial permanece intacto en `/solidcraft/app/`, incluyendo hashes, licencias y service worker. La barra exterior permite volver a las herramientas.
-- El service worker de SolidCraft solo controla `/solidcraft/app/`, nunca la portada ni Atlas. Puede guardar sus archivos para uso sin conexión después de abrirlo.
-- Volver a la portada navega fuera del editor. Mantener una sola pestaña de edición evita tener varias instancias activas. El navegador administra la liberación de memoria y su historial de navegación.
-- En el espacio de diseño, el editor activo se monta dentro del dashboard. Guarda en el proyecto o descarga el documento editable antes de cerrar el editor. Atlas conserva sus claves de almacenamiento y sus proyectos previos; su logotipo vuelve a la portada.
-- El idioma de la portada y Atlas comparte preferencia. El idioma interno de SolidCraft se configura en la aplicación upstream.
-
-La [guía de Atlas](docs/cad/GUIA.md) conserva las instrucciones de croquis, selección local, STEP/STL y conversión a malla. El editor renderiza bajo demanda y calcula BRep en un worker.
+- El service worker de SolidCraft solo controla `/solidcraft/app/`, nunca el resto del sitio. Puede guardar sus archivos para uso sin conexión después de abrirlo.
+- En el espacio de diseño, el editor activo se monta dentro del dashboard. Guarda en el proyecto o descarga el documento editable antes de cerrar el editor. Mantener una sola pestaña de edición evita tener varias instancias activas.
+- El idioma del espacio de diseño y de la página de licencias comparte preferencia. El idioma interno de SolidCraft se configura en la aplicación upstream.
 
 ## Vercel
 
-El sitio de producción es [drafty3-d.vercel.app](https://drafty3-d.vercel.app/), vinculado a **`main`**. Un único despliegue sirve la portada y las rutas independientes. Netlify fue el alojamiento anterior.
+El sitio de producción es [drafty3-d.vercel.app](https://drafty3-d.vercel.app/), vinculado a **`main`**. Un único despliegue sirve el espacio de diseño y las rutas independientes. Netlify fue el alojamiento anterior. `ignoreCommand` en `vercel.json` hace que Vercel solo compile `main`; las demás ramas (incluidas las de Codex) no generan vistas previas pagadas.
 
 - La configuración versionada está en `vercel.json`: build `npm run build`, publicación `dist`, Node 22 según `package.json`.
-- La raíz sirve la portada. Una vista previa de rama puede abrirse directamente en `/workspace/`.
+- La raíz sirve el espacio de diseño.
 - Los WASM se sirven localmente. No hay proxy hacia un editor externo ni servidor geométrico obligatorio.
 - `/deployment.json` identifica `VERCEL_GIT_COMMIT_SHA` cuando Vercel compila. Comprobar que coincide con el commit de GitHub antes de dar un despliegue por verificado.
-- Si ya existe un servidor Materializr protegido con HTTPS, la variable opcional de build `MATERIALIZR_WEB_URL` añade un acceso en su página. No crea ni despliega ese servidor y no debe incluir contraseñas o tokens.
 
 ### Compartir diseños SolidCraft por correo
 
@@ -82,10 +74,6 @@ npx playwright install chromium
 npm run test:browser
 ```
 
-En cloud puede usarse `PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH=/usr/bin/chromium`. La suite usa un único worker y un preview propio en el puerto 4193. Prueba las cargas diferidas, el aislamiento de los editores, el intercambio de archivos y el flujo de sesión y versiones con respuestas simuladas de Supabase, además de las regresiones de Atlas. Las capturas quedan en `artifacts/`.
+En cloud puede usarse `PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH=/usr/bin/chromium`. La suite usa un único worker y un preview propio en el puerto 4193. Prueba las cargas diferidas, el aislamiento de los editores, el intercambio de archivos y el flujo de sesión y versiones con respuestas simuladas de Supabase. Las capturas quedan en `artifacts/`.
 
 SolidCraft: [tangency-labs/solidcraft](https://github.com/tangency-labs/solidcraft), MIT o Apache-2.0. El ZIP oficial y su SHA-256 están fijados en `scripts/solidcraft.mjs`; los avisos originales se publican sin cambios.
-
-Materializr: [materializr-cad/materializr](https://github.com/materializr-cad/materializr), GPL-3.0 con excepciones upstream. Solo se enlazan sus fuentes y descargas, sin redistribuir binarios.
-
-Atlas utiliza Three.js y OpenCascade.js. Sus licencias y fuentes correspondientes se publican en `/cad/legal.html`. [Origen del editor](docs/cad/ORIGEN_CAD.md). El sitio de cursos no se modifica.

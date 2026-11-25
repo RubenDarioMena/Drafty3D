@@ -2,7 +2,6 @@ import http from 'node:http';
 import { readFile, stat } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { createServer } from 'vite';
 import { prepareSolidcraft } from './solidcraft.mjs';
 import { prepareSculptgl } from './sculptgl.mjs';
 import { preparePortal } from './portal.mjs';
@@ -12,17 +11,13 @@ const root = path.resolve(fileURLToPath(new URL(staticOnly ? '../dist/' : '../',
 const generated = path.join(root, '.upstream-cache/portal');
 const port = Number(process.env.PORT || (staticOnly ? 4188 : 4187));
 const types = { '.html': 'text/html; charset=utf-8', '.js': 'text/javascript', '.css': 'text/css', '.json': 'application/json', '.webmanifest': 'application/manifest+json', '.wasm': 'application/wasm', '.png': 'image/png', '.jpg': 'image/jpeg', '.webp': 'image/webp', '.gltf': 'model/gltf+json', '.svg': 'image/svg+xml', '.md': 'text/plain', '.txt': 'text/plain', '.ttf': 'font/ttf' };
-let vite;
 const server = http.createServer(async (req, res) => {
   try {
     const url = new URL(req.url, `http://localhost:${port}`);
     if (!['GET', 'HEAD'].includes(req.method)) { res.writeHead(405); res.end(); return; }
-    if (['/cad', '/solidcraft', '/materializr', '/about', '/solidcraft/app', '/workspace', '/svg-edit', '/sculptgl'].includes(url.pathname)) { res.writeHead(302, { Location: `${url.pathname}/` }); res.end(); return; }
-    if (vite && url.pathname.startsWith('/cad/')) {
-      vite.middlewares(req, res, () => { res.writeHead(404); res.end('No encontrado'); }); return;
-    }
+    if (['/solidcraft', '/about', '/solidcraft/app', '/workspace', '/svg-edit', '/sculptgl'].includes(url.pathname)) { res.writeHead(302, { Location: `${url.pathname}/` }); res.end(); return; }
     const relative = decodeURIComponent(url.pathname).replace(/^\/+/, '') || 'index.html';
-    if (!['index.html', 'portal', 'workspace', 'sculptgl', 'svg-edit', 'solidcraft', 'materializr', 'about', 'cad', 'docs', 'deployment.json'].includes(relative.split('/')[0]) || relative.split('/').some(part => part.startsWith('.'))) {
+    if (!['index.html', 'portal', 'workspace', 'sculptgl', 'svg-edit', 'solidcraft', 'about', 'docs', 'deployment.json'].includes(relative.split('/')[0]) || relative.split('/').some(part => part.startsWith('.'))) {
       res.writeHead(404); res.end('No encontrado'); return;
     }
     let target = path.resolve(root, relative);
@@ -49,9 +44,8 @@ if (!staticOnly) {
     prepareSculptgl(root, path.join(generated, 'sculptgl')),
     preparePortal(root, generated),
   ]);
-  vite = await createServer({ configFile: path.join(root, 'vite.config.mjs'), server: { middlewareMode: true, hmr: { server, path: '__hmr' } }, appType: 'mpa' });
 }
-server.listen(port, '127.0.0.1', () => console.log(`Threeway Avenue · http://127.0.0.1:${port}/`));
-async function close() { await vite?.close(); server.close(); }
+server.listen(port, '127.0.0.1', () => console.log(`Drafty3D · http://127.0.0.1:${port}/`));
+function close() { server.close(); }
 process.once('SIGINT', close);
 process.once('SIGTERM', close);

@@ -102,7 +102,6 @@ test('el espacio con placeholders es ligero, cabe en móvil y SculptGL exporta e
   }));
   page.on('request', request => requests.push(new URL(request.url()).pathname));
   await page.goto('/');
-  await page.getByRole('link', { name: 'Ir al espacio de diseño' }).click();
   await expect(page.getByRole('status')).toContainText('Supabase pendiente');
   await expect(page.getByRole('button', { name: 'Iniciar sesión' })).toBeDisabled();
   await expect(page.locator('iframe')).toHaveCount(0);
@@ -124,7 +123,7 @@ test('el espacio con placeholders es ligero, cabe en móvil y SculptGL exporta e
 
 test('el SVG abre en el editor aislado, conserva el original y se respalda con todas las versiones', async ({ page, context }) => {
   const { versions, blobs } = await fakeCloud(page);
-  await page.goto('/workspace/');
+  await page.goto('/');
   await login(page);
   await project(page);
   await page.locator('#files-input').setInputFiles({ name: 'plano.svg', mimeType: 'image/svg+xml', buffer: Buffer.from(sourceSvg) });
@@ -167,7 +166,7 @@ test('el SVG abre en el editor aislado, conserva el original y se respalda con t
 
 test('SolidCraft exporta un diseño editable y reabre el mismo archivo desde un proyecto', async ({ page }) => {
   await fakeCloud(page);
-  await page.goto('/workspace/');
+  await page.goto('/');
   await login(page);
   await project(page);
   await page.getByRole('button', { name: 'Abrir SolidCraft' }).click();
@@ -200,7 +199,7 @@ test('SolidCraft exporta un diseño editable y reabre el mismo archivo desde un 
 
 test('SculptGL abre el OBJ de un proyecto y conserva su original al guardar el SGL', async ({ page }) => {
   const { versions, blobs } = await fakeCloud(page);
-  await page.goto('/workspace/');
+  await page.goto('/');
   await login(page);
   await project(page);
   const triangle = Buffer.from('v 0 0 0\nv 1 0 0\nv 0 1 0\nf 1 2 3\n');

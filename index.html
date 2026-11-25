@@ -3,59 +3,184 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Espacio central de diseño para proyectos CAD, escultura 3D e ilustraciones vectoriales.">
-  <meta name="theme-color" content="#f5f6f2">
+  <meta name="theme-color" content="#eef1e9">
   <link rel="icon" href="data:,">
-  <title>Drafty3D · Elige tu herramienta</title>
-  <link rel="stylesheet" href="/portal/style.css">
-  <script type="module" src="/portal/app.js"></script>
+  <title>Espacio de diseño · Drafty3D</title>
+  <link rel="stylesheet" href="/workspace/style.css">
+  <script type="module" src="/workspace/assets/app.js"></script>
 </head>
 <body>
-  <header class="site-header">
-    <a class="brand" href="/" aria-label="Drafty3D · inicio"><span class="brand-mark" aria-hidden="true">◇</span> Drafty<span>3D</span></a>
-    <div class="header-right"><span class="header-note" data-copy="header">TU ESPACIO DE DISEÑO</span><label class="language"><span class="sr-only" data-copy="language">Idioma</span><select id="language" aria-label="Idioma"><option value="es">ES</option><option value="en">EN</option></select></label></div>
+  <header class="topbar" id="topbar">
+    <a href="/" class="brand" aria-label="Drafty3D, inicio"><span aria-hidden="true">◇</span>Drafty<b>3D</b></a>
+    <div class="account">
+      <span id="account-email" hidden></span>
+      <button id="sign-in" type="button" class="button primary" disabled>Iniciar sesión</button>
+      <button id="sign-out" type="button" class="button" hidden>Cerrar sesión</button>
+    </div>
   </header>
-  <main class="avenue">
-    <div class="eyebrow"><span></span> THREEWAY AVENUE</div>
-    <h1 data-copy="headline">Una idea.<br>Tres caminos para crear.</h1>
-    <div class="portal-entry">
-      <p class="intro" data-copy="intro">Organiza tus proyectos o empieza con una herramienta de diseño.</p>
-      <a class="open-button primary" href="/workspace/"><span data-copy="openWorkspace">Ir al espacio de diseño</span><span aria-hidden="true">→</span></a>
+
+  <main id="dashboard">
+    <section class="page-title" aria-labelledby="page-heading">
+      <h1 id="page-heading">Espacio de diseño</h1>
+      <p>Tus proyectos y herramientas, en un mismo lugar.</p>
+    </section>
+    <p id="dashboard-status" class="status" role="status" hidden></p>
+
+    <div class="project-layout">
+      <aside class="projects panel" aria-labelledby="project-list-title">
+        <div class="panel-heading">
+          <h2 id="project-list-title">Proyectos</h2>
+          <button type="button" id="new-project" class="button small" hidden>Nuevo proyecto</button>
+        </div>
+        <p id="project-empty">Inicia sesión para acceder a tus proyectos.</p>
+        <ul id="projects" class="project-list"></ul>
+      </aside>
+      <section class="files panel" aria-labelledby="files-heading">
+        <div class="panel-heading files-heading">
+          <div>
+            <h2 id="files-heading">Archivos</h2>
+            <p id="project-description">Aquí se guardan los originales y sus versiones.</p>
+          </div>
+          <div class="actions" id="project-actions" hidden>
+            <button type="button" id="rename-project" class="button small">Renombrar</button>
+            <button type="button" id="backup" class="button small">Descargar respaldo</button>
+            <button type="button" id="new-note" class="button small">Nueva nota</button>
+            <button type="button" id="upload" class="button primary small">Subir archivos</button>
+          </div>
+          <input id="files-input" type="file" multiple hidden>
+        </div>
+        <p id="files-empty" class="empty">Selecciona un proyecto para ver sus archivos.</p>
+        <ul id="files" class="file-list"></ul>
+      </section>
     </div>
-    <div class="tool-grid">
-      <article class="tool-card featured">
-        <div class="card-top"><span class="tool-number">01 /</span><span class="badge" data-copy="recommended">RECOMENDADO</span></div>
-        <div class="tool-art solid-art" aria-hidden="true"><svg viewBox="0 0 220 145"><path class="shape-fill" d="m110 12 71 41v68l-71 41-71-41V53Z" transform="translate(0 -14)"/><path d="m39 39 71 41 71-41M110 80v68M76 60V19m70 41V19"/><path class="art-detail" d="m110 46 31 18v29l-31 18-31-18V64Z"/></svg></div>
-        <p class="tool-type" data-copy="solidType">CAD PARAMÉTRICO · EN EL NAVEGADOR</p>
-        <h2>SolidCraft</h2>
-        <p class="card-description" data-copy="solidDescription">Del croquis al sólido. Modelado paramétrico con historial de operaciones y un motor escrito en Rust.</p>
-        <ul class="capabilities"><li data-copy="solidFeature1">Croquis y operaciones</li><li>WebAssembly</li></ul>
-        <a class="open-button primary" href="/solidcraft/"><span data-copy="openSolid">Abrir SolidCraft</span><span aria-hidden="true">→</span></a>
-        <p class="availability"><span class="status-dot"></span><span data-copy="selfHosted">Alojado aquí · sin cuenta</span></p>
-      </article>
-      <article class="tool-card">
-        <div class="card-top"><span class="tool-number">02 /</span><span class="badge neutral" data-copy="desktop">ESCRITORIO</span></div>
-        <div class="tool-art material-art" aria-hidden="true"><svg viewBox="0 0 220 145"><path class="shape-fill" d="m38 51 72-39 72 39-72 40Z"/><path class="shape-fill" d="m38 78 72 39 72-39v26l-72 39-72-39Z"/><path d="m38 51 72 40 72-40M110 91v26M38 78V51m144 27V51"/><path class="art-detail" d="m80 50 30-16 30 16-30 17Z"/></svg></div>
-        <p class="tool-type" data-copy="materialType">CAD PARAMÉTRICO · APLICACIÓN NATIVA</p>
-        <h2>Materializr</h2>
-        <p class="card-description" data-copy="materialDescription">Croquis con restricciones y modelado de sólidos con OpenCascade. Su versión actual se instala en tu equipo.</p>
-        <ul class="capabilities"><li data-copy="materialFeature1">Restricciones de croquis</li><li>STEP / STL</li></ul>
-        <a class="open-button" href="/materializr/"><span data-copy="materialOptions">Ver opciones de Materializr</span><span aria-hidden="true">→</span></a>
-        <p class="availability native"><span class="status-dot"></span><span data-copy="nativeStatus">Versión web no disponible</span></p>
-      </article>
-      <article class="tool-card">
-        <div class="card-top"><span class="tool-number">03 /</span><span class="badge neutral" data-copy="experimental">EXPERIMENTAL</span></div>
-        <div class="tool-art draft-art" aria-hidden="true"><svg viewBox="0 0 220 145"><path class="shape-fill" d="m110 12 73 42-15 65-58 23-73-42 15-65Z"/><path d="m110 12 0 77 73-35M110 89 37 100m73-11 58 30M52 35l58 54M110 89v53"/><g class="vertex"><circle cx="110" cy="12" r="4"/><circle cx="183" cy="54" r="4"/><circle cx="168" cy="119" r="4"/><circle cx="110" cy="142" r="4"/><circle cx="37" cy="100" r="4"/><circle cx="52" cy="35" r="4"/><circle cx="110" cy="89" r="4"/></g></svg></div>
-        <p class="tool-type" data-copy="draftType">ATLAS · CAD Y MALLAS</p>
-        <h2>Draft3D</h2>
-        <p class="card-description" data-copy="draftDescription">Nuestro editor Atlas. Crea sólidos básicos, trabaja con croquis y convierte tus piezas a mallas poligonales.</p>
-        <ul class="capabilities"><li data-copy="draftFeature1">Sólidos y mallas</li><li>STEP / STL</li></ul>
-        <a class="open-button" href="/cad/"><span data-copy="openDraft">Abrir Draft3D</span><span aria-hidden="true">→</span></a>
-        <p class="availability"><span class="status-dot"></span><span data-copy="selfHosted">Alojado aquí · sin cuenta</span></p>
-      </article>
-    </div>
-    <div class="workspace-note"><span aria-hidden="true">→</span><p data-copy="memory">Abre una herramienta a la vez. Para reunir tus archivos y sus versiones, usa el espacio de diseño.</p></div>
+
+    <section class="tools" aria-labelledby="tools-heading">
+      <div class="section-heading">
+        <h2 id="tools-heading">Herramientas de diseño</h2>
+        <p>Abre un editor para crear un archivo o abre un original desde tu proyecto.</p>
+      </div>
+      <div class="tools-grid">
+        <article class="tool panel">
+          <div class="tool-icon cad-icon" aria-hidden="true">◇</div>
+          <div><h3>SolidCraft</h3><p>CAD paramétrico, croquis y sólidos.</p></div>
+          <div class="tool-footer"><span>JSON · STEP · STL · OBJ</span><button class="button small" data-editor="solidcraft" type="button">Abrir <span class="sr-only">SolidCraft</span></button></div>
+        </article>
+        <article class="tool panel">
+          <div class="tool-icon mesh-icon" aria-hidden="true">◉</div>
+          <div><h3>SculptGL</h3><p>Esculpido digital y mallas 3D.</p></div>
+          <div class="tool-footer"><span>SGL · OBJ · STL · PLY</span><button class="button small" data-editor="sculptgl" type="button">Abrir <span class="sr-only">SculptGL</span></button></div>
+        </article>
+        <article class="tool panel">
+          <div class="tool-icon vector-icon" aria-hidden="true">✦</div>
+          <div><h3>SVG-Edit</h3><p>Edición vectorial de ilustraciones e iconos.</p></div>
+          <div class="tool-footer"><span>SVG</span><button class="button small" data-editor="svg" type="button">Abrir <span class="sr-only">SVG-Edit</span></button></div>
+        </article>
+      </div>
+
+      <details class="more-tools">
+        <summary>Más herramientas</summary>
+        <ul>
+          <li><a href="https://web.blockbench.net/" target="_blank" rel="noopener noreferrer">Blockbench</a><span>Modelado low-poly. Intercambia BBModel, OBJ y GLB mediante archivos.</span></li>
+          <li><a href="https://editor.graphite.art/" target="_blank" rel="noopener noreferrer">Graphite</a><span>Editor experimental. Conserva el proyecto nativo y exporta una copia en SVG.</span></li>
+          <li><a href="https://freecad.virtastic.app/" target="_blank" rel="noopener noreferrer">FreeCAD Web</a><span>Port independiente. Requiere Chrome o Edge de escritorio compatible con WASM64 y JSPI.</span></li>
+        </ul>
+      </details>
+    </section>
   </main>
-  <footer class="site-footer"><span>Drafty3D <span class="footer-divider">/</span> Threeway Avenue</span><a href="/about/" data-copy="about">Proyectos y licencias →</a></footer>
+
+  <section id="editor" class="editor" aria-labelledby="editor-title" hidden>
+    <header class="editor-header">
+      <button type="button" id="back" class="button small">← Proyectos</button>
+      <div class="editor-heading">
+        <h1 id="editor-title"></h1>
+        <p id="editor-document"></p>
+      </div>
+      <div class="actions editor-actions">
+        <label class="editor-format"><span class="sr-only">Formato de exportación</span><select id="format"></select></label>
+        <button type="button" id="editor-download" class="button small" disabled>Descargar</button>
+        <button type="button" id="editor-save" class="button primary small" disabled>Guardar en proyecto</button>
+      </div>
+    </header>
+    <p id="editor-status" class="status editor-status" role="status" hidden></p>
+    <div id="editor-frame" class="editor-frame"></div>
+  </section>
+
+  <dialog id="login" aria-labelledby="login-title">
+    <form id="login-form" autocomplete="off">
+      <h2 id="login-title">Inicia sesión</h2>
+      <p>Abre tus proyectos y archivos desde cualquier dispositivo. Vuelve a iniciar sesión después de recargar.</p>
+      <label>Correo electrónico <input name="email" type="email" autocomplete="off" required></label>
+      <label>Contraseña <input name="password" type="password" autocomplete="off" required></label>
+      <p id="login-status" class="status" role="status" hidden></p>
+      <div class="dialog-actions">
+        <button type="button" data-close class="button">Cancelar</button>
+        <button type="submit" class="button primary">Entrar</button>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog id="project-dialog" aria-labelledby="project-dialog-title">
+    <form id="project-form">
+      <h2 id="project-dialog-title">Nuevo proyecto</h2>
+      <label>Nombre del proyecto <input name="name" required maxlength="100"></label>
+      <p id="project-status" class="status" role="status" hidden></p>
+      <div class="dialog-actions">
+        <button type="button" data-close class="button">Cancelar</button>
+        <button type="submit" class="button primary">Guardar proyecto</button>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog id="history" aria-labelledby="history-title">
+    <div class="dialog-body">
+      <h2 id="history-title">Versiones</h2>
+      <div>
+        <button type="button" id="upload-version" class="button small">Subir nueva versión</button>
+        <input id="version-input" type="file" hidden>
+      </div>
+      <p id="history-status" class="status" role="status" hidden></p>
+      <ul id="versions" class="file-list"></ul>
+      <div class="dialog-actions"><button type="button" class="button" data-close>Cerrar</button></div>
+    </div>
+  </dialog>
+
+  <dialog id="note-dialog" aria-labelledby="note-title">
+    <form id="note-form">
+      <h2 id="note-title">Nota para agentes</h2>
+      <label>Nombre <input name="name" value="Notas" required maxlength="170"></label>
+      <label>Contenido <textarea name="body" rows="7" required></textarea></label>
+      <p id="note-status" class="status" role="status" hidden></p>
+      <div class="dialog-actions">
+        <button type="button" data-close class="button">Cancelar</button>
+        <button type="submit" class="button primary">Guardar nota</button>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog id="save-dialog" aria-labelledby="save-title">
+    <form id="save-form">
+      <h2 id="save-title">Guardar en proyecto</h2>
+      <label>Proyecto <select id="save-project" name="project" required></select></label>
+      <label id="save-name-label">Nombre del archivo <input id="save-name" name="name" maxlength="170" required></label>
+      <p id="save-info"></p>
+      <p id="save-status" class="status" role="status" hidden></p>
+      <div class="dialog-actions">
+        <button type="button" data-close class="button">Cancelar</button>
+        <button type="submit" class="button primary">Guardar</button>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog id="leave-dialog" aria-labelledby="leave-title">
+    <form method="dialog">
+      <h2 id="leave-title">¿Cerrar el editor?</h2>
+      <p>Guarda en el proyecto o descarga una copia si quieres conservar los cambios de este editor.</p>
+      <div class="dialog-actions">
+        <button value="stay" class="button primary" autofocus>Seguir editando</button>
+        <button value="leave" class="button">Cerrar editor</button>
+      </div>
+    </form>
+  </dialog>
+  <footer class="footer" id="footer"><a href="/about/">Proyectos y licencias</a></footer>
 </body>
 </html>
