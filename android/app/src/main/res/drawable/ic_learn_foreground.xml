@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Drafty3D Learn launcher mark: our own diamond with a play arrow (not Blender's logo). -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp" android:height="108dp"
+    android:viewportWidth="108" android:viewportHeight="108">
+    <path android:pathData="M54,26 L82,54 L54,82 L26,54 Z"
+        android:strokeColor="#FFA53A" android:strokeWidth="6" android:strokeLineJoin="round" />
+    <path android:pathData="M48,44 L64,54 L48,64 Z" android:fillColor="#FFFFFF" />
+</vector>

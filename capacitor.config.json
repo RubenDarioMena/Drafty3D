@@ -1,0 +1,9 @@
+{
+  "appId": "io.github.rubendariomena.drafty3d.learn",
+  "appName": "Drafty3D Learn",
+  "webDir": "dist/learn",
+  "android": {
+    "allowMixedContent": false,
+    "captureInput": true
+  }
+}

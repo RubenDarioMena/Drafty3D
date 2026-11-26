@@ -1,0 +1,20 @@
+{
+  "lessons": [
+    {
+      "module": "modifiers",
+      "example": "cup",
+      "mode": "watch",
+      "title": "Low-poly cup",
+      "variantOf": null,
+      "timeline": "modifiers/cup/timeline.json"
+    },
+    {
+      "module": "modifiers",
+      "example": "bowl",
+      "mode": "your-turn",
+      "title": "Your turn: bowl",
+      "variantOf": "cup",
+      "timeline": "modifiers/bowl/timeline.json"
+    }
+  ]
+}

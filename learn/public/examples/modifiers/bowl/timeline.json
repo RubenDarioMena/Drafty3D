@@ -1,0 +1,271 @@
+{
+  "blenderVersion": "5.3.0",
+  "module": "modifiers",
+  "example": "bowl",
+  "mode": "your-turn",
+  "title": "Your turn: bowl",
+  "object": "Bowl",
+  "initial": {
+    "panel": "panel.properties.object",
+    "camera": {
+      "position": [
+        1.6,
+        -1.9,
+        1.35
+      ],
+      "target": [
+        0,
+        0,
+        0.15
+      ],
+      "fov": 30
+    },
+    "text": "Same three modifiers, new values. Turn this open cylinder into a bowl.",
+    "mesh": "step-00.glb"
+  },
+  "steps": [
+    {
+      "id": "panel.properties.modifier",
+      "action": "select_panel",
+      "value": null,
+      "value_type": null,
+      "shortcut": {
+        "keys": [
+          "Ctrl",
+          "Tab"
+        ],
+        "context": "Properties editor · next tab"
+      },
+      "duration": 1.4,
+      "autoAdvance": true,
+      "text": "Open the Modifier Properties tab.",
+      "help": "It's the wrench icon in the Properties tab column, right below the orange Object square.",
+      "camera": {
+        "position": [
+          1.6,
+          -1.9,
+          1.35
+        ],
+        "target": [
+          0,
+          0,
+          0.15
+        ],
+        "fov": 30
+      },
+      "mesh": null
+    },
+    {
+      "id": "modifier.solidify.add",
+      "action": "add_modifier",
+      "value": "Solidify",
+      "value_type": "string",
+      "modifier": "SOLIDIFY",
+      "shortcut": {
+        "keys": [
+          "Shift",
+          "A"
+        ],
+        "context": "Properties editor · Modifiers tab"
+      },
+      "duration": 2.8,
+      "autoAdvance": false,
+      "text": "Give the walls thickness: add a Solidify modifier.",
+      "help": "Add Modifier → Generate → Solidify.",
+      "camera": {
+        "position": [
+          1.6,
+          -1.9,
+          1.35
+        ],
+        "target": [
+          0,
+          0,
+          0.15
+        ],
+        "fov": 30
+      },
+      "mesh": "step-02.glb"
+    },
+    {
+      "id": "modifier.solidify.thickness",
+      "action": "set_value",
+      "value": 0.06,
+      "value_type": "number",
+      "step": 0.01,
+      "modifier": "SOLIDIFY",
+      "shortcut": null,
+      "duration": 2.2,
+      "autoAdvance": false,
+      "text": "Set the wall Thickness to 0.06 m.",
+      "help": "Thickness is the first number in the Solidify panel. ◀ ▶ step it by 0.01 m.",
+      "camera": {
+        "position": [
+          0.85,
+          -1.05,
+          1.85
+        ],
+        "target": [
+          0,
+          0,
+          0.1
+        ],
+        "fov": 40
+      },
+      "mesh": "step-03.glb"
+    },
+    {
+      "id": "modifier.bevel.add",
+      "action": "add_modifier",
+      "value": "Bevel",
+      "value_type": "string",
+      "modifier": "BEVEL",
+      "shortcut": {
+        "keys": [
+          "Shift",
+          "A"
+        ],
+        "context": "Properties editor · Modifiers tab"
+      },
+      "duration": 2.8,
+      "autoAdvance": false,
+      "text": "Round the hard edges: add a Bevel modifier.",
+      "help": "Add Modifier → Generate → Bevel. It goes below Solidify, so it rounds the new walls too.",
+      "camera": {
+        "position": [
+          1.6,
+          -1.9,
+          1.35
+        ],
+        "target": [
+          0,
+          0,
+          0.15
+        ],
+        "fov": 30
+      },
+      "mesh": "step-04.glb"
+    },
+    {
+      "id": "modifier.bevel.amount",
+      "action": "set_value",
+      "value": 0.02,
+      "value_type": "number",
+      "step": 0.01,
+      "modifier": "BEVEL",
+      "shortcut": null,
+      "duration": 2.2,
+      "autoAdvance": false,
+      "text": "Set the bevel Amount to 0.02 m.",
+      "help": "Amount is right below Width Type in the Bevel panel.",
+      "camera": {
+        "position": [
+          1.1,
+          -1.35,
+          0.85
+        ],
+        "target": [
+          0.2,
+          -0.3,
+          0.28
+        ],
+        "fov": 30
+      },
+      "mesh": "step-05.glb"
+    },
+    {
+      "id": "modifier.bevel.segments",
+      "action": "set_value",
+      "value": 3,
+      "value_type": "number",
+      "step": 1,
+      "modifier": "BEVEL",
+      "shortcut": null,
+      "duration": 2.2,
+      "autoAdvance": false,
+      "text": "Use 3 Segments for a softer edge.",
+      "help": "Segments is right below Amount.",
+      "camera": {
+        "position": [
+          1.1,
+          -1.35,
+          0.85
+        ],
+        "target": [
+          0.2,
+          -0.3,
+          0.28
+        ],
+        "fov": 30
+      },
+      "mesh": "step-06.glb"
+    },
+    {
+      "id": "modifier.subsurf.add",
+      "action": "add_modifier",
+      "value": "Subdivision Surface",
+      "value_type": "string",
+      "modifier": "SUBSURF",
+      "shortcut": {
+        "keys": [
+          "Shift",
+          "A"
+        ],
+        "context": "Properties editor · Modifiers tab"
+      },
+      "duration": 2.8,
+      "autoAdvance": false,
+      "text": "Smooth everything: add a Subdivision Surface modifier.",
+      "help": "Add Modifier → Generate → Subdivision Surface. Keep it last in the stack.",
+      "camera": {
+        "position": [
+          1.6,
+          -1.9,
+          1.35
+        ],
+        "target": [
+          0,
+          0,
+          0.15
+        ],
+        "fov": 30
+      },
+      "mesh": "step-07.glb"
+    },
+    {
+      "id": "modifier.subsurf.levels",
+      "action": "set_value",
+      "value": 2,
+      "value_type": "number",
+      "step": 1,
+      "modifier": "SUBSURF",
+      "shortcut": {
+        "keys": [
+          "Ctrl",
+          "2"
+        ],
+        "context": "3D Viewport · Object Mode"
+      },
+      "duration": 2.2,
+      "autoAdvance": false,
+      "text": "Set Levels Viewport to 2.",
+      "help": "First number in the Subdivision panel. In the 3D Viewport, Ctrl 2 does the same.",
+      "camera": {
+        "position": [
+          1.6,
+          -1.9,
+          1.35
+        ],
+        "target": [
+          0,
+          0,
+          0.15
+        ],
+        "fov": 30
+      },
+      "mesh": "step-08.glb"
+    }
+  ],
+  "variantOf": "cup",
+  "outro": "Bowl finished: Solidify → Bevel → Subdivision Surface, the same stack as the cup."
+}

@@ -116,7 +116,7 @@ button:disabled { cursor: default; opacity: .54; }
 .tools { margin-top: 30px; }
 .section-heading { margin-bottom: 15px; }
 .section-heading p { font-size: .88rem; }
-.tools-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+.tools-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 14px; }
 .tool { display: grid; grid-template-columns: 42px 1fr; gap: 12px; align-items: center; padding: 15px; }
 .tool h3 { font-size: 1.05rem; letter-spacing: -.025em; }
 .tool p { margin-top: 5px; color: var(--muted); font-size: .8rem; line-height: 1.45; }
@@ -124,6 +124,7 @@ button:disabled { cursor: default; opacity: .54; }
 .cad-icon { color: #255b40; background: #e6efe2; }
 .mesh-icon { color: #6b492f; background: #f3e8dc; }
 .vector-icon { color: #44578b; background: #e8eef9; }
+.learn-icon { color: #9a5a12; background: #fbecd9; font-size: 19px; }
 .tool-footer { grid-column: 1 / -1; border-top: 1px solid var(--line); padding-top: 11px; display: flex; justify-content: space-between; align-items: center; gap: 9px; }
 .tool-footer > span { color: var(--muted); font-size: .67rem; letter-spacing: .045em; font-weight: 650; }
 

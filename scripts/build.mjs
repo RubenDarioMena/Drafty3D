@@ -1,6 +1,7 @@
 import { mkdir, readFile, rm, stat, writeFile } from 'node:fs/promises';
 import { dirname, resolve, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { prepareLearn } from './learn.mjs';
 import { prepareSolidcraft } from './solidcraft.mjs';
 import { prepareSculptgl } from './sculptgl.mjs';
 import { preparePortal } from './portal.mjs';
@@ -12,7 +13,6 @@ const files = [
   'index.html',
   'portal/style.css',
   'portal/app.js',
-  'workspace/index.html',
   'workspace/style.css',
   'svg-edit/index.html',
   'svg-edit/editor.js',
@@ -32,10 +32,13 @@ for (const [index, file] of files.entries()) {
   await mkdir(dirname(target), { recursive: true });
   await writeFile(target, contents[index]);
 }
+// /workspace/ keeps serving the design workspace for old links; the page itself lives at /.
+await writeFile(resolve(output, 'workspace/index.html'), contents[files.indexOf('index.html')]);
 await Promise.all([
   prepareSolidcraft(root, resolve(output, 'solidcraft/app')),
   prepareSculptgl(root, resolve(output, 'sculptgl')),
   preparePortal(root, output),
+  prepareLearn(root, resolve(output, 'learn')),
 ]);
 await writeFile(resolve(output, 'deployment.json'), JSON.stringify({ commit: process.env.VERCEL_GIT_COMMIT_SHA || process.env.COMMIT_REF || null, solidcraft: '0.18.3' }) + '\n');
 
