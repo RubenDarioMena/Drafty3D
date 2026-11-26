@@ -121,7 +121,11 @@ async function openLesson(key) {
   // Sculpt lessons swap the Properties editor for the 3D Viewport's tool header and brush shelf.
   lessonView.dataset.module = timeline.module;
   viewer ??= new Viewer(document.getElementById('viewport-canvas'));
+  viewer.setHelpers(timeline.helpers ?? []);
   const editor = editors[timeline.module] ?? editors.modifiers;
+  // The objects an Object field may point at: the lesson's helpers, as Blender would list them.
+  editor.objects = (timeline.helpers ?? []).map(helper => helper.name);
+  editor.openList = null;
   const context = { timeline, ui, viewer, editor, menu, modeMenu, cursor, bar, geometries, key, toast };
   mode = timeline.mode === 'watch' ? new WatchMode(context) : new YourTurnMode(context);
   mode.start();

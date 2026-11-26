@@ -72,6 +72,22 @@ export async function animateStep({ step, to, editor, menu, modeMenu, cursor, re
     return card;
   }
 
+  // An Object field or an enum dropdown (Deform Axis): open its list, then pick the item.
+  if (step.action === 'set_value' && editor.element(step.id)?.classList.contains('dropdown')) {
+    await cursor.moveTo(editor.element(step.id), fly);
+    await cursor.tap();
+    editor.openList = step.id;
+    editor.render(editor.state, editor.options);
+    await wait(0.25 * scale);
+    const item = editor.element(`${step.id}.${step.value.toLowerCase()}`);
+    item?.classList.add('on');
+    await cursor.moveTo(item, fly * 0.8);
+    await cursor.tap();
+    editor.openList = null;
+    render(to);
+    return editor.element(step.id);
+  }
+
   if (step.action === 'set_value' && typeof step.value === 'boolean') {
     await cursor.moveTo(editor.element(step.id), fly);
     await cursor.tap();

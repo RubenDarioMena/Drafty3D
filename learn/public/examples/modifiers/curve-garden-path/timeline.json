@@ -1,0 +1,511 @@
+{
+  "blenderVersion": "5.3.0",
+  "module": "modifiers",
+  "example": "curve-garden-path",
+  "mode": "watch",
+  "title": "Garden path",
+  "object": "Paving",
+  "initial": {
+    "panel": "panel.properties.object",
+    "camera": {
+      "position": [
+        1,
+        -2.6,
+        4.3
+      ],
+      "target": [
+        0.8,
+        -0.6,
+        0
+      ],
+      "fov": 40
+    },
+    "text": "A straight paving strip and a curve named Path. The Curve modifier bends a mesh along a curve, as long as you tell it which way the mesh runs.",
+    "mesh": "step-00.glb"
+  },
+  "steps": [
+    {
+      "id": "panel.properties.modifier",
+      "action": "select_panel",
+      "value": null,
+      "value_type": null,
+      "shortcut": {
+        "keys": [
+          "Ctrl",
+          "Tab"
+        ],
+        "context": "Properties editor · next tab"
+      },
+      "duration": 1.4,
+      "autoAdvance": true,
+      "text": "Open the Modifier Properties tab, the wrench.",
+      "help": null,
+      "camera": {
+        "position": [
+          1,
+          -2.6,
+          4.3
+        ],
+        "target": [
+          0.8,
+          -0.6,
+          0
+        ],
+        "fov": 40
+      },
+      "mesh": null
+    },
+    {
+      "id": "modifier.curve.add",
+      "action": "add_modifier",
+      "value": "Curve",
+      "value_type": "string",
+      "modifier": "CURVE",
+      "shortcut": {
+        "keys": [
+          "Shift",
+          "A"
+        ],
+        "context": "Properties editor · Modifiers tab"
+      },
+      "duration": 2.8,
+      "autoAdvance": false,
+      "text": "Add Modifier → Deform → Curve. Nothing happens until it has a curve to follow.",
+      "help": null,
+      "camera": {
+        "position": [
+          1,
+          -2.6,
+          4.3
+        ],
+        "target": [
+          0.8,
+          -0.6,
+          0
+        ],
+        "fov": 40
+      },
+      "mesh": null
+    },
+    {
+      "id": "modifier.curve.object",
+      "action": "set_value",
+      "value": "Path",
+      "value_type": "object",
+      "modifier": "CURVE",
+      "shortcut": null,
+      "duration": 2.2,
+      "autoAdvance": false,
+      "text": "Set Curve Object to Path. The strip jumps onto the curve, but crumpled: Deform Axis is X, and the strip runs along -Y.",
+      "help": null,
+      "camera": {
+        "position": [
+          1,
+          -2.6,
+          4.3
+        ],
+        "target": [
+          0.8,
+          -0.6,
+          0
+        ],
+        "fov": 40
+      },
+      "mesh": "step-03.glb"
+    },
+    {
+      "id": "modifier.curve.deform_axis",
+      "action": "set_value",
+      "value": "NEG_Y",
+      "value_type": "enum",
+      "modifier": "CURVE",
+      "shortcut": null,
+      "duration": 2.2,
+      "autoAdvance": false,
+      "text": "Set Deform Axis to -Y, the way the strip runs. Now its length follows the path; the rings along it let it bend smoothly.",
+      "help": null,
+      "camera": {
+        "position": [
+          0.9,
+          -1.9,
+          2.1
+        ],
+        "target": [
+          0.9,
+          0.3,
+          0
+        ],
+        "fov": 34
+      },
+      "mesh": "step-04.glb"
+    }
+  ],
+  "helpers": [
+    {
+      "name": "Path",
+      "segments": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          0.05495,
+          0.05579,
+          0
+        ],
+        [
+          0.05495,
+          0.05579,
+          0
+        ],
+        [
+          0.10372,
+          0.11478,
+          0
+        ],
+        [
+          0.10372,
+          0.11478,
+          0
+        ],
+        [
+          0.1479,
+          0.17547,
+          0
+        ],
+        [
+          0.1479,
+          0.17547,
+          0
+        ],
+        [
+          0.18907,
+          0.23636,
+          0
+        ],
+        [
+          0.18907,
+          0.23636,
+          0
+        ],
+        [
+          0.22881,
+          0.29594,
+          0
+        ],
+        [
+          0.22881,
+          0.29594,
+          0
+        ],
+        [
+          0.26871,
+          0.35271,
+          0
+        ],
+        [
+          0.26871,
+          0.35271,
+          0
+        ],
+        [
+          0.31035,
+          0.40516,
+          0
+        ],
+        [
+          0.31035,
+          0.40516,
+          0
+        ],
+        [
+          0.35531,
+          0.45179,
+          0
+        ],
+        [
+          0.35531,
+          0.45179,
+          0
+        ],
+        [
+          0.40517,
+          0.49109,
+          0
+        ],
+        [
+          0.40517,
+          0.49109,
+          0
+        ],
+        [
+          0.46152,
+          0.52157,
+          0
+        ],
+        [
+          0.46152,
+          0.52157,
+          0
+        ],
+        [
+          0.52593,
+          0.5417,
+          0
+        ],
+        [
+          0.52593,
+          0.5417,
+          0
+        ],
+        [
+          0.6,
+          0.55,
+          0
+        ],
+        [
+          0.6,
+          0.55,
+          0
+        ],
+        [
+          0.67002,
+          0.54154,
+          0
+        ],
+        [
+          0.67002,
+          0.54154,
+          0
+        ],
+        [
+          0.72912,
+          0.51496,
+          0
+        ],
+        [
+          0.72912,
+          0.51496,
+          0
+        ],
+        [
+          0.77949,
+          0.4739,
+          0
+        ],
+        [
+          0.77949,
+          0.4739,
+          0
+        ],
+        [
+          0.8233,
+          0.42197,
+          0
+        ],
+        [
+          0.8233,
+          0.42197,
+          0
+        ],
+        [
+          0.86274,
+          0.3628,
+          0
+        ],
+        [
+          0.86274,
+          0.3628,
+          0
+        ],
+        [
+          0.9,
+          0.3,
+          0
+        ],
+        [
+          0.9,
+          0.3,
+          0
+        ],
+        [
+          0.93726,
+          0.2372,
+          0
+        ],
+        [
+          0.93726,
+          0.2372,
+          0
+        ],
+        [
+          0.9767,
+          0.17803,
+          0
+        ],
+        [
+          0.9767,
+          0.17803,
+          0
+        ],
+        [
+          1.02051,
+          0.1261,
+          0
+        ],
+        [
+          1.02051,
+          0.1261,
+          0
+        ],
+        [
+          1.07088,
+          0.08504,
+          0
+        ],
+        [
+          1.07088,
+          0.08504,
+          0
+        ],
+        [
+          1.12998,
+          0.05846,
+          0
+        ],
+        [
+          1.12998,
+          0.05846,
+          0
+        ],
+        [
+          1.2,
+          0.05,
+          0
+        ],
+        [
+          1.2,
+          0.05,
+          0
+        ],
+        [
+          1.27407,
+          0.0583,
+          0
+        ],
+        [
+          1.27407,
+          0.0583,
+          0
+        ],
+        [
+          1.33848,
+          0.07843,
+          0
+        ],
+        [
+          1.33848,
+          0.07843,
+          0
+        ],
+        [
+          1.39483,
+          0.10891,
+          0
+        ],
+        [
+          1.39483,
+          0.10891,
+          0
+        ],
+        [
+          1.44469,
+          0.14821,
+          0
+        ],
+        [
+          1.44469,
+          0.14821,
+          0
+        ],
+        [
+          1.48965,
+          0.19484,
+          0
+        ],
+        [
+          1.48965,
+          0.19484,
+          0
+        ],
+        [
+          1.53129,
+          0.24729,
+          0
+        ],
+        [
+          1.53129,
+          0.24729,
+          0
+        ],
+        [
+          1.57119,
+          0.30406,
+          0
+        ],
+        [
+          1.57119,
+          0.30406,
+          0
+        ],
+        [
+          1.61093,
+          0.36364,
+          0
+        ],
+        [
+          1.61093,
+          0.36364,
+          0
+        ],
+        [
+          1.6521,
+          0.42453,
+          0
+        ],
+        [
+          1.6521,
+          0.42453,
+          0
+        ],
+        [
+          1.69628,
+          0.48522,
+          0
+        ],
+        [
+          1.69628,
+          0.48522,
+          0
+        ],
+        [
+          1.74505,
+          0.54421,
+          0
+        ],
+        [
+          1.74505,
+          0.54421,
+          0
+        ],
+        [
+          1.8,
+          0.6,
+          0
+        ]
+      ]
+    }
+  ],
+  "outro": "Done: Curve Object says where, Deform Axis says which way the mesh runs. Now lay a ring track yourself."
+}

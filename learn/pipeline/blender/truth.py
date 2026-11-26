@@ -7,7 +7,8 @@ from types import SimpleNamespace
 import bpy
 
 MODIFIER_SHORT = {'SOLIDIFY': 'solidify', 'BEVEL': 'bevel', 'SUBSURF': 'subsurf',
-                  'SIMPLE_DEFORM': 'simple_deform', 'MIRROR': 'mirror', 'ARRAY': 'array'}
+                  'SIMPLE_DEFORM': 'simple_deform', 'MIRROR': 'mirror', 'ARRAY': 'array',
+                  'BOOLEAN': 'boolean', 'CURVE': 'curve'}
 
 
 def _axis_row(field_prefix, rna, heading, labels=('X', 'Y', 'Z')):
@@ -107,6 +108,25 @@ PANELS = {
             'Caps',
         ],
     },
+    # MOD_boolean.cc: Operation as full-width buttons, then the operand, then the Solver buttons.
+    'BOOLEAN': {
+        'fields': [
+            ('operation', 'operation', {'display': 'expand'}),
+            ('operand_type', 'operand_type', {'display': 'dropdown'}),
+            ('object', 'object', {}),
+            ('solver', 'solver', {'display': 'expand', 'labelled': True}),
+        ],
+        'subpanels': ['Solver Options'],
+    },
+    # MOD_curve.cc: modifier_vgroup_ui draws the vertex group search with its invert toggle.
+    'CURVE': {
+        'fields': [
+            ('object', 'object', {'label': 'Curve Object'}),
+            ('deform_axis', 'deform_axis', {'display': 'dropdown'}),
+            ('vertex_group', 'vertex_group', {}),
+        ],
+        'subpanels': [],
+    },
 }
 
 
@@ -181,8 +201,11 @@ def _rna_field(mod_type, field_id, rna_id, overrides, instance, subpanel=None):
         field.update(kind='enum', display=overrides.get('display', 'dropdown'), default=value,
                      items=[{'value': item.identifier, 'label': item.name} for item in prop.enum_items])
     elif prop.type == 'POINTER':
-        # An object picker (Origin, Axis Object): always empty in the lessons.
+        # An object picker (Origin, Boolean's Object): empty until a lesson points it at one of its helpers.
         field.update(kind='pointer', default=None)
+    elif prop.type == 'STRING':
+        # A search field such as Vertex Group: shown empty, never set by a lesson.
+        field.update(kind='pointer', search=True, default=None)
     elif prop.type == 'BOOLEAN':
         field.update(kind='bool', default=bool(value))
     elif prop.type in ('FLOAT', 'INT'):

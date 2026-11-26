@@ -102,7 +102,14 @@ button { cursor: pointer; }
 .enum-row button { flex: 1; min-width: 0; border: 0; background: transparent; padding: 0 3px; font-size: 12px; white-space: nowrap; }
 .enum-row.interactive { background: var(--field-hover); }
 .dropdown { height: 26px; display: flex; align-items: center; justify-content: space-between; padding: 0 8px; background: #282828; border-radius: var(--radius); font-size: 13px; }
-.dropdown.pointer { justify-content: flex-start; gap: 8px; color: var(--muted); }
+.dropdown.pointer { justify-content: flex-start; gap: 8px; color: var(--muted); width: 100%; border: 0; }
+.dropdown.pointer.set { color: var(--text); }
+.dropdown.pointer.interactive { background: var(--field-hover); outline: 1px solid var(--blue); }
+.dropdown.interactive:not(.pointer) { background: var(--field-hover); outline: 1px solid var(--blue); width: 100%; border: 0; color: var(--text); }
+.dropdown-field { position: relative; min-width: 0; }
+.dropdown-list { margin-top: 3px; background: #1d1d1d; border: 1px solid #444; border-radius: var(--radius); padding: 3px; display: grid; gap: 2px; }
+.dropdown-item { display: flex; gap: 8px; align-items: center; height: 26px; padding: 0 8px; border: 0; background: transparent; color: var(--text); text-align: left; border-radius: 3px; font-size: 13px; }
+.dropdown-item.on, button.dropdown-item:hover { background: var(--blue); }
 .check { display: flex; align-items: center; gap: 6px; font-size: 13px; }
 .check .box { width: 15px; height: 15px; border-radius: 3px; background: var(--field); display: grid; place-items: center; font-size: 11px; }
 .check .box.on { background: var(--blue); }

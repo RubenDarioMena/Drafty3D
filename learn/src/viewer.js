@@ -188,6 +188,23 @@ export class Viewer {
     this.needsRender = true;
   }
 
+  /** Objects a modifier points at (a Boolean cutter, a Curve path): drawn as Blender draws a wire object. */
+  setHelpers(helpers) {
+    if (this.helpers) {
+      this.scene.remove(this.helpers);
+      this.helpers.traverse(node => node.geometry?.dispose());
+    }
+    this.helpers = new THREE.Group();
+    for (const helper of helpers) {
+      const geometry = new THREE.BufferGeometry().setFromPoints(helper.segments.map(point => new THREE.Vector3(...toThree(point))));
+      const lines = new THREE.LineSegments(geometry, new THREE.LineBasicMaterial({ color: 0x111111 }));
+      lines.name = helper.name;
+      this.helpers.add(lines);
+    }
+    this.scene.add(this.helpers);
+    this.needsRender = true;
+  }
+
   setGeometry(geometry) {
     if (geometry && this.mesh.geometry !== geometry) {
       this.mesh.geometry = geometry;

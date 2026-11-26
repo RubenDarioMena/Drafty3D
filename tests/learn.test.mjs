@@ -27,6 +27,8 @@ test('every id in the timelines exists in the UI read from Blender (the pipeline
       assert.ok(known?.has(step.id), `${timeline.example}: ${step.id}`);
       if (step.action === 'set_value' && fields.get(step.id).kind === 'enum') {
         assert.ok(fields.get(step.id).items.some(item => item.value === step.value), `${step.id} = ${step.value} is a Blender option`);
+      } else if (step.action === 'set_value' && fields.get(step.id).kind === 'pointer') {
+        assert.ok((timeline.helpers ?? []).some(helper => helper.name === step.value), `${step.id} points at ${step.value}, one of the lesson's objects`);
       } else if (step.action === 'set_value' && fields.get(step.id).kind === 'bool') {
         assert.equal(typeof step.value, 'boolean', `${step.id} is a checkbox or toggle`);
         assert.equal(step.step, undefined);

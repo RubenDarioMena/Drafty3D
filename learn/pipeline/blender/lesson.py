@@ -82,6 +82,64 @@ def blocks(name, boxes):
     return obj
 
 
+def prism(name, profile, depth):
+    """A flat-shaded prism: a closed XZ profile (such as a house front) pushed back along +Y by `depth`."""
+    bm = bmesh.new()
+    front = [bm.verts.new((x, -depth / 2, z)) for x, z in profile]
+    back = [bm.verts.new((x, depth / 2, z)) for x, z in profile]
+    bm.faces.new(front)
+    bm.faces.new(list(reversed(back)))
+    for i in range(len(profile)):
+        j = (i + 1) % len(profile)
+        bm.faces.new([front[i], back[i], back[j], front[j]])
+    bmesh.ops.recalc_face_normals(bm, faces=bm.faces)
+    mesh = bpy.data.meshes.new(name)
+    bm.to_mesh(mesh)
+    bm.free()
+    obj = bpy.data.objects.new(name, mesh)
+    bpy.context.scene.collection.objects.link(obj)
+    bpy.context.view_layer.objects.active = obj
+    obj.select_set(True)
+    return obj
+
+
+def strip(name, length, width, thickness, cuts):
+    """A flat board from the origin back along -Y, cut into rings so a Curve modifier can bend it smoothly.
+    Along -Y with Deform Axis -Y, the Curve modifier keeps the board lying flat on a flat curve."""
+    obj = blocks(name, [((-width / 2, -length, 0), (width / 2, 0, thickness), ())])
+    bm = bmesh.new()
+    bm.from_mesh(obj.data)
+    for i in range(1, cuts + 1):
+        geom = bm.verts[:] + bm.edges[:] + bm.faces[:]
+        bmesh.ops.bisect_plane(bm, geom=geom, plane_co=(0, -length * i / (cuts + 1), 0), plane_no=(0, 1, 0))
+    bm.to_mesh(obj.data)
+    bm.free()
+    return obj
+
+
+def bezier_curve(name, points):
+    """A flat Bézier path through `points` (XY), starting at the origin, with automatic handles."""
+    data = bpy.data.curves.new(name, 'CURVE')
+    data.dimensions = '3D'
+    spline = data.splines.new('BEZIER')
+    spline.bezier_points.add(len(points) - 1)
+    for point, (x, y) in zip(spline.bezier_points, points):
+        point.co = (x, y, 0)
+        point.handle_left_type = point.handle_right_type = 'AUTO'
+    obj = bpy.data.objects.new(name, data)
+    bpy.context.scene.collection.objects.link(obj)
+    return obj
+
+
+def curve_length(obj):
+    depsgraph = bpy.context.evaluated_depsgraph_get()
+    evaluated = obj.evaluated_get(depsgraph)
+    mesh = evaluated.to_mesh()
+    length = sum((mesh.vertices[a].co - mesh.vertices[b].co).length for a, b in (edge.vertices for edge in mesh.edges))
+    evaluated.to_mesh_clear()
+    return length
+
+
 def _normal_material():
     """Emission of the world-space normal mapped to 0..1; three.js renders the same mapping in the verify test."""
     mat = bpy.data.materials.new('VerifyNormals')
@@ -120,7 +178,7 @@ def _setup_render(scene):
 
 
 class Lesson:
-    def __init__(self, *, module, example, mode, title, out_dir, obj, panel, camera, text, variant_of=None):
+    def __init__(self, *, module, example, mode, title, out_dir, obj, panel, camera, text, variant_of=None, helpers=()):
         self.out_dir = out_dir
         self.obj = obj
         self.scene = bpy.context.scene
@@ -133,6 +191,8 @@ class Lesson:
         self.camera = camera
         self.panel = panel
         self.steps = []
+        for helper in helpers:
+            helper.hide_render = True
         self.data = {
             'blenderVersion': bpy.app.version_string,
             'module': module,
@@ -145,6 +205,8 @@ class Lesson:
         }
         if variant_of:
             self.data['variantOf'] = variant_of
+        for helper in helpers:
+            self.helper(helper)
 
     def _place_camera(self, camera):
         position, target = Vector(camera['position']), Vector(camera['target'])
@@ -200,14 +262,27 @@ class Lesson:
             'autoAdvance': True, 'text': text, 'help': help,
         }, changes_mesh=False, camera=camera)
 
-    def add_modifier(self, mod_type, *, text, help=None, shortcut=None, duration=2.8, camera=None):
+    def helper(self, obj):
+        """An object the lesson's modifiers point at (a Boolean cutter, a Curve path). The app draws its
+        edges as a wireframe, the way Blender draws an object set to Display As Wire."""
+        obj.hide_render = True
+        depsgraph = bpy.context.evaluated_depsgraph_get()
+        evaluated = obj.evaluated_get(depsgraph)
+        mesh = evaluated.to_mesh()
+        world = obj.matrix_world
+        points = [list(map(lambda v: round(v, 5), world @ mesh.vertices[i].co)) for edge in mesh.edges for i in edge.vertices]
+        evaluated.to_mesh_clear()
+        self.data.setdefault('helpers', []).append({'name': obj.name, 'segments': points})
+
+    def add_modifier(self, mod_type, *, text, help=None, shortcut=None, duration=2.8, camera=None, changes_mesh=True):
+        """`changes_mesh=False` for a modifier that does nothing until it is pointed at an object (Boolean, Curve)."""
         bpy.ops.object.modifier_add(type=mod_type)
         menu_label = next(item.name for item in bpy.types.Modifier.bl_rna.properties['type'].enum_items_static if item.identifier == mod_type)
         self._record({
             'id': f'modifier.{truth.MODIFIER_SHORT[mod_type]}.add', 'action': 'add_modifier',
             'value': menu_label, 'value_type': 'string', 'modifier': mod_type, 'shortcut': shortcut,
             'duration': duration, 'autoAdvance': False, 'text': text, 'help': help,
-        }, changes_mesh=True, camera=camera)
+        }, changes_mesh=changes_mesh, camera=camera)
 
     def set_value(self, mod_type, field_id, value, *, text, step=None, help=None, shortcut=None, duration=2.2, camera=None):
         """A number (with its fixed slider `step`), an enum identifier such as 'Z', or a checkbox / toggle (bool)."""
@@ -215,6 +290,10 @@ class Lesson:
         mod = self._modifier(mod_type)
         prop = mod.bl_rna.properties[rna]
         target = math.radians(value) if getattr(prop, 'unit', '') == 'ROTATION' else value
+        if prop.type == 'POINTER':
+            target = bpy.data.objects[value]
+            if value not in [helper['name'] for helper in self.data.get('helpers', [])]:
+                raise ValueError(f'{value} is not a helper of this lesson')
         if 'index' in overrides:
             vector = getattr(mod, rna)
             vector[overrides['index']] = target
@@ -226,7 +305,7 @@ class Lesson:
             raise ValueError(f'Blender clamped {field_id} to {stored}')
         if prop.type in ('ENUM', 'BOOLEAN', 'INT') and stored != target:
             raise ValueError(f'Blender kept {field_id} at {stored}')
-        value_type = {'ENUM': 'enum', 'BOOLEAN': 'bool'}.get(prop.type, 'number')
+        value_type = {'ENUM': 'enum', 'BOOLEAN': 'bool', 'POINTER': 'object'}.get(prop.type, 'number')
         if value_type == 'number' and not step:
             raise ValueError(f'{field_id} needs its slider step')
         record = {

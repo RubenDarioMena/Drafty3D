@@ -1143,6 +1143,147 @@
           "header": null
         }
       ]
+    },
+    "BOOLEAN": {
+      "short": "boolean",
+      "menuLabel": "Boolean",
+      "defaultName": "Boolean",
+      "fields": [
+        {
+          "id": "modifier.boolean.operation",
+          "rna": "operation",
+          "label": "Operation",
+          "display": "expand",
+          "kind": "enum",
+          "default": "DIFFERENCE",
+          "items": [
+            {
+              "value": "INTERSECT",
+              "label": "Intersect"
+            },
+            {
+              "value": "UNION",
+              "label": "Union"
+            },
+            {
+              "value": "DIFFERENCE",
+              "label": "Difference"
+            }
+          ]
+        },
+        {
+          "id": "modifier.boolean.operand_type",
+          "rna": "operand_type",
+          "label": "Operand Type",
+          "display": "dropdown",
+          "kind": "enum",
+          "default": "OBJECT",
+          "items": [
+            {
+              "value": "OBJECT",
+              "label": "Object"
+            },
+            {
+              "value": "COLLECTION",
+              "label": "Collection"
+            }
+          ]
+        },
+        {
+          "id": "modifier.boolean.object",
+          "rna": "object",
+          "label": "Object",
+          "kind": "pointer",
+          "default": null
+        },
+        {
+          "id": "modifier.boolean.solver",
+          "rna": "solver",
+          "label": "Solver",
+          "display": "expand",
+          "labelled": true,
+          "kind": "enum",
+          "default": "EXACT",
+          "items": [
+            {
+              "value": "FLOAT",
+              "label": "Float"
+            },
+            {
+              "value": "EXACT",
+              "label": "Exact"
+            },
+            {
+              "value": "MANIFOLD",
+              "label": "Manifold"
+            }
+          ]
+        }
+      ],
+      "subpanels": [
+        {
+          "label": "Solver Options",
+          "open": false,
+          "header": null
+        }
+      ]
+    },
+    "CURVE": {
+      "short": "curve",
+      "menuLabel": "Curve",
+      "defaultName": "Curve",
+      "fields": [
+        {
+          "id": "modifier.curve.object",
+          "rna": "object",
+          "label": "Curve Object",
+          "kind": "pointer",
+          "default": null
+        },
+        {
+          "id": "modifier.curve.deform_axis",
+          "rna": "deform_axis",
+          "label": "Deform Axis",
+          "display": "dropdown",
+          "kind": "enum",
+          "default": "POS_X",
+          "items": [
+            {
+              "value": "POS_X",
+              "label": "X"
+            },
+            {
+              "value": "POS_Y",
+              "label": "Y"
+            },
+            {
+              "value": "POS_Z",
+              "label": "Z"
+            },
+            {
+              "value": "NEG_X",
+              "label": "-X"
+            },
+            {
+              "value": "NEG_Y",
+              "label": "-Y"
+            },
+            {
+              "value": "NEG_Z",
+              "label": "-Z"
+            }
+          ]
+        },
+        {
+          "id": "modifier.curve.vertex_group",
+          "rna": "vertex_group",
+          "label": "Vertex Group",
+          "kind": "pointer",
+          "search": true,
+          "default": null
+        }
+      ],
+      "subpanels": []
     }
   },
   "sculpt": {

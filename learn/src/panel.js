@@ -180,12 +180,8 @@ export class PropertiesEditor {
         }
         control.append(option);
       }
-    } else if (field.kind === 'enum') {
-      control = el('div', 'dropdown');
-      control.append(field.items.find(item => item.value === value)?.label ?? value, el('span', '', '▾'));
-    } else if (field.kind === 'pointer') {
-      control = el('div', 'dropdown pointer');
-      control.append(el('span', 'object-icon', '▣'), el('span', '', ''));
+    } else if (field.kind === 'enum' || field.kind === 'pointer') {
+      return this.renderDropdown(field, value, interactive);
     } else if (field.kind === 'bool') {
       return this.renderCheck(field, value, interactive);
     } else {
@@ -193,6 +189,57 @@ export class PropertiesEditor {
     }
     control.dataset.control = field.id;
     return control;
+  }
+
+  /**
+   * A dropdown Blender opens as a list: an enum such as Deform Axis, or an Object field listing the
+   * lesson's objects (Blender's ID search). Its items carry `${field.id}.${value}` ids.
+   */
+  renderDropdown(field, value, interactive) {
+    const pointer = field.kind === 'pointer';
+    const options = pointer
+      ? (this.objects ?? []).map(name => ({ value: name, label: name }))
+      : field.items;
+    const box = el('div', 'dropdown-field');
+    const control = el(interactive ? 'button' : 'div',
+      `dropdown${pointer ? ' pointer' : ''}${interactive ? ' interactive' : ''}${value ? ' set' : ''}`);
+    if (pointer) control.append(el('span', 'object-icon', field.search ? '⌕' : '▣'), el('span', 'pointer-name', value ?? ''));
+    else control.append(el('span', '', options.find(item => item.value === value)?.label ?? value), el('span', '', '▾'));
+    control.dataset.control = field.id;
+    const open = this.openList === field.id;
+    if (interactive) {
+      control.type = 'button';
+      control.setAttribute('aria-label', field.title ?? field.label);
+      control.setAttribute('aria-expanded', String(open));
+      control.addEventListener('click', () => this.toggleList(field.id));
+    }
+    box.append(control);
+    if (open) {
+      const list = el('div', 'dropdown-list');
+      list.setAttribute('role', 'listbox');
+      for (const option of options) {
+        const item = el(interactive ? 'button' : 'div', `dropdown-item${option.value === value ? ' on' : ''}`);
+        if (pointer) item.append(el('span', 'object-icon', '▣'));
+        item.append(option.label);
+        item.dataset.control = `${field.id}.${option.value.toLowerCase()}`;
+        item.setAttribute('role', 'option');
+        if (interactive) {
+          item.type = 'button';
+          item.addEventListener('click', () => {
+            this.openList = null;
+            this.options.onValue(field.id, option.value);
+          });
+        }
+        list.append(item);
+      }
+      box.append(list);
+    }
+    return box;
+  }
+
+  toggleList(id) {
+    this.openList = this.openList === id ? null : id;
+    this.render(this.state, this.options);
   }
 
   renderCheck(field, value, interactive) {

@@ -1,5 +1,6 @@
 """Generates the Modifiers examples with bpy. Run through `npm run learn:examples`, not directly."""
 import json
+import math
 import os
 import sys
 
@@ -8,7 +9,7 @@ sys.path.insert(0, os.path.dirname(__file__))
 import bpy  # noqa: E402
 
 import truth  # noqa: E402
-from lesson import Lesson, blocks, column, open_cylinder, reset  # noqa: E402
+from lesson import Lesson, bezier_curve, blocks, column, curve_length, open_cylinder, prism, reset, strip  # noqa: E402
 
 OUT = sys.argv[sys.argv.index('--') + 1] if '--' in sys.argv else sys.argv[-1]
 
@@ -51,6 +52,21 @@ STAIRS_CAMERAS = {
 FLOATING_CAMERAS = {
     'start': {'position': [1.0, -2.3, 1.1], 'target': [0.35, 0, 0.15], 'fov': 30},
     'overview': {'position': [2.1, -3.3, 1.95], 'target': [1.05, 0, 0.65], 'fov': 30},
+}
+
+HOUSE_CAMERAS = {
+    'overview': {'position': [0.95, -2.0, 0.95], 'target': [0, 0, 0.36], 'fov': 30},
+}
+LANTERN_CAMERAS = {
+    'overview': {'position': [0.95, -1.9, 1.0], 'target': [0, 0, 0.3], 'fov': 30},
+}
+PATH_CAMERAS = {
+    'start': {'position': [1.0, -2.6, 4.3], 'target': [0.8, -0.6, 0], 'fov': 40},
+    'overview': {'position': [0.9, -1.9, 2.1], 'target': [0.9, 0.3, 0], 'fov': 34},
+}
+TRACK_CAMERAS = {
+    'start': {'position': [0.5, -3.6, 5.8], 'target': [0.25, -1.55, 0], 'fov': 44},
+    'overview': {'position': [0, -1.9, 2.0], 'target': [0, 0, 0], 'fov': 34},
 }
 
 
@@ -264,6 +280,97 @@ def array_floating_steps():
     lesson.finish(text='Floating steps finished: one Array, with a bigger Z offset than the slab is tall.')
 
 
+def boolean_birdhouse():
+    reset()
+    bpy.ops.mesh.primitive_cylinder_add(vertices=24, radius=0.1, depth=0.3, location=(0, -0.25, 0.36), rotation=(math.pi / 2, 0, 0))
+    door = bpy.context.active_object
+    door.name = door.data.name = 'Door'
+    house = prism('Birdhouse', [(-0.3, 0), (0.3, 0), (0.3, 0.5), (0, 0.75), (-0.3, 0.5)], 0.5)
+    lesson = Lesson(
+        module='modifiers', example='boolean-birdhouse', mode='watch', title='Birdhouse door',
+        out_dir=os.path.join(OUT, 'modifiers', 'boolean-birdhouse'), obj=house, panel='OBJECT', camera=HOUSE_CAMERAS['overview'],
+        helpers=[door],
+        text='A birdhouse and a cylinder named Door, drawn as a wireframe. Boolean uses one object to cut another, and you can still move the cutter later.',
+    )
+    lesson.select_panel('MODIFIER', shortcut=NEXT_TAB, text='Open the Modifier Properties tab, the wrench.')
+    lesson.add_modifier('BOOLEAN', shortcut=ADD_MENU, changes_mesh=False,
+                        text='Add Modifier → Generate → Boolean. Nothing changes yet: Boolean needs an object to work with.')
+    lesson.set_value('BOOLEAN', 'object', 'Door',
+                     text='Set Object to Door. Difference is selected, so the cylinder\'s volume is removed: a round door.')
+    lesson.set_value('BOOLEAN', 'operation', 'INTERSECT',
+                     text='Try Intersect: only the volume inside both objects stays. That is the plug the door removed.')
+    lesson.set_value('BOOLEAN', 'operation', 'DIFFERENCE',
+                     text='Back to Difference for the door. Union, the third button, would add the cylinder instead.')
+    lesson.finish(text='Done: Difference cuts, Union adds, Intersect keeps the overlap. Now cut a window yourself.')
+
+
+def boolean_lantern():
+    reset()
+    window = blocks('Window', [((-0.11, -0.36, 0.2), (0.11, -0.08, 0.44), ())])
+    lantern = blocks('Lantern', [((-0.2, -0.2, 0), (0.2, 0.2, 0.62), ())])
+    lesson = Lesson(
+        module='modifiers', example='boolean-lantern', mode='your-turn', title='Your turn: lantern window', variant_of='boolean-birdhouse',
+        out_dir=os.path.join(OUT, 'modifiers', 'boolean-lantern'), obj=lantern, panel='OBJECT', camera=LANTERN_CAMERAS['overview'],
+        helpers=[window],
+        text='A lantern box and a box named Window. Cut the window with a Boolean, compare it with Union, then cut again.',
+    )
+    lesson.select_panel('MODIFIER', shortcut=NEXT_TAB, text='Open the Modifier Properties tab.',
+                        help='The wrench icon, right below the orange Object square.')
+    lesson.add_modifier('BOOLEAN', shortcut=ADD_MENU, changes_mesh=False, text='Add a Boolean modifier.',
+                        help='Add Modifier → Generate → Boolean.')
+    lesson.set_value('BOOLEAN', 'object', 'Window', text='Point it at the Window box.',
+                     help='Tap the empty Object field and pick Window.')
+    lesson.set_value('BOOLEAN', 'operation', 'UNION', text='Switch to Union to see the box added instead.',
+                     help='Union is the middle of the Intersect / Union / Difference buttons.')
+    lesson.set_value('BOOLEAN', 'operation', 'DIFFERENCE', text='Back to Difference: the window is cut out.',
+                     help='Difference is the last of the three buttons.')
+    lesson.finish(text='Lantern window finished: one Boolean, three ways to combine two objects.')
+
+
+def curve_garden_path():
+    reset()
+    path = bezier_curve('Path', [(0, 0), (0.6, 0.55), (1.2, 0.05), (1.8, 0.6)])
+    board = strip('Paving', round(curve_length(path), 3), 0.3, 0.04, 47)
+    lesson = Lesson(
+        module='modifiers', example='curve-garden-path', mode='watch', title='Garden path',
+        out_dir=os.path.join(OUT, 'modifiers', 'curve-garden-path'), obj=board, panel='OBJECT', camera=PATH_CAMERAS['start'],
+        helpers=[path],
+        text='A straight paving strip and a curve named Path. The Curve modifier bends a mesh along a curve, as long as you tell it which way the mesh runs.',
+    )
+    lesson.select_panel('MODIFIER', shortcut=NEXT_TAB, text='Open the Modifier Properties tab, the wrench.')
+    lesson.add_modifier('CURVE', shortcut=ADD_MENU, changes_mesh=False,
+                        text='Add Modifier → Deform → Curve. Nothing happens until it has a curve to follow.')
+    lesson.set_value('CURVE', 'object', 'Path',
+                     text='Set Curve Object to Path. The strip jumps onto the curve, but crumpled: Deform Axis is X, and the strip runs along -Y.')
+    lesson.set_value('CURVE', 'deform_axis', 'NEG_Y', camera=PATH_CAMERAS['overview'],
+                     text='Set Deform Axis to -Y, the way the strip runs. Now its length follows the path; the rings along it let it bend smoothly.')
+    lesson.finish(text='Done: Curve Object says where, Deform Axis says which way the mesh runs. Now lay a ring track yourself.')
+
+
+def curve_ring_track():
+    reset()
+    bpy.ops.curve.primitive_bezier_circle_add(radius=0.6)
+    ring = bpy.context.active_object
+    ring.name = ring.data.name = 'Ring'
+    track = strip('Track', round(curve_length(ring), 3), 0.22, 0.05, 63)
+    lesson = Lesson(
+        module='modifiers', example='curve-ring-track', mode='your-turn', title='Your turn: ring track', variant_of='curve-garden-path',
+        out_dir=os.path.join(OUT, 'modifiers', 'curve-ring-track'), obj=track, panel='OBJECT', camera=TRACK_CAMERAS['start'],
+        helpers=[ring],
+        text='A straight track exactly as long as the circle named Ring. Bend it all the way around.',
+    )
+    lesson.select_panel('MODIFIER', shortcut=NEXT_TAB, text='Open the Modifier Properties tab.',
+                        help='The wrench icon, right below the orange Object square.')
+    lesson.add_modifier('CURVE', shortcut=ADD_MENU, changes_mesh=False, text='Add a Curve modifier.',
+                        help='Add Modifier → Deform → Curve.')
+    lesson.set_value('CURVE', 'object', 'Ring', camera=TRACK_CAMERAS['overview'], text='Set its Curve Object to Ring.',
+                     help='Tap the empty Curve Object field and pick Ring.')
+    lesson.set_value('CURVE', 'deform_axis', 'NEG_Y',
+                     text='The track runs along -Y: set Deform Axis to -Y.',
+                     help='Deform Axis is the dropdown right below Curve Object.')
+    lesson.finish(text='Ring track finished: the same two settings as the garden path.')
+
+
 if __name__ == '__main__':
     os.makedirs(OUT, exist_ok=True)
     ui_truth()
@@ -275,4 +382,8 @@ if __name__ == '__main__':
     mirror_bench()
     array_stairs()
     array_floating_steps()
+    boolean_birdhouse()
+    boolean_lantern()
+    curve_garden_path()
+    curve_ring_track()
     print('Drafty3D Learn: examples generated in', OUT)

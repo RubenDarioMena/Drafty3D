@@ -266,6 +266,7 @@ export class YourTurnMode {
       return `✓ ${field.label}: ${formatValue(field, step.value)}.`;
     }
     const field = this.ui.modifiers[step.modifier].fields.find(candidate => candidate.id === step.id);
+    if (field.kind === 'pointer') return `✓ ${field.label}: ${step.value}.`;
     if (field.kind === 'bool') return `✓ ${field.row ? `${field.row} ${field.label}` : (field.title ?? field.label)} ${step.value ? 'on' : 'off'}.`;
     if (field.kind === 'enum') return `✓ ${field.label}: ${field.items.find(item => item.value === step.value).label}.`;
     return `✓ ${field.title ?? field.label}: ${formatValue(field, step.value)}.`;

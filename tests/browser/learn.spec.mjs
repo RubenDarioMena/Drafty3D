@@ -173,6 +173,37 @@ test('Your turn with toggles and subpanels: Mirror\'s Axis Y and Array\'s Relati
   await expect(page.locator('#step-count')).toHaveText('Finished');
 });
 
+test('Your turn with Blender\'s dropdowns: Boolean\'s Object picks a helper, Curve\'s Deform Axis opens its list', async ({ page }) => {
+  const add = async (category, id) => {
+    await page.locator('[data-control="modifier.add_menu"]').click();
+    await page.locator(`[data-control="modifier.add_menu.${category}"]`).click();
+    await page.locator(`[data-control="${id}"]`).click();
+  };
+  await page.goto('/learn/#/lesson/modifiers/boolean-lantern');
+  await page.locator('[data-control="panel.properties.modifier"]').click();
+  await add('generate', 'modifier.boolean.add');
+  await expect(page.locator('#step-count')).toHaveText('Step 3 of 5');
+  // The empty Object field lists the lesson's objects; picking Window cuts it.
+  await page.locator('[data-control="modifier.boolean.object"]').click();
+  await expect(page.locator('.dropdown-list [role="option"]')).toHaveText([/Window$/]);
+  await page.locator('[data-control="modifier.boolean.object.window"]').click();
+  await expect(page.locator('#clue')).toHaveText('✓ Object: Window.');
+  await expect(page.locator('[data-control="modifier.boolean.object"]')).toHaveText(/Window/);
+  await page.locator('[data-control="modifier.boolean.operation.union"]').click();
+  await page.locator('[data-control="modifier.boolean.operation.difference"]').click();
+  await expect(page.locator('#step-count')).toHaveText('Finished');
+
+  await page.goto('/learn/#/lesson/modifiers/curve-ring-track');
+  await page.locator('[data-control="panel.properties.modifier"]').click();
+  await add('deform', 'modifier.curve.add');
+  await page.locator('[data-control="modifier.curve.object"]').click();
+  await page.locator('[data-control="modifier.curve.object.ring"]').click();
+  await page.locator('[data-control="modifier.curve.deform_axis"]').click();
+  await page.locator('[data-control="modifier.curve.deform_axis.neg_y"]').click();
+  await expect(page.locator('#clue')).toHaveText('✓ Deform Axis: -Y.');
+  await expect(page.locator('#step-count')).toHaveText('Finished');
+});
+
 test('fine stepping stops on every action, including the open Add Modifier menu, and the menu stays on screen', async ({ page }) => {
   await page.goto('/learn/#/lesson/modifiers/cup');
   await expect(page.locator('#watch-controls')).toBeVisible();
@@ -204,7 +235,8 @@ test('home groups the lessons by module', async ({ page }) => {
   await expect(page.locator('.module h2')).toHaveText(['Modifiers', 'Sculpting']);
   await expect(page.locator('.module[data-module="modifiers"] .lesson-card h3')).toHaveText(
     ['Low-poly cup', 'Your turn: bowl', 'Twisted column', 'Your turn: twisted candle',
-      'Table from one corner', 'Your turn: bench', 'Staircase from one step', 'Your turn: floating steps']);
+      'Table from one corner', 'Your turn: bench', 'Staircase from one step', 'Your turn: floating steps',
+      'Birdhouse door', 'Your turn: lantern window', 'Garden path', 'Your turn: ring track']);
   await expect(page.locator('.module[data-module="sculpt"] .lesson-card h3')).toHaveText(
     ['Pebble buddy', 'Your turn: sleepy buddy', 'Horned buddy', 'Your turn: antenna bug', 'Craggy rock', 'Your turn: split boulder']);
 });
