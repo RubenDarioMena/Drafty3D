@@ -53,6 +53,35 @@ def column(name, radius, height, sides, cuts, caps=True):
     return obj
 
 
+def blocks(name, boxes):
+    """A flat-shaded mesh of axis-aligned boxes. Each box is (min, max, open): `open` names the sides
+    left without a face ('-x', '+z', ...), such as the cut faces on a Mirror plane."""
+    bm = bmesh.new()
+    for low, high, open_sides in boxes:
+        corner = {}
+        for i in (0, 1):
+            for j in (0, 1):
+                for k in (0, 1):
+                    corner[i, j, k] = bm.verts.new(((low, high)[i][0], (low, high)[j][1], (low, high)[k][2]))
+        sides = {
+            '-x': [(0, 0, 0), (0, 0, 1), (0, 1, 1), (0, 1, 0)], '+x': [(1, 0, 0), (1, 1, 0), (1, 1, 1), (1, 0, 1)],
+            '-y': [(0, 0, 0), (1, 0, 0), (1, 0, 1), (0, 0, 1)], '+y': [(0, 1, 0), (0, 1, 1), (1, 1, 1), (1, 1, 0)],
+            '-z': [(0, 0, 0), (0, 1, 0), (1, 1, 0), (1, 0, 0)], '+z': [(0, 0, 1), (1, 0, 1), (1, 1, 1), (0, 1, 1)],
+        }
+        for side, loop in sides.items():
+            if side not in open_sides:
+                bm.faces.new([corner[key] for key in loop])
+    mesh = bpy.data.meshes.new(name)
+    bm.normal_update()
+    bm.to_mesh(mesh)
+    bm.free()
+    obj = bpy.data.objects.new(name, mesh)
+    bpy.context.scene.collection.objects.link(obj)
+    bpy.context.view_layer.objects.active = obj
+    obj.select_set(True)
+    return obj
+
+
 def _normal_material():
     """Emission of the world-space normal mapped to 0..1; three.js renders the same mapping in the verify test."""
     mat = bpy.data.materials.new('VerifyNormals')
@@ -181,26 +210,31 @@ class Lesson:
         }, changes_mesh=True, camera=camera)
 
     def set_value(self, mod_type, field_id, value, *, text, step=None, help=None, shortcut=None, duration=2.2, camera=None):
-        """A number (with its fixed slider `step`) or an enum identifier such as 'Z'."""
-        field = next(f for f in truth.PANELS[mod_type]['fields'] if f[0] == field_id)
+        """A number (with its fixed slider `step`), an enum identifier such as 'Z', or a checkbox / toggle (bool)."""
+        _id, rna, overrides, _sub = next(f for f in truth.panel_fields(mod_type) if f[0] == field_id)
         mod = self._modifier(mod_type)
-        prop = mod.bl_rna.properties[field[1]]
+        prop = mod.bl_rna.properties[rna]
         target = math.radians(value) if getattr(prop, 'unit', '') == 'ROTATION' else value
-        setattr(mod, field[1], target)
-        stored = getattr(mod, field[1])
+        if 'index' in overrides:
+            vector = getattr(mod, rna)
+            vector[overrides['index']] = target
+            stored = getattr(mod, rna)[overrides['index']]
+        else:
+            setattr(mod, rna, target)
+            stored = getattr(mod, rna)
         if prop.type == 'FLOAT' and abs(stored - target) > 1e-6:
             raise ValueError(f'Blender clamped {field_id} to {stored}')
-        if prop.type == 'ENUM' and stored != value:
+        if prop.type in ('ENUM', 'BOOLEAN', 'INT') and stored != target:
             raise ValueError(f'Blender kept {field_id} at {stored}')
-        is_enum = prop.type == 'ENUM'
-        if not is_enum and not step:
+        value_type = {'ENUM': 'enum', 'BOOLEAN': 'bool'}.get(prop.type, 'number')
+        if value_type == 'number' and not step:
             raise ValueError(f'{field_id} needs its slider step')
         record = {
             'id': f'modifier.{truth.MODIFIER_SHORT[mod_type]}.{field_id}', 'action': 'set_value',
-            'value': value, 'value_type': 'enum' if is_enum else 'number', 'modifier': mod_type, 'shortcut': shortcut,
+            'value': value, 'value_type': value_type, 'modifier': mod_type, 'shortcut': shortcut,
             'duration': duration, 'autoAdvance': False, 'text': text, 'help': help,
         }
-        if not is_enum:
+        if value_type == 'number':
             record['step'] = step
         self._record(record, changes_mesh=True, camera=camera)
 

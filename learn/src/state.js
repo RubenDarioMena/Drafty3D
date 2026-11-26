@@ -65,8 +65,8 @@ export function isSolved(live, step) {
   if (step.action === 'set_value') {
     const mod = live.modifiers.find(candidate => candidate.type === step.modifier);
     if (!mod) return false;
-    // Enum buttons (Axis X / Y / Z) match exactly; numbers match on their fixed slider step.
-    if (typeof step.value === 'string') return mod.values[step.id] === step.value;
+    // Enum buttons and checkboxes match exactly; numbers match on their fixed slider step.
+    if (typeof step.value !== 'number') return mod.values[step.id] === step.value;
     return ticks(mod.values[step.id], step.step) === ticks(step.value, step.step);
   }
   return false;

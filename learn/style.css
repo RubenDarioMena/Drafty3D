@@ -107,7 +107,14 @@ button { cursor: pointer; }
 .check .box { width: 15px; height: 15px; border-radius: 3px; background: var(--field); display: grid; place-items: center; font-size: 11px; }
 .check .box.on { background: var(--blue); }
 .subpanel { font-size: 13px; color: #cfcfcf; padding: 4px 2px; border-top: 1px solid #353535; }
-.subpanel::before { content: "▸ "; color: var(--muted); }
+.subpanel-head { display: flex; align-items: center; gap: 4px; min-height: 22px; }
+.subpanel-head::before { content: "▸"; color: var(--muted); width: 12px; }
+.subpanel.open > .subpanel-head::before { content: "▾"; }
+.subpanel-body { padding-top: 4px; display: grid; gap: 5px; }
+button.check { border: 0; background: transparent; padding: 0; color: inherit; text-align: left; }
+button.check .box { background: var(--field-hover); outline: 1px solid var(--blue); }
+.row-controls { display: flex; align-items: center; gap: 6px; min-width: 0; }
+.row-controls > .number { flex: 1; min-width: 0; }
 
 /* Sculpt Mode: 3D Viewport tool header and brush asset shelf (replace Properties in sculpt lessons) */
 .sculpt-tools { display: none; min-height: 0; background: var(--region); border-top: 1px solid #111; flex-direction: column; }

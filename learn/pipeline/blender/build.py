@@ -8,7 +8,7 @@ sys.path.insert(0, os.path.dirname(__file__))
 import bpy  # noqa: E402
 
 import truth  # noqa: E402
-from lesson import Lesson, column, open_cylinder, reset  # noqa: E402
+from lesson import Lesson, blocks, column, open_cylinder, reset  # noqa: E402
 
 OUT = sys.argv[sys.argv.index('--') + 1] if '--' in sys.argv else sys.argv[-1]
 
@@ -34,6 +34,23 @@ COLUMN_CAMERAS = {
 CANDLE_CAMERAS = {
     'overview': {'position': [1.6, -1.95, 1.05], 'target': [0, 0, 0.48], 'fov': 30},
     'edge': {'position': [0.8, -1.0, 1.25], 'target': [0, 0, 0.85], 'fov': 30},
+}
+
+TABLE_CAMERAS = {
+    'overview': {'position': [2.0, -2.45, 1.75], 'target': [0, 0, 0.38], 'fov': 30},
+    'corner': {'position': [1.3, -1.35, 1.2], 'target': [0.45, -0.28, 0.6], 'fov': 30},
+}
+BENCH_CAMERAS = {
+    'overview': {'position': [1.6, -1.95, 1.15], 'target': [0, 0, 0.22], 'fov': 30},
+    'corner': {'position': [1.45, -1.0, 0.85], 'target': [0.62, -0.12, 0.36], 'fov': 30},
+}
+STAIRS_CAMERAS = {
+    'start': {'position': [1.1, -2.6, 1.3], 'target': [0.35, 0, 0.2], 'fov': 30},
+    'overview': {'position': [0.2, -3.6, 1.6], 'target': [0.9, 0, 0.58], 'fov': 30},
+}
+FLOATING_CAMERAS = {
+    'start': {'position': [1.0, -2.3, 1.1], 'target': [0.35, 0, 0.15], 'fov': 30},
+    'overview': {'position': [2.1, -3.3, 1.95], 'target': [1.05, 0, 0.65], 'fov': 30},
 }
 
 
@@ -163,6 +180,90 @@ def twisted_candle():
     lesson.finish(text='Twisted candle finished: Bevel → Simple Deform, the same stack as the column.')
 
 
+def mirror_table():
+    reset()
+    # One corner of a table: a quarter of the top, open where it touches the two mirror planes, and one leg.
+    obj = blocks('Table', [((0, 0, 0.7), (0.55, 0.35, 0.76), ('-x', '-y')),
+                           ((0.45, 0.25, 0), (0.51, 0.31, 0.7), ('+z',))])
+    lesson = Lesson(
+        module='modifiers', example='mirror-table', mode='watch', title='Table from one corner',
+        out_dir=os.path.join(OUT, 'modifiers', 'mirror-table'), obj=obj, panel='OBJECT', camera=TABLE_CAMERAS['overview'],
+        text='Only one corner of this table is modeled. Mirror copies it across X and Y; whatever you change in the corner, the other three follow.',
+    )
+    lesson.select_panel('MODIFIER', shortcut=NEXT_TAB, text='Open the Modifier Properties tab, the wrench.')
+    lesson.add_modifier('MIRROR', shortcut=ADD_MENU,
+                        text='Add Modifier → Generate → Mirror. Axis X is on: the corner is copied across the red X axis, so you see two legs.')
+    lesson.set_value('MIRROR', 'axis_y', True,
+                     text='Turn on Axis Y too. Each half is copied across Y: four legs, one whole top. Merge joins the copies along the seams.')
+    lesson.add_modifier('BEVEL', shortcut=ADD_MENU, camera=TABLE_CAMERAS['corner'],
+                        text='Add a Bevel below Mirror. It rounds the whole mirrored table, and its 0.1 m default is far too big for a 6 cm top.')
+    lesson.set_value('BEVEL', 'amount', 0.02, step=0.01, text='Set Amount to 0.02 m: a soft edge on the top and the legs.')
+    lesson.set_value('BEVEL', 'segments', 3, step=1, text='Raise Segments to 3 to round it.')
+    lesson.finish(text='Done: model a quarter, Mirror the rest, Bevel after Mirror so every copy gets the same edge. Now build a bench yourself.')
+
+
+def mirror_bench():
+    reset()
+    obj = blocks('Bench', [((0, 0, 0.4), (0.7, 0.2, 0.47), ('-x', '-y')),
+                           ((0.56, 0.07, 0), (0.64, 0.15, 0.4), ('+z',))])
+    lesson = Lesson(
+        module='modifiers', example='mirror-bench', mode='your-turn', title='Your turn: bench', variant_of='mirror-table',
+        out_dir=os.path.join(OUT, 'modifiers', 'mirror-bench'), obj=obj, panel='OBJECT', camera=BENCH_CAMERAS['overview'],
+        text='One corner of a long bench. Mirror it on X and Y, then soften its edges.',
+    )
+    lesson.select_panel('MODIFIER', shortcut=NEXT_TAB, text='Open the Modifier Properties tab.',
+                        help='The wrench icon, right below the orange Object square.')
+    lesson.add_modifier('MIRROR', shortcut=ADD_MENU, text='Copy the corner: add a Mirror modifier.',
+                        help='Add Modifier → Generate → Mirror.')
+    lesson.set_value('MIRROR', 'axis_y', True, text='Mirror on Y as well, for all four legs.',
+                     help='The Axis row has X Y Z buttons. X is already on; tap Y.')
+    lesson.add_modifier('BEVEL', shortcut=ADD_MENU, camera=BENCH_CAMERAS['corner'],
+                        text='Soften the edges: add a Bevel modifier below Mirror.', help='Add Modifier → Generate → Bevel.')
+    lesson.set_value('BEVEL', 'amount', 0.01, step=0.01, text='Set the bevel Amount to 0.01 m.',
+                     help='Amount is right below Width Type.')
+    lesson.set_value('BEVEL', 'segments', 2, step=1, text='Use 2 Segments.', help='Segments is right below Amount.')
+    lesson.finish(text='Bench finished: Mirror → Bevel, the same stack as the table.')
+
+
+def array_stairs():
+    reset()
+    obj = blocks('Step', [((0, -0.5, 0), (0.3, 0.5, 0.18), ())])
+    lesson = Lesson(
+        module='modifiers', example='array-stairs', mode='watch', title='Staircase from one step',
+        out_dir=os.path.join(OUT, 'modifiers', 'array-stairs'), obj=obj, panel='OBJECT', camera=STAIRS_CAMERAS['start'],
+        text='One step, six steps. Array repeats an object; Relative Offset moves each copy by the object\'s own size.',
+    )
+    lesson.select_panel('MODIFIER', shortcut=NEXT_TAB, text='Open the Modifier Properties tab, the wrench.')
+    lesson.add_modifier('ARRAY', shortcut=ADD_MENU,
+                        text='Add Modifier → Generate → Array. Two copies, the second one step-depth further along X: Factor X is 1.')
+    lesson.set_value('ARRAY', 'factor_z', 1, step=0.1,
+                     text='Set Factor Z to 1: each copy also rises one step height. Now it climbs.')
+    lesson.set_value('ARRAY', 'count', 6, step=1, camera=STAIRS_CAMERAS['overview'],
+                     text='Raise Count to 6. Same offset, six steps.')
+    lesson.finish(text='Done: Count says how many, the offset says where the next one goes. Now make floating steps yourself.')
+
+
+def array_floating_steps():
+    reset()
+    obj = blocks('Slab', [((0, -0.3, 0), (0.35, 0.3, 0.08), ())])
+    lesson = Lesson(
+        module='modifiers', example='array-floating-steps', mode='your-turn', title='Your turn: floating steps',
+        variant_of='array-stairs',
+        out_dir=os.path.join(OUT, 'modifiers', 'array-floating-steps'), obj=obj, panel='OBJECT', camera=FLOATING_CAMERAS['start'],
+        text='A thin slab. Stack copies with a gap between them, like steps fixed to a wall.',
+    )
+    lesson.select_panel('MODIFIER', shortcut=NEXT_TAB, text='Open the Modifier Properties tab.',
+                        help='The wrench icon, right below the orange Object square.')
+    lesson.add_modifier('ARRAY', shortcut=ADD_MENU, text='Repeat the slab: add an Array modifier.',
+                        help='Add Modifier → Generate → Array.')
+    lesson.set_value('ARRAY', 'factor_z', 2.5, step=0.1,
+                     text='Set Factor Z to 2.5: each copy rises two and a half slab heights, leaving a gap.',
+                     help='Factor X, Y, Z are in the Relative Offset subpanel. Z is the third.')
+    lesson.set_value('ARRAY', 'count', 5, step=1, camera=FLOATING_CAMERAS['overview'],
+                     text='Set Count to 5.', help='Count is right below Fit Type.')
+    lesson.finish(text='Floating steps finished: one Array, with a bigger Z offset than the slab is tall.')
+
+
 if __name__ == '__main__':
     os.makedirs(OUT, exist_ok=True)
     ui_truth()
@@ -170,4 +271,8 @@ if __name__ == '__main__':
     bowl()
     twisted_column()
     twisted_candle()
+    mirror_table()
+    mirror_bench()
+    array_stairs()
+    array_floating_steps()
     print('Drafty3D Learn: examples generated in', OUT)

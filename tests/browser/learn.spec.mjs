@@ -140,6 +140,39 @@ test('Your turn with Blender\'s option buttons: Simple Deform\'s Axis row and an
   await expect(page.locator('#step-count')).toHaveText('Finished');
 });
 
+test('Your turn with toggles and subpanels: Mirror\'s Axis Y and Array\'s Relative Offset Factor Z', async ({ page }) => {
+  const press = async (id, times, direction) => {
+    for (let i = 0; i < times; i += 1) await page.locator(`[data-control="${id}"] button[aria-label^="${direction}"]`).click();
+  };
+  const add = async (category, id) => {
+    await page.locator('[data-control="modifier.add_menu"]').click();
+    await page.locator(`[data-control="modifier.add_menu.${category}"]`).click();
+    await page.locator(`[data-control="${id}"]`).click();
+  };
+  await page.goto('/learn/#/lesson/modifiers/mirror-bench');
+  await page.locator('[data-control="panel.properties.modifier"]').click();
+  await add('generate', 'modifier.mirror.add');
+  // Blender's Axis row: X starts on, Y and Z off; tapping Y turns it on without touching X.
+  await expect(page.locator('[data-control="modifier.mirror.axis_x"]')).toHaveClass(/\bon\b/);
+  await page.locator('[data-control="modifier.mirror.axis_y"]').click();
+  await expect(page.locator('#clue')).toHaveText('✓ Axis Y on.');
+  await expect(page.locator('[data-control="modifier.mirror.axis_x"]')).toHaveClass(/\bon\b/);
+  await expect(page.locator('[data-control="modifier.mirror.axis_y"]')).toHaveClass(/\bon\b/);
+  await expect(page.locator('.subpanel-head').filter({ hasText: 'Data' })).toBeVisible();
+
+  await page.goto('/learn/#/lesson/modifiers/array-floating-steps');
+  await page.locator('[data-control="panel.properties.modifier"]').click();
+  await add('generate', 'modifier.array.add');
+  // Relative Offset is the subpanel Blender opens by default, its checkbox on; Merge stays closed.
+  await expect(page.locator('.subpanel.open .subpanel-head')).toHaveText([/Relative Offset$/]);
+  await expect(page.locator('[data-control="modifier.array.relative"] .box')).toHaveClass(/on/);
+  await expect(page.locator('[data-control="modifier.array.merge"] .box')).not.toHaveClass(/on/);
+  await press('modifier.array.factor_z', 25, 'Increase');
+  await expect(page.locator('#clue')).toHaveText('✓ Factor Z: 2.500.');
+  await press('modifier.array.count', 3, 'Increase');
+  await expect(page.locator('#step-count')).toHaveText('Finished');
+});
+
 test('fine stepping stops on every action, including the open Add Modifier menu, and the menu stays on screen', async ({ page }) => {
   await page.goto('/learn/#/lesson/modifiers/cup');
   await expect(page.locator('#watch-controls')).toBeVisible();
@@ -170,7 +203,8 @@ test('home groups the lessons by module', async ({ page }) => {
   await page.goto('/learn/');
   await expect(page.locator('.module h2')).toHaveText(['Modifiers', 'Sculpting']);
   await expect(page.locator('.module[data-module="modifiers"] .lesson-card h3')).toHaveText(
-    ['Low-poly cup', 'Your turn: bowl', 'Twisted column', 'Your turn: twisted candle']);
+    ['Low-poly cup', 'Your turn: bowl', 'Twisted column', 'Your turn: twisted candle',
+      'Table from one corner', 'Your turn: bench', 'Staircase from one step', 'Your turn: floating steps']);
   await expect(page.locator('.module[data-module="sculpt"] .lesson-card h3')).toHaveText(
     ['Pebble buddy', 'Your turn: sleepy buddy', 'Horned buddy', 'Your turn: antenna bug', 'Craggy rock', 'Your turn: split boulder']);
 });

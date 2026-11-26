@@ -432,8 +432,8 @@
           "id": "modifier.solidify.mode",
           "rna": "solidify_mode",
           "label": "Mode",
-          "kind": "enum",
           "display": "dropdown",
+          "kind": "enum",
           "default": "EXTRUDE",
           "items": [
             {
@@ -464,7 +464,8 @@
           "unit": "",
           "softMin": -1,
           "softMax": 1,
-          "default": -1
+          "default": -1,
+          "precision": 4
         },
         {
           "id": "modifier.solidify.even_thickness",
@@ -490,11 +491,31 @@
         }
       ],
       "subpanels": [
-        "Normals",
-        "Materials",
-        "Edge Data",
-        "Thickness Clamp",
-        "Output Vertex Groups"
+        {
+          "label": "Normals",
+          "open": false,
+          "header": null
+        },
+        {
+          "label": "Materials",
+          "open": false,
+          "header": null
+        },
+        {
+          "label": "Edge Data",
+          "open": false,
+          "header": null
+        },
+        {
+          "label": "Thickness Clamp",
+          "open": false,
+          "header": null
+        },
+        {
+          "label": "Output Vertex Groups",
+          "open": false,
+          "header": null
+        }
       ]
     },
     "BEVEL": {
@@ -506,8 +527,8 @@
           "id": "modifier.bevel.affect",
           "rna": "affect",
           "label": "Affect",
-          "kind": "enum",
           "display": "expand",
+          "kind": "enum",
           "default": "EDGES",
           "items": [
             {
@@ -524,8 +545,8 @@
           "id": "modifier.bevel.width_type",
           "rna": "offset_type",
           "label": "Width Type",
-          "kind": "enum",
           "display": "dropdown",
+          "kind": "enum",
           "default": "OFFSET",
           "items": [
             {
@@ -574,8 +595,8 @@
           "id": "modifier.bevel.limit_method",
           "rna": "limit_method",
           "label": "Limit Method",
-          "kind": "enum",
           "display": "expand",
+          "kind": "enum",
           "default": "ANGLE",
           "items": [
             {
@@ -608,9 +629,21 @@
         }
       ],
       "subpanels": [
-        "Profile",
-        "Geometry",
-        "Shading"
+        {
+          "label": "Profile",
+          "open": false,
+          "header": null
+        },
+        {
+          "label": "Geometry",
+          "open": false,
+          "header": null
+        },
+        {
+          "label": "Shading",
+          "open": false,
+          "header": null
+        }
       ]
     },
     "SUBSURF": {
@@ -622,8 +655,8 @@
           "id": "modifier.subsurf.type",
           "rna": "subdivision_type",
           "label": "Subdivision Type",
-          "kind": "enum",
           "display": "expand",
+          "kind": "enum",
           "default": "CATMULL_CLARK",
           "items": [
             {
@@ -665,7 +698,11 @@
         }
       ],
       "subpanels": [
-        "Advanced"
+        {
+          "label": "Advanced",
+          "open": false,
+          "header": null
+        }
       ]
     },
     "SIMPLE_DEFORM": {
@@ -677,8 +714,8 @@
           "id": "modifier.simple_deform.mode",
           "rna": "deform_method",
           "label": "Mode",
-          "kind": "enum",
           "display": "expand",
+          "kind": "enum",
           "default": "TWIST",
           "items": [
             {
@@ -720,9 +757,9 @@
           "id": "modifier.simple_deform.axis",
           "rna": "deform_axis",
           "label": "Axis",
+          "display": "expand",
           "labelled": true,
           "kind": "enum",
-          "display": "expand",
           "default": "X",
           "items": [
             {
@@ -741,7 +778,370 @@
         }
       ],
       "subpanels": [
-        "Restrictions"
+        {
+          "label": "Restrictions",
+          "open": false,
+          "header": null
+        }
+      ]
+    },
+    "MIRROR": {
+      "short": "mirror",
+      "menuLabel": "Mirror",
+      "defaultName": "Mirror",
+      "fields": [
+        {
+          "id": "modifier.mirror.axis_x",
+          "rna": "use_axis",
+          "label": "X",
+          "index": 0,
+          "row": "Axis",
+          "display": "toggle",
+          "kind": "bool",
+          "default": true
+        },
+        {
+          "id": "modifier.mirror.axis_y",
+          "rna": "use_axis",
+          "label": "Y",
+          "index": 1,
+          "row": "Axis",
+          "display": "toggle",
+          "kind": "bool",
+          "default": false
+        },
+        {
+          "id": "modifier.mirror.axis_z",
+          "rna": "use_axis",
+          "label": "Z",
+          "index": 2,
+          "row": "Axis",
+          "display": "toggle",
+          "kind": "bool",
+          "default": false
+        },
+        {
+          "id": "modifier.mirror.bisect_x",
+          "rna": "use_bisect_axis",
+          "label": "X",
+          "index": 0,
+          "row": "Bisect",
+          "display": "toggle",
+          "kind": "bool",
+          "default": false
+        },
+        {
+          "id": "modifier.mirror.bisect_y",
+          "rna": "use_bisect_axis",
+          "label": "Y",
+          "index": 1,
+          "row": "Bisect",
+          "display": "toggle",
+          "kind": "bool",
+          "default": false
+        },
+        {
+          "id": "modifier.mirror.bisect_z",
+          "rna": "use_bisect_axis",
+          "label": "Z",
+          "index": 2,
+          "row": "Bisect",
+          "display": "toggle",
+          "kind": "bool",
+          "default": false
+        },
+        {
+          "id": "modifier.mirror.flip_x",
+          "rna": "use_bisect_flip_axis",
+          "label": "X",
+          "index": 0,
+          "row": "Flip",
+          "display": "toggle",
+          "kind": "bool",
+          "default": false
+        },
+        {
+          "id": "modifier.mirror.flip_y",
+          "rna": "use_bisect_flip_axis",
+          "label": "Y",
+          "index": 1,
+          "row": "Flip",
+          "display": "toggle",
+          "kind": "bool",
+          "default": false
+        },
+        {
+          "id": "modifier.mirror.flip_z",
+          "rna": "use_bisect_flip_axis",
+          "label": "Z",
+          "index": 2,
+          "row": "Flip",
+          "display": "toggle",
+          "kind": "bool",
+          "default": false
+        },
+        {
+          "id": "modifier.mirror.mirror_object",
+          "rna": "mirror_object",
+          "label": "Mirror Object",
+          "kind": "pointer",
+          "default": null
+        },
+        {
+          "id": "modifier.mirror.clipping",
+          "rna": "use_clip",
+          "label": "Clipping",
+          "kind": "bool",
+          "default": false
+        },
+        {
+          "id": "modifier.mirror.merge",
+          "rna": "use_mirror_merge",
+          "label": "",
+          "row": "Merge",
+          "kind": "bool",
+          "default": true
+        },
+        {
+          "id": "modifier.mirror.merge_distance",
+          "rna": "merge_threshold",
+          "label": "",
+          "row": "Merge",
+          "title": "Merge Distance",
+          "kind": "float",
+          "unit": "m",
+          "softMin": 0,
+          "softMax": 1,
+          "default": 0.001
+        },
+        {
+          "id": "modifier.mirror.bisect_distance",
+          "rna": "bisect_threshold",
+          "label": "Bisect Distance",
+          "kind": "float",
+          "unit": "m",
+          "softMin": 0,
+          "softMax": 1,
+          "default": 0.001
+        }
+      ],
+      "subpanels": [
+        {
+          "label": "Data",
+          "open": false,
+          "header": null
+        }
+      ]
+    },
+    "ARRAY": {
+      "short": "array",
+      "menuLabel": "Array",
+      "defaultName": "Array",
+      "fields": [
+        {
+          "id": "modifier.array.fit_type",
+          "rna": "fit_type",
+          "label": "Fit Type",
+          "display": "dropdown",
+          "kind": "enum",
+          "default": "FIXED_COUNT",
+          "items": [
+            {
+              "value": "FIXED_COUNT",
+              "label": "Fixed Count"
+            },
+            {
+              "value": "FIT_LENGTH",
+              "label": "Fit Length"
+            },
+            {
+              "value": "FIT_CURVE",
+              "label": "Fit Curve"
+            }
+          ]
+        },
+        {
+          "id": "modifier.array.count",
+          "rna": "count",
+          "label": "Count",
+          "kind": "int",
+          "unit": "",
+          "softMin": 1,
+          "softMax": 1000,
+          "default": 2
+        },
+        {
+          "id": "modifier.array.relative",
+          "rna": "use_relative_offset",
+          "label": "Relative Offset",
+          "subpanel": 0,
+          "kind": "bool",
+          "default": true
+        },
+        {
+          "id": "modifier.array.factor_x",
+          "rna": "relative_offset_displace",
+          "label": "Factor X",
+          "index": 0,
+          "title": "Factor X",
+          "subpanel": 0,
+          "kind": "float",
+          "unit": "",
+          "softMin": -10000,
+          "softMax": 10000,
+          "default": 1,
+          "precision": 3
+        },
+        {
+          "id": "modifier.array.factor_y",
+          "rna": "relative_offset_displace",
+          "label": "Y",
+          "index": 1,
+          "title": "Factor Y",
+          "subpanel": 0,
+          "kind": "float",
+          "unit": "",
+          "softMin": -10000,
+          "softMax": 10000,
+          "default": 0,
+          "precision": 3
+        },
+        {
+          "id": "modifier.array.factor_z",
+          "rna": "relative_offset_displace",
+          "label": "Z",
+          "index": 2,
+          "title": "Factor Z",
+          "subpanel": 0,
+          "kind": "float",
+          "unit": "",
+          "softMin": -10000,
+          "softMax": 10000,
+          "default": 0,
+          "precision": 3
+        },
+        {
+          "id": "modifier.array.constant",
+          "rna": "use_constant_offset",
+          "label": "Constant Offset",
+          "subpanel": 1,
+          "kind": "bool",
+          "default": false
+        },
+        {
+          "id": "modifier.array.distance_x",
+          "rna": "constant_offset_displace",
+          "label": "Distance X",
+          "index": 0,
+          "title": "Distance X",
+          "subpanel": 1,
+          "kind": "float",
+          "unit": "m",
+          "softMin": -3.4028234663852886e+38,
+          "softMax": 3.4028234663852886e+38,
+          "default": 1
+        },
+        {
+          "id": "modifier.array.distance_y",
+          "rna": "constant_offset_displace",
+          "label": "Y",
+          "index": 1,
+          "title": "Distance Y",
+          "subpanel": 1,
+          "kind": "float",
+          "unit": "m",
+          "softMin": -3.4028234663852886e+38,
+          "softMax": 3.4028234663852886e+38,
+          "default": 0
+        },
+        {
+          "id": "modifier.array.distance_z",
+          "rna": "constant_offset_displace",
+          "label": "Z",
+          "index": 2,
+          "title": "Distance Z",
+          "subpanel": 1,
+          "kind": "float",
+          "unit": "m",
+          "softMin": -3.4028234663852886e+38,
+          "softMax": 3.4028234663852886e+38,
+          "default": 0
+        },
+        {
+          "id": "modifier.array.object",
+          "rna": "use_object_offset",
+          "label": "Object Offset",
+          "subpanel": 2,
+          "kind": "bool",
+          "default": false
+        },
+        {
+          "id": "modifier.array.offset_object",
+          "rna": "offset_object",
+          "label": "Object",
+          "subpanel": 2,
+          "kind": "pointer",
+          "default": null
+        },
+        {
+          "id": "modifier.array.merge",
+          "rna": "use_merge_vertices",
+          "label": "Merge",
+          "subpanel": 3,
+          "kind": "bool",
+          "default": false
+        },
+        {
+          "id": "modifier.array.merge_distance",
+          "rna": "merge_threshold",
+          "label": "Distance",
+          "subpanel": 3,
+          "kind": "float",
+          "unit": "m",
+          "softMin": 0,
+          "softMax": 1,
+          "default": 0.01
+        },
+        {
+          "id": "modifier.array.first_last",
+          "rna": "use_merge_vertices_cap",
+          "label": "First and Last Copies",
+          "subpanel": 3,
+          "kind": "bool",
+          "default": false
+        }
+      ],
+      "subpanels": [
+        {
+          "label": "Relative Offset",
+          "open": true,
+          "header": "modifier.array.relative"
+        },
+        {
+          "label": "Constant Offset",
+          "open": false,
+          "header": "modifier.array.constant"
+        },
+        {
+          "label": "Object Offset",
+          "open": false,
+          "header": "modifier.array.object"
+        },
+        {
+          "label": "Merge",
+          "open": false,
+          "header": "modifier.array.merge"
+        },
+        {
+          "label": "UVs",
+          "open": false,
+          "header": null
+        },
+        {
+          "label": "Caps",
+          "open": false,
+          "header": null
+        }
       ]
     }
   },

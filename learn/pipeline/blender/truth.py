@@ -7,9 +7,27 @@ from types import SimpleNamespace
 import bpy
 
 MODIFIER_SHORT = {'SOLIDIFY': 'solidify', 'BEVEL': 'bevel', 'SUBSURF': 'subsurf',
-                  'SIMPLE_DEFORM': 'simple_deform'}
+                  'SIMPLE_DEFORM': 'simple_deform', 'MIRROR': 'mirror', 'ARRAY': 'array'}
 
-# Main-panel field order per modifier. Blender draws these panels in C
+
+def _axis_row(field_prefix, rna, heading, labels=('X', 'Y', 'Z')):
+    """One element of a vector property per field: Mirror's X Y Z toggles, Array's Factor X / Y / Z."""
+    return [(f'{field_prefix}_{axis.lower()}', rna, {'index': i, 'label': label, 'row': heading})
+            for i, (axis, label) in enumerate(zip('XYZ', labels))]
+
+
+def _toggles(field_prefix, rna, heading):
+    return [(id_, rna, {**overrides, 'display': 'toggle'}) for id_, rna, overrides in _axis_row(field_prefix, rna, heading)]
+
+
+def _vector(field_prefix, rna, label):
+    # Blender labels a split vector column "Factor X", then "Y", "Z".
+    return [(id_, rna, {'index': overrides['index'], 'label': overrides['label'] if overrides['index'] else f'{label} X',
+                        'title': f'{label} {overrides["label"]}'})
+            for id_, rna, overrides in _axis_row(field_prefix, rna, label)]
+
+# Main-panel field order per modifier, then its subpanels: a plain label for a
+# closed subpanel the lessons never open, or {label, open, header, fields}. Blender draws these panels in C
 # (MOD_*.cc panel_draw), which the bpy wheel does not ship, so the order and
 # the few label overrides below come from that source. Everything else
 # (RNA names, types, defaults, enum items, units) is read from bpy at runtime.
@@ -55,7 +73,51 @@ PANELS = {
         ],
         'subpanels': ['Restrictions'],
     },
+    # MOD_mirror.cc: three rows of X Y Z toggles, then Merge as a checkbox and its distance on one row.
+    'MIRROR': {
+        'fields': [
+            *_toggles('axis', 'use_axis', 'Axis'),
+            *_toggles('bisect', 'use_bisect_axis', 'Bisect'),
+            *_toggles('flip', 'use_bisect_flip_axis', 'Flip'),
+            ('mirror_object', 'mirror_object', {}),
+            ('clipping', 'use_clip', {'label': 'Clipping'}),
+            ('merge', 'use_mirror_merge', {'label': '', 'row': 'Merge'}),
+            ('merge_distance', 'merge_threshold', {'label': '', 'title': 'Merge Distance', 'row': 'Merge'}),
+            ('bisect_distance', 'bisect_threshold', {'label': 'Bisect Distance'}),
+        ],
+        'subpanels': ['Data'],
+    },
+    # MOD_array.cc: Relative Offset is the one subpanel open by default (ui_expand_flag SUBPANEL_1).
+    'ARRAY': {
+        'fields': [
+            ('fit_type', 'fit_type', {'display': 'dropdown'}),
+            ('count', 'count', {}),
+        ],
+        'subpanels': [
+            {'label': 'Relative Offset', 'open': True, 'header': ('relative', 'use_relative_offset', {}),
+             'fields': _vector('factor', 'relative_offset_displace', 'Factor')},
+            {'label': 'Constant Offset', 'header': ('constant', 'use_constant_offset', {}),
+             'fields': _vector('distance', 'constant_offset_displace', 'Distance')},
+            {'label': 'Object Offset', 'header': ('object', 'use_object_offset', {}),
+             'fields': [('offset_object', 'offset_object', {'label': 'Object'})]},
+            {'label': 'Merge', 'header': ('merge', 'use_merge_vertices', {'label': 'Merge'}),
+             'fields': [('merge_distance', 'merge_threshold', {'label': 'Distance'}),
+                        ('first_last', 'use_merge_vertices_cap', {'label': 'First and Last Copies'})]},
+            'UVs',
+            'Caps',
+        ],
+    },
 }
+
+
+def panel_fields(mod_type):
+    """Every field of a modifier panel as (id, rna, overrides, subpanel index or None): main panel first."""
+    panel = PANELS[mod_type]
+    fields = [(*field, None) for field in panel['fields']]
+    for index, sub in enumerate(panel['subpanels']):
+        if isinstance(sub, dict):
+            fields += [(*field, index) for field in ([sub['header']] if sub.get('header') else []) + sub['fields']]
+    return fields
 
 # Tab column of the Properties editor for a selected mesh object. The order is
 # drawn in C (buttons_context.cc); labels come from RNA below.
@@ -97,7 +159,7 @@ def shortcut(keymap, operator, context, **props):
     raise LookupError(f'No default shortcut for {operator} {props} in {keymap}')
 
 
-def _rna_field(mod_type, field_id, rna_id, overrides, instance):
+def _rna_field(mod_type, field_id, rna_id, overrides, instance, subpanel=None):
     prop = instance.bl_rna.properties[rna_id]
     value = getattr(instance, rna_id)
     field = {
@@ -105,8 +167,14 @@ def _rna_field(mod_type, field_id, rna_id, overrides, instance):
         'rna': rna_id,
         'label': overrides.get('label', prop.name),
     }
-    if 'heading' in overrides:
-        field['heading'] = overrides['heading']
+    if 'index' in overrides:
+        value = value[overrides['index']]
+        field['index'] = overrides['index']
+    for key in ('heading', 'row', 'title', 'display'):
+        if key in overrides:
+            field[key] = overrides[key]
+    if subpanel is not None:
+        field['subpanel'] = subpanel
     if overrides.get('labelled'):
         field['labelled'] = True
     if prop.type == 'ENUM':
@@ -128,6 +196,9 @@ def _rna_field(mod_type, field_id, rna_id, overrides, instance):
                          softMin=round(math.degrees(prop.soft_min), 4), softMax=round(math.degrees(prop.soft_max), 4))
         else:
             field['default'] = round(value, 6) if prop.type == 'FLOAT' else value
+        if prop.type == 'FLOAT' and unit == 'NONE':
+            # Plain factors show Blender's own number of decimals (Array's Factor: 2.500).
+            field['precision'] = prop.precision
     return field
 
 
@@ -206,6 +277,14 @@ def object_panels():
             if getattr(cls, 'bl_context', None) == 'object' and not getattr(cls, 'bl_parent_id', None) and cls.bl_label]
 
 
+def _subpanel(mod_type, sub):
+    if isinstance(sub, str):
+        return {'label': sub, 'open': False, 'header': None}
+    header = sub.get('header')
+    return {'label': sub['label'], 'open': bool(sub.get('open')),
+            'header': f'modifier.{MODIFIER_SHORT[mod_type]}.{header[0]}' if header else None}
+
+
 def modifier_definitions(obj):
     """Adds each modifier through the real operator to read its true defaults, then removes it."""
     menu_labels = {item.identifier: item.name for item in bpy.types.Modifier.bl_rna.properties['type'].enum_items_static}
@@ -217,8 +296,8 @@ def modifier_definitions(obj):
             'short': MODIFIER_SHORT[mod_type],
             'menuLabel': menu_labels[mod_type],
             'defaultName': mod.name,
-            'fields': [_rna_field(mod_type, field_id, rna, overrides, mod) for field_id, rna, overrides in panel['fields']],
-            'subpanels': panel['subpanels'],
+            'fields': [_rna_field(mod_type, *field[:3], mod, field[3]) for field in panel_fields(mod_type)],
+            'subpanels': [_subpanel(mod_type, sub) for sub in panel['subpanels']],
         }
         obj.modifiers.remove(mod)
     return definitions

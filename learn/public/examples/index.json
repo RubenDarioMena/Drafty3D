@@ -33,6 +33,38 @@
       "timeline": "modifiers/twisted-candle/timeline.json"
     },
     {
+      "module": "modifiers",
+      "example": "mirror-table",
+      "mode": "watch",
+      "title": "Table from one corner",
+      "variantOf": null,
+      "timeline": "modifiers/mirror-table/timeline.json"
+    },
+    {
+      "module": "modifiers",
+      "example": "mirror-bench",
+      "mode": "your-turn",
+      "title": "Your turn: bench",
+      "variantOf": "mirror-table",
+      "timeline": "modifiers/mirror-bench/timeline.json"
+    },
+    {
+      "module": "modifiers",
+      "example": "array-stairs",
+      "mode": "watch",
+      "title": "Staircase from one step",
+      "variantOf": null,
+      "timeline": "modifiers/array-stairs/timeline.json"
+    },
+    {
+      "module": "modifiers",
+      "example": "array-floating-steps",
+      "mode": "your-turn",
+      "title": "Your turn: floating steps",
+      "variantOf": "array-stairs",
+      "timeline": "modifiers/array-floating-steps/timeline.json"
+    },
+    {
       "module": "sculpt",
       "example": "pebble-buddy",
       "mode": "watch",

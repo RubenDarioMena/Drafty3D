@@ -72,6 +72,13 @@ export async function animateStep({ step, to, editor, menu, modeMenu, cursor, re
     return card;
   }
 
+  if (step.action === 'set_value' && typeof step.value === 'boolean') {
+    await cursor.moveTo(editor.element(step.id), fly);
+    await cursor.tap();
+    render(to);
+    return editor.element(step.id);
+  }
+
   if (step.action === 'set_value' && typeof step.value === 'string') {
     const option = editor.element(`${step.id}.${step.value.toLowerCase()}`) ?? editor.element(step.id);
     await cursor.moveTo(option, fly);

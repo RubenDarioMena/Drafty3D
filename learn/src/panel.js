@@ -86,10 +86,71 @@ export class PropertiesEditor {
     head.append(el('span', 'name', modifier.name), el('span', 'toggles', '▣◉✕'));
     head.lastChild.setAttribute('aria-hidden', 'true');
     const body = el('div', 'modifier-body');
-    for (const field of definition.fields) body.append(this.renderField(field, modifier.values[field.id]));
-    for (const label of definition.subpanels) body.append(el('div', 'subpanel', label));
+    const { fields } = definition;
+    this.renderFields(body, fields.filter(field => field.subpanel === undefined), modifier);
+    definition.subpanels.forEach((subpanel, index) => body.append(this.renderSubpanel(subpanel, index, fields, modifier)));
     card.append(head, body);
     return card;
+  }
+
+  /** Fields in panel order; consecutive fields sharing a `row` heading sit on one line, as Blender draws them. */
+  renderFields(parent, fields, modifier) {
+    for (let i = 0; i < fields.length;) {
+      const field = fields[i];
+      if (!field.row) {
+        parent.append(this.renderField(field, modifier.values[field.id]));
+        i += 1;
+        continue;
+      }
+      const group = [];
+      while (i < fields.length && fields[i].row === field.row) group.push(fields[i++]);
+      parent.append(this.renderRow(field.row, group, modifier));
+    }
+  }
+
+  renderRow(heading, group, modifier) {
+    const interactive = group.some(field => this.options.interactive.has(field.id));
+    const row = el('div', 'field');
+    row.classList.toggle('disabled', !interactive && !this.options.showAllEnabled);
+    let control;
+    if (group.every(field => field.display === 'toggle')) {
+      // Mirror's Axis X Y Z: joined toggle buttons, several may be on at once.
+      control = el('div', `enum-row${interactive ? ' interactive' : ''}`);
+      for (const field of group) control.append(this.renderToggle(field, modifier.values[field.id]));
+    } else {
+      control = el('div', 'row-controls');
+      for (const field of group) control.append(this.renderControl(field, modifier.values[field.id], this.options.interactive.has(field.id)));
+    }
+    row.append(el('span', 'label', heading), control);
+    return row;
+  }
+
+  renderToggle(field, value) {
+    const interactive = this.options.interactive.has(field.id);
+    const toggle = el(interactive ? 'button' : 'span', value ? 'on' : '', field.label);
+    toggle.dataset.control = field.id;
+    if (interactive) {
+      toggle.type = 'button';
+      toggle.setAttribute('aria-pressed', String(Boolean(value)));
+      toggle.setAttribute('aria-label', `${field.row} ${field.label}`);
+      toggle.addEventListener('click', () => this.options.onValue(field.id, !value));
+    }
+    return toggle;
+  }
+
+  /** A subpanel header (with its checkbox, if Blender draws one); its body only when Blender opens it by default. */
+  renderSubpanel(subpanel, index, fields, modifier) {
+    const box = el('div', `subpanel${subpanel.open ? ' open' : ''}`);
+    const head = el('div', 'subpanel-head');
+    const header = subpanel.header && fields.find(field => field.id === subpanel.header);
+    head.append(header ? this.renderCheck(header, modifier.values[header.id], this.options.interactive.has(header.id)) : subpanel.label);
+    box.append(head);
+    if (subpanel.open) {
+      const body = el('div', 'subpanel-body');
+      this.renderFields(body, fields.filter(field => field.subpanel === index && field.id !== subpanel.header), modifier);
+      box.append(body);
+    }
+    return box;
   }
 
   renderField(field, value) {
@@ -100,6 +161,11 @@ export class PropertiesEditor {
     if (field.kind === 'enum' && field.display === 'expand' && !field.labelled && !field.id.endsWith('limit_method')) {
       label.textContent = '';
     }
+    row.append(label, this.renderControl(field, value, interactive));
+    return row;
+  }
+
+  renderControl(field, value, interactive) {
     let control;
     if (field.kind === 'enum' && field.display === 'expand') {
       control = el('div', `enum-row${interactive ? ' interactive' : ''}`);
@@ -121,14 +187,25 @@ export class PropertiesEditor {
       control = el('div', 'dropdown pointer');
       control.append(el('span', 'object-icon', '▣'), el('span', '', ''));
     } else if (field.kind === 'bool') {
-      control = el('div', 'check');
-      control.append(el('span', `box${value ? ' on' : ''}`, value ? '✓' : ''), field.label);
+      return this.renderCheck(field, value, interactive);
     } else {
       control = this.renderNumber(field, value, interactive);
     }
     control.dataset.control = field.id;
-    row.append(label, control);
-    return row;
+    return control;
+  }
+
+  renderCheck(field, value, interactive) {
+    const control = el(interactive ? 'button' : 'div', `check${interactive ? ' interactive' : ''}`);
+    control.append(el('span', `box${value ? ' on' : ''}`, value ? '✓' : ''), field.label);
+    control.dataset.control = field.id;
+    if (interactive) {
+      control.type = 'button';
+      control.setAttribute('aria-pressed', String(Boolean(value)));
+      control.setAttribute('aria-label', field.title ?? (field.label || field.row || field.heading));
+      control.addEventListener('click', () => this.options.onValue(field.id, !value));
+    }
+    return control;
   }
 
   renderNumber(field, value, interactive) {
@@ -142,10 +219,11 @@ export class PropertiesEditor {
       button.tabIndex = interactive ? 0 : -1;
       button.disabled = !interactive;
     }
-    minus.setAttribute('aria-label', `Decrease ${field.label}`);
-    plus.setAttribute('aria-label', `Increase ${field.label}`);
+    const name = field.title ?? field.label;
+    minus.setAttribute('aria-label', `Decrease ${name}`);
+    plus.setAttribute('aria-label', `Increase ${name}`);
     control.append(minus, text, plus);
-    control.setAttribute('aria-label', `${field.label} ${formatValue(field, value)}`);
+    control.setAttribute('aria-label', `${name} ${formatValue(field, value)}`);
     if (!interactive) return control;
 
     const clamp = candidate => Math.min(field.softMax, Math.max(field.softMin, roundToStep(candidate, step)));
@@ -186,7 +264,7 @@ export class PropertiesEditor {
     input.step = String(step);
     input.value = String(value);
     input.className = 'value';
-    input.setAttribute('aria-label', field.label);
+    input.setAttribute('aria-label', field.title ?? field.label);
     input.style.cssText = 'width:100%;height:24px;border:0;background:#2a2a2a;text-align:center;border-radius:3px';
     let done = false;
     const finish = () => {
