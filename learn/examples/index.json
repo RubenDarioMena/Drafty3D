@@ -113,6 +113,22 @@
       "timeline": "modifiers/stack-cushion/timeline.json"
     },
     {
+      "module": "modifiers",
+      "example": "project-ladder",
+      "mode": "watch",
+      "title": "Project: wooden ladder",
+      "variantOf": null,
+      "timeline": "modifiers/project-ladder/timeline.json"
+    },
+    {
+      "module": "modifiers",
+      "example": "project-bookshelf",
+      "mode": "your-turn",
+      "title": "Your turn: bookshelf",
+      "variantOf": "project-ladder",
+      "timeline": "modifiers/project-bookshelf/timeline.json"
+    },
+    {
       "module": "sculpt",
       "example": "pebble-buddy",
       "mode": "watch",

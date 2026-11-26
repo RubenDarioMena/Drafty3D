@@ -1,0 +1,291 @@
+{
+  "blenderVersion": "5.3.0",
+  "module": "modifiers",
+  "example": "project-ladder",
+  "mode": "watch",
+  "title": "Project: wooden ladder",
+  "object": "Ladder",
+  "initial": {
+    "panel": "panel.properties.object",
+    "camera": {
+      "position": [
+        0.55,
+        -0.95,
+        0.32
+      ],
+      "target": [
+        0.14,
+        0,
+        0.12
+      ],
+      "fov": 30
+    },
+    "text": "Project 3. A whole ladder from half a rung and one piece of rail: Array stacks it, Mirror closes it, Bevel finishes it.",
+    "mesh": "step-00.glb"
+  },
+  "steps": [
+    {
+      "id": "panel.properties.modifier",
+      "action": "select_panel",
+      "value": null,
+      "value_type": null,
+      "shortcut": {
+        "keys": [
+          "Ctrl",
+          "Tab"
+        ],
+        "context": "Properties editor · next tab"
+      },
+      "duration": 1.4,
+      "autoAdvance": true,
+      "text": "Open the Modifier Properties tab, the wrench.",
+      "help": null,
+      "camera": {
+        "position": [
+          0.55,
+          -0.95,
+          0.32
+        ],
+        "target": [
+          0.14,
+          0,
+          0.12
+        ],
+        "fov": 30
+      },
+      "mesh": null
+    },
+    {
+      "id": "modifier.array.add",
+      "action": "add_modifier",
+      "value": "Array",
+      "value_type": "string",
+      "modifier": "ARRAY",
+      "shortcut": {
+        "keys": [
+          "Shift",
+          "A"
+        ],
+        "context": "Properties editor · Modifiers tab"
+      },
+      "duration": 2.8,
+      "autoAdvance": false,
+      "text": "Add Modifier → Generate → Array. The copy lands beside the piece: Factor X is 1.",
+      "help": null,
+      "camera": {
+        "position": [
+          0.95,
+          -1.5,
+          0.5
+        ],
+        "target": [
+          0.28,
+          0,
+          0.25
+        ],
+        "fov": 30
+      },
+      "mesh": "step-02.glb"
+    },
+    {
+      "id": "modifier.array.factor_z",
+      "action": "set_value",
+      "value": 1,
+      "value_type": "number",
+      "modifier": "ARRAY",
+      "shortcut": null,
+      "duration": 2.2,
+      "autoAdvance": false,
+      "text": "Set Factor Z to 1: the copy also rises one rail piece. It goes up and to the side.",
+      "help": null,
+      "step": 0.1,
+      "camera": {
+        "position": [
+          0.95,
+          -1.5,
+          0.5
+        ],
+        "target": [
+          0.28,
+          0,
+          0.25
+        ],
+        "fov": 30
+      },
+      "mesh": "step-03.glb"
+    },
+    {
+      "id": "modifier.array.factor_x",
+      "action": "set_value",
+      "value": 0,
+      "value_type": "number",
+      "modifier": "ARRAY",
+      "shortcut": null,
+      "duration": 2.2,
+      "autoAdvance": false,
+      "text": "Set Factor X to 0: no sideways move, so the copy sits right on top. The rail pieces line up.",
+      "help": null,
+      "step": 0.1,
+      "camera": {
+        "position": [
+          0.95,
+          -1.5,
+          0.5
+        ],
+        "target": [
+          0.28,
+          0,
+          0.25
+        ],
+        "fov": 30
+      },
+      "mesh": "step-04.glb"
+    },
+    {
+      "id": "modifier.array.count",
+      "action": "set_value",
+      "value": 3,
+      "value_type": "number",
+      "modifier": "ARRAY",
+      "shortcut": null,
+      "duration": 2.2,
+      "autoAdvance": false,
+      "text": "Raise Count to 3: three rungs, one long rail.",
+      "help": null,
+      "step": 1,
+      "camera": {
+        "position": [
+          0.6,
+          -1.9,
+          0.55
+        ],
+        "target": [
+          0,
+          0,
+          0.38
+        ],
+        "fov": 30
+      },
+      "mesh": "step-05.glb"
+    },
+    {
+      "id": "modifier.mirror.add",
+      "action": "add_modifier",
+      "value": "Mirror",
+      "value_type": "string",
+      "modifier": "MIRROR",
+      "shortcut": {
+        "keys": [
+          "Shift",
+          "A"
+        ],
+        "context": "Properties editor · Modifiers tab"
+      },
+      "duration": 2.8,
+      "autoAdvance": false,
+      "text": "Add a Mirror below Array. It copies the whole stack across X: the second rail, and the rungs meet in the middle.",
+      "help": null,
+      "camera": {
+        "position": [
+          0.6,
+          -1.9,
+          0.55
+        ],
+        "target": [
+          0,
+          0,
+          0.38
+        ],
+        "fov": 30
+      },
+      "mesh": "step-06.glb"
+    },
+    {
+      "id": "modifier.bevel.add",
+      "action": "add_modifier",
+      "value": "Bevel",
+      "value_type": "string",
+      "modifier": "BEVEL",
+      "shortcut": {
+        "keys": [
+          "Shift",
+          "A"
+        ],
+        "context": "Properties editor · Modifiers tab"
+      },
+      "duration": 2.8,
+      "autoAdvance": false,
+      "text": "Add a Bevel at the bottom of the stack. Its 0.1 m default eats the 12 cm rails.",
+      "help": null,
+      "camera": {
+        "position": [
+          0.42,
+          -0.85,
+          0.62
+        ],
+        "target": [
+          0.15,
+          0,
+          0.55
+        ],
+        "fov": 30
+      },
+      "mesh": "step-07.glb"
+    },
+    {
+      "id": "modifier.bevel.amount",
+      "action": "set_value",
+      "value": 0.02,
+      "value_type": "number",
+      "modifier": "BEVEL",
+      "shortcut": null,
+      "duration": 2.2,
+      "autoAdvance": false,
+      "text": "Set Amount to 0.02 m.",
+      "help": null,
+      "step": 0.01,
+      "camera": {
+        "position": [
+          0.42,
+          -0.85,
+          0.62
+        ],
+        "target": [
+          0.15,
+          0,
+          0.55
+        ],
+        "fov": 30
+      },
+      "mesh": "step-08.glb"
+    },
+    {
+      "id": "modifier.bevel.segments",
+      "action": "set_value",
+      "value": 2,
+      "value_type": "number",
+      "modifier": "BEVEL",
+      "shortcut": null,
+      "duration": 2.2,
+      "autoAdvance": false,
+      "text": "Use 2 Segments for a rounded edge on every rung and rail.",
+      "help": null,
+      "step": 1,
+      "camera": {
+        "position": [
+          0.42,
+          -0.85,
+          0.62
+        ],
+        "target": [
+          0.15,
+          0,
+          0.55
+        ],
+        "fov": 30
+      },
+      "mesh": "step-09.glb"
+    }
+  ],
+  "outro": "Project done: Array → Mirror → Bevel. Repeat, copy, then finish the edges of everything at once. Now build a bookshelf the same way."
+}
