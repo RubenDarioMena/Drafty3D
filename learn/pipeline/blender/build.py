@@ -75,6 +75,17 @@ BLOCK_CAMERAS = {
 CUSHION_CAMERAS = {
     'overview': {'position': [1.6, -2.0, 1.25], 'target': [0, 0, 0.12], 'fov': 30},
 }
+LADDER_CAMERAS = {
+    'piece': {'position': [0.55, -0.95, 0.32], 'target': [0.14, 0, 0.12], 'fov': 30},
+    'start': {'position': [0.95, -1.5, 0.5], 'target': [0.28, 0, 0.25], 'fov': 30},
+    'overview': {'position': [0.6, -1.9, 0.55], 'target': [0, 0, 0.38], 'fov': 30},
+    'corner': {'position': [0.42, -0.85, 0.62], 'target': [0.15, 0, 0.55], 'fov': 30},
+}
+SHELF_CAMERAS = {
+    'start': {'position': [1.05, -1.7, 0.55], 'target': [0.38, 0, 0.3], 'fov': 30},
+    'overview': {'position': [0.55, -2.55, 0.75], 'target': [0, 0, 0.48], 'fov': 30},
+    'corner': {'position': [0.5, -1.0, 0.8], 'target': [0.2, 0, 0.66], 'fov': 30},
+}
 APPLY = truth.shortcut('Property Editor', 'object.modifier_apply', 'Properties editor · Modifiers tab')
 
 
@@ -428,6 +439,69 @@ def stack_cushion():
     lesson.finish(text='Cushion finished: Bevel → Subdivision, then Bevel applied into the mesh.')
 
 
+
+def project_ladder():
+    reset()
+    # Half a rung and one rail section. The rail is open top and bottom, so the copies stack into one long rail;
+    # the rung's end is sunk into the rail so no open edge shows once Bevel cuts the rail's corners.
+    obj = blocks('Ladder', [((0, -0.045, 0.08), (0.2, 0.045, 0.16), ('-x',)),
+                            ((0.18, -0.06, 0), (0.3, 0.06, 0.25), ('-z', '+z'))])
+    lesson = Lesson(
+        module='modifiers', example='project-ladder', mode='watch', title='Project: wooden ladder',
+        out_dir=os.path.join(OUT, 'modifiers', 'project-ladder'), obj=obj, panel='OBJECT', camera=LADDER_CAMERAS['piece'],
+        text='Project 3. A whole ladder from half a rung and one piece of rail: Array stacks it, Mirror closes it, Bevel finishes it.',
+    )
+    lesson.select_panel('MODIFIER', shortcut=NEXT_TAB, text='Open the Modifier Properties tab, the wrench.')
+    lesson.add_modifier('ARRAY', shortcut=ADD_MENU, camera=LADDER_CAMERAS['start'],
+                        text='Add Modifier → Generate → Array. The copy lands beside the piece: Factor X is 1.')
+    lesson.set_value('ARRAY', 'factor_z', 1, step=0.1,
+                     text='Set Factor Z to 1: the copy also rises one rail piece. It goes up and to the side.')
+    lesson.set_value('ARRAY', 'factor_x', 0, step=0.1,
+                     text='Set Factor X to 0: no sideways move, so the copy sits right on top. The rail pieces line up.')
+    lesson.set_value('ARRAY', 'count', 3, step=1, camera=LADDER_CAMERAS['overview'],
+                     text='Raise Count to 3: three rungs, one long rail.')
+    lesson.add_modifier('MIRROR', shortcut=ADD_MENU,
+                        text='Add a Mirror below Array. It copies the whole stack across X: the second rail, and the rungs meet in the middle.')
+    lesson.add_modifier('BEVEL', shortcut=ADD_MENU, camera=LADDER_CAMERAS['corner'],
+                        text='Add a Bevel at the bottom of the stack. Its 0.1 m default eats the 12 cm rails.')
+    lesson.set_value('BEVEL', 'amount', 0.02, step=0.01, text='Set Amount to 0.02 m.')
+    lesson.set_value('BEVEL', 'segments', 2, step=1,
+                     text='Use 2 Segments for a rounded edge on every rung and rail.')
+    lesson.finish(text='Project done: Array → Mirror → Bevel. Repeat, copy, then finish the edges of everything at once. '
+                       'Now build a bookshelf the same way.')
+
+
+def project_bookshelf():
+    reset()
+    obj = blocks('Bookshelf', [((0, -0.14, 0), (0.32, 0.14, 0.06), ('-x',)),
+                               ((0.3, -0.15, 0), (0.38, 0.15, 0.32), ('-z', '+z'))])
+    lesson = Lesson(
+        module='modifiers', example='project-bookshelf', mode='your-turn', title='Your turn: bookshelf',
+        variant_of='project-ladder',
+        out_dir=os.path.join(OUT, 'modifiers', 'project-bookshelf'), obj=obj, panel='OBJECT', camera=SHELF_CAMERAS['start'],
+        text='Half a shelf and one piece of the side. Stack it, mirror it and round its edges.',
+    )
+    lesson.select_panel('MODIFIER', shortcut=NEXT_TAB, text='Open the Modifier Properties tab.',
+                        help='The wrench icon, right below the orange Object square.')
+    lesson.add_modifier('ARRAY', shortcut=ADD_MENU, text='Repeat the piece: add an Array modifier.',
+                        help='Add Modifier → Generate → Array.')
+    lesson.set_value('ARRAY', 'factor_z', 1, step=0.1, text='Lift the copy: set Factor Z to 1.',
+                     help='Factor Z is the third field in Relative Offset.')
+    lesson.set_value('ARRAY', 'factor_x', 0, step=0.1, text='Stop the sideways move: set Factor X to 0. The shelves stack.',
+                     help='Factor X is the first field in Relative Offset.')
+    lesson.set_value('ARRAY', 'count', 3, step=1, camera=SHELF_CAMERAS['overview'], text='Set Count to 3 shelves.',
+                     help='Count is right below Fit Type.')
+    lesson.add_modifier('MIRROR', shortcut=ADD_MENU, text='Close the shelf: add a Mirror modifier below Array.',
+                        help='Add Modifier → Generate → Mirror. Axis X is already on.')
+    lesson.add_modifier('BEVEL', shortcut=ADD_MENU, camera=SHELF_CAMERAS['corner'],
+                        text='Round the edges: add a Bevel modifier at the bottom.', help='Add Modifier → Generate → Bevel.')
+    lesson.set_value('BEVEL', 'amount', 0.02, step=0.01,
+                     text='Set the bevel Amount to 0.02 m.', help='Amount is right below Width Type.')
+    lesson.set_value('BEVEL', 'segments', 3, step=1, text='Use 3 Segments for a round edge.',
+                     help='Segments is right below Amount.')
+    lesson.finish(text='Bookshelf finished: the same Array → Mirror → Bevel stack as the ladder.')
+
+
 if __name__ == '__main__':
     os.makedirs(OUT, exist_ok=True)
     ui_truth()
@@ -445,4 +519,6 @@ if __name__ == '__main__':
     curve_ring_track()
     stack_block()
     stack_cushion()
+    project_ladder()
+    project_bookshelf()
     print('Drafty3D Learn: examples generated in', OUT)

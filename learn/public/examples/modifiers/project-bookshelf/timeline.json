@@ -1,0 +1,292 @@
+{
+  "blenderVersion": "5.3.0",
+  "module": "modifiers",
+  "example": "project-bookshelf",
+  "mode": "your-turn",
+  "title": "Your turn: bookshelf",
+  "object": "Bookshelf",
+  "initial": {
+    "panel": "panel.properties.object",
+    "camera": {
+      "position": [
+        1.05,
+        -1.7,
+        0.55
+      ],
+      "target": [
+        0.38,
+        0,
+        0.3
+      ],
+      "fov": 30
+    },
+    "text": "Half a shelf and one piece of the side. Stack it, mirror it and round its edges.",
+    "mesh": "step-00.glb"
+  },
+  "steps": [
+    {
+      "id": "panel.properties.modifier",
+      "action": "select_panel",
+      "value": null,
+      "value_type": null,
+      "shortcut": {
+        "keys": [
+          "Ctrl",
+          "Tab"
+        ],
+        "context": "Properties editor · next tab"
+      },
+      "duration": 1.4,
+      "autoAdvance": true,
+      "text": "Open the Modifier Properties tab.",
+      "help": "The wrench icon, right below the orange Object square.",
+      "camera": {
+        "position": [
+          1.05,
+          -1.7,
+          0.55
+        ],
+        "target": [
+          0.38,
+          0,
+          0.3
+        ],
+        "fov": 30
+      },
+      "mesh": null
+    },
+    {
+      "id": "modifier.array.add",
+      "action": "add_modifier",
+      "value": "Array",
+      "value_type": "string",
+      "modifier": "ARRAY",
+      "shortcut": {
+        "keys": [
+          "Shift",
+          "A"
+        ],
+        "context": "Properties editor · Modifiers tab"
+      },
+      "duration": 2.8,
+      "autoAdvance": false,
+      "text": "Repeat the piece: add an Array modifier.",
+      "help": "Add Modifier → Generate → Array.",
+      "camera": {
+        "position": [
+          1.05,
+          -1.7,
+          0.55
+        ],
+        "target": [
+          0.38,
+          0,
+          0.3
+        ],
+        "fov": 30
+      },
+      "mesh": "step-02.glb"
+    },
+    {
+      "id": "modifier.array.factor_z",
+      "action": "set_value",
+      "value": 1,
+      "value_type": "number",
+      "modifier": "ARRAY",
+      "shortcut": null,
+      "duration": 2.2,
+      "autoAdvance": false,
+      "text": "Lift the copy: set Factor Z to 1.",
+      "help": "Factor Z is the third field in Relative Offset.",
+      "step": 0.1,
+      "camera": {
+        "position": [
+          1.05,
+          -1.7,
+          0.55
+        ],
+        "target": [
+          0.38,
+          0,
+          0.3
+        ],
+        "fov": 30
+      },
+      "mesh": "step-03.glb"
+    },
+    {
+      "id": "modifier.array.factor_x",
+      "action": "set_value",
+      "value": 0,
+      "value_type": "number",
+      "modifier": "ARRAY",
+      "shortcut": null,
+      "duration": 2.2,
+      "autoAdvance": false,
+      "text": "Stop the sideways move: set Factor X to 0. The shelves stack.",
+      "help": "Factor X is the first field in Relative Offset.",
+      "step": 0.1,
+      "camera": {
+        "position": [
+          1.05,
+          -1.7,
+          0.55
+        ],
+        "target": [
+          0.38,
+          0,
+          0.3
+        ],
+        "fov": 30
+      },
+      "mesh": "step-04.glb"
+    },
+    {
+      "id": "modifier.array.count",
+      "action": "set_value",
+      "value": 3,
+      "value_type": "number",
+      "modifier": "ARRAY",
+      "shortcut": null,
+      "duration": 2.2,
+      "autoAdvance": false,
+      "text": "Set Count to 3 shelves.",
+      "help": "Count is right below Fit Type.",
+      "step": 1,
+      "camera": {
+        "position": [
+          0.55,
+          -2.55,
+          0.75
+        ],
+        "target": [
+          0,
+          0,
+          0.48
+        ],
+        "fov": 30
+      },
+      "mesh": "step-05.glb"
+    },
+    {
+      "id": "modifier.mirror.add",
+      "action": "add_modifier",
+      "value": "Mirror",
+      "value_type": "string",
+      "modifier": "MIRROR",
+      "shortcut": {
+        "keys": [
+          "Shift",
+          "A"
+        ],
+        "context": "Properties editor · Modifiers tab"
+      },
+      "duration": 2.8,
+      "autoAdvance": false,
+      "text": "Close the shelf: add a Mirror modifier below Array.",
+      "help": "Add Modifier → Generate → Mirror. Axis X is already on.",
+      "camera": {
+        "position": [
+          0.55,
+          -2.55,
+          0.75
+        ],
+        "target": [
+          0,
+          0,
+          0.48
+        ],
+        "fov": 30
+      },
+      "mesh": "step-06.glb"
+    },
+    {
+      "id": "modifier.bevel.add",
+      "action": "add_modifier",
+      "value": "Bevel",
+      "value_type": "string",
+      "modifier": "BEVEL",
+      "shortcut": {
+        "keys": [
+          "Shift",
+          "A"
+        ],
+        "context": "Properties editor · Modifiers tab"
+      },
+      "duration": 2.8,
+      "autoAdvance": false,
+      "text": "Round the edges: add a Bevel modifier at the bottom.",
+      "help": "Add Modifier → Generate → Bevel.",
+      "camera": {
+        "position": [
+          0.5,
+          -1,
+          0.8
+        ],
+        "target": [
+          0.2,
+          0,
+          0.66
+        ],
+        "fov": 30
+      },
+      "mesh": "step-07.glb"
+    },
+    {
+      "id": "modifier.bevel.amount",
+      "action": "set_value",
+      "value": 0.02,
+      "value_type": "number",
+      "modifier": "BEVEL",
+      "shortcut": null,
+      "duration": 2.2,
+      "autoAdvance": false,
+      "text": "Set the bevel Amount to 0.02 m.",
+      "help": "Amount is right below Width Type.",
+      "step": 0.01,
+      "camera": {
+        "position": [
+          0.5,
+          -1,
+          0.8
+        ],
+        "target": [
+          0.2,
+          0,
+          0.66
+        ],
+        "fov": 30
+      },
+      "mesh": "step-08.glb"
+    },
+    {
+      "id": "modifier.bevel.segments",
+      "action": "set_value",
+      "value": 3,
+      "value_type": "number",
+      "modifier": "BEVEL",
+      "shortcut": null,
+      "duration": 2.2,
+      "autoAdvance": false,
+      "text": "Use 3 Segments for a round edge.",
+      "help": "Segments is right below Amount.",
+      "step": 1,
+      "camera": {
+        "position": [
+          0.5,
+          -1,
+          0.8
+        ],
+        "target": [
+          0.2,
+          0,
+          0.66
+        ],
+        "fov": 30
+      },
+      "mesh": "step-09.glb"
+    }
+  ],
+  "variantOf": "project-ladder",
+  "outro": "Bookshelf finished: the same Array → Mirror → Bevel stack as the ladder."
+}

@@ -272,7 +272,7 @@ test('home groups the lessons by module', async ({ page }) => {
     ['Low-poly cup', 'Your turn: bowl', 'Twisted column', 'Your turn: twisted candle',
       'Table from one corner', 'Your turn: bench', 'Staircase from one step', 'Your turn: floating steps',
       'Birdhouse door', 'Your turn: lantern window', 'Garden path', 'Your turn: ring track',
-      'Order in the stack', 'Your turn: cushion']);
+      'Order in the stack', 'Your turn: cushion', 'Project: wooden ladder', 'Your turn: bookshelf']);
   await expect(page.locator('.module[data-module="sculpt"] .lesson-card h3')).toHaveText(
     ['Pebble buddy', 'Your turn: sleepy buddy', 'Horned buddy', 'Your turn: antenna bug', 'Craggy rock', 'Your turn: split boulder']);
 });

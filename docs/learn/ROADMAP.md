@@ -25,15 +25,15 @@ Eso es lo que llamamos **intermedio**. **Principiante completo** es llegar hasta
 | --- | --- | --- | --- | --- |
 | 1 | Moverse y crear | Principiante | 6 | 0 |
 | 2 | Dar forma (modelado) | Principiante | 8 | 0 |
-| 3 | Modificadores | Principiante | 8 | 2 |
+| 3 | Modificadores | Principiante | 8 | 8 |
 | 4 | Escultura | Principiante | 8 | 3 |
 | 5 | Materiales, luz y render | Principiante | 8 | 0 |
-| | **Principiante completo** | | **38** | **5** |
+| | **Principiante completo** | | **38** | **11** |
 | 6 | Texturas | Intermedio | 6 | 0 |
 | 7 | Animación | Intermedio | 5 | 0 |
 | 8 | Curvas, texto y nodos | Intermedio | 5 | 0 |
 | 9 | Articular objetos (rigging básico) | Intermedio | 4 | 0 |
-| | **Intermedio (horizonte)** | | **58** | **5 (≈ 9 %)** |
+| | **Intermedio (horizonte)** | | **58** | **11 (≈ 19 %)** |
 
 Lo hecho hasta ahora está en los niveles 3 y 4 porque eran los que la app podía enseñar con lo que ya sabía hacer. El orden de **aprendizaje** empieza en el nivel 1; el orden en que conviene **construir** está en "Qué sigue" al final.
 
@@ -77,12 +77,12 @@ Lo hecho hasta ahora está en los niveles 3 y 4 porque eran los que la app podí
 | --- | --- | --- |
 | ✅ | 3.1 Taza low-poly | **Solidify** (dar grosor), **Bevel** (redondear bordes), **Subdivision Surface** (suavizar), y por qué van en ese orden. *Low-poly cup* → *Your turn: bowl*. |
 | ✅ | 3.2 Columna torcida | **Bevel** + **Simple Deform** (torcer) y su eje. *Twisted column* → *Your turn: twisted candle*. |
-| ⬜ | 3.3 Modelar solo la mitad | **Mirror**: lo que haces de un lado aparece del otro. Clave para objetos y personajes simétricos. |
-| ⬜ | 3.4 Repetir piezas | **Array**: una escalera, una cerca o una cadena a partir de una sola pieza. |
-| ⬜ | 3.5 Cortes y agujeros | **Boolean**: restar, sumar o cruzar dos objetos (por ejemplo, el agujero de un tornillo). |
-| ⬜ | 3.6 Doblar a lo largo de una curva | **Curve** y **Lattice**: deformar un objeto con una guía. |
-| ⬜ | 3.7 Ordenar y aplicar | Reordenar, apagar y **Apply** (volver el efecto parte fija del modelo). |
-| ⬜ | **Proyecto 3: una lámpara de mesa** | Mirror para el cuerpo, Array para detalles, Solidify en la pantalla, Subdivision para suavizar. |
+| ✅ | 3.3 Modelar solo la mitad | **Mirror**: lo que haces de un lado aparece del otro. Clave para objetos y personajes simétricos. *Table from one corner* → *Your turn: bench*. |
+| ✅ | 3.4 Repetir piezas | **Array**: una escalera, una cerca o una cadena a partir de una sola pieza. *Staircase from one step* → *Your turn: floating steps*. |
+| ✅ | 3.5 Cortes y agujeros | **Boolean**: restar, sumar o cruzar dos objetos (por ejemplo, el agujero de un tornillo). *Birdhouse door* → *Your turn: lantern window*. |
+| ✅ | 3.6 Doblar a lo largo de una curva | **Curve**: deformar un objeto con una guía. *Garden path* → *Your turn: ring track*. **Lattice** queda para después: necesita editar puntos de la jaula, que llega con el Nivel 2. |
+| ✅ | 3.7 Ordenar y aplicar | Reordenar (**Move to First**), apagar (**Realtime**) y **Apply** (volver el efecto parte fija del modelo). *Order in the stack* → *Your turn: cushion*. |
+| ✅ | **Proyecto 3: una escalera de mano** | Media pieza (medio peldaño y un tramo de riel): Array la apila, Mirror la cierra y Bevel redondea todo a la vez. *Project: wooden ladder* → *Your turn: bookshelf*. |
 
 ### Nivel 4 · Escultura
 
@@ -112,7 +112,7 @@ Lo hecho hasta ahora está en los niveles 3 y 4 porque eran los que la app podí
 | ⬜ | 5.5 La imagen final | **Render**: **EEVEE** (rápido) contra **Cycles** (realista), calidad y guardar la imagen. |
 | ⬜ | 5.6 El fondo | **World**: color o foto 360° (HDRI) que ilumina la escena. |
 | ⬜ | 5.7 Guardar y exportar | Guardar bien el archivo y exportar a **STL** (impresión 3D) o **glTF** (web). |
-| ⬜ | **Proyecto 5: foto de producto** | La taza o la lámpara con materiales, tres luces, cámara y render final. **Aquí termina la etapa principiante.** |
+| ⬜ | **Proyecto 5: foto de producto** | La taza o la escalera con materiales, tres luces, cámara y render final. **Aquí termina la etapa principiante.** |
 
 ---
 
@@ -164,7 +164,7 @@ Lo hecho hasta ahora está en los niveles 3 y 4 porque eran los que la app podí
 | ⬜ | 9.1 Huesos | **Armature**: crear una cadena de huesos. |
 | ⬜ | 9.2 Unir huesos y modelo | **Parent** con pesos automáticos y **Weight Paint** para corregir qué parte sigue a qué hueso. |
 | ⬜ | 9.3 Posar y animar | **Pose Mode** y keyframes sobre los huesos. |
-| ⬜ | **Proyecto 9: lámpara articulada animada** | La lámpara del nivel 3 con huesos, que se asoma y mira a la cámara. **Aquí termina el horizonte.** |
+| ⬜ | **Proyecto 9: lámpara articulada animada** | Una lámpara de escritorio con huesos, que se asoma y mira a la cámara. **Aquí termina el horizonte.** |
 
 ---
 
@@ -193,7 +193,7 @@ Pendiente aparte: el modificador **Wireframe** se probó y se quitó, porque con
 
 Propuesta de orden de construcción (no es el orden de aprendizaje):
 
-1. **Terminar el nivel 3** (Mirror, Array, Boolean, Curve, Apply y su proyecto). La app ya casi puede, y completa un nivel entero.
+1. ✅ **Terminar el nivel 3** (Mirror, Array, Boolean, Curve, Apply y su proyecto). Lattice quedó para después del nivel 2.
 2. **Terminar el nivel 4** (Mask y Pose primero; Remesh y Multiresolution después del cambio de reproducción).
 3. **Nivel 1** completo: es la puerta de entrada de la ruta, y su selección y gizmo se reutilizan en el nivel 2.
 4. **Nivel 2** (modelado): la pieza grande.
