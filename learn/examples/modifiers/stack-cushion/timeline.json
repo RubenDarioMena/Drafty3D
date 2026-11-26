@@ -1,0 +1,289 @@
+{
+  "blenderVersion": "5.3.0",
+  "module": "modifiers",
+  "example": "stack-cushion",
+  "mode": "your-turn",
+  "title": "Your turn: cushion",
+  "object": "Cushion",
+  "initial": {
+    "panel": "panel.properties.object",
+    "camera": {
+      "position": [
+        1.6,
+        -2,
+        1.25
+      ],
+      "target": [
+        0,
+        0,
+        0.12
+      ],
+      "fov": 30
+    },
+    "text": "A flat box. Put Bevel above Subdivision to turn it into a cushion, check each one, then apply the Bevel.",
+    "mesh": "step-00.glb"
+  },
+  "steps": [
+    {
+      "id": "panel.properties.modifier",
+      "action": "select_panel",
+      "value": null,
+      "value_type": null,
+      "shortcut": {
+        "keys": [
+          "Ctrl",
+          "Tab"
+        ],
+        "context": "Properties editor · next tab"
+      },
+      "duration": 1.4,
+      "autoAdvance": true,
+      "text": "Open the Modifier Properties tab.",
+      "help": "The wrench icon, right below the orange Object square.",
+      "camera": {
+        "position": [
+          1.6,
+          -2,
+          1.25
+        ],
+        "target": [
+          0,
+          0,
+          0.12
+        ],
+        "fov": 30
+      },
+      "mesh": null
+    },
+    {
+      "id": "modifier.subsurf.add",
+      "action": "add_modifier",
+      "value": "Subdivision Surface",
+      "value_type": "string",
+      "modifier": "SUBSURF",
+      "shortcut": {
+        "keys": [
+          "Shift",
+          "A"
+        ],
+        "context": "Properties editor · Modifiers tab"
+      },
+      "duration": 2.8,
+      "autoAdvance": false,
+      "text": "Add a Subdivision Surface modifier.",
+      "help": "Add Modifier → Generate → Subdivision Surface.",
+      "camera": {
+        "position": [
+          1.6,
+          -2,
+          1.25
+        ],
+        "target": [
+          0,
+          0,
+          0.12
+        ],
+        "fov": 30
+      },
+      "mesh": "step-02.glb"
+    },
+    {
+      "id": "modifier.subsurf.levels",
+      "action": "set_value",
+      "value": 2,
+      "value_type": "number",
+      "modifier": "SUBSURF",
+      "shortcut": null,
+      "duration": 2.2,
+      "autoAdvance": false,
+      "text": "Set Levels Viewport to 2.",
+      "help": "First number in the Subdivision panel.",
+      "step": 1,
+      "camera": {
+        "position": [
+          1.6,
+          -2,
+          1.25
+        ],
+        "target": [
+          0,
+          0,
+          0.12
+        ],
+        "fov": 30
+      },
+      "mesh": "step-03.glb"
+    },
+    {
+      "id": "modifier.bevel.add",
+      "action": "add_modifier",
+      "value": "Bevel",
+      "value_type": "string",
+      "modifier": "BEVEL",
+      "shortcut": {
+        "keys": [
+          "Shift",
+          "A"
+        ],
+        "context": "Properties editor · Modifiers tab"
+      },
+      "duration": 2.8,
+      "autoAdvance": false,
+      "text": "Add a Bevel modifier.",
+      "help": "Add Modifier → Generate → Bevel.",
+      "camera": {
+        "position": [
+          1.6,
+          -2,
+          1.25
+        ],
+        "target": [
+          0,
+          0,
+          0.12
+        ],
+        "fov": 30
+      },
+      "mesh": "step-04.glb"
+    },
+    {
+      "id": "modifier.bevel.move_to_first",
+      "action": "move_modifier",
+      "value": "FIRST",
+      "value_type": "enum",
+      "modifier": "BEVEL",
+      "shortcut": null,
+      "duration": 2.4,
+      "autoAdvance": false,
+      "text": "Bevel must run first: move it to the top of the stack.",
+      "help": "The small arrow in the Bevel header opens its menu: Move to First.",
+      "camera": {
+        "position": [
+          1.6,
+          -2,
+          1.25
+        ],
+        "target": [
+          0,
+          0,
+          0.12
+        ],
+        "fov": 30
+      },
+      "mesh": "step-05.glb"
+    },
+    {
+      "id": "modifier.bevel.amount",
+      "action": "set_value",
+      "value": 0.08,
+      "value_type": "number",
+      "modifier": "BEVEL",
+      "shortcut": null,
+      "duration": 2.2,
+      "autoAdvance": false,
+      "text": "Set the bevel Amount to 0.08 m.",
+      "help": "Amount is right below Width Type.",
+      "step": 0.01,
+      "camera": {
+        "position": [
+          1.6,
+          -2,
+          1.25
+        ],
+        "target": [
+          0,
+          0,
+          0.12
+        ],
+        "fov": 30
+      },
+      "mesh": "step-06.glb"
+    },
+    {
+      "id": "modifier.subsurf.show_viewport",
+      "action": "toggle_modifier",
+      "value": false,
+      "value_type": "bool",
+      "modifier": "SUBSURF",
+      "shortcut": null,
+      "duration": 1.8,
+      "autoAdvance": false,
+      "text": "Hide Subdivision to see the bevel alone.",
+      "help": "The screen icon in the Subdivision header is its Realtime toggle.",
+      "camera": {
+        "position": [
+          1.6,
+          -2,
+          1.25
+        ],
+        "target": [
+          0,
+          0,
+          0.12
+        ],
+        "fov": 30
+      },
+      "mesh": "step-07.glb"
+    },
+    {
+      "id": "modifier.subsurf.show_viewport",
+      "action": "toggle_modifier",
+      "value": true,
+      "value_type": "bool",
+      "modifier": "SUBSURF",
+      "shortcut": null,
+      "duration": 1.8,
+      "autoAdvance": false,
+      "text": "Show Subdivision again.",
+      "help": "Tap the same screen icon.",
+      "camera": {
+        "position": [
+          1.6,
+          -2,
+          1.25
+        ],
+        "target": [
+          0,
+          0,
+          0.12
+        ],
+        "fov": 30
+      },
+      "mesh": "step-08.glb"
+    },
+    {
+      "id": "modifier.bevel.apply",
+      "action": "apply_modifier",
+      "value": null,
+      "value_type": null,
+      "modifier": "BEVEL",
+      "shortcut": {
+        "keys": [
+          "Ctrl",
+          "A"
+        ],
+        "context": "Properties editor · Modifiers tab"
+      },
+      "duration": 2.4,
+      "autoAdvance": false,
+      "text": "Apply the Bevel.",
+      "help": "Bevel's header menu → Apply.",
+      "camera": {
+        "position": [
+          1.6,
+          -2,
+          1.25
+        ],
+        "target": [
+          0,
+          0,
+          0.12
+        ],
+        "fov": 30
+      },
+      "mesh": null
+    }
+  ],
+  "variantOf": "stack-block",
+  "outro": "Cushion finished: Bevel → Subdivision, then Bevel applied into the mesh."
+}
