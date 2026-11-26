@@ -1,0 +1,1422 @@
+{
+  "blenderVersion": "5.3.0",
+  "module": "sculpt",
+  "example": "pebble-buddy",
+  "mode": "watch",
+  "title": "Pebble buddy",
+  "object": "Pebble",
+  "initial": {
+    "camera": {
+      "position": [
+        0,
+        -2.6,
+        0.62
+      ],
+      "target": [
+        0,
+        0,
+        0.04
+      ],
+      "fov": 30
+    },
+    "text": "A smooth pebble becomes a little character. Sculpt Mode shapes the mesh like clay, one brush stroke at a time.",
+    "mesh": "step-00.glb",
+    "mode": "OBJECT",
+    "tool": null
+  },
+  "steps": [
+    {
+      "id": "object.mode.sculpt",
+      "action": "set_mode",
+      "value": "SCULPT",
+      "value_type": "enum",
+      "shortcut": {
+        "keys": [
+          "Ctrl",
+          "Tab"
+        ],
+        "context": "3D Viewport · mode pie"
+      },
+      "duration": 1.6,
+      "autoAdvance": true,
+      "text": "Switch the 3D Viewport to Sculpt Mode. The header now shows the brush and its settings.",
+      "help": null,
+      "tool": {
+        "brush": "Draw",
+        "size": 100,
+        "strength": 0.5,
+        "direction": "ADD",
+        "symmetry": []
+      },
+      "camera": {
+        "position": [
+          0,
+          -2.6,
+          0.62
+        ],
+        "target": [
+          0,
+          0,
+          0.04
+        ],
+        "fov": 30
+      },
+      "mesh": null
+    },
+    {
+      "id": "sculpt.brush.grab",
+      "action": "select_brush",
+      "value": "Grab",
+      "value_type": "string",
+      "shortcut": {
+        "keys": [
+          "G"
+        ],
+        "context": "3D Viewport · Sculpt Mode"
+      },
+      "duration": 2,
+      "autoAdvance": false,
+      "text": "Pick the Grab brush. It moves a whole region of the surface, like pulling soft clay.",
+      "help": null,
+      "tool": {
+        "brush": "Grab",
+        "size": 100,
+        "strength": 0.4,
+        "direction": null,
+        "symmetry": []
+      },
+      "camera": {
+        "position": [
+          0,
+          -2.6,
+          0.62
+        ],
+        "target": [
+          0,
+          0,
+          0.04
+        ],
+        "fov": 30
+      },
+      "mesh": null
+    },
+    {
+      "id": "sculpt.size",
+      "action": "set_value",
+      "value": 300,
+      "value_type": "number",
+      "step": 10,
+      "shortcut": {
+        "keys": [
+          "F"
+        ],
+        "context": "3D Viewport · Sculpt Mode"
+      },
+      "duration": 2,
+      "autoAdvance": false,
+      "text": "Grab works best with a big brush. Set Size to 300 px. Size is shared by all brushes.",
+      "help": null,
+      "tool": {
+        "brush": "Grab",
+        "size": 300,
+        "strength": 0.4,
+        "direction": null,
+        "symmetry": []
+      },
+      "camera": {
+        "position": [
+          0,
+          -2.6,
+          0.62
+        ],
+        "target": [
+          0,
+          0,
+          0.04
+        ],
+        "fov": 30
+      },
+      "mesh": null
+    },
+    {
+      "id": "sculpt.stroke",
+      "action": "stroke",
+      "value": null,
+      "value_type": null,
+      "duration": 2.3,
+      "autoAdvance": false,
+      "text": "Drag the top upward. The pebble stretches into a head.",
+      "help": null,
+      "stroke": {
+        "brush": "Grab",
+        "brushType": "GRAB",
+        "drag": true,
+        "path": [
+          [
+            0,
+            0.3
+          ],
+          [
+            0.01,
+            0.5
+          ],
+          [
+            0.03,
+            0.72
+          ]
+        ],
+        "points": [
+          [
+            0,
+            -0.3184,
+            0.3002
+          ],
+          [
+            0.0004,
+            -0.3167,
+            0.3079
+          ],
+          [
+            0.0008,
+            -0.3149,
+            0.3157
+          ],
+          [
+            0.0012,
+            -0.3132,
+            0.3234
+          ],
+          [
+            0.0016,
+            -0.3115,
+            0.3312
+          ],
+          [
+            0.002,
+            -0.3098,
+            0.3389
+          ],
+          [
+            0.0024,
+            -0.308,
+            0.3467
+          ],
+          [
+            0.0028,
+            -0.3063,
+            0.3544
+          ],
+          [
+            0.0032,
+            -0.3046,
+            0.3622
+          ],
+          [
+            0.0036,
+            -0.3028,
+            0.3699
+          ],
+          [
+            0.004,
+            -0.3011,
+            0.3777
+          ],
+          [
+            0.0044,
+            -0.2994,
+            0.3854
+          ],
+          [
+            0.0048,
+            -0.2977,
+            0.3932
+          ],
+          [
+            0.0052,
+            -0.2959,
+            0.4009
+          ],
+          [
+            0.0056,
+            -0.2942,
+            0.4087
+          ],
+          [
+            0.006,
+            -0.2925,
+            0.4164
+          ],
+          [
+            0.0065,
+            -0.2908,
+            0.4241
+          ],
+          [
+            0.0072,
+            -0.2891,
+            0.4316
+          ],
+          [
+            0.0079,
+            -0.2874,
+            0.4392
+          ],
+          [
+            0.0086,
+            -0.2857,
+            0.4467
+          ],
+          [
+            0.0093,
+            -0.284,
+            0.4543
+          ],
+          [
+            0.01,
+            -0.2823,
+            0.4618
+          ],
+          [
+            0.0107,
+            -0.2807,
+            0.4694
+          ],
+          [
+            0.0114,
+            -0.279,
+            0.4769
+          ],
+          [
+            0.0121,
+            -0.2773,
+            0.4845
+          ],
+          [
+            0.0128,
+            -0.2756,
+            0.492
+          ],
+          [
+            0.0135,
+            -0.2739,
+            0.4996
+          ],
+          [
+            0.0142,
+            -0.2722,
+            0.5071
+          ],
+          [
+            0.0149,
+            -0.2706,
+            0.5147
+          ],
+          [
+            0.0156,
+            -0.2689,
+            0.5222
+          ],
+          [
+            0.0164,
+            -0.2672,
+            0.5298
+          ],
+          [
+            0.0171,
+            -0.2655,
+            0.5373
+          ],
+          [
+            0.0178,
+            -0.2638,
+            0.5449
+          ],
+          [
+            0.0185,
+            -0.2621,
+            0.5524
+          ],
+          [
+            0.0185,
+            -0.2621,
+            0.5524
+          ]
+        ],
+        "radius": 0.1939,
+        "movedVertices": 429
+      },
+      "shortcut": null,
+      "tool": {
+        "brush": "Grab",
+        "size": 300,
+        "strength": 0.4,
+        "direction": null,
+        "symmetry": []
+      },
+      "camera": {
+        "position": [
+          0,
+          -2.6,
+          0.62
+        ],
+        "target": [
+          0,
+          0,
+          0.04
+        ],
+        "fov": 30
+      },
+      "mesh": "step-04.glb"
+    },
+    {
+      "id": "sculpt.brush.draw",
+      "action": "select_brush",
+      "value": "Draw",
+      "value_type": "string",
+      "shortcut": {
+        "keys": [
+          "V"
+        ],
+        "context": "3D Viewport · Sculpt Mode"
+      },
+      "duration": 2,
+      "autoAdvance": false,
+      "text": "Pick the Draw brush. It raises the surface under the stroke.",
+      "help": null,
+      "tool": {
+        "brush": "Draw",
+        "size": 300,
+        "strength": 0.5,
+        "direction": "ADD",
+        "symmetry": []
+      },
+      "camera": {
+        "position": [
+          0,
+          -2.6,
+          0.62
+        ],
+        "target": [
+          0,
+          0,
+          0.04
+        ],
+        "fov": 30
+      },
+      "mesh": null
+    },
+    {
+      "id": "sculpt.size",
+      "action": "set_value",
+      "value": 60,
+      "value_type": "number",
+      "step": 10,
+      "shortcut": {
+        "keys": [
+          "F"
+        ],
+        "context": "3D Viewport · Sculpt Mode"
+      },
+      "duration": 2,
+      "autoAdvance": false,
+      "text": "Details need a small brush: set Size to 60 px.",
+      "help": null,
+      "tool": {
+        "brush": "Draw",
+        "size": 60,
+        "strength": 0.5,
+        "direction": "ADD",
+        "symmetry": []
+      },
+      "camera": {
+        "position": [
+          0,
+          -2.6,
+          0.62
+        ],
+        "target": [
+          0,
+          0,
+          0.04
+        ],
+        "fov": 30
+      },
+      "mesh": null
+    },
+    {
+      "id": "sculpt.strength",
+      "action": "set_value",
+      "value": 1,
+      "value_type": "number",
+      "step": 0.1,
+      "shortcut": {
+        "keys": [
+          "Shift",
+          "F"
+        ],
+        "context": "3D Viewport · Sculpt Mode"
+      },
+      "duration": 2,
+      "autoAdvance": false,
+      "text": "Set Strength to 1.0 so each stroke cuts deep enough to read.",
+      "help": null,
+      "tool": {
+        "brush": "Draw",
+        "size": 60,
+        "strength": 1,
+        "direction": "ADD",
+        "symmetry": []
+      },
+      "camera": {
+        "position": [
+          0,
+          -2.6,
+          0.62
+        ],
+        "target": [
+          0,
+          0,
+          0.04
+        ],
+        "fov": 30
+      },
+      "mesh": null
+    },
+    {
+      "id": "sculpt.direction.subtract",
+      "action": "set_direction",
+      "value": "SUBTRACT",
+      "value_type": "enum",
+      "shortcut": {
+        "keys": [
+          "Ctrl",
+          "Drag"
+        ],
+        "context": "hold while sculpting"
+      },
+      "duration": 1.6,
+      "autoAdvance": false,
+      "text": "Switch the direction to Subtract (−): Draw now carves into the surface.",
+      "help": null,
+      "tool": {
+        "brush": "Draw",
+        "size": 60,
+        "strength": 1,
+        "direction": "SUBTRACT",
+        "symmetry": []
+      },
+      "camera": {
+        "position": [
+          0,
+          -2.6,
+          0.62
+        ],
+        "target": [
+          0,
+          0,
+          0.04
+        ],
+        "fov": 30
+      },
+      "mesh": null
+    },
+    {
+      "id": "sculpt.symmetry.x",
+      "action": "set_symmetry",
+      "value": true,
+      "value_type": "bool",
+      "duration": 1.6,
+      "autoAdvance": false,
+      "text": "Turn on X symmetry. Every stroke is mirrored to the other side.",
+      "help": null,
+      "shortcut": null,
+      "tool": {
+        "brush": "Draw",
+        "size": 60,
+        "strength": 1,
+        "direction": "SUBTRACT",
+        "symmetry": [
+          "X"
+        ]
+      },
+      "camera": {
+        "position": [
+          0,
+          -2.6,
+          0.62
+        ],
+        "target": [
+          0,
+          0,
+          0.04
+        ],
+        "fov": 30
+      },
+      "mesh": null
+    },
+    {
+      "id": "sculpt.stroke",
+      "action": "stroke",
+      "value": null,
+      "value_type": null,
+      "duration": 2,
+      "autoAdvance": false,
+      "text": "Circle twice for the right eye. Symmetry carves the left eye too.",
+      "help": null,
+      "stroke": {
+        "brush": "Draw",
+        "brushType": "DRAW",
+        "drag": false,
+        "path": [
+          [
+            0.215,
+            0.12
+          ],
+          [
+            0.2117,
+            0.1325
+          ],
+          [
+            0.2025,
+            0.1417
+          ],
+          [
+            0.19,
+            0.145
+          ],
+          [
+            0.1775,
+            0.1417
+          ],
+          [
+            0.1683,
+            0.1325
+          ],
+          [
+            0.165,
+            0.12
+          ],
+          [
+            0.1683,
+            0.1075
+          ],
+          [
+            0.1775,
+            0.0983
+          ],
+          [
+            0.19,
+            0.095
+          ],
+          [
+            0.2025,
+            0.0983
+          ],
+          [
+            0.2117,
+            0.1075
+          ],
+          [
+            0.215,
+            0.12
+          ],
+          [
+            0.2117,
+            0.1325
+          ],
+          [
+            0.2025,
+            0.1417
+          ],
+          [
+            0.19,
+            0.145
+          ],
+          [
+            0.1775,
+            0.1417
+          ],
+          [
+            0.1683,
+            0.1325
+          ],
+          [
+            0.165,
+            0.12
+          ],
+          [
+            0.1683,
+            0.1075
+          ],
+          [
+            0.1775,
+            0.0983
+          ],
+          [
+            0.19,
+            0.095
+          ],
+          [
+            0.2025,
+            0.0983
+          ],
+          [
+            0.2117,
+            0.1075
+          ],
+          [
+            0.215,
+            0.12
+          ]
+        ],
+        "points": [
+          [
+            0.1301,
+            -0.3798,
+            0.1991
+          ],
+          [
+            0.1282,
+            -0.3762,
+            0.2061
+          ],
+          [
+            0.1227,
+            -0.3747,
+            0.2115
+          ],
+          [
+            0.115,
+            -0.3756,
+            0.2137
+          ],
+          [
+            0.1073,
+            -0.3786,
+            0.2122
+          ],
+          [
+            0.1017,
+            -0.3827,
+            0.2074
+          ],
+          [
+            0.0995,
+            -0.3869,
+            0.2005
+          ],
+          [
+            0.1015,
+            -0.3902,
+            0.1934
+          ],
+          [
+            0.107,
+            -0.3918,
+            0.1881
+          ],
+          [
+            0.1146,
+            -0.3912,
+            0.186
+          ],
+          [
+            0.1222,
+            -0.3885,
+            0.1875
+          ],
+          [
+            0.1279,
+            -0.3844,
+            0.1923
+          ],
+          [
+            0.1301,
+            -0.3798,
+            0.1991
+          ],
+          [
+            0.1282,
+            -0.3762,
+            0.2061
+          ],
+          [
+            0.1227,
+            -0.3747,
+            0.2115
+          ],
+          [
+            0.115,
+            -0.3756,
+            0.2137
+          ],
+          [
+            0.1073,
+            -0.3786,
+            0.2122
+          ],
+          [
+            0.1017,
+            -0.3827,
+            0.2074
+          ],
+          [
+            0.0995,
+            -0.3869,
+            0.2005
+          ],
+          [
+            0.1015,
+            -0.3902,
+            0.1934
+          ],
+          [
+            0.107,
+            -0.3918,
+            0.1881
+          ],
+          [
+            0.1146,
+            -0.3912,
+            0.186
+          ],
+          [
+            0.1222,
+            -0.3885,
+            0.1875
+          ],
+          [
+            0.1279,
+            -0.3844,
+            0.1923
+          ],
+          [
+            0.1301,
+            -0.3798,
+            0.1991
+          ],
+          [
+            0.1301,
+            -0.3798,
+            0.1991
+          ]
+        ],
+        "radius": 0.0381,
+        "movedVertices": 74
+      },
+      "shortcut": null,
+      "tool": {
+        "brush": "Draw",
+        "size": 60,
+        "strength": 1,
+        "direction": "SUBTRACT",
+        "symmetry": [
+          "X"
+        ]
+      },
+      "camera": {
+        "position": [
+          0,
+          -2.6,
+          0.62
+        ],
+        "target": [
+          0,
+          0,
+          0.04
+        ],
+        "fov": 30
+      },
+      "mesh": "step-10.glb"
+    },
+    {
+      "id": "sculpt.stroke",
+      "action": "stroke",
+      "value": null,
+      "value_type": null,
+      "duration": 2,
+      "autoAdvance": false,
+      "text": "Now half a smile, from the middle to the right. The mirror draws the other half.",
+      "help": null,
+      "stroke": {
+        "brush": "Draw",
+        "brushType": "DRAW",
+        "drag": false,
+        "path": [
+          [
+            -0.03,
+            -0.17
+          ],
+          [
+            0.08,
+            -0.16
+          ],
+          [
+            0.16,
+            -0.12
+          ],
+          [
+            0.23,
+            -0.05
+          ]
+        ],
+        "points": [
+          [
+            -0.0179,
+            -0.448,
+            0.036
+          ],
+          [
+            -0.0102,
+            -0.4481,
+            0.0367
+          ],
+          [
+            -0.0025,
+            -0.4482,
+            0.0375
+          ],
+          [
+            0.0053,
+            -0.4481,
+            0.0382
+          ],
+          [
+            0.013,
+            -0.4479,
+            0.0389
+          ],
+          [
+            0.0207,
+            -0.4476,
+            0.0395
+          ],
+          [
+            0.0284,
+            -0.4472,
+            0.0401
+          ],
+          [
+            0.0362,
+            -0.4467,
+            0.0407
+          ],
+          [
+            0.0439,
+            -0.4461,
+            0.0413
+          ],
+          [
+            0.0512,
+            -0.4452,
+            0.0432
+          ],
+          [
+            0.058,
+            -0.4441,
+            0.0464
+          ],
+          [
+            0.0649,
+            -0.443,
+            0.0496
+          ],
+          [
+            0.0717,
+            -0.4417,
+            0.0528
+          ],
+          [
+            0.0786,
+            -0.4404,
+            0.056
+          ],
+          [
+            0.0854,
+            -0.4388,
+            0.0591
+          ],
+          [
+            0.0923,
+            -0.4373,
+            0.0622
+          ],
+          [
+            0.0985,
+            -0.4354,
+            0.0664
+          ],
+          [
+            0.1042,
+            -0.4335,
+            0.0717
+          ],
+          [
+            0.1098,
+            -0.4313,
+            0.0769
+          ],
+          [
+            0.1154,
+            -0.4291,
+            0.0821
+          ],
+          [
+            0.1211,
+            -0.4266,
+            0.0872
+          ],
+          [
+            0.1268,
+            -0.4241,
+            0.0924
+          ],
+          [
+            0.1325,
+            -0.4214,
+            0.0975
+          ],
+          [
+            0.1382,
+            -0.4185,
+            0.1026
+          ],
+          [
+            0.1382,
+            -0.4185,
+            0.1026
+          ]
+        ],
+        "radius": 0.0376,
+        "movedVertices": 102
+      },
+      "shortcut": null,
+      "tool": {
+        "brush": "Draw",
+        "size": 60,
+        "strength": 1,
+        "direction": "SUBTRACT",
+        "symmetry": [
+          "X"
+        ]
+      },
+      "camera": {
+        "position": [
+          0,
+          -2.6,
+          0.62
+        ],
+        "target": [
+          0,
+          0,
+          0.04
+        ],
+        "fov": 30
+      },
+      "mesh": "step-11.glb"
+    },
+    {
+      "id": "sculpt.brush.smooth",
+      "action": "select_brush",
+      "value": "Smooth",
+      "value_type": "string",
+      "shortcut": {
+        "keys": [
+          "S"
+        ],
+        "context": "3D Viewport · Sculpt Mode"
+      },
+      "duration": 2,
+      "autoAdvance": false,
+      "text": "Pick the Smooth brush. It evens out bumps without changing the overall shape.",
+      "help": null,
+      "tool": {
+        "brush": "Smooth",
+        "size": 60,
+        "strength": 0.7,
+        "direction": "SMOOTH",
+        "symmetry": [
+          "X"
+        ]
+      },
+      "camera": {
+        "position": [
+          0,
+          -2.6,
+          0.62
+        ],
+        "target": [
+          0,
+          0,
+          0.04
+        ],
+        "fov": 30
+      },
+      "mesh": null
+    },
+    {
+      "id": "sculpt.size",
+      "action": "set_value",
+      "value": 200,
+      "value_type": "number",
+      "step": 10,
+      "shortcut": {
+        "keys": [
+          "F"
+        ],
+        "context": "3D Viewport · Sculpt Mode"
+      },
+      "duration": 2,
+      "autoAdvance": false,
+      "text": "Set Size to 200 px to smooth a wide area.",
+      "help": null,
+      "tool": {
+        "brush": "Smooth",
+        "size": 200,
+        "strength": 0.7,
+        "direction": "SMOOTH",
+        "symmetry": [
+          "X"
+        ]
+      },
+      "camera": {
+        "position": [
+          0,
+          -2.6,
+          0.62
+        ],
+        "target": [
+          0,
+          0,
+          0.04
+        ],
+        "fov": 30
+      },
+      "mesh": null
+    },
+    {
+      "id": "sculpt.stroke",
+      "action": "stroke",
+      "value": null,
+      "value_type": null,
+      "duration": 3,
+      "autoAdvance": false,
+      "text": "Circle over the pointy tip a few times. Smooth rounds it off without changing the overall shape.",
+      "help": null,
+      "stroke": {
+        "brush": "Smooth",
+        "brushType": "SMOOTH",
+        "drag": false,
+        "path": [
+          [
+            0.06,
+            0.42
+          ],
+          [
+            0.052,
+            0.45
+          ],
+          [
+            0.03,
+            0.472
+          ],
+          [
+            0,
+            0.48
+          ],
+          [
+            -0.03,
+            0.472
+          ],
+          [
+            -0.052,
+            0.45
+          ],
+          [
+            -0.06,
+            0.42
+          ],
+          [
+            -0.052,
+            0.39
+          ],
+          [
+            -0.03,
+            0.368
+          ],
+          [
+            0,
+            0.36
+          ],
+          [
+            0.03,
+            0.368
+          ],
+          [
+            0.052,
+            0.39
+          ],
+          [
+            0.06,
+            0.42
+          ],
+          [
+            0.052,
+            0.45
+          ],
+          [
+            0.03,
+            0.472
+          ],
+          [
+            0,
+            0.48
+          ],
+          [
+            -0.03,
+            0.472
+          ],
+          [
+            -0.052,
+            0.45
+          ],
+          [
+            -0.06,
+            0.42
+          ],
+          [
+            -0.052,
+            0.39
+          ],
+          [
+            -0.03,
+            0.368
+          ],
+          [
+            0,
+            0.36
+          ],
+          [
+            0.03,
+            0.368
+          ],
+          [
+            0.052,
+            0.39
+          ],
+          [
+            0.06,
+            0.42
+          ],
+          [
+            0.052,
+            0.45
+          ],
+          [
+            0.03,
+            0.472
+          ],
+          [
+            0,
+            0.48
+          ],
+          [
+            -0.03,
+            0.472
+          ],
+          [
+            -0.052,
+            0.45
+          ],
+          [
+            -0.06,
+            0.42
+          ],
+          [
+            -0.052,
+            0.39
+          ],
+          [
+            -0.03,
+            0.368
+          ],
+          [
+            0,
+            0.36
+          ],
+          [
+            0.03,
+            0.368
+          ],
+          [
+            0.052,
+            0.39
+          ],
+          [
+            0.06,
+            0.42
+          ]
+        ],
+        "points": [
+          [
+            0.0369,
+            -0.3044,
+            0.3725
+          ],
+          [
+            0.0253,
+            -0.288,
+            0.396
+          ],
+          [
+            0,
+            -0.2792,
+            0.4069
+          ],
+          [
+            -0.0254,
+            -0.2844,
+            0.3957
+          ],
+          [
+            -0.0369,
+            -0.301,
+            0.3721
+          ],
+          [
+            -0.0251,
+            -0.32,
+            0.3491
+          ],
+          [
+            0,
+            -0.329,
+            0.3385
+          ],
+          [
+            0.0251,
+            -0.3217,
+            0.3493
+          ],
+          [
+            0.0369,
+            -0.3044,
+            0.3725
+          ],
+          [
+            0.0253,
+            -0.288,
+            0.396
+          ],
+          [
+            0,
+            -0.2792,
+            0.4069
+          ],
+          [
+            -0.0254,
+            -0.2844,
+            0.3957
+          ],
+          [
+            -0.0369,
+            -0.301,
+            0.3721
+          ],
+          [
+            -0.0251,
+            -0.32,
+            0.3491
+          ],
+          [
+            0,
+            -0.329,
+            0.3385
+          ],
+          [
+            0.0251,
+            -0.3217,
+            0.3493
+          ],
+          [
+            0.0369,
+            -0.3044,
+            0.3725
+          ],
+          [
+            0.0253,
+            -0.288,
+            0.396
+          ],
+          [
+            0,
+            -0.2792,
+            0.4069
+          ],
+          [
+            -0.0254,
+            -0.2844,
+            0.3957
+          ],
+          [
+            -0.0369,
+            -0.301,
+            0.3721
+          ],
+          [
+            -0.0251,
+            -0.32,
+            0.3491
+          ],
+          [
+            0,
+            -0.329,
+            0.3385
+          ],
+          [
+            0.0251,
+            -0.3217,
+            0.3493
+          ],
+          [
+            0.0369,
+            -0.3044,
+            0.3725
+          ],
+          [
+            0.0369,
+            -0.3044,
+            0.3725
+          ]
+        ],
+        "radius": 0.1292,
+        "movedVertices": 327
+      },
+      "shortcut": null,
+      "tool": {
+        "brush": "Smooth",
+        "size": 200,
+        "strength": 0.7,
+        "direction": "SMOOTH",
+        "symmetry": [
+          "X"
+        ]
+      },
+      "camera": {
+        "position": [
+          0,
+          -2.6,
+          0.62
+        ],
+        "target": [
+          0,
+          0,
+          0.04
+        ],
+        "fov": 30
+      },
+      "mesh": "step-14.glb"
+    }
+  ],
+  "outro": "Done: Grab for the big shape, Draw for details, Smooth to clean up. Now sculpt a sleepy buddy yourself."
+}

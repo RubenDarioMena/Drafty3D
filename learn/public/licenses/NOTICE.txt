@@ -1,0 +1,23 @@
+Drafty3D Learn – for Blender users
+Unofficial. Not affiliated with or endorsed by the Blender Foundation.
+"Blender" is a trademark of the Blender Foundation. Button labels match
+Blender 5.3 so what you learn transfers directly; all icons are original.
+
+Third-party software included in this app
+-----------------------------------------
+
+three.js 0.186.1
+  MIT License, see three.js-MIT.txt
+  https://github.com/mrdoob/three.js
+
+GSAP 3.15.1 (GreenSock Animation Platform)
+  GreenSock "Standard No Charge" license
+  https://gsap.com/standard-license
+
+Draco 3D decoder (glTF build, shipped with three.js)
+  Copyright Google LLC. Apache License 2.0, see Apache-2.0.txt
+  https://github.com/google/draco
+
+Example meshes were generated with Blender 5.3 (bpy) by this project's
+own scripts in learn/pipeline/. Blender is GPL-2.0-or-later; the generated
+meshes are the project's own output and carry no Blender code.

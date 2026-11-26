@@ -19,5 +19,5 @@ export default defineConfig({
       args: ['--use-gl=angle', '--use-angle=swiftshader', '--enable-unsafe-swiftshader', '--ignore-gpu-blocklist'],
     },
   },
-  webServer: { command: 'npm run preview', env: { PORT: '4193' }, url: 'http://127.0.0.1:4193/cad/', reuseExistingServer: false },
+  webServer: { command: 'npm run preview', env: { PORT: '4193' }, url: 'http://127.0.0.1:4193/', reuseExistingServer: false },
 });

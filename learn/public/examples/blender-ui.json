@@ -1,0 +1,1387 @@
+{
+  "blenderVersion": "5.3.0",
+  "propertiesTabs": [
+    {
+      "id": "panel.properties.tool",
+      "identifier": "TOOL",
+      "label": "Tool"
+    },
+    {
+      "separator": true
+    },
+    {
+      "id": "panel.properties.render",
+      "identifier": "RENDER",
+      "label": "Render"
+    },
+    {
+      "id": "panel.properties.output",
+      "identifier": "OUTPUT",
+      "label": "Output"
+    },
+    {
+      "id": "panel.properties.view_layer",
+      "identifier": "VIEW_LAYER",
+      "label": "View Layer"
+    },
+    {
+      "id": "panel.properties.scene",
+      "identifier": "SCENE",
+      "label": "Scene"
+    },
+    {
+      "id": "panel.properties.world",
+      "identifier": "WORLD",
+      "label": "World"
+    },
+    {
+      "id": "panel.properties.collection",
+      "identifier": "COLLECTION",
+      "label": "Collection"
+    },
+    {
+      "separator": true
+    },
+    {
+      "id": "panel.properties.object",
+      "identifier": "OBJECT",
+      "label": "Object"
+    },
+    {
+      "id": "panel.properties.modifier",
+      "identifier": "MODIFIER",
+      "label": "Modifiers"
+    },
+    {
+      "id": "panel.properties.particles",
+      "identifier": "PARTICLES",
+      "label": "Particles"
+    },
+    {
+      "id": "panel.properties.physics",
+      "identifier": "PHYSICS",
+      "label": "Physics"
+    },
+    {
+      "id": "panel.properties.constraint",
+      "identifier": "CONSTRAINT",
+      "label": "Constraints"
+    },
+    {
+      "id": "panel.properties.data",
+      "identifier": "DATA",
+      "label": "Data"
+    },
+    {
+      "id": "panel.properties.material",
+      "identifier": "MATERIAL",
+      "label": "Material"
+    },
+    {
+      "separator": true
+    },
+    {
+      "id": "panel.properties.texture",
+      "identifier": "TEXTURE",
+      "label": "Texture"
+    }
+  ],
+  "objectPanels": [
+    "Transform",
+    "Relations",
+    "Collections",
+    "Instancing",
+    "Motion Paths",
+    "Viewport Display",
+    "Shading",
+    "Visibility",
+    "Line Art",
+    "Animation",
+    "Custom Properties"
+  ],
+  "addModifierMenu": {
+    "id": "modifier.add_menu",
+    "label": "Add Modifier",
+    "shortcut": {
+      "keys": [
+        "Shift",
+        "A"
+      ],
+      "context": "Properties editor · Modifiers tab"
+    },
+    "categories": [
+      {
+        "id": "modifier.add_menu.edit",
+        "label": "Edit",
+        "items": [
+          {
+            "id": "modifier.data_transfer.add",
+            "label": "Data Transfer",
+            "type": "DATA_TRANSFER"
+          },
+          {
+            "id": "modifier.mesh_cache.add",
+            "label": "Mesh Cache",
+            "type": "MESH_CACHE"
+          },
+          {
+            "id": "modifier.mesh_sequence_cache.add",
+            "label": "Mesh Sequence Cache",
+            "type": "MESH_SEQUENCE_CACHE"
+          },
+          {
+            "id": "modifier.uv_project.add",
+            "label": "UV Project",
+            "type": "UV_PROJECT"
+          },
+          {
+            "id": "modifier.uv_warp.add",
+            "label": "UV Warp",
+            "type": "UV_WARP"
+          },
+          {
+            "id": "modifier.vertex_weight_edit.add",
+            "label": "Vertex Weight Edit",
+            "type": "VERTEX_WEIGHT_EDIT"
+          },
+          {
+            "id": "modifier.vertex_weight_mix.add",
+            "label": "Vertex Weight Mix",
+            "type": "VERTEX_WEIGHT_MIX"
+          },
+          {
+            "id": "modifier.vertex_weight_proximity.add",
+            "label": "Vertex Weight Proximity",
+            "type": "VERTEX_WEIGHT_PROXIMITY"
+          }
+        ]
+      },
+      {
+        "id": "modifier.add_menu.generate",
+        "label": "Generate",
+        "items": [
+          {
+            "id": "modifier.asset.array.add",
+            "label": "Array",
+            "type": null
+          },
+          {
+            "id": "modifier.array.add",
+            "label": "Array (Legacy)",
+            "type": "ARRAY"
+          },
+          {
+            "id": "modifier.bevel.add",
+            "label": "Bevel",
+            "type": "BEVEL"
+          },
+          {
+            "id": "modifier.boolean.add",
+            "label": "Boolean",
+            "type": "BOOLEAN"
+          },
+          {
+            "id": "modifier.build.add",
+            "label": "Build",
+            "type": "BUILD"
+          },
+          {
+            "id": "modifier.asset.curve_to_tube.add",
+            "label": "Curve to Tube",
+            "type": null
+          },
+          {
+            "id": "modifier.decimate.add",
+            "label": "Decimate",
+            "type": "DECIMATE"
+          },
+          {
+            "id": "modifier.edge_split.add",
+            "label": "Edge Split",
+            "type": "EDGE_SPLIT"
+          },
+          {
+            "id": "modifier.mask.add",
+            "label": "Mask",
+            "type": "MASK"
+          },
+          {
+            "id": "modifier.mirror.add",
+            "label": "Mirror",
+            "type": "MIRROR"
+          },
+          {
+            "id": "modifier.multires.add",
+            "label": "Multiresolution",
+            "type": "MULTIRES"
+          },
+          {
+            "id": "modifier.remesh.add",
+            "label": "Remesh",
+            "type": "REMESH"
+          },
+          {
+            "id": "modifier.asset.scatter_on_surface.add",
+            "label": "Scatter on Surface",
+            "type": null
+          },
+          {
+            "id": "modifier.screw.add",
+            "label": "Screw",
+            "type": "SCREW"
+          },
+          {
+            "id": "modifier.skin.add",
+            "label": "Skin",
+            "type": "SKIN"
+          },
+          {
+            "id": "modifier.solidify.add",
+            "label": "Solidify",
+            "type": "SOLIDIFY"
+          },
+          {
+            "id": "modifier.subsurf.add",
+            "label": "Subdivision Surface",
+            "type": "SUBSURF"
+          },
+          {
+            "id": "modifier.triangulate.add",
+            "label": "Triangulate",
+            "type": "TRIANGULATE"
+          },
+          {
+            "id": "modifier.volume_to_mesh.add",
+            "label": "Volume to Mesh",
+            "type": "VOLUME_TO_MESH"
+          },
+          {
+            "id": "modifier.weld.add",
+            "label": "Weld",
+            "type": "WELD"
+          },
+          {
+            "id": "modifier.wireframe.add",
+            "label": "Wireframe",
+            "type": "WIREFRAME"
+          }
+        ]
+      },
+      {
+        "id": "modifier.add_menu.deform",
+        "label": "Deform",
+        "items": [
+          {
+            "id": "modifier.armature.add",
+            "label": "Armature",
+            "type": "ARMATURE"
+          },
+          {
+            "id": "modifier.cast.add",
+            "label": "Cast",
+            "type": "CAST"
+          },
+          {
+            "id": "modifier.curve.add",
+            "label": "Curve",
+            "type": "CURVE"
+          },
+          {
+            "id": "modifier.displace.add",
+            "label": "Displace",
+            "type": "DISPLACE"
+          },
+          {
+            "id": "modifier.hook.add",
+            "label": "Hook",
+            "type": "HOOK"
+          },
+          {
+            "id": "modifier.laplaciandeform.add",
+            "label": "Laplacian Deform",
+            "type": "LAPLACIANDEFORM"
+          },
+          {
+            "id": "modifier.lattice.add",
+            "label": "Lattice",
+            "type": "LATTICE"
+          },
+          {
+            "id": "modifier.mesh_deform.add",
+            "label": "Mesh Deform",
+            "type": "MESH_DEFORM"
+          },
+          {
+            "id": "modifier.shrinkwrap.add",
+            "label": "Shrinkwrap",
+            "type": "SHRINKWRAP"
+          },
+          {
+            "id": "modifier.simple_deform.add",
+            "label": "Simple Deform",
+            "type": "SIMPLE_DEFORM"
+          },
+          {
+            "id": "modifier.smooth.add",
+            "label": "Smooth",
+            "type": "SMOOTH"
+          },
+          {
+            "id": "modifier.corrective_smooth.add",
+            "label": "Smooth Corrective",
+            "type": "CORRECTIVE_SMOOTH"
+          },
+          {
+            "id": "modifier.laplaciansmooth.add",
+            "label": "Smooth Laplacian",
+            "type": "LAPLACIANSMOOTH"
+          },
+          {
+            "id": "modifier.surface_deform.add",
+            "label": "Surface Deform",
+            "type": "SURFACE_DEFORM"
+          },
+          {
+            "id": "modifier.warp.add",
+            "label": "Warp",
+            "type": "WARP"
+          },
+          {
+            "id": "modifier.wave.add",
+            "label": "Wave",
+            "type": "WAVE"
+          }
+        ]
+      },
+      {
+        "id": "modifier.add_menu.normals",
+        "label": "Normals",
+        "items": [
+          {
+            "id": "modifier.normal_edit.add",
+            "label": "Normal Edit",
+            "type": "NORMAL_EDIT"
+          },
+          {
+            "id": "modifier.weighted_normal.add",
+            "label": "Weighted Normal",
+            "type": "WEIGHTED_NORMAL"
+          }
+        ]
+      },
+      {
+        "id": "modifier.add_menu.physics",
+        "label": "Physics",
+        "items": [
+          {
+            "id": "modifier.cloth.add",
+            "label": "Cloth",
+            "type": "CLOTH"
+          },
+          {
+            "id": "modifier.collision.add",
+            "label": "Collision",
+            "type": "COLLISION"
+          },
+          {
+            "id": "modifier.dynamic_paint.add",
+            "label": "Dynamic Paint",
+            "type": "DYNAMIC_PAINT"
+          },
+          {
+            "id": "modifier.explode.add",
+            "label": "Explode",
+            "type": "EXPLODE"
+          },
+          {
+            "id": "modifier.fluid.add",
+            "label": "Fluid",
+            "type": "FLUID"
+          },
+          {
+            "id": "modifier.ocean.add",
+            "label": "Ocean",
+            "type": "OCEAN"
+          },
+          {
+            "id": "modifier.particle_instance.add",
+            "label": "Particle Instance",
+            "type": "PARTICLE_INSTANCE"
+          },
+          {
+            "id": "modifier.particle_system.add",
+            "label": "Particle System",
+            "type": "PARTICLE_SYSTEM"
+          },
+          {
+            "id": "modifier.soft_body.add",
+            "label": "Soft Body",
+            "type": "SOFT_BODY"
+          }
+        ]
+      }
+    ]
+  },
+  "modifiers": {
+    "SOLIDIFY": {
+      "short": "solidify",
+      "menuLabel": "Solidify",
+      "defaultName": "Solidify",
+      "fields": [
+        {
+          "id": "modifier.solidify.mode",
+          "rna": "solidify_mode",
+          "label": "Mode",
+          "kind": "enum",
+          "display": "dropdown",
+          "default": "EXTRUDE",
+          "items": [
+            {
+              "value": "EXTRUDE",
+              "label": "Simple"
+            },
+            {
+              "value": "NON_MANIFOLD",
+              "label": "Complex"
+            }
+          ]
+        },
+        {
+          "id": "modifier.solidify.thickness",
+          "rna": "thickness",
+          "label": "Thickness",
+          "kind": "float",
+          "unit": "m",
+          "softMin": -10,
+          "softMax": 10,
+          "default": 0.01
+        },
+        {
+          "id": "modifier.solidify.offset",
+          "rna": "offset",
+          "label": "Offset",
+          "kind": "float",
+          "unit": "",
+          "softMin": -1,
+          "softMax": 1,
+          "default": -1
+        },
+        {
+          "id": "modifier.solidify.even_thickness",
+          "rna": "use_even_offset",
+          "label": "Even Thickness",
+          "kind": "bool",
+          "default": false
+        },
+        {
+          "id": "modifier.solidify.rim_fill",
+          "rna": "use_rim",
+          "label": "Fill",
+          "heading": "Rim",
+          "kind": "bool",
+          "default": true
+        },
+        {
+          "id": "modifier.solidify.rim_only",
+          "rna": "use_rim_only",
+          "label": "Only Rim",
+          "kind": "bool",
+          "default": false
+        }
+      ],
+      "subpanels": [
+        "Normals",
+        "Materials",
+        "Edge Data",
+        "Thickness Clamp",
+        "Output Vertex Groups"
+      ]
+    },
+    "BEVEL": {
+      "short": "bevel",
+      "menuLabel": "Bevel",
+      "defaultName": "Bevel",
+      "fields": [
+        {
+          "id": "modifier.bevel.affect",
+          "rna": "affect",
+          "label": "Affect",
+          "kind": "enum",
+          "display": "expand",
+          "default": "EDGES",
+          "items": [
+            {
+              "value": "VERTICES",
+              "label": "Vertices"
+            },
+            {
+              "value": "EDGES",
+              "label": "Edges"
+            }
+          ]
+        },
+        {
+          "id": "modifier.bevel.width_type",
+          "rna": "offset_type",
+          "label": "Width Type",
+          "kind": "enum",
+          "display": "dropdown",
+          "default": "OFFSET",
+          "items": [
+            {
+              "value": "OFFSET",
+              "label": "Offset"
+            },
+            {
+              "value": "WIDTH",
+              "label": "Width"
+            },
+            {
+              "value": "DEPTH",
+              "label": "Depth"
+            },
+            {
+              "value": "PERCENT",
+              "label": "Percent"
+            },
+            {
+              "value": "ABSOLUTE",
+              "label": "Absolute"
+            }
+          ]
+        },
+        {
+          "id": "modifier.bevel.amount",
+          "rna": "width",
+          "label": "Amount",
+          "kind": "float",
+          "unit": "m",
+          "softMin": 0,
+          "softMax": 100,
+          "default": 0.1
+        },
+        {
+          "id": "modifier.bevel.segments",
+          "rna": "segments",
+          "label": "Segments",
+          "kind": "int",
+          "unit": "",
+          "softMin": 1,
+          "softMax": 100,
+          "default": 1
+        },
+        {
+          "id": "modifier.bevel.limit_method",
+          "rna": "limit_method",
+          "label": "Limit Method",
+          "kind": "enum",
+          "display": "expand",
+          "default": "ANGLE",
+          "items": [
+            {
+              "value": "NONE",
+              "label": "None"
+            },
+            {
+              "value": "ANGLE",
+              "label": "Angle"
+            },
+            {
+              "value": "WEIGHT",
+              "label": "Weight"
+            },
+            {
+              "value": "VGROUP",
+              "label": "Vertex Group"
+            }
+          ]
+        },
+        {
+          "id": "modifier.bevel.angle",
+          "rna": "angle_limit",
+          "label": "Angle",
+          "kind": "float",
+          "unit": "°",
+          "softMin": 0,
+          "softMax": 180,
+          "default": 30
+        }
+      ],
+      "subpanels": [
+        "Profile",
+        "Geometry",
+        "Shading"
+      ]
+    },
+    "SUBSURF": {
+      "short": "subsurf",
+      "menuLabel": "Subdivision Surface",
+      "defaultName": "Subdivision",
+      "fields": [
+        {
+          "id": "modifier.subsurf.type",
+          "rna": "subdivision_type",
+          "label": "Subdivision Type",
+          "kind": "enum",
+          "display": "expand",
+          "default": "CATMULL_CLARK",
+          "items": [
+            {
+              "value": "CATMULL_CLARK",
+              "label": "Catmull-Clark"
+            },
+            {
+              "value": "SIMPLE",
+              "label": "Simple"
+            }
+          ]
+        },
+        {
+          "id": "modifier.subsurf.levels",
+          "rna": "levels",
+          "label": "Levels Viewport",
+          "kind": "int",
+          "unit": "",
+          "softMin": 0,
+          "softMax": 6,
+          "default": 1
+        },
+        {
+          "id": "modifier.subsurf.render",
+          "rna": "render_levels",
+          "label": "Render",
+          "kind": "int",
+          "unit": "",
+          "softMin": 0,
+          "softMax": 6,
+          "default": 2
+        },
+        {
+          "id": "modifier.subsurf.optimal_display",
+          "rna": "show_only_control_edges",
+          "label": "Optimal Display",
+          "kind": "bool",
+          "default": true
+        }
+      ],
+      "subpanels": [
+        "Advanced"
+      ]
+    },
+    "SIMPLE_DEFORM": {
+      "short": "simple_deform",
+      "menuLabel": "Simple Deform",
+      "defaultName": "SimpleDeform",
+      "fields": [
+        {
+          "id": "modifier.simple_deform.mode",
+          "rna": "deform_method",
+          "label": "Mode",
+          "kind": "enum",
+          "display": "expand",
+          "default": "TWIST",
+          "items": [
+            {
+              "value": "TWIST",
+              "label": "Twist"
+            },
+            {
+              "value": "BEND",
+              "label": "Bend"
+            },
+            {
+              "value": "TAPER",
+              "label": "Taper"
+            },
+            {
+              "value": "STRETCH",
+              "label": "Stretch"
+            }
+          ]
+        },
+        {
+          "id": "modifier.simple_deform.angle",
+          "rna": "angle",
+          "label": "Angle",
+          "kind": "float",
+          "unit": "°",
+          "softMin": -360,
+          "softMax": 360,
+          "default": 45
+        },
+        {
+          "id": "modifier.simple_deform.origin",
+          "rna": "origin",
+          "label": "Origin",
+          "kind": "pointer",
+          "default": null
+        },
+        {
+          "id": "modifier.simple_deform.axis",
+          "rna": "deform_axis",
+          "label": "Axis",
+          "labelled": true,
+          "kind": "enum",
+          "display": "expand",
+          "default": "X",
+          "items": [
+            {
+              "value": "X",
+              "label": "X"
+            },
+            {
+              "value": "Y",
+              "label": "Y"
+            },
+            {
+              "value": "Z",
+              "label": "Z"
+            }
+          ]
+        }
+      ],
+      "subpanels": [
+        "Restrictions"
+      ]
+    }
+  },
+  "sculpt": {
+    "modeMenu": {
+      "id": "object.mode",
+      "shortcut": {
+        "keys": [
+          "Ctrl",
+          "Tab"
+        ],
+        "context": "3D Viewport · mode pie"
+      },
+      "items": [
+        {
+          "id": "object.mode.object",
+          "value": "OBJECT",
+          "label": "Object Mode"
+        },
+        {
+          "id": "object.mode.edit",
+          "value": "EDIT",
+          "label": "Edit Mode"
+        },
+        {
+          "id": "object.mode.sculpt",
+          "value": "SCULPT",
+          "label": "Sculpt Mode"
+        },
+        {
+          "id": "object.mode.vertex_paint",
+          "value": "VERTEX_PAINT",
+          "label": "Vertex Paint"
+        },
+        {
+          "id": "object.mode.weight_paint",
+          "value": "WEIGHT_PAINT",
+          "label": "Weight Paint"
+        },
+        {
+          "id": "object.mode.texture_paint",
+          "value": "TEXTURE_PAINT",
+          "label": "Texture Paint"
+        }
+      ]
+    },
+    "header": {
+      "brush": {
+        "id": "sculpt.brush"
+      },
+      "size": {
+        "id": "sculpt.size",
+        "label": "Size",
+        "kind": "int",
+        "unit": "px",
+        "precision": 0,
+        "softMin": 1,
+        "softMax": 1000,
+        "shortcut": {
+          "keys": [
+            "F"
+          ],
+          "context": "3D Viewport · Sculpt Mode"
+        }
+      },
+      "strength": {
+        "id": "sculpt.strength",
+        "label": "Strength",
+        "kind": "float",
+        "unit": "",
+        "precision": 3,
+        "softMin": 0,
+        "softMax": 1,
+        "shortcut": {
+          "keys": [
+            "Shift",
+            "F"
+          ],
+          "context": "3D Viewport · Sculpt Mode"
+        }
+      },
+      "direction": {
+        "id": "sculpt.direction",
+        "items": [
+          {
+            "id": "sculpt.direction.add",
+            "value": "ADD",
+            "label": "Add"
+          },
+          {
+            "id": "sculpt.direction.subtract",
+            "value": "SUBTRACT",
+            "label": "Subtract"
+          }
+        ],
+        "shortcut": {
+          "keys": [
+            "Ctrl",
+            "Drag"
+          ],
+          "context": "hold while sculpting"
+        }
+      },
+      "symmetry": {
+        "id": "sculpt.symmetry",
+        "items": [
+          {
+            "id": "sculpt.symmetry.x",
+            "axis": "X",
+            "label": "X"
+          },
+          {
+            "id": "sculpt.symmetry.y",
+            "axis": "Y",
+            "label": "Y"
+          },
+          {
+            "id": "sculpt.symmetry.z",
+            "axis": "Z",
+            "label": "Z"
+          }
+        ]
+      }
+    },
+    "shelf": {
+      "id": "sculpt.shelf",
+      "tabs": [
+        "All",
+        "General",
+        "Paint",
+        "Simulation"
+      ],
+      "groups": [
+        "Add & Subtract",
+        "Contrast",
+        "Transform",
+        "Utilities"
+      ],
+      "brushes": [
+        {
+          "id": "sculpt.brush.airbrush",
+          "name": "Airbrush",
+          "tab": "Paint",
+          "group": null,
+          "shortcut": null
+        },
+        {
+          "id": "sculpt.brush.bend_boundary_cloth",
+          "name": "Bend Boundary Cloth",
+          "tab": "Simulation",
+          "group": null,
+          "shortcut": null
+        },
+        {
+          "id": "sculpt.brush.bend_twist_cloth",
+          "name": "Bend/Twist Cloth",
+          "tab": "Simulation",
+          "group": null,
+          "shortcut": null
+        },
+        {
+          "id": "sculpt.brush.blend_hard",
+          "name": "Blend Hard",
+          "tab": "Paint",
+          "group": null,
+          "shortcut": null
+        },
+        {
+          "id": "sculpt.brush.blend_soft",
+          "name": "Blend Soft",
+          "tab": "Paint",
+          "group": null,
+          "shortcut": null
+        },
+        {
+          "id": "sculpt.brush.blend_square",
+          "name": "Blend Square",
+          "tab": "Paint",
+          "group": null,
+          "shortcut": null
+        },
+        {
+          "id": "sculpt.brush.blob",
+          "name": "Blob",
+          "tab": "General",
+          "group": "Add & Subtract",
+          "shortcut": null
+        },
+        {
+          "id": "sculpt.brush.blur",
+          "name": "Blur",
+          "tab": "Paint",
+          "group": null,
+          "shortcut": null
+        },
+        {
+          "id": "sculpt.brush.boundary",
+          "name": "Boundary",
+          "tab": "General",
+          "group": "Transform",
+          "shortcut": null
+        },
+        {
+          "id": "sculpt.brush.clay",
+          "name": "Clay",
+          "tab": "General",
+          "group": "Add & Subtract",
+          "shortcut": null
+        },
+        {
+          "id": "sculpt.brush.clay_strips",
+          "name": "Clay Strips",
+          "tab": "General",
+          "group": "Add & Subtract",
+          "shortcut": {
+            "keys": [
+              "C"
+            ],
+            "context": "3D Viewport · Sculpt Mode"
+          }
+        },
+        {
+          "id": "sculpt.brush.clay_thumb",
+          "name": "Clay Thumb",
+          "tab": "General",
+          "group": "Add & Subtract",
+          "shortcut": null
+        },
+        {
+          "id": "sculpt.brush.crease_polish",
+          "name": "Crease Polish",
+          "tab": "General",
+          "group": "Add & Subtract",
+          "shortcut": {
+            "keys": [
+              "Shift",
+              "C"
+            ],
+            "context": "3D Viewport · Sculpt Mode"
+          }
+        },
+        {
+          "id": "sculpt.brush.crease_sharp",
+          "name": "Crease Sharp",
+          "tab": "General",
+          "group": "Add & Subtract",
+          "shortcut": null
+        },
+        {
+          "id": "sculpt.brush.density",
+          "name": "Density",
+          "tab": "General",
+          "group": "Utilities",
+          "shortcut": null
+        },
+        {
+          "id": "sculpt.brush.drag_cloth",
+          "name": "Drag Cloth",
+          "tab": "Simulation",
+          "group": null,
+          "shortcut": null
+        },
+        {
+          "id": "sculpt.brush.draw",
+          "name": "Draw",
+          "tab": "General",
+          "group": "Add & Subtract",
+          "shortcut": {
+            "keys": [
+              "V"
+            ],
+            "context": "3D Viewport · Sculpt Mode"
+          }
+        },
+        {
+          "id": "sculpt.brush.draw_sharp",
+          "name": "Draw Sharp",
+          "tab": "General",
+          "group": "Add & Subtract",
+          "shortcut": null
+        },
+        {
+          "id": "sculpt.brush.elastic_grab",
+          "name": "Elastic Grab",
+          "tab": "General",
+          "group": "Transform",
+          "shortcut": null
+        },
+        {
+          "id": "sculpt.brush.elastic_snake_hook",
+          "name": "Elastic Snake Hook",
+          "tab": "General",
+          "group": "Transform",
+          "shortcut": null
+        },
+        {
+          "id": "sculpt.brush.erase_multires_displacement",
+          "name": "Erase Multires Displacement",
+          "tab": "General",
+          "group": "Utilities",
+          "shortcut": null
+        },
+        {
+          "id": "sculpt.brush.expand_contract_cloth",
+          "name": "Expand/Contract Cloth",
+          "tab": "Simulation",
+          "group": null,
+          "shortcut": null
+        },
+        {
+          "id": "sculpt.brush.face_set_paint",
+          "name": "Face Set Paint",
+          "tab": "General",
+          "group": "Utilities",
+          "shortcut": null
+        },
+        {
+          "id": "sculpt.brush.fill_deepen",
+          "name": "Fill/Deepen",
+          "tab": "General",
+          "group": "Contrast",
+          "shortcut": null
+        },
+        {
+          "id": "sculpt.brush.flatten_contrast",
+          "name": "Flatten/Contrast",
+          "tab": "General",
+          "group": "Contrast",
+          "shortcut": null
+        },
+        {
+          "id": "sculpt.brush.grab",
+          "name": "Grab",
+          "tab": "General",
+          "group": "Transform",
+          "shortcut": {
+            "keys": [
+              "G"
+            ],
+            "context": "3D Viewport · Sculpt Mode"
+          }
+        },
+        {
+          "id": "sculpt.brush.grab_2d",
+          "name": "Grab 2D",
+          "tab": "General",
+          "group": "Transform",
+          "shortcut": null
+        },
+        {
+          "id": "sculpt.brush.grab_cloth",
+          "name": "Grab Cloth",
+          "tab": "Simulation",
+          "group": null,
+          "shortcut": null
+        },
+        {
+          "id": "sculpt.brush.grab_planar_cloth_",
+          "name": "Grab Planar Cloth ",
+          "tab": "Simulation",
+          "group": null,
+          "shortcut": null
+        },
+        {
+          "id": "sculpt.brush.grab_random_cloth",
+          "name": "Grab Random Cloth",
+          "tab": "Simulation",
+          "group": null,
+          "shortcut": null
+        },
+        {
+          "id": "sculpt.brush.grab_silhouette",
+          "name": "Grab Silhouette",
+          "tab": "General",
+          "group": "Transform",
+          "shortcut": null
+        },
+        {
+          "id": "sculpt.brush.inflate_cloth",
+          "name": "Inflate Cloth",
+          "tab": "Simulation",
+          "group": null,
+          "shortcut": null
+        },
+        {
+          "id": "sculpt.brush.inflate_deflate",
+          "name": "Inflate/Deflate",
+          "tab": "General",
+          "group": "Add & Subtract",
+          "shortcut": {
+            "keys": [
+              "I"
+            ],
+            "context": "3D Viewport · Sculpt Mode"
+          }
+        },
+        {
+          "id": "sculpt.brush.layer",
+          "name": "Layer",
+          "tab": "General",
+          "group": "Add & Subtract",
+          "shortcut": null
+        },
+        {
+          "id": "sculpt.brush.mask",
+          "name": "Mask",
+          "tab": "General",
+          "group": "Utilities",
+          "shortcut": {
+            "keys": [
+              "M"
+            ],
+            "context": "3D Viewport · Sculpt Mode"
+          }
+        },
+        {
+          "id": "sculpt.brush.nudge",
+          "name": "Nudge",
+          "tab": "General",
+          "group": "Transform",
+          "shortcut": null
+        },
+        {
+          "id": "sculpt.brush.paint_blend",
+          "name": "Paint Blend",
+          "tab": "Paint",
+          "group": null,
+          "shortcut": null
+        },
+        {
+          "id": "sculpt.brush.paint_hard",
+          "name": "Paint Hard",
+          "tab": "Paint",
+          "group": null,
+          "shortcut": null
+        },
+        {
+          "id": "sculpt.brush.paint_hard_pressure",
+          "name": "Paint Hard Pressure",
+          "tab": "Paint",
+          "group": null,
+          "shortcut": null
+        },
+        {
+          "id": "sculpt.brush.paint_soft",
+          "name": "Paint Soft",
+          "tab": "Paint",
+          "group": null,
+          "shortcut": null
+        },
+        {
+          "id": "sculpt.brush.paint_soft_pressure",
+          "name": "Paint Soft Pressure",
+          "tab": "Paint",
+          "group": null,
+          "shortcut": null
+        },
+        {
+          "id": "sculpt.brush.paint_square",
+          "name": "Paint Square",
+          "tab": "Paint",
+          "group": null,
+          "shortcut": null
+        },
+        {
+          "id": "sculpt.brush.pinch_folds_cloth",
+          "name": "Pinch Folds Cloth",
+          "tab": "Simulation",
+          "group": null,
+          "shortcut": null
+        },
+        {
+          "id": "sculpt.brush.pinch_point_cloth",
+          "name": "Pinch Point Cloth",
+          "tab": "Simulation",
+          "group": null,
+          "shortcut": null
+        },
+        {
+          "id": "sculpt.brush.pinch_magnify",
+          "name": "Pinch/Magnify",
+          "tab": "General",
+          "group": "Transform",
+          "shortcut": {
+            "keys": [
+              "P"
+            ],
+            "context": "3D Viewport · Sculpt Mode"
+          }
+        },
+        {
+          "id": "sculpt.brush.plateau",
+          "name": "Plateau",
+          "tab": "General",
+          "group": "Contrast",
+          "shortcut": null
+        },
+        {
+          "id": "sculpt.brush.pose",
+          "name": "Pose",
+          "tab": "General",
+          "group": "Transform",
+          "shortcut": null
+        },
+        {
+          "id": "sculpt.brush.pull",
+          "name": "Pull",
+          "tab": "General",
+          "group": "Transform",
+          "shortcut": null
+        },
+        {
+          "id": "sculpt.brush.push_cloth",
+          "name": "Push Cloth",
+          "tab": "Simulation",
+          "group": null,
+          "shortcut": null
+        },
+        {
+          "id": "sculpt.brush.relax_pinch",
+          "name": "Relax Pinch",
+          "tab": "General",
+          "group": "Transform",
+          "shortcut": null
+        },
+        {
+          "id": "sculpt.brush.relax_slide",
+          "name": "Relax Slide",
+          "tab": "General",
+          "group": "Transform",
+          "shortcut": null
+        },
+        {
+          "id": "sculpt.brush.scene_project",
+          "name": "Scene Project",
+          "tab": "General",
+          "group": "Transform",
+          "shortcut": null
+        },
+        {
+          "id": "sculpt.brush.scrape_multiplane",
+          "name": "Scrape Multiplane",
+          "tab": "General",
+          "group": "Contrast",
+          "shortcut": null
+        },
+        {
+          "id": "sculpt.brush.scrape_fill",
+          "name": "Scrape/Fill",
+          "tab": "General",
+          "group": "Contrast",
+          "shortcut": {
+            "keys": [
+              "Shift",
+              "T"
+            ],
+            "context": "3D Viewport · Sculpt Mode"
+          }
+        },
+        {
+          "id": "sculpt.brush.sharpen",
+          "name": "Sharpen",
+          "tab": "Paint",
+          "group": null,
+          "shortcut": null
+        },
+        {
+          "id": "sculpt.brush.smear",
+          "name": "Smear",
+          "tab": "Paint",
+          "group": null,
+          "shortcut": null
+        },
+        {
+          "id": "sculpt.brush.smear_multires_displacement",
+          "name": "Smear Multires Displacement",
+          "tab": "General",
+          "group": "Utilities",
+          "shortcut": null
+        },
+        {
+          "id": "sculpt.brush.smooth",
+          "name": "Smooth",
+          "tab": "General",
+          "group": "Contrast",
+          "shortcut": {
+            "keys": [
+              "S"
+            ],
+            "context": "3D Viewport · Sculpt Mode"
+          }
+        },
+        {
+          "id": "sculpt.brush.snake_hook",
+          "name": "Snake Hook",
+          "tab": "General",
+          "group": "Transform",
+          "shortcut": {
+            "keys": [
+              "K"
+            ],
+            "context": "3D Viewport · Sculpt Mode"
+          }
+        },
+        {
+          "id": "sculpt.brush.stretch_move_cloth",
+          "name": "Stretch/Move Cloth",
+          "tab": "Simulation",
+          "group": null,
+          "shortcut": null
+        },
+        {
+          "id": "sculpt.brush.thumb",
+          "name": "Thumb",
+          "tab": "General",
+          "group": "Transform",
+          "shortcut": null
+        },
+        {
+          "id": "sculpt.brush.trim",
+          "name": "Trim",
+          "tab": "General",
+          "group": "Contrast",
+          "shortcut": null
+        },
+        {
+          "id": "sculpt.brush.twist",
+          "name": "Twist",
+          "tab": "General",
+          "group": "Transform",
+          "shortcut": null
+        },
+        {
+          "id": "sculpt.brush.twist_boundary_cloth",
+          "name": "Twist Boundary Cloth",
+          "tab": "Simulation",
+          "group": null,
+          "shortcut": null
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,84 @@
+{
+  "lessons": [
+    {
+      "module": "modifiers",
+      "example": "cup",
+      "mode": "watch",
+      "title": "Low-poly cup",
+      "variantOf": null,
+      "timeline": "modifiers/cup/timeline.json"
+    },
+    {
+      "module": "modifiers",
+      "example": "bowl",
+      "mode": "your-turn",
+      "title": "Your turn: bowl",
+      "variantOf": "cup",
+      "timeline": "modifiers/bowl/timeline.json"
+    },
+    {
+      "module": "modifiers",
+      "example": "twisted-column",
+      "mode": "watch",
+      "title": "Twisted column",
+      "variantOf": null,
+      "timeline": "modifiers/twisted-column/timeline.json"
+    },
+    {
+      "module": "modifiers",
+      "example": "twisted-candle",
+      "mode": "your-turn",
+      "title": "Your turn: twisted candle",
+      "variantOf": "twisted-column",
+      "timeline": "modifiers/twisted-candle/timeline.json"
+    },
+    {
+      "module": "sculpt",
+      "example": "pebble-buddy",
+      "mode": "watch",
+      "title": "Pebble buddy",
+      "variantOf": null,
+      "timeline": "sculpt/pebble-buddy/timeline.json"
+    },
+    {
+      "module": "sculpt",
+      "example": "sleepy-buddy",
+      "mode": "your-turn",
+      "title": "Your turn: sleepy buddy",
+      "variantOf": "pebble-buddy",
+      "timeline": "sculpt/sleepy-buddy/timeline.json"
+    },
+    {
+      "module": "sculpt",
+      "example": "horned-buddy",
+      "mode": "watch",
+      "title": "Horned buddy",
+      "variantOf": null,
+      "timeline": "sculpt/horned-buddy/timeline.json"
+    },
+    {
+      "module": "sculpt",
+      "example": "antenna-bug",
+      "mode": "your-turn",
+      "title": "Your turn: antenna bug",
+      "variantOf": "horned-buddy",
+      "timeline": "sculpt/antenna-bug/timeline.json"
+    },
+    {
+      "module": "sculpt",
+      "example": "rock",
+      "mode": "watch",
+      "title": "Craggy rock",
+      "variantOf": null,
+      "timeline": "sculpt/rock/timeline.json"
+    },
+    {
+      "module": "sculpt",
+      "example": "boulder",
+      "mode": "your-turn",
+      "title": "Your turn: split boulder",
+      "variantOf": "rock",
+      "timeline": "sculpt/boulder/timeline.json"
+    }
+  ]
+}

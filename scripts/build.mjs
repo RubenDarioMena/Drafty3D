@@ -1,8 +1,7 @@
 import { mkdir, readFile, rm, stat, writeFile } from 'node:fs/promises';
 import { dirname, resolve, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { build } from 'vite';
-import { prepareCadSources } from './cad-sources.mjs';
+import { prepareLearn } from './learn.mjs';
 import { prepareSolidcraft } from './solidcraft.mjs';
 import { prepareSculptgl } from './sculptgl.mjs';
 import { preparePortal } from './portal.mjs';
@@ -14,12 +13,10 @@ const files = [
   'index.html',
   'portal/style.css',
   'portal/app.js',
-  'workspace/index.html',
   'workspace/style.css',
   'svg-edit/index.html',
   'svg-edit/editor.js',
   'solidcraft/index.html',
-  'materializr/index.html',
   'about/index.html',
   'docs/investigacion/propuestas-ui.html',
   'docs/investigacion/comparativa-cad.html',
@@ -27,30 +24,21 @@ const files = [
   'docs/investigacion/README.md',
   'docs/investigacion/drafty3d-seleccion-funciones-1.json',
   'docs/investigacion/propuestas-ui-preview.png',
-  'docs/cad/ATLAS.md',
 ];
 const contents = await Promise.all(files.map(file => readFile(resolve(root, file))));
 await rm(output, { recursive: true, force: true });
 for (const [index, file] of files.entries()) {
   const target = resolve(output, file);
   await mkdir(dirname(target), { recursive: true });
-  let data = contents[index];
-  if (file === 'materializr/index.html' && process.env.MATERIALIZR_WEB_URL) {
-    const url = new URL(process.env.MATERIALIZR_WEB_URL);
-    if (url.protocol !== 'https:' || url.username || url.password) {
-      throw new Error('MATERIALIZR_WEB_URL debe ser una URL HTTPS sin credenciales.');
-    }
-    const href = url.href.replaceAll('&', '&amp;').replaceAll('"', '&quot;').replaceAll('<', '&lt;').replaceAll('>', '&gt;');
-    data = Buffer.from(data.toString().replace('<!-- MATERIALIZR_REMOTE_LINK -->', `<a class="open-button primary" href="${href}" data-copy="remoteOpen">Abrir Materializr alojado →</a>`));
-  }
-  await writeFile(target, data);
+  await writeFile(target, contents[index]);
 }
-await build({ configFile: resolve(root, 'vite.config.mjs') });
+// /workspace/ keeps serving the design workspace for old links; the page itself lives at /.
+await writeFile(resolve(output, 'workspace/index.html'), contents[files.indexOf('index.html')]);
 await Promise.all([
-  prepareCadSources(root, resolve(output, 'cad/licenses/source')),
   prepareSolidcraft(root, resolve(output, 'solidcraft/app')),
   prepareSculptgl(root, resolve(output, 'sculptgl')),
   preparePortal(root, output),
+  prepareLearn(root, resolve(output, 'learn')),
 ]);
 await writeFile(resolve(output, 'deployment.json'), JSON.stringify({ commit: process.env.VERCEL_GIT_COMMIT_SHA || process.env.COMMIT_REF || null, solidcraft: '0.18.3' }) + '\n');
 
