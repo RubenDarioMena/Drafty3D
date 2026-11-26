@@ -59,17 +59,24 @@ export class AddModifierMenu {
 
   place(menu) {
     const anchor = this.anchor.getBoundingClientRect();
+    // Stay inside the visible area: Android system bars and the lesson bar must not cover the menu.
+    const bounds = document.getElementById('app').getBoundingClientRect();
+    const style = getComputedStyle(document.getElementById('app'));
+    const bottom = Math.min(window.visualViewport?.height ?? window.innerHeight, bounds.bottom - parseFloat(style.paddingBottom || 0)) - 8;
+    const top = bounds.top + parseFloat(style.paddingTop || 0) + 8;
     const width = Math.min(260, window.innerWidth - 16);
     menu.style.width = `${width}px`;
     menu.style.left = `${Math.max(8, Math.min(anchor.left, window.innerWidth - width - 8))}px`;
-    const below = window.innerHeight - anchor.bottom - 8;
+    const below = bottom - anchor.bottom - 4;
+    const above = anchor.top - top - 4;
     const height = menu.offsetHeight;
-    if (height <= below || below >= anchor.top) {
+    if (height <= below || below >= above) {
       menu.style.top = `${anchor.bottom + 4}px`;
-      menu.style.maxHeight = `${below - 4}px`;
+      menu.style.maxHeight = `${below}px`;
     } else {
-      menu.style.top = `${Math.max(8, anchor.top - 4 - height)}px`;
-      menu.style.maxHeight = `${anchor.top - 12}px`;
+      const shown = Math.min(height, above);
+      menu.style.top = `${anchor.top - 4 - shown}px`;
+      menu.style.maxHeight = `${above}px`;
     }
   }
 

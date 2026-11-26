@@ -14,7 +14,7 @@ Prototipo del módulo **Modificadores**. Incluye una lección para ver (la taza,
 
 La primera vez, githack muestra su propia página "One more step": toca **Open the page**. Es un aviso de githack, no de la app. En el navegador la app se descarga de internet; sin conexión solo funciona el APK.
 
-Cada push a `codex/portal-diseno` que toque `/learn/` o `android/` vuelve a generar ambos en GitHub Actions (gratis en repos públicos). No se gasta ningún build de Vercel: la rama `preview` lleva su propio `vercel.json` con el `ignoreCommand`.
+Cada push a `codex/portal-diseno` que toque `/learn/` o `android/` actualiza la vista previa de githack en GitHub Actions (gratis en repos públicos). El APK solo se genera a mano: Actions → "Drafty3D Learn · APK + preview" → **Run workflow**. No se gasta ningún build de Vercel: la rama `preview` lleva su propio `vercel.json` con el `ignoreCommand`.
 
 ### Instalar el APK
 
@@ -53,7 +53,7 @@ Mientras no existan los secretos, Actions genera un **APK de depuración**. Cada
 
 ## Qué probar
 
-**Ver (Low-poly cup).** Pulsa **Start**. Cada paso mueve el cursor al control real, lo resalta y muestra el atajo de Blender como teclas. Un paso solo de navegación (abrir la pestaña de la llave) avanza solo; los demás esperan **Next**. **Autoplay** encadena los pasos. El deslizador permite parar en cualquier paso, también en los de navegación. Con la reproducción detenida puedes girar la vista: un dedo gira, dos dedos mueven, pellizcar hace zoom. Al continuar, la cámara vuelve a la de Blender.
+**Ver (Low-poly cup).** Pulsa **Start**. Cada paso mueve el cursor al control real, lo resalta y muestra el atajo de Blender como teclas. Un paso solo de navegación (abrir la pestaña de la llave) avanza solo; los demás esperan **Next**. **Autoplay** encadena los pasos. El deslizador permite parar en cualquier paso, también en los de navegación. Los botones **‹ ›** avanzan o retroceden una sola acción dentro del paso (por ejemplo, con el menú Add Modifier abierto) y se quedan quietos ahí. Con la reproducción detenida puedes girar la vista: un dedo gira, dos dedos mueven, pellizcar hace zoom. Al continuar, la cámara vuelve a la de Blender.
 
 **Your turn (bowl).** Es un candado de combinación: haz cada paso con los controles de verdad. Nada cuenta como error. Cuando aciertas aparece una pista verde (por ejemplo `✓ Thickness: 0.06 m.`), una vibración corta en Android y la malla cambia a lo que Blender calculó. Los números se cambian con ◀ ▶, arrastrando sobre el valor o tocándolo para escribirlo. **Show me** (amarillo) hace el paso por ti y explica dónde estaba. El progreso queda guardado en el dispositivo. **Restart** vuelve a empezar.
 

@@ -23,7 +23,11 @@ export class WatchMode {
       next: document.getElementById('next'),
       autoplay: document.getElementById('autoplay'),
       hint: document.getElementById('orbit-hint'),
+      fineNext: document.getElementById('fine-next'),
+      finePrev: document.getElementById('fine-prev'),
     };
+    // Position inside the next step's actions (null = resting on a completed step).
+    this.stage = null;
   }
 
   start() {
@@ -34,7 +38,9 @@ export class WatchMode {
     autoplay.checked = false;
     this.menu.interactive = false;
     next.addEventListener('click', () => this.next(), { signal });
-    prev.addEventListener('click', () => this.seek(this.index - 1), { signal });
+    prev.addEventListener('click', () => this.seek(this.stage === null ? this.index - 1 : this.index), { signal });
+    this.dom.fineNext.addEventListener('click', () => this.fine(1), { signal });
+    this.dom.finePrev.addEventListener('click', () => this.fine(-1), { signal });
     scrubber.addEventListener('input', () => this.seek(Number(scrubber.value)), { signal });
     autoplay.addEventListener('change', () => {
       this.autoplay = autoplay.checked;
@@ -61,6 +67,8 @@ export class WatchMode {
 
   jump(index, cameraDuration = 0.35) {
     this.index = index;
+    this.stage = null;
+    this.menu.close();
     const state = stateAt(this.timeline, this.ui, index);
     this.render(state);
     this.viewer.showCamera(state.camera, cameraDuration);
@@ -85,8 +93,10 @@ export class WatchMode {
   updateControls() {
     const { scrubber, prev, next, hint } = this.dom;
     scrubber.value = String(this.index);
-    prev.disabled = this.busy || this.index < 0;
+    prev.disabled = this.busy || (this.index < 0 && this.stage === null);
     next.disabled = this.busy || this.index >= this.last;
+    this.dom.finePrev.disabled = this.busy || (this.index < 0 && this.stage === null);
+    this.dom.fineNext.disabled = this.busy || this.index >= this.last;
     next.textContent = this.index < 0 ? 'Start ▶' : this.index >= this.last ? 'Done ✓' : 'Next ▶';
     this.viewer.setOrbit(!this.busy);
     hint.hidden = this.busy;
@@ -94,6 +104,8 @@ export class WatchMode {
 
   async next() {
     if (this.busy || this.index >= this.last) return;
+    this.stage = null;
+    this.menu.close();
     const token = ++this.token;
     const index = this.index + 1;
     const step = this.timeline.steps[index];
@@ -117,6 +129,67 @@ export class WatchMode {
       await wait(step.autoAdvance ? 0.6 : step.duration);
       if (token === this.token && (step.autoAdvance || this.autoplay)) this.next();
     }
+  }
+
+  /** Actions inside a step, so the learner can stop on each one (e.g. the open menu). */
+  stagesOf(step) {
+    return step.action === 'add_modifier' ? ['menu', 'submenu'] : ['target'];
+  }
+
+  /** Moves one action forward (+1) or back (-1), paused on that frame. */
+  fine(direction) {
+    if (this.busy) return;
+    this.token += 1;
+    this.autoplay = this.dom.autoplay.checked = false;
+    if (direction > 0) {
+      if (this.index >= this.last) return;
+      const count = this.stagesOf(this.timeline.steps[this.index + 1]).length;
+      if (this.stage === null) this.stage = 0;
+      else if (this.stage < count - 1) this.stage += 1;
+      else return this.finishStage();
+    } else {
+      if (this.stage === null) {
+        if (this.index < 0) return;
+        const index = this.index - 1;
+        this.jump(index, 0);
+        this.stage = this.stagesOf(this.timeline.steps[index + 1]).length - 1;
+      } else if (this.stage > 0) this.stage -= 1;
+      else return this.jump(this.index);
+    }
+    this.showStage();
+  }
+
+  finishStage() {
+    this.jump(this.index + 1);
+    this.cursor.hide();
+  }
+
+  showStage() {
+    const index = this.index + 1;
+    const step = this.timeline.steps[index];
+    const stage = this.stagesOf(step)[this.stage];
+    this.render(stateAt(this.timeline, this.ui, this.index));
+    this.menu.close();
+    this.viewer.showCamera(step.camera, 0.35);
+    const total = this.timeline.steps.length;
+    const count = this.stagesOf(step).length;
+    this.bar.show({ count: `Step ${index + 1} of ${total} · action ${this.stage + 1} of ${count + 1}`, text: step.text, shortcut: step.shortcut });
+    this.bar.showClue('');
+    let target;
+    if (stage === 'target') {
+      target = this.editor.element(step.id);
+    } else {
+      const button = this.editor.element(this.menu.ui.id);
+      this.menu.open(button);
+      target = button;
+      if (stage === 'submenu') {
+        this.menu.openCategory(this.menu.categoryOf(step.id).id);
+        target = this.menu.element(step.id);
+      }
+    }
+    target?.classList.add(stage === 'submenu' ? 'active' : 'is-target');
+    this.cursor.moveTo(target, 0.3);
+    this.updateControls();
   }
 
   seek(index) {

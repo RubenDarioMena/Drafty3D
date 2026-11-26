@@ -4,6 +4,7 @@
   "webDir": "dist/learn",
   "android": {
     "allowMixedContent": false,
-    "captureInput": true
+    "captureInput": true,
+    "adjustMarginsForEdgeToEdge": "force"
   }
 }

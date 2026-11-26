@@ -28,14 +28,14 @@ button, input, select { font: inherit; color: inherit; }
 button { cursor: pointer; }
 [hidden] { display: none !important; }
 
-#app { height: 100dvh; display: flex; flex-direction: column; padding-bottom: env(safe-area-inset-bottom); }
+#app { height: 100dvh; display: flex; flex-direction: column; padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left); }
 
 .topbar {
-  flex: none; height: 40px; display: flex; align-items: center; gap: 12px; padding: 0 12px;
+  flex: none; min-height: 44px; display: flex; align-items: center; gap: 12px; padding: 0 12px;
   background: var(--topbar); border-bottom: 1px solid #111; font-size: 13px; white-space: nowrap;
 }
-.brand { color: var(--text); text-decoration: none; font-weight: 600; }
-.brand b { color: var(--orange); font-weight: 600; }
+.brand { color: var(--text); text-decoration: none; font-weight: 600; display: inline-flex; align-items: center; min-height: 44px; padding: 0 4px; }
+.brand b { color: var(--orange); font-weight: 600; margin-left: .3em; }
 .brand-mark { color: var(--orange); margin-right: 6px; }
 .workspace-tab { background: var(--panel); padding: 3px 10px; border-radius: var(--radius); color: var(--text); }
 .lesson-title { color: var(--muted); overflow: hidden; text-overflow: ellipsis; }
@@ -117,7 +117,7 @@ button { cursor: pointer; }
 .menu h4 { margin: 2px 12px 4px; font-size: 12px; color: var(--muted); font-weight: 500; }
 .menu button { display: flex; width: 100%; justify-content: space-between; gap: 12px; text-align: left; background: transparent; border: 0; padding: 7px 12px; }
 .menu button:disabled { color: #6c6c6c; cursor: default; }
-.menu button.active, .menu button:not(:disabled):hover { background: var(--blue); }
+.menu button.active, .menu button:not(:disabled):hover { background: var(--blue); color: #fff; }
 
 /* Lesson bar */
 .lesson-bar { display: grid; gap: 8px; padding: 10px 12px; background: var(--bg); border-top: 1px solid #000; }
@@ -134,6 +134,7 @@ button { cursor: pointer; }
 .controls button { height: 36px; padding: 0 14px; border-radius: 6px; border: 0; background: var(--field); }
 .controls button.primary { background: var(--blue); flex: 1; }
 .controls button:disabled { opacity: .4; }
+.controls button.fine { padding: 0 10px; font-weight: 700; }
 .toggle { display: flex; align-items: center; gap: 6px; font-size: 13px; color: #cfcfcf; white-space: nowrap; }
 #scrubber { width: 100%; accent-color: var(--orange); }
 #turn-controls { grid-template-columns: auto auto; justify-content: space-between; }

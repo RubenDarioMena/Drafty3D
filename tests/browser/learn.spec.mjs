@@ -108,6 +108,24 @@ test('Your turn works like a combination lock, with "Show me" always available, 
   await expect(page.locator('.lesson-card').nth(1)).toContainText('Done ✓ · 1 with help');
 });
 
+test('fine stepping stops on every action, including the open Add Modifier menu, and the menu stays on screen', async ({ page }) => {
+  await page.goto('/learn/#/lesson/modifiers/cup');
+  await expect(page.locator('#watch-controls')).toBeVisible();
+  for (let i = 0; i < 4; i += 1) await page.locator('#fine-next').click();
+  await expect(page.locator('#step-count')).toHaveText('Step 2 of 8 · action 2 of 3');
+  const item = page.locator('.menu [data-control="modifier.solidify.add"]');
+  await expect(item).toHaveClass(/active/);
+  await expect(item).toHaveCSS('color', 'rgb(255, 255, 255)');
+  const box = await page.locator('.menu').boundingBox();
+  expect(box.y + box.height).toBeLessThanOrEqual(page.viewportSize().height);
+  await page.locator('#fine-prev').click();
+  await expect(page.locator('#step-count')).toHaveText('Step 2 of 8 · action 1 of 3');
+  await page.locator('#fine-next').click();
+  await page.locator('#fine-next').click();
+  await expect(page.locator('#step-count')).toHaveText('Step 2 of 8');
+  await expect(page.locator('.modifier')).toHaveCount(1);
+});
+
 test('the layout fits a phone screen without horizontal scrolling', async ({ page }) => {
   await page.goto('/learn/#/lesson/modifiers/cup');
   await expect(page.locator('#step-count')).toBeVisible();
