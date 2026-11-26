@@ -7,6 +7,7 @@ const english = {
   aboutIntro: "Drafty3D's design workspace integrates existing tools. Each keeps its own license and provenance.",
   solidLicense: 'Official, unmodified web release 0.18.3. MIT or Apache-2.0. Licenses, font notices and third-party attributions are distributed with the application.',
   workspaceLicenses: 'Design workspace editors',
+  learnLicense: 'Unofficial, not affiliated with the Blender Foundation. Uses three.js (MIT), GSAP (standard no-charge license) and the Draco decoder (Apache-2.0).',
   bundledNotices: 'Dependency notices', pinnedSource: 'Pinned source', licenseInfo: 'License information',
   privacyTitle: 'Files and memory',
   privacy: 'The design workspace loads one editor at a time. Save to the project or download a copy before leaving. SolidCraft can also keep its own files in the browser for offline work.',

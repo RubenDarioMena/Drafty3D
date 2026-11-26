@@ -1,124 +1,99 @@
 # Drafty3D Learn — contrato pipeline ↔ UI
 
-Resuelve el ticket [#7 del mapa de wayfinder](https://github.com/RubenDarioMena/Drafty3D/issues/7)
-(decidido en grilling con Rubén Mena, 2026-11-25). Es el contrato entre los
-scripts de Blender (`bpy==5.3.0`) que generan cada ejemplo y la UI de
-`/learn/` (three.js + GSAP). Si cambia algo aquí, versionar este documento
-y avisar en el PR correspondiente.
+Contrato entre los scripts de Blender (`bpy==5.3.0`, en `learn/pipeline/`) que generan cada ejemplo y la app `/learn/` (three.js + GSAP). Lo decidió el grilling del ticket [#7](https://github.com/RubenDarioMena/Drafty3D/issues/7) y lo ajustó el [#8](https://github.com/RubenDarioMena/Drafty3D/issues/8) al implementarlo (ver "Cambios" al final). `tests/learn.test.mjs` comprueba el contrato en cada `npm test`.
+
+## Archivos
+
+| Archivo | Lo genera | Contenido |
+| --- | --- | --- |
+| `learn/public/examples/index.json` | pipeline | Lista de lecciones: `module`, `example`, `mode`, `title`, `variantOf`, `timeline`. |
+| `learn/public/examples/blender-ui.json` | pipeline, leyendo Blender | Pestañas de Properties, menú Add Modifier completo, campos de cada modificador (etiqueta, tipo, valor por defecto, unidad, rango), paneles del Object tab. |
+| `learn/public/examples/<module>/<example>/timeline.json` | pipeline | El timeline de la lección (abajo). |
+| `learn/public/examples/<module>/<example>/step-NN.glb` | pipeline + `gltf-transform draco` | Malla evaluada de cada paso que cambia la geometría. |
+| `tests/fixtures/learn/<module>/<example>/step-NN.png` | pipeline | Render de Blender de las normales de cada malla, para la prueba Blender vs three.js. No se publica. |
 
 ## 1. IDs semánticos
 
-Cada control o acción tocable tiene un ID único: un string plano con
-puntos, `<namespace>.<objetivo>.<propiedad>`.
+Cada control o acción que se puede tocar tiene un ID único: un string plano con puntos, `<namespace>.<objetivo>.<propiedad>`.
 
-Namespaces fijos para el módulo de Modificadores:
+- `panel.properties.<pestaña>`: pestañas de Properties (ej. `panel.properties.modifier`).
+- `modifier.add_menu`, `modifier.add_menu.<categoría>`: el botón Add Modifier y sus categorías.
+- `modifier.<tipo>.add`: elemento del menú que agrega ese modificador.
+- `modifier.<tipo>`: la tarjeta del modificador en la pila.
+- `modifier.<tipo>.<campo>`: un campo (ej. `modifier.bevel.amount`, que en RNA es `width`).
+- `object.*`: reservado para seleccionar objetos.
 
-- `panel.*` — pestañas/paneles (ej. `panel.properties.modifier`).
-- `object.*` — selección de objeto en el viewport/outliner.
-- `modifier.*` — un modificador concreto (ej. `modifier.bevel.amount`).
+No hay índice de instancia: cada tipo de modificador aparece una vez por ejemplo.
 
-Sin índice de instancia: cada tipo de modificador aparece como máximo una
-vez por ejemplo en los tres ejemplos conocidos (taza, cadena/cerca, cabeza
-simétrica). Si un ejemplo futuro necesita dos modificadores del mismo
-tipo, se añade un índice (`modifier.subsurf_1.levels`) en ese momento, no
-antes.
-
-## 2. Esquema del timeline JSON
-
-Un archivo JSON por ejemplo:
+## 2. Timeline JSON
 
 ```json
 {
   "blenderVersion": "5.3.0",
   "module": "modifiers",
   "example": "cup",
-  "steps": [ /* ver abajo */ ]
+  "mode": "watch",
+  "title": "Low-poly cup",
+  "object": "Cup",
+  "initial": { "panel": "panel.properties.object", "camera": { "...": "..." }, "text": "…", "mesh": "step-00.glb" },
+  "steps": [ { "...": "..." } ],
+  "outro": "Done: Solidify → Bevel → Subdivision Surface…"
 }
 ```
 
-- `blenderVersion`: versión exacta usada para grabar el ejemplo (requisito
-  de la spec para saber qué regrabar si cambia Blender).
-- `module` / `example`: solo organización de archivos.
+- `mode`: `watch` (Ver) o `your-turn`. Una práctica lleva `variantOf` con el ejemplo que imita.
+- `initial`: el estado antes del primer paso: pestaña activa, cámara, texto y malla.
 
-Cada entrada de `steps` tiene esta forma:
+Cada paso:
 
 ```json
 {
   "id": "modifier.bevel.amount",
   "action": "set_value",
-  "value": 0.05,
+  "modifier": "BEVEL",
+  "value": 0.02,
   "value_type": "number",
+  "step": 0.01,
   "shortcut": null,
-  "duration": 1.0,
+  "duration": 2.2,
   "autoAdvance": false,
-  "fallable": true,
-  "camera": { "position": [0, -4, 2], "target": [0, 0, 1], "fov": 50 },
-  "text": "Set the bevel amount.",
-  "mesh": "step-03.glb"
+  "camera": { "position": [0.95, -1.25, 1.3], "target": [0.12, -0.18, 0.78], "fov": 30 },
+  "text": "Lower Amount to 0.02 m for a thin, clean edge.",
+  "help": "Amount is right below Width Type in the Bevel panel.",
+  "mesh": "step-05.glb"
 }
 ```
-
-Campos:
 
 | Campo | Tipo | Notas |
 | --- | --- | --- |
 | `id` | string | Ver sección 1. |
-| `action` | enum | `add_modifier`, `set_value`, `apply_modifier`, `select_panel`, `select_object`. |
-| `value` | `number \| string \| boolean \| null` | El valor final de la acción. `null` cuando la acción no tiene valor que verificar (`apply_modifier`, `select_panel`, `select_object`). `add_modifier` lleva el nombre del modificador como string (ej. `"Bevel"`); `set_value` lleva el número (o booleano si es un toggle, ej. "Clamp Overlap" de Bevel). |
-| `value_type` | `"number" \| "string" \| "boolean" \| null` | Explícito; evita que el validador de "Your turn" tenga que inferir el tipo. `null` junto con `value: null`. |
-| `shortcut` | `string \| null` | Solo para mostrar (ej. `"Ctrl+1"`). Nunca se exige su uso. |
-| `duration` | number (segundos) | Cuánto se queda el paso en pantalla en reproducción automática antes de avanzar al siguiente, si `autoAdvance` lo permite. En modo manual, es la duración de la animación del cursor/resaltado dentro del paso. |
-| `autoAdvance` | boolean | `true` solo en pasos de navegación pura (`fallable: false`): avanzan solos hacia adelante sin esperar clic. En cualquier otro caso, el modo "Ver" espera un clic del alumno por defecto (hay una opción de autoplay que usa `duration` como temporizador para todos los pasos). |
-| `fallable` | boolean | `false` en pasos de navegación pura — no cuentan como intento en "Your turn". `true` en el resto. |
-| `camera` | objeto | `position` y `target` en coordenadas de Blender (eje Z arriba), más `fov` en grados. Tomados de la cámara real de Blender en ese frame. Sin roll de cámara en estos ejemplos. |
-| `text` | string (inglés) | Texto explicativo mostrado al alumno. |
-| `mesh` | `string \| null` | Nombre del archivo `.glb` de este paso (ver sección 3). Ausente/`null` cuando el paso no cambia la malla — el visor reusa la del último paso que sí tuvo `mesh`. |
+| `action` | enum | `select_panel`, `add_modifier`, `set_value` (en uso); `apply_modifier`, `select_object` (reservados). |
+| `modifier` | string | Tipo RNA del modificador (`SOLIDIFY`, `BEVEL`, `SUBSURF`) en `add_modifier` y `set_value`. |
+| `value` / `value_type` | `number`/`string`/`boolean`/`null` | `add_modifier` lleva el texto del menú (ej. `"Subdivision Surface"`); `set_value` el número; `select_panel` lleva `null`. |
+| `step` | number | Solo en `set_value`. Es el paso fijo del slider: la UI lo usa para ◀ ▶ y el arrastre, y la validación compara `round(valor/step)`. |
+| `shortcut` | `{ keys, context }` o `null` | Atajo del keymap por defecto de Blender 5.3 (ej. `{"keys": ["Shift", "A"], "context": "Properties editor · Modifiers tab"}`). Solo se muestra. |
+| `duration` | number (s) | En autoplay, el tiempo que el paso queda en pantalla después de su animación. |
+| `autoAdvance` | boolean | `true` en pasos de navegación pura: avanzan solos hacia adelante, pero el scrubber puede pararse en ellos. |
+| `camera` | objeto | `position` y `target` en coordenadas de Blender (Z arriba). `fov` es el ángulo vertical en grados de un render cuadrado. La UI convierte a Y arriba y abre el ángulo en pantallas verticales. |
+| `text` | string (inglés) | En Ver: qué pasa y por qué. En Your turn: la tarea. |
+| `help` | string o `null` | Explicación breve de "Show me" en Your turn. |
+| `mesh` | string o `null` | `step-NN.glb` si el paso cambia la malla. Si es `null`, se reutiliza la última malla. |
 
-Importante: todo paso, incluidos los de navegación pura con
-`autoAdvance: true`, sigue siendo una entrada individual y direccionable
-del arreglo `steps`. "Avanza solo" únicamente describe el comportamiento
-en reproducción hacia adelante; al pausar y usar el scrubber, el alumno
-puede detenerse exactamente en esos pasos igual que en cualquier otro.
+## 3. Malla por paso
 
-## 3. Entrega de malla por paso
+- Un `.glb` por paso que cambia la geometría (`step-NN.glb`, NN = índice del paso; `00` es el inicial). Es un snapshot completo, nunca un delta.
+- El pipeline exporta en dos pasos: `bpy` exporta glTF sin comprimir y `gltf-transform` aplica Draco. El pipeline vuelve a leer cada archivo y falla si no tiene `KHR_draco_mesh_compression` (`bpy` reporta éxito aunque no comprima).
+- three.js solo muestra la malla; nunca recalcula modificadores. Se usa la evaluación de viewport (`Levels Viewport`), que es la que aplica el exportador.
 
-- Un archivo `.glb` por paso que cambia la malla, nombrado `step-NN.glb`
-  (NN con dos dígitos, ej. `step-02.glb`), exportado por `bpy` y
-  comprimido con `gltf-transform draco` (pipeline confirmado en el
-  ticket [#11](https://github.com/RubenDarioMena/Drafty3D/issues/11)).
-- Cada malla es un snapshot completo y acumulado del estado en ese punto,
-  nunca un delta. three.js solo la muestra; nunca recalcula modificadores.
-- El timeline JSON referencia el archivo explícitamente por el campo
-  `mesh` de cada paso — nunca se infiere por posición en el arreglo, para
-  poder reordenar pasos sin romper referencias.
+## 4. Mapeo de ID a control
 
-## 4. Mapeo de ID a control en la UI
+- Cada elemento lleva `data-control="<id>"` (misma convención que `data-copy`/`data-editor` en el repo).
+- GSAP localiza el elemento con `querySelector('[data-control="<id>"]')` + `getBoundingClientRect()`. Nunca se graban coordenadas de pantalla.
 
-- Atributo dedicado `data-control="<id>"` en el elemento DOM del control
-  (slider, botón, pestaña), siguiendo la misma convención ya usada en el
-  repo (`data-copy` para i18n, `data-editor` para qué editor abrir) en
-  vez de un `data-id` genérico.
-- GSAP localiza el elemento con
-  `document.querySelector('[data-control="<id>"]')` y
-  `getBoundingClientRect()` para animar el cursor — nunca se registran
-  coordenadas de pantalla en el pipeline.
+## Cambios desde #7
 
-## IDs conocidos para el ejemplo de la taza
-
-```
-panel.properties.modifier
-modifier.bevel.add
-modifier.bevel.amount
-modifier.bevel.segments
-modifier.solidify.add
-modifier.solidify.thickness
-modifier.subsurf.add
-modifier.subsurf.levels
-```
-
-(Orden real de modificadores: Bevel → Solidify → Subdivision — confirmado
-por investigación en [#11](https://github.com/RubenDarioMena/Drafty3D/issues/11):
-aplicar bevel después de subdivision lo anula o explota el conteo de
-vértices. El resto del timeline exacto, incluyendo si la taza aplica el
-stack al final con `modifier.*.apply`, se define al escribir el script
-real de Blender.)
+- Se quitó `fallable`: con el candado de combinación de #8 ya no se cuentan intentos.
+- Se agregaron `step`, `help`, `modifier`, `initial`, `outro`, `mode`, `title`, `object` y `variantOf`.
+- `shortcut` pasó de string a `{ keys, context }`, porque el atajo depende del editor donde está el ratón en Blender.
+- Se definió qué significan `fov` y `duration`.
+- Nuevo `blender-ui.json`: la UI no escribe a mano etiquetas, menús ni valores por defecto.

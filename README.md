@@ -6,6 +6,7 @@ El espacio de diseño es la pantalla principal del sitio. Ahí puedes organizar 
 | --- | --- | --- |
 | **Espacio de diseño** | Proyectos, archivos y tres editores integrados | `/` (también disponible en `/workspace/`) |
 | **SolidCraft** | Paquete web oficial 0.18.3, alojado aquí | `/solidcraft/` |
+| **Drafty3D Learn** | Aprender la interfaz de Blender 5.3 (prototipo: Modificadores); también como APK sin conexión | `/learn/` |
 
 ## Local
 
@@ -34,6 +35,13 @@ En el entorno cloud con proxy, usar `NODE_USE_ENV_PROXY=1` con una versión de N
 El dashboard está disponible en `/` (y también en `/workspace/`, que sirve el mismo contenido para no romper enlaces antiguos). Los tres editores abren y exportan archivos aunque Supabase esté pendiente de configurar. Con una cuenta puedes subir originales, guardar nuevas versiones, restaurar una anterior como una versión adicional y descargar un respaldo ZIP con un manifiesto. El inicio de sesión se hace con correo y contraseña y se repite al recargar o abrir otra pestaña.
 
 Consulta la [guía del portal](docs/PORTAL.md) para activar Supabase en el entorno elegido, conocer los formatos y revisar el alcance de Blockbench, Graphite y FreeCAD Web.
+
+## Drafty3D Learn
+
+Módulo para aprender la interfaz de Blender con ejemplos reales: Blender 5.3 (`bpy`) graba cada paso y three.js solo lo muestra. Es el mismo build en `/learn/`, en la vista previa de githack y en el APK de Android (Capacitor), que se publica en GitHub Releases. Para probarlo, ver las decisiones y regenerar ejemplos: [guía de Drafty3D Learn](docs/learn/README.md). Contrato de datos: [docs/learn/PIPELINE_CONTRACT.md](docs/learn/PIPELINE_CONTRACT.md).
+
+- `npm run build:learn` compila solo `/learn/` en `dist/learn`.
+- `npm run learn:examples` regenera los ejemplos (requiere el entorno `bpy` descrito en la guía).
 
 ## Memoria y archivos
 
