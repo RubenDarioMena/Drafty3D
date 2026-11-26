@@ -7,9 +7,9 @@
   <meta name="description" content="Learn Blender's interface in short, offline sessions. Unofficial, not affiliated with the Blender Foundation.">
   <link rel="icon" href="data:,">
   <title>Drafty3D Learn – for Blender users</title>
-  <script type="module" crossorigin src="./assets/index-BtqFwPu3.js"></script>
-  <link rel="modulepreload" crossorigin href="./assets/viewer-Bvrd51jF.js">
-  <link rel="stylesheet" crossorigin href="./assets/index-WD2N2gpD.css">
+  <script type="module" crossorigin src="./assets/index-BmTCwmQh.js"></script>
+  <link rel="modulepreload" crossorigin href="./assets/viewer-B3p3VUOj.js">
+  <link rel="stylesheet" crossorigin href="./assets/index-S0Lm7N8g.css">
 </head>
 <body>
   <div id="app">
@@ -25,10 +25,7 @@
         <p>Learn Blender's interface in short sessions. Watch a real piece being built, then build a variant yourself. No account needed; the Android app works fully offline.</p>
         <p class="legal">Unofficial. Not affiliated with the Blender Foundation.</p>
       </section>
-      <section class="module" aria-labelledby="module-modifiers">
-        <header><h2 id="module-modifiers">Modifiers</h2><span class="version" id="blender-version"></span></header>
-        <ul id="lesson-list" class="lesson-list"></ul>
-      </section>
+      <div id="modules"></div>
       <footer class="home-footer">
         <a id="workspace-link" href="../">← Drafty3D</a>
         <button type="button" id="about-open" class="link-button">About &amp; licenses</button>
@@ -38,7 +35,7 @@
     <main id="lesson" class="lesson" hidden>
       <section class="viewport" aria-label="3D Viewport">
         <canvas id="viewport-canvas"></canvas>
-        <div class="viewport-header" aria-hidden="true"><span>Object Mode</span><span id="object-name"></span></div>
+        <div class="viewport-header" aria-hidden="true"><span id="viewport-mode">Object Mode</span><span id="object-name"></span></div>
         <p class="orbit-hint" id="orbit-hint" hidden>Drag to orbit · two fingers to pan · pinch to zoom</p>
       </section>
 
@@ -46,6 +43,8 @@
         <nav class="tabs" id="tabs" aria-label="Properties tabs"></nav>
         <div class="panel" id="panel"></div>
       </section>
+
+      <section class="sculpt-tools" id="sculpt-tools" aria-label="3D Viewport tool settings"></section>
 
       <section class="lesson-bar" id="lesson-bar" aria-live="polite">
         <div class="step-copy">
