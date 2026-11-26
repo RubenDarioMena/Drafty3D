@@ -1,200 +1,201 @@
-# Drafty3D Learn: mapa de módulos de Blender
+# Drafty3D Learn: ruta de principiante a intermedio en Blender
 
-Lo esencial para pasar de cero a hacer y mostrar un modelo propio en Blender 5.3, en el orden en que conviene aprenderlo. Los nombres de Blender van en inglés, como en la app.
+## El horizonte
 
-**Marcadores:** ✅ ya está en la app (con lección Ver + Your turn verificada contra Blender) · 🟡 parcial (aparece en la app pero no se enseña completo) · ⬜ pendiente.
+Al terminar la ruta, una persona que nunca abrió Blender puede **hacer de principio a fin un objeto o un personaje sencillo**:
 
-La columna "Qué pide a la app" dice qué hay que construir además de grabar lecciones; si está vacía, basta con el pipeline actual.
+1. modelarlo (con piezas, editando su forma, con modificadores o esculpiendo),
+2. darle materiales y colores,
+3. iluminarlo, encuadrarlo con una cámara y sacar una imagen final (render),
+4. animarlo un poco (que gire, rebote o se mueva),
+5. guardarlo y exportarlo (por ejemplo, para imprimir en 3D o mostrarlo en la web).
 
-## Resumen
+Eso es lo que llamamos **intermedio**. **Principiante completo** es llegar hasta el punto 3 con objetos sencillos. Lo que queda fuera de la ruta está al final: simulaciones, pelo, rigging de personajes completo, programación y otros temas avanzados.
 
-| # | Módulo | Estado | Lecciones hoy |
-| --- | --- | --- | --- |
-| 1 | Interfaz y navegación | 🟡 | (dentro de las otras) |
-| 2 | Object Mode: crear y transformar | ⬜ | — |
-| 3 | Edit Mode: modelado | ⬜ | — |
-| 4 | Modifiers | 🟡 | Low-poly cup, bowl, twisted column, twisted candle |
-| 5 | Sculpting | 🟡 | Pebble buddy, sleepy buddy, horned buddy, antenna bug, craggy rock, split boulder |
-| 6 | Materials y shading | ⬜ | — |
-| 7 | UV y texturas | ⬜ | — |
-| 8 | Luces, cámara y render | ⬜ | — |
-| 9 | Animación | ⬜ | — |
-| 10 | Rigging y Weight Paint | ⬜ | — |
-| 11 | Curves y Text | ⬜ | — |
-| 12 | Geometry Nodes (introducción) | ⬜ | — |
-| 13 | Archivos, import / export | ⬜ | — |
+## Cómo leer este documento
 
-Módulos 1 a 8 son el núcleo para un principiante; 9 a 13 vienen después.
+- La ruta tiene **9 niveles**. Cada nivel tiene una meta ("al terminar puedes…"), sus **lecciones** y un **proyecto final** que junta todo lo del nivel.
+- Cada lección de la lista es una **pareja**: una lección **Ver** (la app lo hace paso a paso) y su **Your turn** (la persona lo repite con otros valores). Así son las que ya existen.
+- Marcadores: ✅ ya está en la app y verificada contra Blender · 🟡 parcial · ⬜ falta.
+- Los nombres de Blender van en inglés y en negritas, porque así aparecen en el programa. Al lado hay una explicación en palabras simples.
 
-## 1. Interfaz y navegación
+## Progreso
 
-| Estado | Tema | Qué pide a la app |
+| Nivel | Tema | Etapa | Lecciones | Hechas |
+| --- | --- | --- | --- | --- |
+| 1 | Moverse y crear | Principiante | 6 | 0 |
+| 2 | Dar forma (modelado) | Principiante | 8 | 0 |
+| 3 | Modificadores | Principiante | 8 | 2 |
+| 4 | Escultura | Principiante | 8 | 3 |
+| 5 | Materiales, luz y render | Principiante | 8 | 0 |
+| | **Principiante completo** | | **38** | **5** |
+| 6 | Texturas | Intermedio | 6 | 0 |
+| 7 | Animación | Intermedio | 5 | 0 |
+| 8 | Curvas, texto y nodos | Intermedio | 5 | 0 |
+| 9 | Articular objetos (rigging básico) | Intermedio | 4 | 0 |
+| | **Intermedio (horizonte)** | | **58** | **5 (≈ 9 %)** |
+
+Lo hecho hasta ahora está en los niveles 3 y 4 porque eran los que la app podía enseñar con lo que ya sabía hacer. El orden de **aprendizaje** empieza en el nivel 1; el orden en que conviene **construir** está en "Qué sigue" al final.
+
+---
+
+## Etapa principiante
+
+### Nivel 1 · Moverse y crear
+
+**Al terminar puedes:** moverte por una escena 3D, crear objetos básicos (cubos, esferas, cilindros) y acomodarlos con medidas exactas para armar algo simple.
+
+| | Lección | Qué aprendes |
 | --- | --- | --- |
-| ✅ | Girar, mover y hacer zoom en la vista (con el dedo; en Blender, ratón) | |
-| ✅ | Properties editor y sus pestañas (Modifier) | |
-| ✅ | Selector de modo (Object / Sculpt) | |
-| ✅ | Atajos del keymap por defecto mostrados en cada paso | |
-| ⬜ | Vistas numpad (Front, Top, Side) y perspectiva / ortográfica | Botones de vista en el viewport |
-| ⬜ | Outliner: ver, ocultar y seleccionar objetos | Panel Outliner leído de Blender |
-| ⬜ | Workspaces y editores (Layout, Modeling, Sculpting, Shading…) | Pestañas de workspace |
-| ⬜ | Viewport shading: Wireframe, Solid, Material Preview, Rendered | Modos de sombreado en three.js |
-| ⬜ | 3D cursor y pivot point | Mostrar el cursor 3D |
-| ⬜ | Header menus (View, Select, Add, Object) | Hoy solo se muestran, no se abren |
+| 🟡 | 1.1 Mirar la escena | Girar, acercar y mover la vista; ver de frente, de arriba y de lado. La app ya deja girar la vista con el dedo, pero no hay lección. |
+| ⬜ | 1.2 Crear objetos | **Add → Mesh**: crear un cubo, una esfera o un cilindro y ajustar su tamaño y número de lados justo después de crearlo. |
+| ⬜ | 1.3 Mover, girar y escalar | **Move / Rotate / Scale** (G, R, S), en un solo eje y con números exactos. Es lo que más se usa en Blender. |
+| ⬜ | 1.4 Duplicar y ordenar | **Duplicate**, la lista de objetos (**Outliner**) y agrupar en **Collections**. |
+| 🟡 | 1.5 Los modos de Blender | **Object Mode** (mover objetos completos), **Edit Mode** (cambiar su forma) y **Sculpt Mode** (esculpir). El cambio a Sculpt Mode ya se enseña dentro de las lecciones de escultura. |
+| ⬜ | **Proyecto 1: una mesa con sillas hecha de bloques** | Todo junto: crear cajas y cilindros, medirlos, duplicarlos y acomodarlos. |
 
-## 2. Object Mode: crear y transformar
+### Nivel 2 · Dar forma (modelado)
 
-| Estado | Tema | Qué pide a la app |
+**Al terminar puedes:** tomar un objeto simple y transformarlo en otro editando sus partes: puntos (vértices), líneas (aristas) y caras. Es la forma más común de modelar objetos.
+
+| | Lección | Qué aprendes |
 | --- | --- | --- |
-| ⬜ | Add → Mesh: Cube, UV Sphere, Cylinder, Plane… y el panel "Adjust Last Operation" | Acción `add_object`, panel de operador |
-| ⬜ | Seleccionar uno y varios objetos, objeto activo | Selección en three.js (acción `select_object` ya reservada en el contrato) |
-| ⬜ | Move / Rotate / Scale (G, R, S) con eje (X, Y, Z) y valores escritos | Gizmo y panel N (Transform) |
-| ⬜ | Apply Transforms (Ctrl A) y origen del objeto | |
-| ⬜ | Duplicate (Shift D) y Linked Duplicate (Alt D) | |
-| ⬜ | Snapping (incremento, vértice, cara) | |
-| ⬜ | Parent (Ctrl P) y Collections | Outliner |
-| ⬜ | Shade Smooth / Shade Auto Smooth | |
+| ⬜ | 2.1 Puntos, líneas y caras | Seleccionar vértices, aristas y caras, y anillos completos de ellas. |
+| ⬜ | 2.2 Sacar volumen | **Extrude**: jalar una cara hacia afuera para que salga una pieza nueva (patas, brazos, asas). |
+| ⬜ | 2.3 Huecos y marcos | **Inset** + **Extrude** hacia adentro: hacer una caja, una ventana o un cajón. |
+| ⬜ | 2.4 Más detalle donde hace falta | **Loop Cut**: agregar cortes para poder doblar o dar forma a una zona. |
+| ⬜ | 2.5 Bordes redondeados | **Bevel** de aristas, el mismo efecto que el modificador pero solo donde lo eliges. |
+| ⬜ | 2.6 Cortar y unir | **Knife** para cortar a mano, **Merge** para juntar puntos y **Fill** para tapar huecos. |
+| ⬜ | 2.7 Mover suave | **Proportional Editing**: mover un punto y que los vecinos lo sigan, como tela. |
+| ⬜ | **Proyecto 2: una taza con asa** | Cilindro → hueco con Inset y Extrude → asa con Extrude → bordes con Bevel. |
 
-## 3. Edit Mode: modelado
+### Nivel 3 · Modificadores
 
-El módulo más grande y el más pedido para modelar piezas. La app hoy no edita componentes.
+**Al terminar puedes:** usar efectos que se apilan sobre un objeto (grosor, bordes redondos, suavizado, torcer, repetir, espejo, cortes) y cambiarlos en cualquier momento sin rehacer el modelo. Entiendes que el **orden** de la pila cambia el resultado.
 
-| Estado | Tema | Qué pide a la app |
+| | Lección | Qué aprendes |
 | --- | --- | --- |
-| ⬜ | Modos de selección: vértice, arista, cara (1, 2, 3) | Dibujar y tocar vértices / aristas / caras sobre la malla |
-| ⬜ | Seleccionar loops (Alt clic), todo, invertir | |
-| ⬜ | Extrude (E) | Grabar operadores de Edit Mode; malla con topología cambiante (sin morph vértice a vértice) |
-| ⬜ | Inset (I) | |
-| ⬜ | Bevel de aristas (Ctrl B) | |
-| ⬜ | Loop Cut and Slide (Ctrl R) | |
-| ⬜ | Knife (K) | Trazo sobre la malla (ya existe para escultura) |
-| ⬜ | Merge (M), Fill (F), Bridge Edge Loops | |
-| ⬜ | Proportional Editing (O) | |
-| ⬜ | Normales: ver y recalcular (Shift N) | |
-| ⬜ | Delete / Dissolve | |
+| ✅ | 3.1 Taza low-poly | **Solidify** (dar grosor), **Bevel** (redondear bordes), **Subdivision Surface** (suavizar), y por qué van en ese orden. *Low-poly cup* → *Your turn: bowl*. |
+| ✅ | 3.2 Columna torcida | **Bevel** + **Simple Deform** (torcer) y su eje. *Twisted column* → *Your turn: twisted candle*. |
+| ⬜ | 3.3 Modelar solo la mitad | **Mirror**: lo que haces de un lado aparece del otro. Clave para objetos y personajes simétricos. |
+| ⬜ | 3.4 Repetir piezas | **Array**: una escalera, una cerca o una cadena a partir de una sola pieza. |
+| ⬜ | 3.5 Cortes y agujeros | **Boolean**: restar, sumar o cruzar dos objetos (por ejemplo, el agujero de un tornillo). |
+| ⬜ | 3.6 Doblar a lo largo de una curva | **Curve** y **Lattice**: deformar un objeto con una guía. |
+| ⬜ | 3.7 Ordenar y aplicar | Reordenar, apagar y **Apply** (volver el efecto parte fija del modelo). |
+| ⬜ | **Proyecto 3: una lámpara de mesa** | Mirror para el cuerpo, Array para detalles, Solidify en la pantalla, Subdivision para suavizar. |
 
-## 4. Modifiers
+### Nivel 4 · Escultura
 
-| Estado | Tema | Qué pide a la app |
+**Al terminar puedes:** modelar formas orgánicas (personajes, criaturas, rocas) como si fuera barro, con pinceles, y controlar el nivel de detalle.
+
+| | Lección | Qué aprendes |
 | --- | --- | --- |
-| ✅ | Add Modifier (menú leído de Blender) | |
-| ✅ | Orden del stack (Solidify → Bevel → Subdivision; Bevel → Simple Deform) | |
-| ✅ | **Solidify**: Thickness | |
-| ✅ | **Bevel**: Amount, Segments | |
-| ✅ | **Subdivision Surface**: Levels Viewport | |
-| ✅ | **Simple Deform**: Twist, Axis, Angle | |
-| 🟡 | Campos que se ven pero aún no se enseñan (Offset, Limit Method, Render levels, Bend / Taper / Stretch…) | |
-| ⬜ | **Mirror**: eje, Clipping, Bisect | Fila de botones booleanos X Y Z |
-| ⬜ | **Array**: Count, Relative Offset, Merge | Subpaneles abiertos (Relative Offset) |
-| ⬜ | **Boolean**: Difference, Union, Intersect con otro objeto | Escenas con dos objetos y selector de objeto |
-| ⬜ | **Decimate** (Collapse, Planar) | |
-| ⬜ | **Displace**, **Cast**, **Smooth** | Texturas para Displace |
-| ⬜ | **Curve**, **Lattice**, **Shrinkwrap** | Objetos de control en escena |
-| ⬜ | **Screw**, **Skin**, **Remesh**, **Weld** | |
-| ⬜ | **Wireframe** | Probado y descartado por ahora: con el grosor por defecto la verificación no distingue error de antialiasing. Hace falta otra forma de verificar piezas delgadas |
-| ⬜ | Apply, duplicar, mover y desactivar modificadores (ojo / pantalla) | Acción `apply_modifier` ya reservada |
+| ✅ | 4.1 Primeros pinceles | **Grab** (jalar), **Draw** (subir o tallar), **Smooth** (suavizar), con tamaño, fuerza, + / − y espejo. *Pebble buddy* → *Your turn: sleepy buddy*. |
+| ✅ | 4.2 Formas que salen | **Snake Hook** (estirar cuernos o antenas), **Inflate** (inflar), **Crease** (líneas marcadas). *Horned buddy* → *Your turn: antenna bug*. |
+| ✅ | 4.3 Superficies duras | **Clay Strips** (capas de barro), **Scrape** (aplanar), **Draw Sharp** (grietas). *Craggy rock* → *Your turn: split boulder*. |
+| ⬜ | 4.4 Proteger zonas | **Mask**: pintar lo que no se debe tocar y esculpir solo el resto. |
+| ⬜ | 4.5 Mover partes grandes | **Pose** y **Elastic Deform**: girar una cabeza o estirar un brazo sin deformarlo. |
+| ⬜ | 4.6 Más detalle donde haga falta | **Remesh**: rehacer la malla para tener detalle parejo después de estirar mucho. |
+| ⬜ | 4.7 Detalle fino | **Multiresolution**: arrugas y texturas finas sin perder la forma base. |
+| ⬜ | **Proyecto 4: cabeza de personaje estilizado** | Forma base con Grab y Snake Hook, rasgos con Draw y Crease, protección con Mask y detalle con Multiresolution. |
 
-## 5. Sculpting
+### Nivel 5 · Materiales, luz y render
 
-| Estado | Tema | Qué pide a la app |
+**Al terminar puedes:** hacer que un modelo se vea terminado: colores y materiales (plástico, metal, vidrio), luces, una cámara bien colocada, una imagen final guardada y el archivo exportado.
+
+| | Lección | Qué aprendes |
 | --- | --- | --- |
-| ✅ | Entrar a Sculpt Mode | |
-| ✅ | Brush asset shelf con todos los pinceles de Blender | |
-| ✅ | Size, Strength, + / −, simetría X | |
-| ✅ | **Grab**, **Draw**, **Smooth** | |
-| ✅ | **Snake Hook**, **Inflate/Deflate**, **Crease Polish** | |
-| ✅ | **Clay Strips**, **Scrape/Fill**, **Draw Sharp** | |
-| 🟡 | Simetría Y y Z (botones visibles, sin lección) | |
-| ⬜ | **Mask** (M) y operaciones de máscara (invertir, limpiar) | Mostrar la máscara sobre la malla |
-| ⬜ | **Pinch/Magnify**, **Flatten/Contrast**, **Layer**, **Blob**, **Clay**, **Clay Thumb** | |
-| ⬜ | **Elastic Deform**, **Pose**, **Thumb**, **Rotate**, **Boundary** | Ya soportados como pinceles de arrastre en el grabador |
-| ⬜ | Falloff (curva), Stroke Method (Space, Dots, Line) | Más campos del header / panel de herramienta |
-| ⬜ | Face Sets | Colores de face sets en la vista |
-| ⬜ | **Remesh** (voxel, R) y **Dyntopo** | Cambian la topología: la app tendría que cortar en vez de animar vértice a vértice |
-| ⬜ | **Multiresolution** (modificador) | |
-| ⬜ | Matcaps y cavity en la vista de escultura | Shading en three.js |
+| ⬜ | 5.1 Primer material | **Principled BSDF**: color, qué tan brillante o mate (**Roughness**) y si es metal (**Metallic**). |
+| ⬜ | 5.2 Varios materiales | Dos o más materiales en un solo objeto (la taza por fuera y por dentro). |
+| ⬜ | 5.3 Luces | **Point**, **Sun**, **Spot** y **Area**; iluminación de tres puntos. |
+| ⬜ | 5.4 Cámara | Poner la cámara, encuadrar y elegir el lente. |
+| ⬜ | 5.5 La imagen final | **Render**: **EEVEE** (rápido) contra **Cycles** (realista), calidad y guardar la imagen. |
+| ⬜ | 5.6 El fondo | **World**: color o foto 360° (HDRI) que ilumina la escena. |
+| ⬜ | 5.7 Guardar y exportar | Guardar bien el archivo y exportar a **STL** (impresión 3D) o **glTF** (web). |
+| ⬜ | **Proyecto 5: foto de producto** | La taza o la lámpara con materiales, tres luces, cámara y render final. **Aquí termina la etapa principiante.** |
 
-## 6. Materials y shading
+---
 
-| Estado | Tema | Qué pide a la app |
+## Etapa intermedia
+
+### Nivel 6 · Texturas
+
+**Al terminar puedes:** poner imágenes y patrones sobre un modelo (madera, etiquetas, desgaste) y crear materiales con nodos.
+
+| | Lección | Qué aprendes |
 | --- | --- | --- |
-| ⬜ | Material Properties: nuevo material, varios materiales por objeto, asignar a caras | Pestaña Material; color en three.js |
-| ⬜ | **Principled BSDF**: Base Color, Metallic, Roughness, Alpha, Emission | Verificación por color, no solo normales |
-| ⬜ | Shader Editor: nodos básicos (Image Texture, ColorRamp, Mix) | Editor de nodos (grande) |
-| ⬜ | Material Preview vs Rendered | |
+| ⬜ | 6.1 Desdoblar el modelo | **UV Unwrap** con costuras (**seams**): extender el modelo en plano, como el patrón de una prenda. |
+| ⬜ | 6.2 Poner una imagen | **Image Texture**: una etiqueta o una foto de madera sobre el modelo. |
+| ⬜ | 6.3 Materiales con nodos | **Shader Editor**: conectar cajitas (nodos) para mezclar colores y patrones. |
+| ⬜ | 6.4 Patrones sin imágenes | **Noise** y **ColorRamp**: manchas, mármol, óxido. |
+| ⬜ | 6.5 Pintar sobre el modelo | **Texture Paint**: pintar directo en 3D. |
+| ⬜ | **Proyecto 6: un cofre de madera** | UV, textura de madera, metal en las esquinas y desgaste. |
 
-## 7. UV y texturas
+### Nivel 7 · Animación
 
-| Estado | Tema | Qué pide a la app |
+**Al terminar puedes:** hacer animaciones cortas: un objeto que gira para mostrarse, una pelota que rebota, una cámara que se mueve.
+
+| | Lección | Qué aprendes |
 | --- | --- | --- |
-| ⬜ | Marcar seams y Unwrap | Edit Mode (módulo 3) |
-| ⬜ | UV Editor: mover islas, escala | Segundo editor 2D |
-| ⬜ | Smart UV Project | |
-| ⬜ | Image Texture en el material | Módulo 6 |
-| ⬜ | Texture Paint | |
+| ⬜ | 7.1 Fotogramas clave | **Keyframes**: marcar dónde está algo en un momento y dejar que Blender complete el movimiento. |
+| ⬜ | 7.2 La línea de tiempo | **Timeline**: duración, velocidad y reproducción. |
+| ⬜ | 7.3 Movimiento natural | **Graph Editor**: acelerar y frenar suave en vez de moverse como robot. |
+| ⬜ | 7.4 Animar la cámara | Un giro alrededor del objeto (*turntable*) y exportarlo como video. |
+| ⬜ | **Proyecto 7: pelota que rebota** | Rebote con caída, aplastamiento al tocar el suelo y salida. |
 
-## 8. Luces, cámara y render
+### Nivel 8 · Curvas, texto y nodos
 
-| Estado | Tema | Qué pide a la app |
+**Al terminar puedes:** hacer cables, tubos y letras en 3D, y repartir muchos objetos automáticamente (piedras, pasto, tornillos).
+
+| | Lección | Qué aprendes |
 | --- | --- | --- |
-| ⬜ | Tipos de luz: Point, Sun, Spot, Area; potencia y color | Luces en three.js comparables |
-| ⬜ | World: color o HDRI | |
-| ⬜ | Cámara: poner, apuntar, ver por la cámara (Numpad 0), focal length | |
-| ⬜ | Render Engine: EEVEE vs Cycles, samples | |
-| ⬜ | Resolución y salida; Render Image (F12) y guardar | Mostrar el render de Blender como imagen |
+| ⬜ | 8.1 Curvas | **Bezier**: dibujar una curva y darle grosor para hacer un cable o un tubo. |
+| ⬜ | 8.2 Texto 3D | **Text**: escribir, cambiar la fuente y darle volumen. |
+| ⬜ | 8.3 Nodos de geometría | **Geometry Nodes**: repartir objetos sobre una superficie con reglas. |
+| ⬜ | 8.4 Variación | Tamaños y giros al azar para que no se vea repetido. |
+| ⬜ | **Proyecto 8: un letrero en un jardín** | Letras 3D sobre un poste, cable de curva y piedras repartidas con nodos. |
 
-## 9. Animación
+### Nivel 9 · Articular objetos (rigging básico)
 
-| Estado | Tema | Qué pide a la app |
+**Al terminar puedes:** ponerle "huesos" a un objeto para moverlo por partes, como una lámpara de escritorio con brazo o una cola que se dobla.
+
+| | Lección | Qué aprendes |
 | --- | --- | --- |
-| ⬜ | Keyframes (I) sobre Location / Rotation / Scale | Timeline y reproducción |
-| ⬜ | Timeline: frames, rango, reproducir | |
-| ⬜ | Graph Editor: interpolación y easing | Editor de curvas |
-| ⬜ | Dope Sheet | |
+| ⬜ | 9.1 Huesos | **Armature**: crear una cadena de huesos. |
+| ⬜ | 9.2 Unir huesos y modelo | **Parent** con pesos automáticos y **Weight Paint** para corregir qué parte sigue a qué hueso. |
+| ⬜ | 9.3 Posar y animar | **Pose Mode** y keyframes sobre los huesos. |
+| ⬜ | **Proyecto 9: lámpara articulada animada** | La lámpara del nivel 3 con huesos, que se asoma y mira a la cámara. **Aquí termina el horizonte.** |
 
-## 10. Rigging y Weight Paint
+---
 
-| Estado | Tema | Qué pide a la app |
+## Fuera del horizonte (avanzado)
+
+No entran en esta ruta: rigging de personaje completo (caras, dedos), simulaciones (tela, fluidos, fuego), pelo y partículas, **Compositing**, **Grease Pencil** (dibujo 2D en 3D), retopología profesional, bake de texturas y Python. Se pueden planear después como rutas aparte.
+
+---
+
+## Qué tiene que aprender a hacer la app
+
+Algunos niveles se pueden hacer solo grabando lecciones nuevas; otros piden construir piezas nuevas en la app. Esto es lo que decide el orden de trabajo.
+
+| Nivel | Qué falta construir | Tamaño |
 | --- | --- | --- |
-| ⬜ | Armature: huesos, Edit / Pose Mode | Esqueleto en three.js |
-| ⬜ | Parent con pesos automáticos | |
-| ⬜ | Weight Paint | Pintar pesos con trazo |
-| ⬜ | Inverse Kinematics | |
+| 3 Modificadores | Casi nada: Mirror y Array piden botones X Y Z y subpaneles abiertos; Boolean y Curve piden escenas con dos objetos. | Chico |
+| 4 Escultura | Mostrar la máscara sobre la malla. Remesh y Multiresolution cambian la malla entera, así que la app no podría animar el trazo punto por punto y tendría que cortar entre una malla y otra. | Chico a mediano |
+| 1 Moverse y crear | Seleccionar objetos tocándolos, flechas para moverlos (gizmo), panel de medidas, Outliner y varios objetos en escena. | Mediano |
+| 5 Materiales, luz y render | Colores y luces en la vista; la verificación contra Blender hoy compara formas, no colores. Mostrar el render de Blender como imagen. | Mediano |
+| 2 Modelado | Tocar puntos, líneas y caras sobre la malla y reproducir operaciones que agregan geometría. Es la pieza más grande y la más importante. | Grande |
+| 6 a 9 Intermedio | Editor de UV, editor de nodos, línea de tiempo y huesos. | Grande |
 
-## 11. Curves y Text
+Pendiente aparte: el modificador **Wireframe** se probó y se quitó, porque con alambres tan delgados la verificación contra Blender no distingue un error real del suavizado de bordes. Hace falta otra forma de verificar piezas delgadas.
 
-| Estado | Tema | Qué pide a la app |
-| --- | --- | --- |
-| ⬜ | Bezier: puntos y handles | |
-| ⬜ | Bevel / Extrude de la curva | |
-| ⬜ | Text: escribir, fuente, Extrude | |
+## Qué sigue
 
-## 12. Geometry Nodes (introducción)
+Propuesta de orden de construcción (no es el orden de aprendizaje):
 
-| Estado | Tema | Qué pide a la app |
-| --- | --- | --- |
-| ⬜ | Modificador Geometry Nodes y editor de nodos | Editor de nodos (compartido con módulo 6) |
-| ⬜ | Distribute Points on Faces + Instance on Points | |
-| ⬜ | Set Position, Transform Geometry | |
-
-## 13. Archivos, import / export
-
-| Estado | Tema | Qué pide a la app |
-| --- | --- | --- |
-| ⬜ | Guardar, Save As, autosave y recuperar | Solo explicación (no hay archivos en la app) |
-| ⬜ | Append / Link desde otro .blend | |
-| ⬜ | Export glTF, FBX, OBJ, STL (impresión 3D) | |
-| ⬜ | Import de referencias e imágenes | |
-
-## La app (no son módulos de Blender)
-
-| Estado | Tema |
-| --- | --- |
-| ✅ | Ver: paso a paso con cursor, resaltado, atajos, autoplay y deslizador |
-| ✅ | Your turn: candado de combinación con "Show me" y progreso guardado |
-| ✅ | Trazos que se repasan con el dedo sobre una guía |
-| ✅ | Verificación Blender vs three.js en cada paso de cada lección |
-| ✅ | Funciona sin conexión; APK de Android por workflow manual |
-| ⬜ | Recorrido de módulos con requisitos (no abrir Edit Mode antes de Object Mode) |
-| ⬜ | Textos de la app en español (hoy en inglés, como la interfaz de Blender) |
-| ⬜ | Verificación para piezas delgadas (alambres) y para materiales / color |
-| ⬜ | Topología cambiante (Edit Mode, Remesh, Dyntopo) en la reproducción |
+1. **Terminar el nivel 3** (Mirror, Array, Boolean, Curve, Apply y su proyecto). La app ya casi puede, y completa un nivel entero.
+2. **Terminar el nivel 4** (Mask y Pose primero; Remesh y Multiresolution después del cambio de reproducción).
+3. **Nivel 1** completo: es la puerta de entrada de la ruta, y su selección y gizmo se reutilizan en el nivel 2.
+4. **Nivel 2** (modelado): la pieza grande.
+5. **Nivel 5**: con esto queda la **etapa principiante completa**.
+6. Etapa intermedia, del nivel 6 al 9.
