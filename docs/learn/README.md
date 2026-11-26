@@ -2,6 +2,8 @@
 
 Prototipo con dos módulos y cinco parejas de lecciones (una para ver y su práctica). **Modificadores**: *Low-poly cup* → *Your turn: bowl*, y *Twisted column* → *Your turn: twisted candle*. **Sculpting**: *Pebble buddy* → *Your turn: sleepy buddy*, *Horned buddy* → *Your turn: antenna bug*, y *Craggy rock* → *Your turn: split boulder*. Todo funciona sin conexión: en el navegador y en el APK.
 
+El mapa de módulos de Blender, con lo que ya está y lo que falta, está en [ROADMAP.md](ROADMAP.md).
+
 > La app está en inglés, como Blender. Esta guía está en español porque es para revisar el producto.
 
 ## Cómo probarlo
