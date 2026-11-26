@@ -98,8 +98,11 @@ button { cursor: pointer; }
 .number.interactive button { color: var(--text); }
 .enum-row { display: flex; background: var(--field); border-radius: var(--radius); overflow: hidden; height: 26px; }
 .enum-row span { flex: 1; min-width: 0; display: block; line-height: 26px; text-align: center; font-size: 12px; padding: 0 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.enum-row span.on { background: var(--blue); }
+.enum-row span.on, .enum-row button.on { background: var(--blue); }
+.enum-row button { flex: 1; min-width: 0; border: 0; background: transparent; padding: 0 3px; font-size: 12px; white-space: nowrap; }
+.enum-row.interactive { background: var(--field-hover); }
 .dropdown { height: 26px; display: flex; align-items: center; justify-content: space-between; padding: 0 8px; background: #282828; border-radius: var(--radius); font-size: 13px; }
+.dropdown.pointer { justify-content: flex-start; gap: 8px; color: var(--muted); }
 .check { display: flex; align-items: center; gap: 6px; font-size: 13px; }
 .check .box { width: 15px; height: 15px; border-radius: 3px; background: var(--field); display: grid; place-items: center; font-size: 11px; }
 .check .box.on { background: var(--blue); }

@@ -72,9 +72,9 @@ Cada paso:
 | --- | --- | --- |
 | `id` | string | Ver sección 1. |
 | `action` | enum | `select_panel`, `add_modifier`, `set_value`, `set_mode`, `select_brush`, `set_direction`, `set_symmetry`, `stroke` (en uso); `apply_modifier`, `select_object` (reservados). |
-| `modifier` | string | Tipo RNA del modificador (`SOLIDIFY`, `BEVEL`, `SUBSURF`) en `add_modifier` y `set_value` de modificadores. Un `set_value` sin `modifier` cambia un campo del header de escultura. |
-| `value` / `value_type` | `number`/`string`/`boolean`/`null` | `add_modifier` lleva el texto del menú (ej. `"Subdivision Surface"`); `set_value` el número; `select_panel` lleva `null`. |
-| `step` | number | Solo en `set_value`. Es el paso fijo del slider: la UI lo usa para ◀ ▶ y el arrastre, y la validación compara `round(valor/step)`. |
+| `modifier` | string | Tipo RNA del modificador (`SOLIDIFY`, `BEVEL`, `SUBSURF`, `SIMPLE_DEFORM`) en `add_modifier` y `set_value` de modificadores. Un `set_value` sin `modifier` cambia un campo del header de escultura. |
+| `value` / `value_type` | `number`/`string`/`boolean`/`null` | `add_modifier` lleva el texto del menú (ej. `"Subdivision Surface"`); `set_value` el número (`value_type: "number"`) o, en un enum, el identificador RNA de la opción (`value_type: "enum"`, ej. `"Z"`); `select_panel` lleva `null`. |
+| `step` | number | Solo en `set_value` numérico (un enum no lleva `step`). Es el paso fijo del slider: la UI lo usa para ◀ ▶ y el arrastre, y la validación compara `round(valor/step)`. |
 | `shortcut` | `{ keys, context }` o `null` | Atajo del keymap por defecto de Blender 5.3 (ej. `{"keys": ["Shift", "A"], "context": "Properties editor · Modifiers tab"}`). Solo se muestra. |
 | `duration` | number (s) | En autoplay, el tiempo que el paso queda en pantalla después de su animación. |
 | `autoAdvance` | boolean | `true` en pasos de navegación pura: avanzan solos hacia adelante, pero el scrubber puede pararse en ellos. |
@@ -97,9 +97,10 @@ Cada paso:
 | `stroke` | `null` | Lleva `stroke` y `mesh`. |
 
 - `tool` (todos los pasos en Sculpt Mode): `{ brush, size, strength, direction, symmetry }` tal como Blender los reporta **después** del paso. `direction` es `null` si el pincel no tiene + / − (Grab), y vale `"SMOOTH"` en Smooth. `symmetry` es una lista de ejes (`["X"]`). Los valores son los efectivos del header: si el pincel usa tamaño unificado, `size` es el unificado.
-- `stroke`: `{ brush, brushType, path, points, radius, movedVertices }`.
+- `stroke`: `{ brush, brushType, drag, path, points, radius, movedVertices }`.
+  - `drag`: `true` en pinceles de arrastre (Grab, Snake Hook, Elastic Deform, Thumb, Pose, Rotate, Boundary). Sus `points` van sobre el plano de la profundidad inicial y la app anima el trazo de forma uniforme.
   - `path`: el recorrido en unidades de la vista de la lección: (0, 0) es el `target` de la cámara y 1 es media altura de la región.
-  - `points`: el mismo recorrido en coordenadas de Blender (~24 puntos sobre la superficie; en Grab, sobre el plano de la profundidad inicial).
+  - `points`: el mismo recorrido en coordenadas de Blender (~24 puntos sobre la superficie; en pinceles de arrastre, sobre el plano de la profundidad inicial).
   - `radius`: radio del pincel en metros a esa profundidad.
   - `movedVertices`: vértices que Blender movió. El pipeline falla si es 0.
 - El `camera` de un trazo es la vista con la que Blender lo grabó. La app la usa para que la guía caiga en el mismo lugar.
@@ -122,6 +123,12 @@ Cada paso:
 - `header`: `brush`, `size` y `strength` (`label`, `kind`, `unit`, `precision`, `softMin`, `softMax`, `shortcut`), `direction.items` y `symmetry.items`.
 - `shelf`: `{ id, tabs, groups, brushes: [{ id, name, tab, group, shortcut }] }`, leído de los catálogos de los pinceles de Blender (`essentials_brushes-mesh_sculpt.blend`). Los atajos salen del keymap "Sculpt" (`brush.asset_activate`).
 
+## Campos de modificador en `blender-ui.json`
+
+- `kind`: `float`, `int`, `bool`, `enum` o `pointer` (selector de objeto, como Origin; siempre vacío en las lecciones).
+- Los enums con `display: "expand"` se dibujan como fila de botones con `data-control="<id>.<opción en minúsculas>"`. Su etiqueta se oculta, salvo si el campo trae `labelled: true` (Axis de Simple Deform).
+- Los campos de ángulo (`unit: "°"`) traen `default`, `softMin` y `softMax` en grados.
+
 ## Cambios desde #7
 
 - Se quitó `fallable`: con el candado de combinación de #8 ya no se cuentan intentos.
@@ -130,3 +137,4 @@ Cada paso:
 - Se definió qué significan `fov` y `duration`.
 - Nuevo `blender-ui.json`: la UI no escribe a mano etiquetas, menús ni valores por defecto.
 - Escultura: acciones `set_mode`, `select_brush`, `set_direction`, `set_symmetry` y `stroke`; campos `tool` y `stroke`; `initial.mode` e `initial.tool`; sección `sculpt` en `blender-ui.json`; topología compartida entre mallas.
+- Más ejemplos: `set_value` de enum (`value_type: "enum"`, sin `step`), campos `pointer` y `labelled`, límites de ángulo en grados y `stroke.drag`.

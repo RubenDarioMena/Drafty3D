@@ -97,19 +97,29 @@ export class PropertiesEditor {
     const row = el('div', 'field');
     row.classList.toggle('disabled', !interactive && !this.options.showAllEnabled);
     const label = el('span', 'label', field.kind === 'bool' ? (field.heading || '') : field.label);
-    if (field.kind === 'enum' && field.display === 'expand' && !['limit_method'].some(id => field.id.endsWith(id))) {
+    if (field.kind === 'enum' && field.display === 'expand' && !field.labelled && !field.id.endsWith('limit_method')) {
       label.textContent = '';
     }
     let control;
     if (field.kind === 'enum' && field.display === 'expand') {
-      control = el('div', 'enum-row');
+      control = el('div', `enum-row${interactive ? ' interactive' : ''}`);
       for (const item of field.items) {
-        const option = el('span', item.value === value ? 'on' : '', item.label);
+        // Buttons only where the lesson lets the learner choose; elsewhere the row is just shown.
+        const option = el(interactive ? 'button' : 'span', item.value === value ? 'on' : '', item.label);
+        option.dataset.control = `${field.id}.${item.value.toLowerCase()}`;
+        if (interactive) {
+          option.type = 'button';
+          option.setAttribute('aria-pressed', String(item.value === value));
+          option.addEventListener('click', () => this.options.onValue(field.id, item.value));
+        }
         control.append(option);
       }
     } else if (field.kind === 'enum') {
       control = el('div', 'dropdown');
       control.append(field.items.find(item => item.value === value)?.label ?? value, el('span', '', '▾'));
+    } else if (field.kind === 'pointer') {
+      control = el('div', 'dropdown pointer');
+      control.append(el('span', 'object-icon', '▣'), el('span', '', ''));
     } else if (field.kind === 'bool') {
       control = el('div', 'check');
       control.append(el('span', `box${value ? ' on' : ''}`, value ? '✓' : ''), field.label);

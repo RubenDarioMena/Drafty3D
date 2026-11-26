@@ -32,6 +32,27 @@ def open_cylinder(name, radius, height, vertices):
     return obj
 
 
+def column(name, radius, height, sides, cuts, caps=True):
+    """A prism standing on the floor with evenly spaced rings, so a deform modifier bends it smoothly."""
+    bpy.ops.mesh.primitive_cylinder_add(vertices=sides, radius=radius, depth=height,
+                                        end_fill_type='NGON' if caps else 'NOTHING')
+    obj = bpy.context.active_object
+    obj.name = obj.data.name = name
+    # A square stands on its side, not on a corner.
+    turn = Matrix.Rotation(math.pi / sides, 4, 'Z') if sides == 4 else Matrix.Identity(4)
+    obj.data.transform(Matrix.Translation((0, 0, height / 2)) @ turn)
+    bm = bmesh.new()
+    bm.from_mesh(obj.data)
+    for i in range(1, cuts + 1):
+        z = height * i / (cuts + 1)
+        geom = bm.verts[:] + bm.edges[:] + bm.faces[:]
+        bmesh.ops.bisect_plane(bm, geom=geom, plane_co=(0, 0, z), plane_no=(0, 0, 1))
+    bm.to_mesh(obj.data)
+    bm.free()
+    bpy.ops.object.shade_smooth_by_angle(angle=math.radians(30))
+    return obj
+
+
 def _normal_material():
     """Emission of the world-space normal mapped to 0..1; three.js renders the same mapping in the verify test."""
     mat = bpy.data.materials.new('VerifyNormals')
@@ -159,19 +180,29 @@ class Lesson:
             'duration': duration, 'autoAdvance': False, 'text': text, 'help': help,
         }, changes_mesh=True, camera=camera)
 
-    def set_value(self, mod_type, field_id, value, *, step, text, help=None, shortcut=None, duration=2.2, camera=None):
+    def set_value(self, mod_type, field_id, value, *, text, step=None, help=None, shortcut=None, duration=2.2, camera=None):
+        """A number (with its fixed slider `step`) or an enum identifier such as 'Z'."""
         field = next(f for f in truth.PANELS[mod_type]['fields'] if f[0] == field_id)
         mod = self._modifier(mod_type)
         prop = mod.bl_rna.properties[field[1]]
-        setattr(mod, field[1], math.radians(value) if getattr(prop, 'unit', '') == 'ROTATION' else value)
+        target = math.radians(value) if getattr(prop, 'unit', '') == 'ROTATION' else value
+        setattr(mod, field[1], target)
         stored = getattr(mod, field[1])
-        if prop.type == 'FLOAT' and abs(stored - value) > 1e-6:
+        if prop.type == 'FLOAT' and abs(stored - target) > 1e-6:
             raise ValueError(f'Blender clamped {field_id} to {stored}')
-        self._record({
+        if prop.type == 'ENUM' and stored != value:
+            raise ValueError(f'Blender kept {field_id} at {stored}')
+        is_enum = prop.type == 'ENUM'
+        if not is_enum and not step:
+            raise ValueError(f'{field_id} needs its slider step')
+        record = {
             'id': f'modifier.{truth.MODIFIER_SHORT[mod_type]}.{field_id}', 'action': 'set_value',
-            'value': value, 'value_type': 'number', 'step': step, 'modifier': mod_type, 'shortcut': shortcut,
+            'value': value, 'value_type': 'enum' if is_enum else 'number', 'modifier': mod_type, 'shortcut': shortcut,
             'duration': duration, 'autoAdvance': False, 'text': text, 'help': help,
-        }, changes_mesh=True, camera=camera)
+        }
+        if not is_enum:
+            record['step'] = step
+        self._record(record, changes_mesh=True, camera=camera)
 
     def finish(self, *, text):
         self.data['outro'] = text

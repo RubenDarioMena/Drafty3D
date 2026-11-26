@@ -92,13 +92,13 @@
       "action": "set_value",
       "value": 0.06,
       "value_type": "number",
-      "step": 0.01,
       "modifier": "SOLIDIFY",
       "shortcut": null,
       "duration": 2.2,
       "autoAdvance": false,
       "text": "Set the wall Thickness to 0.06 m.",
       "help": "Thickness is the first number in the Solidify panel. ◀ ▶ step it by 0.01 m.",
+      "step": 0.01,
       "camera": {
         "position": [
           0.85,
@@ -151,13 +151,13 @@
       "action": "set_value",
       "value": 0.02,
       "value_type": "number",
-      "step": 0.01,
       "modifier": "BEVEL",
       "shortcut": null,
       "duration": 2.2,
       "autoAdvance": false,
       "text": "Set the bevel Amount to 0.02 m.",
       "help": "Amount is right below Width Type in the Bevel panel.",
+      "step": 0.01,
       "camera": {
         "position": [
           1.1,
@@ -178,13 +178,13 @@
       "action": "set_value",
       "value": 3,
       "value_type": "number",
-      "step": 1,
       "modifier": "BEVEL",
       "shortcut": null,
       "duration": 2.2,
       "autoAdvance": false,
       "text": "Use 3 Segments for a softer edge.",
       "help": "Segments is right below Amount.",
+      "step": 1,
       "camera": {
         "position": [
           1.1,
@@ -237,7 +237,6 @@
       "action": "set_value",
       "value": 2,
       "value_type": "number",
-      "step": 1,
       "modifier": "SUBSURF",
       "shortcut": {
         "keys": [
@@ -250,6 +249,7 @@
       "autoAdvance": false,
       "text": "Set Levels Viewport to 2.",
       "help": "First number in the Subdivision panel. In the 3D Viewport, Ctrl 2 does the same.",
+      "step": 1,
       "camera": {
         "position": [
           1.6,

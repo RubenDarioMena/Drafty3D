@@ -22,6 +22,7 @@ const TABS = {
 const MODIFIERS = {
   SOLIDIFY: svg('<rect x="3" y="7" width="14" height="6" stroke="#4f8ef2" stroke-width="1.6"/><path d="M3 10h14" stroke="#4f8ef2" stroke-width="1" stroke-dasharray="2 2"/>'),
   BEVEL: svg('<path d="M4 16V9l5-5h7v12z" stroke="#4f8ef2" stroke-width="1.6"/>'),
+  SIMPLE_DEFORM: svg('<path d="M6 3.5c5 2 -1 5 4 6.5s-1 4.5 4 6.5" stroke="#4f8ef2" stroke-width="1.8"/><path d="M4 3.5h5M11 16.5h5" stroke="#4f8ef2" stroke-width="1.4"/>'),
   SUBSURF: svg('<rect x="3.5" y="3.5" width="13" height="13" rx="1" stroke="#4f8ef2" stroke-width="1.2"/><circle cx="10" cy="10" r="5" stroke="#4f8ef2" stroke-width="1.6"/>'),
 };
 

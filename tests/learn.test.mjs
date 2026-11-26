@@ -17,16 +17,21 @@ const byModule = module => Object.values(timelines).filter(timeline => timeline.
 test('every id in the timelines exists in the UI read from Blender (the pipeline ↔ UI contract)', () => {
   const tabIds = new Set(ui.propertiesTabs.filter(tab => !tab.separator).map(tab => tab.id));
   const menuIds = new Set(ui.addModifierMenu.categories.flatMap(category => category.items.map(item => item.id)));
-  const fieldIds = new Set(Object.values(ui.modifiers).flatMap(definition => definition.fields.map(field => field.id)));
+  const fields = new Map(Object.values(ui.modifiers).flatMap(definition => definition.fields.map(field => [field.id, field])));
+  const fieldIds = new Set(fields.keys());
   for (const timeline of byModule('modifiers')) {
     assert.equal(timeline.blenderVersion, ui.blenderVersion);
     assert.ok(tabIds.has(timeline.initial.panel));
     for (const step of timeline.steps) {
       const known = { select_panel: tabIds, add_modifier: menuIds, set_value: fieldIds }[step.action];
       assert.ok(known?.has(step.id), `${timeline.example}: ${step.id}`);
-      if (step.action === 'set_value') {
+      if (step.action === 'set_value' && fields.get(step.id).kind === 'enum') {
+        assert.ok(fields.get(step.id).items.some(item => item.value === step.value), `${step.id} = ${step.value} is a Blender option`);
+      } else if (step.action === 'set_value') {
+        const field = fields.get(step.id);
         assert.ok(step.step > 0);
         assert.equal(roundToStep(step.value, step.step), step.value, `${step.id} sits on its fixed slider step`);
+        assert.ok(step.value >= field.softMin && step.value <= field.softMax, `${step.id} = ${step.value} is reachable with ◀ ▶`);
       }
     }
   }
@@ -74,7 +79,9 @@ test('every mesh a timeline names ships with the app and has a Blender reference
 
 test('each Your turn is a variant of its Watch lesson: same tools in the same order, different values or strokes', () => {
   const turns = Object.values(timelines).filter(timeline => timeline.mode === 'your-turn');
-  assert.deepEqual(turns.map(timeline => timeline.variantOf).sort(), ['cup', 'pebble-buddy']);
+  const watches = Object.values(timelines).filter(timeline => timeline.mode === 'watch');
+  assert.deepEqual(turns.map(timeline => timeline.variantOf).sort(), watches.map(timeline => timeline.example).sort(),
+    'every Watch lesson has exactly one Your turn variant');
   for (const turn of turns) {
     const watch = timelines[turn.variantOf];
     assert.equal(watch.mode, 'watch');
@@ -85,8 +92,8 @@ test('each Your turn is a variant of its Watch lesson: same tools in the same or
   }
 });
 
-test('no Your turn step is already solved when the learner reaches it (each lesson starts from Blender defaults)', () => {
-  for (const timeline of Object.values(timelines).filter(candidate => candidate.mode === 'your-turn')) {
+test('no step is already done when the lesson reaches it (each lesson starts from Blender defaults)', () => {
+  for (const timeline of Object.values(timelines)) {
     timeline.steps.forEach((step, index) => {
       assert.equal(isSolved(stateAt(timeline, ui, index - 1), step), false, `${timeline.example} step ${index + 1} (${step.id})`);
     });

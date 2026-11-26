@@ -1,6 +1,6 @@
 # Drafty3D Learn: guía de prueba y decisiones
 
-Prototipo con dos módulos. **Modificadores**: una lección para ver (la taza, *Low-poly cup*) y una práctica (*Your turn: bowl*). **Sculpting**: una lección para ver (*Pebble buddy*) y una práctica (*Your turn: sleepy buddy*). Todo funciona sin conexión: en el navegador y en el APK.
+Prototipo con dos módulos y cinco parejas de lecciones (una para ver y su práctica). **Modificadores**: *Low-poly cup* → *Your turn: bowl*, y *Twisted column* → *Your turn: twisted candle*. **Sculpting**: *Pebble buddy* → *Your turn: sleepy buddy*, *Horned buddy* → *Your turn: antenna bug*, y *Craggy rock* → *Your turn: split boulder*. Todo funciona sin conexión: en el navegador y en el APK.
 
 > La app está en inglés, como Blender. Esta guía está en español porque es para revisar el producto.
 
@@ -63,6 +63,12 @@ Mientras no existan los secretos, Actions genera un **APK de depuración**. Cada
 
 **Sculpting · Your turn (sleepy buddy).** Los mismos pinceles en el mismo orden, con otra cara: ojos cerrados, boca redonda y la cabeza inclinada. Los ajustes funcionan como en el bowl: menú de modo, pincel en la repisa, Size y Strength con ◀ ▶, arrastre o escribiendo, + / −, espejo. Un pincel o un modo que no toca muestra "Not this one yet" y no cambia nada. En un paso de trazo aparece una **línea punteada** con un punto naranja en el inicio y una flecha al final. Repásala con un dedo empezando en el punto. Si te sales, empiezas al revés o solo tocas, aparece un aviso ("Follow the dotted line", "Start at the dot", "Drag along the whole line") y puedes reintentar. En los círculos (boca, punta de la cabeza) puedes empezar en cualquier parte. Mientras haya un trazo pendiente, un dedo dibuja en vez de girar la vista.
 
+**Modificadores · Twisted column / twisted candle.** Una columna cuadrada (el cirio es hexagonal) con **Bevel** para suavizar las aristas y **Simple Deform** en Twist. Simple Deform tuerce por defecto alrededor de X, así que la columna se dobla de lado: el paso siguiente pone **Axis** en Z (una fila de botones X Y Z, como en Blender) y luego sube **Angle** (de 5° en 5°). En el cirio: 0.02 m, 2 segmentos, Z y 180°.
+
+**Sculpting · Horned buddy / antenna bug.** Tres pinceles nuevos: **Snake Hook** estira cuernos (o antenas) desde la cabeza y sigue jalando mientras arrastras, así que la guía sale de la superficie hacia el aire; **Inflate/Deflate** infla los ojos con círculos; **Crease Polish** con Strength 1.0 corta la sonrisa (o una boca pequeña) yendo y volviendo sobre la línea.
+
+**Sculpting · Craggy rock / split boulder.** **Clay Strips** pone dos franjas de arcilla (estratos), **Scrape/Fill** con Strength 1.0 aplana una cara yendo y viniendo, y **Draw Sharp** talla una grieta en zigzag. Draw Sharp ya empieza en Subtract (−), así que no hay paso de + / −: lo dice el texto del pincel.
+
 ## Decisiones que tomé por ti
 
 Tomadas con los principios del registro de decisiones. Para el modo práctica, la regla del candado la decidiste tú.
@@ -90,15 +96,20 @@ Tomadas con los principios del registro de decisiones. Para el modo práctica, l
 | Repisa de pinceles | Los 70+ pinceles de Blender 5.3, con las pestañas y grupos leídos de sus catálogos. Todos se pueden tocar (para aprender dónde están), pero solo el correcto avanza. Los puntos de color por grupo son propios, no los iconos de Blender. | 2, 4 |
 | + / − en Smooth | Blender no muestra + / − para Smooth (su dirección es "Smooth"), así que la app tampoco. | 2 |
 | Layout de escultura | En celular, la vista 3D va arriba y el header y la repisa abajo. En PC van en la columna derecha, donde están los Properties en los modificadores. En Blender el header está encima de la vista y la repisa abajo de ella; lo reacomodé para el pulgar. | 4 |
-| Inicio | Las lecciones se agrupan por módulo (Modifiers, Sculpting), con Ver antes de su Your turn. | 4 |
+| Inicio | Las lecciones se agrupan por módulo (Modifiers, Sculpting). Dentro de cada módulo van de la más fácil a la más nueva, cada Ver seguida de su Your turn (`WATCH_ORDER` en `build-examples.mjs`). | 4 |
+| Más ejemplos de modificadores | Agregué **Simple Deform** (Twist) sobre **Bevel**. Probé también **Wireframe** (lámpara de alambre) y lo descarté: con el grosor por defecto de Blender (0.02 m) los alambres miden unos pocos píxeles y la comparación Blender vs three.js no puede distinguir un error real del antialiasing de los bordes. Aflojar la prueba la dejaba ciega para pasos que sí cambian (bowl, boulder), así que preferí quitar la lección antes que publicar algo sin verificar. | 2 |
+| Botones de opción (Axis, Mode) | Los enums que Blender dibuja expandidos son una fila de botones. En Your turn solo la fila del paso actual es tocable; al acertar se queda iluminada la opción elegida. El valor se compara como texto (`"Z"`), sin `step`. | 2, 4 |
+| Ángulos | Se muestran y se cambian en grados, como en Blender, y los límites también (±360°). Antes los límites venían en radianes (±6.28) y ◀ ▶ se habría detenido en 6°; la nueva prueba del cirio lo cubre. | 2 |
+| Pinceles de arrastre | Snake Hook (y Grab, Elastic, Thumb, Pose, Rotate, Boundary) se graban sobre el plano de profundidad inicial y se animan de forma uniforme; el timeline lo marca con `stroke.drag`. | 2 |
+| Trazos de ida y vuelta | Crease Polish, Scrape/Fill y Draw Sharp casi no cambiaban nada con una pasada y la fuerza por defecto; la prueba Blender vs three.js lo detectó ("must look different"). Ahora suben Strength a 1.0 y repasan la línea. | 2, 6 |
 | Releases | Un release fijo `learn-preview` que se reemplaza en cada build. El `versionCode` es el número de ejecución del workflow, así cada APK es más nuevo que el anterior. | 5 |
 
 ## Cómo se verifica
 
-- `npm test`: comprueba el contrato pipeline ↔ UI. Cada ID de los timelines existe en lo que se leyó de Blender (también modo, pinceles y campos del header de escultura), cada malla existe, los valores caen en su paso fijo, cada trazo movió vértices de verdad y cada Your turn usa las mismas herramientas que su Ver. También prueba la lógica del candado y la regla del trazo. Una prueba exige que **ningún paso de Your turn llegue ya resuelto**: así encontré que Blender arrastraba Strength y Subtract de la primera lección a la segunda.
+- `npm test`: comprueba el contrato pipeline ↔ UI. Cada ID de los timelines existe en lo que se leyó de Blender (también modo, pinceles y campos del header de escultura), cada malla existe, los valores caen en su paso fijo, cada trazo movió vértices de verdad y cada Your turn usa las mismas herramientas que su Ver. También prueba la lógica del candado y la regla del trazo. Una prueba exige que **ningún paso llegue ya resuelto**, en Ver y en Your turn: así encontré que Blender arrastraba Strength y Subtract de la primera lección a la segunda, y que Draw Sharp ya empieza en Subtract. Cada Ver debe tener exactamente un Your turn, y cada valor debe poder alcanzarse con ◀ ▶ dentro de los límites de Blender.
 - `npm run test:browser` (después de `npm run build`):
   - **Blender vs three.js por paso** (`tests/browser/learn-verify.spec.mjs`). Blender renderiza las normales del objeto como colores; three.js dibuja lo mismo con el cargador y la cámara de la app. Umbrales: IoU ≥ 0.99, diferencia media ≤ 0.006, píxeles malos ≤ 1 %. Los pasos correctos dan ≤ 0.004 y la malla del paso anterior da ≥ 0.009, así que la prueba sí puede fallar. Esta prueba encontró dos errores reales que ya están corregidos: los niveles Render vs Viewport de Subdivision y el Amount del bowl que no cambiaba nada.
-    Las lecciones de escultura pasan con los mismos umbrales en todos sus pasos, incluida la condición de que cada trazo cambie lo que se ve.
+    La prueba recorre todas las lecciones de `index.json`. Las de escultura pasan con los mismos umbrales en todos sus pasos, incluida la condición de que cada trazo cambie lo que se ve.
   - Recorridos completos de Ver y Your turn en tamaño celular, sin peticiones fuera de `/learn/` y sin errores de página. En escultura, la prueba dibuja cada trazo con el ratón sobre la guía proyectada, incluidos un trazo fuera de la línea y uno al revés.
 
 ## Regenerar los ejemplos
@@ -129,7 +140,7 @@ learn/pipeline/get-blender.sh
 npm run learn:examples -- --only=sculpt
 ```
 
-`get-blender.sh` descarga Blender 5.3.0 de download.blender.org a `learn/pipeline/.blender/` (ignorado por git) y verifica su sha256. `--only=modifiers` o `--only=sculpt` graba un solo módulo; `--skip-blender` solo vuelve a empaquetar lo que ya está en `.out`. Con `LEARN_DEBUG=1` el grabador guarda una captura de la ventana de Blender después de cada trazo. Los scripts son `learn/pipeline/blender/sculpt.py` (grabador) y `build_sculpt.py` (lecciones).
+`get-blender.sh` descarga Blender 5.3.0 de download.blender.org a `learn/pipeline/.blender/` (ignorado por git) y verifica su sha256. `--only=modifiers` o `--only=sculpt` graba un solo módulo; `--skip-blender` solo vuelve a empaquetar lo que ya está en `.out`. Con `LEARN_DEBUG=1` el grabador guarda una captura de la ventana de Blender después de cada trazo. Los scripts son `learn/pipeline/blender/sculpt.py` (grabador) y `build_sculpt.py` (lecciones). Cada nombre de la tupla `LESSONS` de `build_sculpt.py` se graba en su propio proceso de Blender; `LEARN_SCULPT_ONLY=rock` graba solo esa (pero `.out/sculpt` se limpia antes, así que para publicar graba todas).
 
 ## Limitaciones conocidas
 

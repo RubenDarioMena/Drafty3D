@@ -6,7 +6,8 @@ from types import SimpleNamespace
 
 import bpy
 
-MODIFIER_SHORT = {'SOLIDIFY': 'solidify', 'BEVEL': 'bevel', 'SUBSURF': 'subsurf'}
+MODIFIER_SHORT = {'SOLIDIFY': 'solidify', 'BEVEL': 'bevel', 'SUBSURF': 'subsurf',
+                  'SIMPLE_DEFORM': 'simple_deform'}
 
 # Main-panel field order per modifier. Blender draws these panels in C
 # (MOD_*.cc panel_draw), which the bpy wheel does not ship, so the order and
@@ -43,6 +44,16 @@ PANELS = {
             ('optimal_display', 'show_only_control_edges', {}),
         ],
         'subpanels': ['Advanced'],
+    },
+    # MOD_simpledeform.cc at the v5.3.0 tag.
+    'SIMPLE_DEFORM': {
+        'fields': [
+            ('mode', 'deform_method', {'display': 'expand'}),
+            ('angle', 'angle', {}),
+            ('origin', 'origin', {}),
+            ('axis', 'deform_axis', {'display': 'expand', 'labelled': True}),
+        ],
+        'subpanels': ['Restrictions'],
     },
 }
 
@@ -96,9 +107,14 @@ def _rna_field(mod_type, field_id, rna_id, overrides, instance):
     }
     if 'heading' in overrides:
         field['heading'] = overrides['heading']
+    if overrides.get('labelled'):
+        field['labelled'] = True
     if prop.type == 'ENUM':
         field.update(kind='enum', display=overrides.get('display', 'dropdown'), default=value,
                      items=[{'value': item.identifier, 'label': item.name} for item in prop.enum_items])
+    elif prop.type == 'POINTER':
+        # An object picker (Origin, Axis Object): always empty in the lessons.
+        field.update(kind='pointer', default=None)
     elif prop.type == 'BOOLEAN':
         field.update(kind='bool', default=bool(value))
     elif prop.type in ('FLOAT', 'INT'):
@@ -107,7 +123,9 @@ def _rna_field(mod_type, field_id, rna_id, overrides, instance):
                      unit={'LENGTH': 'm', 'ROTATION': '°'}.get(unit, ''),
                      softMin=prop.soft_min, softMax=prop.soft_max)
         if unit == 'ROTATION':
-            field['default'] = round(math.degrees(value), 4)
+            # The app shows and steps angles in degrees, like Blender's UI: the limits too.
+            field.update(default=round(math.degrees(value), 4),
+                         softMin=round(math.degrees(prop.soft_min), 4), softMax=round(math.degrees(prop.soft_max), 4))
         else:
             field['default'] = round(value, 6) if prop.type == 'FLOAT' else value
     return field

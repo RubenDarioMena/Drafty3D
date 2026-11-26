@@ -44,7 +44,9 @@ if (record('sculpt')) {
   { stdio: 'ignore' });
   // A fixed 1920×1080 screen keeps brush sizes in pixels, and therefore the strokes, reproducible.
   // One Blender process per lesson: brush settings live in the session, so each lesson starts from factory brushes.
-  for (const lesson of ['buddy', 'sleepy']) {
+  const script = await readFile(resolve(pipeline, 'blender/build_sculpt.py'), 'utf8');
+  const names = (process.env.LEARN_SCULPT_ONLY ?? script.match(/^LESSONS = \(([^)]*)\)/m)[1]).match(/\w+/g);
+  for (const lesson of names) {
     execFileSync('xvfb-run', ['-a', '-s', '-screen 0 1920x1080x24', blenderApp, '--factory-startup', '--gpu-backend', 'opengl',
       start, '--python', resolve(pipeline, 'blender/build_sculpt.py'), '--', out],
     { stdio: 'inherit', env: { ...process.env, LEARN_SCULPT_ONLY: lesson } });
@@ -99,9 +101,12 @@ for (const module of await readdir(join(out), { withFileTypes: true })) {
     console.log(`${module.name}/${example}: ${timeline.steps.length} pasos, mallas ${(raw / 1024).toFixed(0)} KiB → ${(packed / 1024).toFixed(0)} KiB con Draco`);
   }
 }
-// Home lists modules in this order; inside a module, Watch comes before its Your turn variant.
+// Home lists modules in this order, then each Watch lesson (easiest first) followed by its Your turn variant.
 const MODULE_ORDER = ['modifiers', 'sculpt'];
-lessons.sort((a, b) => (MODULE_ORDER.indexOf(a.module) - MODULE_ORDER.indexOf(b.module))
+const WATCH_ORDER = ['cup', 'twisted-column', 'pebble-buddy', 'horned-buddy', 'rock'];
+const rank = (list, item) => (list.indexOf(item) + list.length + 1) % (list.length + 1);
+lessons.sort((a, b) => (rank(MODULE_ORDER, a.module) - rank(MODULE_ORDER, b.module))
+  || (rank(WATCH_ORDER, a.variantOf ?? a.example) - rank(WATCH_ORDER, b.variantOf ?? b.example))
   || (a.mode === b.mode ? 0 : a.mode === 'watch' ? -1 : 1));
 await writeFile(join(examples, 'index.json'), JSON.stringify({ lessons }, null, 2) + '\n');
 

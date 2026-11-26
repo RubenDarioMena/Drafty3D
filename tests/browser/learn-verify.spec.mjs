@@ -9,7 +9,9 @@ const passes = r => r.iou >= PASS.iou && r.meanDiff <= PASS.meanDiff && r.badFra
 const fixture = async (lesson, mesh) => 'data:image/png;base64,' +
   (await readFile(new URL(`../fixtures/learn/${lesson}/${mesh.replace('.glb', '.png')}`, import.meta.url))).toString('base64');
 
-for (const lesson of ['modifiers/cup', 'modifiers/bowl', 'sculpt/pebble-buddy', 'sculpt/sleepy-buddy']) {
+const index = JSON.parse(await readFile(new URL('../../learn/public/examples/index.json', import.meta.url), 'utf8'));
+
+for (const lesson of index.lessons.map(entry => `${entry.module}/${entry.example}`)) {
   test(`${lesson}: three.js shows exactly what Blender computed at every step, and every step changes the result`, async ({ page }) => {
     const timeline = JSON.parse(await readFile(new URL(`../../learn/public/examples/${lesson}/timeline.json`, import.meta.url), 'utf8'));
     const shots = [timeline.initial, ...timeline.steps.filter(step => step.mesh)];

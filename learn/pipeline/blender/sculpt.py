@@ -24,6 +24,9 @@ CONTEXT = '3D Viewport · Sculpt Mode'
 # Room left around a stroke so it never lands on the toolbar, header or asset shelf
 # that overlap the 3D Viewport's main region in Sculpt Mode.
 SAFE_MARGIN = {'left': 90, 'right': 140, 'top': 110, 'bottom': 170}
+# Brushes that carry the surface along with the cursor instead of acting on what lies under it.
+# Their trail follows the cursor on a plane at the start depth, and the app moves them as one piece.
+DRAG_BRUSHES = {'GRAB', 'SNAKE_HOOK', 'ELASTIC_DEFORM', 'THUMB', 'POSE', 'ROTATE', 'BOUNDARY'}
 
 
 # ---------------------------------------------------------------- Blender window helpers
@@ -303,7 +306,8 @@ class SculptLesson(Lesson):
         world = [view3d_utils.region_2d_to_location_3d(region, r3d, p, depth) for p in dense]
         edge = view3d_utils.region_2d_to_location_3d(region, r3d, dense[0] + Vector((radius_px, 0)), depth)
         radius = (edge - start).length
-        on_surface = [] if brush.sculpt_brush_type == 'GRAB' else [self._surface(region, r3d, p) for p in dense]
+        drag = brush.sculpt_brush_type in DRAG_BRUSHES
+        on_surface = [] if drag else [self._surface(region, r3d, p) for p in dense]
         trail = [s if s is not None else w for s, w in zip(on_surface, world)] if on_surface else world
 
         before = self._positions()
@@ -329,7 +333,7 @@ class SculptLesson(Lesson):
             'id': 'sculpt.stroke', 'action': 'stroke', 'value': None, 'value_type': None,
             'duration': round(seconds + 0.8, 2), 'autoAdvance': False, 'text': text, 'help': help,
             'stroke': {
-                'brush': brush.name, 'brushType': brush.sculpt_brush_type,
+                'brush': brush.name, 'brushType': brush.sculpt_brush_type, 'drag': drag,
                 'path': [[round(c, 4) for c in uv] for uv in path],
                 'points': [[round(c, 4) for c in p] for p in trail[::keep] + [trail[-1]]],
                 'radius': round(radius, 4), 'movedVertices': int((moved > 1e-5).sum()),

@@ -64,7 +64,10 @@ export function isSolved(live, step) {
   }
   if (step.action === 'set_value') {
     const mod = live.modifiers.find(candidate => candidate.type === step.modifier);
-    return Boolean(mod) && ticks(mod.values[step.id], step.step) === ticks(step.value, step.step);
+    if (!mod) return false;
+    // Enum buttons (Axis X / Y / Z) match exactly; numbers match on their fixed slider step.
+    if (typeof step.value === 'string') return mod.values[step.id] === step.value;
+    return ticks(mod.values[step.id], step.step) === ticks(step.value, step.step);
   }
   return false;
 }
@@ -76,7 +79,7 @@ export function interactiveFields(timeline, solvedCount) {
 
 /** Step size of each lesson field, from the timeline (the only source of slider granularity). */
 export function fieldSteps(timeline) {
-  return Object.fromEntries(timeline.steps.filter(step => step.action === 'set_value').map(step => [step.id, step.step]));
+  return Object.fromEntries(timeline.steps.filter(step => step.action === 'set_value' && step.step).map(step => [step.id, step.step]));
 }
 
 export function lessonModifierTypes(timeline) {

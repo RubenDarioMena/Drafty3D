@@ -94,6 +94,127 @@ def sleepy():
     lesson.finish(text='Sleepy buddy finished with the same three brushes as before.')
 
 
+def horned():
+    clear_scene()
+    obj = pebble('Pebble')
+    lesson = SculptLesson(
+        module='sculpt', example='horned-buddy', mode='watch', title='Horned buddy',
+        out_dir=os.path.join(OUT, 'sculpt', 'horned-buddy'), obj=obj, camera=FRONT,
+        text='Three new brushes turn the pebble into a little monster: Snake Hook pulls horns, Inflate blows up the eyes, Crease cuts a grin.',
+    )
+    lesson.set_mode('SCULPT', text='Switch to Sculpt Mode.')
+    lesson.select_brush('Snake Hook', text='Pick Snake Hook. Like Grab, it drags the surface, but it keeps pulling as you go, so it can draw out long shapes.')
+    lesson.set_tool_value('size', 140, step=10, text='Set Size to 140 px: the width of the horn at its base.')
+    lesson.set_symmetry('X', True, text='Turn on X symmetry so both horns grow at once.')
+    yield from lesson.stroke([(0.2, 0.36), (0.26, 0.52), (0.3, 0.66), (0.33, 0.76)], seconds=1.6,
+                             text='Drag from the top of the head up and outward. The mirror pulls the left horn.')
+    lesson.select_brush('Inflate/Deflate', text='Pick Inflate/Deflate. It pushes the surface out along its normals, like blowing into a balloon.')
+    lesson.set_tool_value('size', 90, step=10, text='Set Size to 90 px.')
+    yield from lesson.stroke(loop((0.3, -0.1), 0.04, turns=3, points=30), seconds=1.6,
+                             text='Circle on the right eye spot a few times: the eye swells up. Symmetry makes the other one.')
+    lesson.select_brush('Crease Polish', text='Pick Crease Polish. It cuts a sharp groove and pinches the sides together.')
+    lesson.set_tool_value('size', 50, step=10, text='Set Size to 50 px for a thin line.')
+    lesson.set_tool_value('strength', 1.0, step=0.1, text='Set Strength to 1.0 so the groove cuts deep.')
+    yield from lesson.stroke([(0.0, -0.26), (0.1, -0.25), (0.19, -0.2), (0.25, -0.12), (0.19, -0.2), (0.1, -0.25), (0.0, -0.26),
+                              (0.1, -0.25), (0.19, -0.2), (0.25, -0.12)], seconds=2.4,
+                             text='Draw half a wide grin from the middle to the right and go over it again; the mirror completes it.')
+    lesson.finish(text='Done: Snake Hook for horns, Inflate for volume, Crease for sharp lines. Now sculpt a bug with antennae.')
+
+
+def bug():
+    clear_scene()
+    obj = pebble('Pebble')
+    lesson = SculptLesson(
+        module='sculpt', example='antenna-bug', mode='your-turn', title='Your turn: antenna bug', variant_of='horned-buddy',
+        out_dir=os.path.join(OUT, 'sculpt', 'antenna-bug'), obj=obj, camera=FRONT,
+        text='Same brushes, new creature: thin antennae, big round eyes and a small mouth.',
+    )
+    lesson.set_mode('SCULPT', text='Switch to Sculpt Mode.', help='The mode menu at the left of the 3D Viewport header.')
+    lesson.select_brush('Snake Hook', text='Pick the Snake Hook brush.', help='Snake Hook is in the shelf under General. K selects it.')
+    lesson.set_tool_value('size', 70, step=10, text='Set Size to 70 px: thin antennae.', help='Size is in the header, right of the brush.')
+    lesson.set_symmetry('X', True, text='Turn on X symmetry.', help='The X button with the butterfly, right side of the header.')
+    yield from lesson.stroke([(0.1, 0.42), (0.13, 0.58), (0.2, 0.7), (0.28, 0.76)], seconds=1.6,
+                             text='Pull a thin antenna up and out from the top of the head.',
+                             help='Start just right of the middle on top, drag up, then curve outward.')
+    lesson.select_brush('Inflate/Deflate', text='Pick the Inflate/Deflate brush.', help='Inflate/Deflate is under General. I selects it.')
+    lesson.set_tool_value('size', 120, step=10, text='Set Size to 120 px.', help='The Size field again.')
+    yield from lesson.stroke(loop((0.2, 0.12), 0.04, turns=3, points=30), seconds=1.6,
+                             text='Circle over the right eye spot to blow up a big round eye.',
+                             help='Small circles right of the middle, a little above the center. Start anywhere on the loop.')
+    lesson.select_brush('Crease Polish', text='Pick the Crease Polish brush.', help='Crease Polish is under General. Shift C selects it.')
+    lesson.set_tool_value('size', 40, step=10, text='Set Size to 40 px.', help='The Size field again.')
+    lesson.set_tool_value('strength', 1.0, step=0.1, text='Set Strength to 1.0.', help='Strength is right of Size. Shift F changes it.')
+    yield from lesson.stroke([(0.0, -0.18), (0.07, -0.2), (0.13, -0.16), (0.07, -0.2), (0.0, -0.18), (0.07, -0.2), (0.13, -0.16)],
+                             seconds=1.8, text='A small mouth: a short line from the middle to the right, back and forth.',
+                             help='Below the eyes, from the middle line to the right and back, twice.')
+    lesson.finish(text='Antenna bug finished with the same three brushes as the horned buddy.')
+
+
+def rock():
+    clear_scene()
+    obj = pebble('Rock', scale=(1.05, 0.9, 0.8))
+    lesson = SculptLesson(
+        module='sculpt', example='rock', mode='watch', title='Craggy rock',
+        out_dir=os.path.join(OUT, 'sculpt', 'rock'), obj=obj, camera=FRONT,
+        text='A smooth pebble becomes a weathered rock: layers of clay, flat chipped faces and a deep crack.',
+    )
+    lesson.set_mode('SCULPT', text='Switch to Sculpt Mode.')
+    lesson.select_brush('Clay Strips', text='Pick Clay Strips. It lays down flat strips, like adding slabs of clay.')
+    lesson.set_tool_value('size', 120, step=10, text='Set Size to 120 px: wide strips.')
+    yield from lesson.stroke([(-0.42, -0.12), (-0.15, 0.02), (0.15, 0.12), (0.4, 0.2)], seconds=1.6,
+                             text='Drag one strip across the front. It builds a ledge, not a bump.')
+    yield from lesson.stroke([(-0.4, -0.36), (-0.1, -0.26), (0.2, -0.2), (0.42, -0.08)], seconds=1.6,
+                             text='Add a second strip below it: rock strata.')
+    lesson.select_brush('Scrape/Fill', text='Pick Scrape/Fill. It shaves off whatever sticks out above a plane, leaving a flat face.')
+    lesson.set_tool_value('size', 200, step=10, text='Set Size to 200 px.')
+    lesson.set_tool_value('strength', 1.0, step=0.1, text='Set Strength to 1.0 to shave hard.')
+    yield from lesson.stroke([(0.3, 0.3), (0.32, 0.0), (0.3, -0.3), (0.32, 0.0), (0.3, 0.3), (0.32, 0.0), (0.3, -0.3)], seconds=2.6,
+                             text='Scrape up and down the right side. It shaves the strips and the bulge into one chipped, flat face.')
+    lesson.select_brush('Draw Sharp', text='Pick Draw Sharp. Like Draw, but with a hard edge, and it starts on Subtract (−): it carves a cut.')
+    lesson.set_tool_value('size', 40, step=10, text='Set Size to 40 px.')
+    lesson.set_tool_value('strength', 1.0, step=0.1, text='Set Strength to 1.0.')
+    yield from lesson.stroke([(-0.18, 0.4), (-0.12, 0.26), (-0.2, 0.12), (-0.12, -0.02), (-0.18, -0.16), (-0.12, -0.02),
+                              (-0.2, 0.12), (-0.12, 0.26), (-0.18, 0.4)], seconds=2.2,
+                             text='Zigzag down the left side and back up: a crack through the layers.')
+    lesson.finish(text='Done: Clay Strips to build, Scrape to chip flat faces, Draw Sharp to crack. Now shape a boulder yourself.')
+
+
+def boulder():
+    clear_scene()
+    obj = pebble('Rock', scale=(1.05, 0.9, 0.8))
+    lesson = SculptLesson(
+        module='sculpt', example='boulder', mode='your-turn', title='Your turn: split boulder', variant_of='rock',
+        out_dir=os.path.join(OUT, 'sculpt', 'boulder'), obj=obj, camera=FRONT,
+        text='Same brushes, another rock: a boulder with a flat left face and a crack down the middle.',
+    )
+    lesson.set_mode('SCULPT', text='Switch to Sculpt Mode.', help='The mode menu at the left of the 3D Viewport header.')
+    lesson.select_brush('Clay Strips', text='Pick the Clay Strips brush.', help='Clay Strips is under General. C selects it.')
+    lesson.set_tool_value('size', 150, step=10, text='Set Size to 150 px.', help='Size is in the header, right of the brush.')
+    yield from lesson.stroke([(0.42, -0.2), (0.15, -0.05), (-0.15, 0.05), (-0.4, 0.12)], seconds=1.6,
+                             text='Lay one strip across the front, from right to left.',
+                             help='Start on the right side, a little below the middle, and drag to the left.')
+    yield from lesson.stroke([(0.4, 0.18), (0.12, 0.3), (-0.15, 0.32), (-0.35, 0.26)], seconds=1.6,
+                             text='Lay a second strip above it, also from right to left.',
+                             help='Same direction, higher up.')
+    lesson.select_brush('Scrape/Fill', text='Pick the Scrape/Fill brush.', help='Scrape/Fill is under General. Shift T selects it.')
+    lesson.set_tool_value('size', 250, step=10, text='Set Size to 250 px.', help='The Size field again.')
+    lesson.set_tool_value('strength', 1.0, step=0.1, text='Set Strength to 1.0.', help='Strength is right of Size. Shift F changes it.')
+    yield from lesson.stroke([(-0.44, 0.3), (-0.52, 0.05), (-0.44, -0.2), (-0.52, 0.05), (-0.44, 0.3), (-0.52, 0.05), (-0.44, -0.2)],
+                             seconds=2.4, text='Scrape up and down the left side to cut a flat face.',
+                             help='Start on the upper left edge, drag down, up and down again.')
+    lesson.select_brush('Draw Sharp', text='Pick the Draw Sharp brush. It already carves (Subtract).', help='Draw Sharp is in the shelf, right after Draw.')
+    lesson.set_tool_value('size', 50, step=10, text='Set Size to 50 px.', help='The Size field again.')
+    lesson.set_tool_value('strength', 1.0, step=0.1, text='Set Strength to 1.0.', help='Strength is right of Size. Shift F changes it.')
+    yield from lesson.stroke([(0.02, 0.46), (0.08, 0.3), (-0.02, 0.15), (0.06, 0.0), (-0.01, -0.2), (0.06, 0.0), (-0.02, 0.15),
+                              (0.08, 0.3), (0.02, 0.46)], seconds=2.2,
+                             text='Crack it down the middle with a zigzag, down and back up.',
+                             help='From the top center down, zigzagging a little, then back up the same way.')
+    lesson.finish(text='Split boulder finished with the same three brushes as the rock.')
+
+
+LESSONS = ('buddy', 'sleepy', 'horned', 'bug', 'rock', 'boulder')
+
+
 def main():
     os.makedirs(OUT, exist_ok=True)
     with open(os.path.join(OUT, 'sculpt-ui.json'), 'w') as handle:
@@ -101,9 +222,9 @@ def main():
         handle.write('\n')
     # build-examples.mjs starts one Blender per lesson (LEARN_SCULPT_ONLY): brush settings persist within a session.
     only = os.environ.get('LEARN_SCULPT_ONLY')
-    for lesson in (buddy, sleepy):
-        if not only or only == lesson.__name__:
-            yield from lesson()
+    for name in LESSONS:
+        if not only or only == name:
+            yield from globals()[name]()
     print('Drafty3D Learn: sculpt examples recorded in', OUT, flush=True)
 
 

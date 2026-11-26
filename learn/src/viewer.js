@@ -126,6 +126,7 @@ export class Viewer {
     const endNormal = to.getAttribute('normal');
     const moving = [];
     const timing = [];
+    const drag = stroke.drag ?? stroke.brushType === 'GRAB';
     const trail = stroke.points.map(point => new THREE.Vector3(...toThree(point)));
     const vertex = new THREE.Vector3();
     for (let i = 0; i < start.count; i += 1) {
@@ -134,7 +135,7 @@ export class Viewer {
       const dz = end.getZ(i) - start.getZ(i);
       if (dx * dx + dy * dy + dz * dz < 1e-12) continue;
       moving.push(i);
-      if (stroke.brushType === 'GRAB') {
+      if (drag) {
         timing.push(0);
         continue;
       }
@@ -157,7 +158,7 @@ export class Viewer {
     const soft = 0.18;
     return t => {
       moving.forEach((i, k) => {
-        const local = stroke.brushType === 'GRAB' ? t : Math.min(1, Math.max(0, (t * (1 + soft) - timing[k]) / soft));
+        const local = drag ? t : Math.min(1, Math.max(0, (t * (1 + soft) - timing[k]) / soft));
         position.setXYZ(i, start.getX(i) + (end.getX(i) - start.getX(i)) * local,
           start.getY(i) + (end.getY(i) - start.getY(i)) * local,
           start.getZ(i) + (end.getZ(i) - start.getZ(i)) * local);

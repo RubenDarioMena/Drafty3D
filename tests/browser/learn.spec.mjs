@@ -108,6 +108,38 @@ test('Your turn works like a combination lock, with "Show me" always available, 
   await expect(page.locator('.lesson-card').nth(1)).toContainText('Done ✓ · 1 with help');
 });
 
+test('Your turn with Blender\'s option buttons: Simple Deform\'s Axis row and an angle stepped in degrees', async ({ page }) => {
+  await page.goto('/learn/#/lesson/modifiers/twisted-candle');
+  await expect(page.locator('#step-count')).toHaveText('Step 1 of 7');
+  const press = async (id, times, direction) => {
+    for (let i = 0; i < times; i += 1) await page.locator(`[data-control="${id}"] button[aria-label^="${direction}"]`).click();
+  };
+  await page.locator('[data-control="panel.properties.modifier"]').click();
+  await page.locator('[data-control="modifier.add_menu"]').click();
+  await page.locator('[data-control="modifier.add_menu.generate"]').click();
+  await page.locator('[data-control="modifier.bevel.add"]').click();
+  await press('modifier.bevel.amount', 8, 'Decrease');
+  await press('modifier.bevel.segments', 1, 'Increase');
+  await expect(page.locator('#step-count')).toHaveText('Step 5 of 7');
+  await page.locator('[data-control="modifier.add_menu"]').click();
+  await page.locator('[data-control="modifier.add_menu.deform"]').click();
+  await page.locator('[data-control="modifier.simple_deform.add"]').click();
+  await expect(page.locator('#clue')).toHaveText('✓ Simple Deform added.');
+
+  // Blender's default bends around X; the learner switches the row to Z.
+  await expect(page.locator('[data-control="modifier.simple_deform.axis.x"]')).toHaveAttribute('aria-pressed', 'true');
+  await page.locator('[data-control="modifier.simple_deform.axis.y"]').click();
+  await expect(page.locator('#step-count')).toHaveText('Step 6 of 7');
+  await page.locator('[data-control="modifier.simple_deform.axis.z"]').click();
+  await expect(page.locator('#clue')).toHaveText('✓ Axis: Z.');
+  // Once solved, the row is shown, not offered: plain labels with Z lit.
+  await expect(page.locator('[data-control="modifier.simple_deform.axis.z"]')).toHaveClass('on');
+
+  // 45° → 180° in 5° steps: the limits are in degrees too.
+  await press('modifier.simple_deform.angle', 27, 'Increase');
+  await expect(page.locator('#step-count')).toHaveText('Finished');
+});
+
 test('fine stepping stops on every action, including the open Add Modifier menu, and the menu stays on screen', async ({ page }) => {
   await page.goto('/learn/#/lesson/modifiers/cup');
   await expect(page.locator('#watch-controls')).toBeVisible();
@@ -137,7 +169,10 @@ test('the layout fits a phone screen without horizontal scrolling', async ({ pag
 test('home groups the lessons by module', async ({ page }) => {
   await page.goto('/learn/');
   await expect(page.locator('.module h2')).toHaveText(['Modifiers', 'Sculpting']);
-  await expect(page.locator('.module[data-module="sculpt"] .lesson-card h3')).toHaveText(['Pebble buddy', 'Your turn: sleepy buddy']);
+  await expect(page.locator('.module[data-module="modifiers"] .lesson-card h3')).toHaveText(
+    ['Low-poly cup', 'Your turn: bowl', 'Twisted column', 'Your turn: twisted candle']);
+  await expect(page.locator('.module[data-module="sculpt"] .lesson-card h3')).toHaveText(
+    ['Pebble buddy', 'Your turn: sleepy buddy', 'Horned buddy', 'Your turn: antenna bug', 'Craggy rock', 'Your turn: split boulder']);
 });
 
 /** Canvas pixels of the dotted guide, as page coordinates. */
