@@ -6,7 +6,7 @@ El espacio de diseño es la pantalla principal del sitio. Ahí puedes organizar 
 | --- | --- | --- |
 | **Espacio de diseño** | Proyectos, archivos y tres editores integrados | `/` (también disponible en `/workspace/`) |
 | **SolidCraft** | Paquete web oficial 0.18.3, alojado aquí | `/solidcraft/` |
-| **Drafty3D Learn** | Aprender la interfaz de Blender 5.3 (prototipo: Modificadores); también como APK sin conexión | `/learn/` |
+| **Drafty3D Learn** | Aprender Blender 5.3 de principiante a intermedio (prototipo: Modificadores y Escultura); también como APK sin conexión | `/learn/` |
 
 ## Local
 
@@ -38,7 +38,7 @@ Consulta la [guía del portal](docs/PORTAL.md) para activar Supabase en el entor
 
 ## Drafty3D Learn
 
-Módulo para aprender la interfaz de Blender con ejemplos reales: Blender 5.3 (`bpy`) graba cada paso y three.js solo lo muestra. Es el mismo build en `/learn/`, en la vista previa de githack y en el APK de Android (Capacitor), que se publica en GitHub Releases. Para probarlo, ver las decisiones y regenerar ejemplos: [guía de Drafty3D Learn](docs/learn/README.md). Contrato de datos: [docs/learn/PIPELINE_CONTRACT.md](docs/learn/PIPELINE_CONTRACT.md).
+Módulo para aprender la interfaz de Blender con ejemplos reales: Blender 5.3 (`bpy`) graba cada paso y three.js solo lo muestra. Es el mismo build en `/learn/`, en la vista previa de githack y en el APK de Android (Capacitor), que se publica en GitHub Releases. **Plan de trabajo:** [ruta de aprendizaje de principiante a intermedio](docs/learn/ROADMAP.md), con lo que ya está y lo que falta; es la referencia para decidir qué lección sigue. Para probarlo, ver las decisiones y regenerar ejemplos: [guía de Drafty3D Learn](docs/learn/README.md). Contrato de datos: [docs/learn/PIPELINE_CONTRACT.md](docs/learn/PIPELINE_CONTRACT.md).
 
 - `npm run build:learn` compila solo `/learn/` en `dist/learn`.
 - `npm run learn:examples` regenera los ejemplos (requiere el entorno `bpy` descrito en la guía).
