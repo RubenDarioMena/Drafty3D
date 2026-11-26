@@ -12,6 +12,8 @@ Prototipo del módulo **Modificadores**. Incluye una lección para ver (la taza,
 | APK (descarga directa en el celular) | https://github.com/RubenDarioMena/Drafty3D/releases/download/learn-preview/drafty3d-learn.apk |
 | Página del release (notas, commit de origen) | https://github.com/RubenDarioMena/Drafty3D/releases/tag/learn-preview |
 
+githack guarda en caché el enlace de la rama `preview` durante un rato, así que después de un cambio puede seguir mostrando la versión anterior. Cada ejecución de Actions publica en su resumen un enlace fijado al commit (`https://raw.githack.com/RubenDarioMena/Drafty3D/<commit>/learn/index.html`), que siempre está al día.
+
 La primera vez, githack muestra su propia página "One more step": toca **Open the page**. Es un aviso de githack, no de la app. En el navegador la app se descarga de internet; sin conexión solo funciona el APK.
 
 Cada push a `codex/portal-diseno` que toque `/learn/` o `android/` actualiza la vista previa de githack en GitHub Actions (gratis en repos públicos). El APK solo se genera a mano: Actions → "Drafty3D Learn · APK + preview" → **Run workflow**. No se gasta ningún build de Vercel: la rama `preview` lleva su propio `vercel.json` con el `ignoreCommand`.

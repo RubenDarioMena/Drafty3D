@@ -115,3 +115,6 @@ jobs:
           git add -A
           git commit -qm "Drafty3D Learn preview from ${GITHUB_SHA::7}" || { echo "No changes"; exit 0; }
           git push origin preview
+          # githack caches branch URLs for a while; a commit URL is always fresh.
+          url="https://raw.githack.com/$GITHUB_REPOSITORY/$(git rev-parse HEAD)/learn/index.html"
+          echo "Preview (always up to date): $url" | tee -a "$GITHUB_STEP_SUMMARY"
