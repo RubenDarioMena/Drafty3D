@@ -1,5 +1,5 @@
 import { formatValue, roundToStep } from './format.js';
-import { modifierIcon, tabIcon } from './icons.js';
+import { HEADER_ICONS, modifierIcon, tabIcon } from './icons.js';
 
 const DRAG_PIXELS_PER_STEP = 14;
 
@@ -83,14 +83,82 @@ export class PropertiesEditor {
     const head = el('header', 'modifier-head');
     head.append(el('span', 'chevron', '▾'));
     head.insertAdjacentHTML('beforeend', modifierIcon(modifier.type));
-    head.append(el('span', 'name', modifier.name), el('span', 'toggles', '▣◉✕'));
-    head.lastChild.setAttribute('aria-hidden', 'true');
+    head.append(el('span', 'name', modifier.name), this.renderHeaderControls(modifier, definition));
+    card.classList.toggle('hidden-in-viewport', modifier.visible === false);
     const body = el('div', 'modifier-body');
     const { fields } = definition;
     this.renderFields(body, fields.filter(field => field.subpanel === undefined), modifier);
     definition.subpanels.forEach((subpanel, index) => body.append(this.renderSubpanel(subpanel, index, fields, modifier)));
-    card.append(head, body);
+    card.append(head);
+    if (this.openList === `modifier.${definition.short}.menu`) card.append(this.renderModifierMenu(modifier, definition));
+    card.append(body);
     return card;
+  }
+
+  /** Blender's header row: Edit Mode, Realtime and Render toggles, the extra menu arrow, Delete. */
+  renderHeaderControls(modifier, definition) {
+    const { toggles, delete: remove } = this.ui.modifierHeader;
+    const box = el('span', 'toggles');
+    const control = (id, icon, label, pressed) => {
+      const interactive = this.options.interactive.has(id);
+      const button = el(interactive ? 'button' : 'span', `head-control${pressed === false ? ' off' : ''}${interactive ? ' interactive' : ''}`);
+      button.innerHTML = icon;
+      button.dataset.control = id;
+      button.title = label;
+      if (interactive) {
+        button.type = 'button';
+        button.setAttribute('aria-label', label);
+        if (pressed !== undefined) button.setAttribute('aria-pressed', String(pressed));
+      }
+      return button;
+    };
+    for (const toggle of toggles) {
+      const id = `modifier.${definition.short}.${toggle.id}`;
+      const pressed = toggle.id === 'show_viewport' ? modifier.visible !== false : true;
+      const button = control(id, HEADER_ICONS[toggle.id], `${toggle.label}: ${toggle.description}`, pressed);
+      if (button.tagName === 'BUTTON') button.addEventListener('click', () => this.options.onStackOp?.(id));
+      box.append(button);
+    }
+    const menuId = `modifier.${definition.short}.menu`;
+    const menu = control(menuId, HEADER_ICONS.menu, 'Modifier menu');
+    if (menu.tagName === 'BUTTON') {
+      menu.setAttribute('aria-expanded', String(this.openList === menuId));
+      menu.addEventListener('click', () => this.toggleList(menuId));
+    }
+    box.append(menu, control(`modifier.${definition.short}.delete`, HEADER_ICONS.delete, remove.label));
+    return box;
+  }
+
+  /** The arrow's menu (modifier_ops_extra_draw): Apply, Duplicate, Copy to Selected, Move to First / Last, Pin to Last. */
+  renderModifierMenu(modifier, definition) {
+    const index = this.state.modifiers.indexOf(modifier);
+    const last = this.state.modifiers.length - 1;
+    const list = el('div', 'dropdown-list modifier-menu');
+    list.setAttribute('role', 'menu');
+    for (const item of this.ui.modifierHeader.menu) {
+      if (item.separator) {
+        list.append(el('div', 'menu-sep'));
+        continue;
+      }
+      const id = `modifier.${definition.short}.${item.id}`;
+      const blocked = (item.id === 'move_to_first' && index === 0) || (item.id === 'move_to_last' && index === last);
+      const interactive = this.options.interactive.has(id) && !blocked;
+      const entry = el(interactive ? 'button' : 'div', `dropdown-item${blocked ? ' blocked' : ''}`);
+      if (item.checkbox) entry.append(el('span', 'box', ''));
+      entry.append(el('span', 'item-label', item.label));
+      if (item.shortcut) entry.append(el('span', 'item-shortcut', item.shortcut.keys.join(' ')));
+      entry.dataset.control = id;
+      entry.setAttribute('role', 'menuitem');
+      if (interactive) {
+        entry.type = 'button';
+        entry.addEventListener('click', () => {
+          this.openList = null;
+          this.options.onStackOp?.(id);
+        });
+      }
+      list.append(entry);
+    }
+    return list;
   }
 
   /** Fields in panel order; consecutive fields sharing a `row` heading sit on one line, as Blender draws them. */

@@ -69,6 +69,14 @@ TRACK_CAMERAS = {
     'overview': {'position': [0, -1.9, 2.0], 'target': [0, 0, 0], 'fov': 34},
 }
 
+BLOCK_CAMERAS = {
+    'overview': {'position': [2.1, -2.7, 1.95], 'target': [0, 0, 0.5], 'fov': 30},
+}
+CUSHION_CAMERAS = {
+    'overview': {'position': [1.6, -2.0, 1.25], 'target': [0, 0, 0.12], 'fov': 30},
+}
+APPLY = truth.shortcut('Property Editor', 'object.modifier_apply', 'Properties editor · Modifiers tab')
+
 
 def ui_truth():
     reset()
@@ -79,6 +87,7 @@ def ui_truth():
         'objectPanels': truth.object_panels(),
         'addModifierMenu': truth.add_modifier_menu(),
         'modifiers': truth.modifier_definitions(probe),
+        'modifierHeader': truth.modifier_header(),
     }
     with open(os.path.join(OUT, 'blender-ui.json'), 'w') as handle:
         json.dump(data, handle, indent=2)
@@ -371,6 +380,54 @@ def curve_ring_track():
     lesson.finish(text='Ring track finished: the same two settings as the garden path.')
 
 
+def stack_block():
+    reset()
+    obj = blocks('Block', [((-0.5, -0.5, 0), (0.5, 0.5, 1), ())])
+    lesson = Lesson(
+        module='modifiers', example='stack-block', mode='watch', title='Order in the stack',
+        out_dir=os.path.join(OUT, 'modifiers', 'stack-block'), obj=obj, panel='OBJECT', camera=BLOCK_CAMERAS['overview'],
+        text='Modifiers run from top to bottom, each one on the result of the one above. Same two modifiers, two orders, two different shapes.',
+    )
+    lesson.select_panel('MODIFIER', shortcut=NEXT_TAB, text='Open the Modifier Properties tab, the wrench.')
+    lesson.add_modifier('SUBSURF', shortcut=ADD_MENU, text='Add Modifier → Generate → Subdivision Surface. The cube melts into a blob.')
+    lesson.set_value('SUBSURF', 'levels', 2, step=1, shortcut=SUBSURF_2, text='Set Levels Viewport to 2: a smoother blob.')
+    lesson.add_modifier('BEVEL', shortcut=ADD_MENU,
+                        text='Add a Bevel. It goes below Subdivision and works on its smooth result, where no edge is sharp enough to bevel.')
+    lesson.move_modifier('BEVEL', 'FIRST',
+                         text='Open Bevel\'s menu, the small arrow in its header, and choose Move to First. Now Bevel runs on the cube, then Subdivision smooths it: a rounded block.')
+    lesson.set_value('BEVEL', 'amount', 0.2, step=0.01, text='Set Amount to 0.2 m for rounder edges.')
+    lesson.toggle_modifier('SUBSURF', False,
+                           text='Hide Subdivision with its Realtime toggle, the screen icon in its header. You see what Bevel made on its own.')
+    lesson.toggle_modifier('SUBSURF', True, text='Turn it back on. Hiding never deletes a modifier or its settings.')
+    lesson.apply_modifier('BEVEL', shortcut=APPLY,
+                          text='Apply Bevel from its menu. The shape stays the same, but the bevel is now part of the mesh and the modifier is gone.')
+    lesson.finish(text='Done: order changes the result, Realtime hides without losing anything, Apply makes it permanent. Now round a cushion yourself.')
+
+
+def stack_cushion():
+    reset()
+    obj = blocks('Cushion', [((-0.5, -0.35, 0), (0.5, 0.35, 0.25), ())])
+    lesson = Lesson(
+        module='modifiers', example='stack-cushion', mode='your-turn', title='Your turn: cushion', variant_of='stack-block',
+        out_dir=os.path.join(OUT, 'modifiers', 'stack-cushion'), obj=obj, panel='OBJECT', camera=CUSHION_CAMERAS['overview'],
+        text='A flat box. Put Bevel above Subdivision to turn it into a cushion, check each one, then apply the Bevel.',
+    )
+    lesson.select_panel('MODIFIER', shortcut=NEXT_TAB, text='Open the Modifier Properties tab.',
+                        help='The wrench icon, right below the orange Object square.')
+    lesson.add_modifier('SUBSURF', shortcut=ADD_MENU, text='Add a Subdivision Surface modifier.',
+                        help='Add Modifier → Generate → Subdivision Surface.')
+    lesson.set_value('SUBSURF', 'levels', 2, step=1, text='Set Levels Viewport to 2.', help='First number in the Subdivision panel.')
+    lesson.add_modifier('BEVEL', shortcut=ADD_MENU, text='Add a Bevel modifier.', help='Add Modifier → Generate → Bevel.')
+    lesson.move_modifier('BEVEL', 'FIRST', text='Bevel must run first: move it to the top of the stack.',
+                         help='The small arrow in the Bevel header opens its menu: Move to First.')
+    lesson.set_value('BEVEL', 'amount', 0.08, step=0.01, text='Set the bevel Amount to 0.08 m.', help='Amount is right below Width Type.')
+    lesson.toggle_modifier('SUBSURF', False, text='Hide Subdivision to see the bevel alone.',
+                           help='The screen icon in the Subdivision header is its Realtime toggle.')
+    lesson.toggle_modifier('SUBSURF', True, text='Show Subdivision again.', help='Tap the same screen icon.')
+    lesson.apply_modifier('BEVEL', shortcut=APPLY, text='Apply the Bevel.', help='Bevel\'s header menu → Apply.')
+    lesson.finish(text='Cushion finished: Bevel → Subdivision, then Bevel applied into the mesh.')
+
+
 if __name__ == '__main__':
     os.makedirs(OUT, exist_ok=True)
     ui_truth()
@@ -386,4 +443,6 @@ if __name__ == '__main__':
     boolean_lantern()
     curve_garden_path()
     curve_ring_track()
+    stack_block()
+    stack_cushion()
     print('Drafty3D Learn: examples generated in', OUT)

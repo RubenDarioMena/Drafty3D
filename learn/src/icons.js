@@ -28,5 +28,14 @@ const MODIFIERS = {
   SUBSURF: svg('<rect x="3.5" y="3.5" width="13" height="13" rx="1" stroke="#4f8ef2" stroke-width="1.2"/><circle cx="10" cy="10" r="5" stroke="#4f8ef2" stroke-width="1.6"/>'),
 };
 
+// Modifier header: edit mode, Realtime (viewport) and render toggles, the extra menu arrow.
+export const HEADER_ICONS = {
+  show_in_editmode: svg('<path d="M4 15l6-10 6 10z" stroke="currentColor" stroke-width="1.5"/><circle cx="4" cy="15" r="1.6" fill="currentColor"/><circle cx="10" cy="5" r="1.6" fill="currentColor"/><circle cx="16" cy="15" r="1.6" fill="currentColor"/>'),
+  show_viewport: svg('<rect x="3" y="4.5" width="14" height="9" rx="1.2" stroke="currentColor" stroke-width="1.6"/><path d="M7.5 16.5h5M10 13.5v3" stroke="currentColor" stroke-width="1.6"/>'),
+  show_render: svg('<rect x="3" y="6.5" width="14" height="9" rx="1.5" stroke="currentColor" stroke-width="1.6"/><circle cx="10" cy="11" r="2.6" stroke="currentColor" stroke-width="1.6"/><path d="M7 6.5l1.2-2h3.6l1.2 2" stroke="currentColor" stroke-width="1.6"/>'),
+  menu: svg('<path d="M6 8l4 4 4-4" stroke="currentColor" stroke-width="1.8"/>'),
+  delete: svg('<path d="M6 6l8 8M14 6l-8 8" stroke="currentColor" stroke-width="1.8"/>'),
+};
+
 export const tabIcon = identifier => TABS[identifier] || svg('<circle cx="10" cy="10" r="3" fill="#888"/>');
 export const modifierIcon = type => MODIFIERS[type] || TABS.MODIFIER;

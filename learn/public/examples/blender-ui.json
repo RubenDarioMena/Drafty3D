@@ -1286,6 +1286,82 @@
       "subpanels": []
     }
   },
+  "modifierHeader": {
+    "toggles": [
+      {
+        "id": "show_in_editmode",
+        "label": "Edit Mode",
+        "description": "Display modifier in Edit mode"
+      },
+      {
+        "id": "show_viewport",
+        "label": "Realtime",
+        "description": "Display modifier in viewport"
+      },
+      {
+        "id": "show_render",
+        "label": "Render",
+        "description": "Use modifier during render"
+      }
+    ],
+    "menu": [
+      {
+        "id": "apply",
+        "label": "Apply",
+        "shortcut": {
+          "keys": [
+            "Ctrl",
+            "A"
+          ],
+          "context": "Properties editor · Modifiers tab"
+        }
+      },
+      {
+        "id": "duplicate",
+        "label": "Duplicate",
+        "shortcut": {
+          "keys": [
+            "Shift",
+            "D"
+          ],
+          "context": "Properties editor · Modifiers tab"
+        }
+      },
+      {
+        "id": "copy_to_selected",
+        "label": "Copy to Selected"
+      },
+      {
+        "separator": true
+      },
+      {
+        "id": "move_to_first",
+        "label": "Move to First"
+      },
+      {
+        "id": "move_to_last",
+        "label": "Move to Last"
+      },
+      {
+        "separator": true
+      },
+      {
+        "id": "pin_to_last",
+        "label": "Pin to Last",
+        "checkbox": true
+      }
+    ],
+    "delete": {
+      "id": "delete",
+      "label": "Delete",
+      "shortcut": {
+        "keys": [
+          "X"
+        ],
+        "context": "Properties editor · Modifiers tab"
+      }
+    }
+  },
   "sculpt": {
     "modeMenu": {
       "id": "object.mode",

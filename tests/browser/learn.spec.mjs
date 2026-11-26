@@ -204,6 +204,41 @@ test('Your turn with Blender\'s dropdowns: Boolean\'s Object picks a helper, Cur
   await expect(page.locator('#step-count')).toHaveText('Finished');
 });
 
+test('Your turn with the modifier header: Move to First, the Realtime toggle and Apply', async ({ page }) => {
+  const add = async (category, id) => {
+    await page.locator('[data-control="modifier.add_menu"]').click();
+    await page.locator(`[data-control="modifier.add_menu.${category}"]`).click();
+    await page.locator(`[data-control="${id}"]`).click();
+  };
+  const press = async (id, times, direction) => {
+    for (let i = 0; i < times; i += 1) await page.locator(`[data-control="${id}"] button[aria-label^="${direction}"]`).click();
+  };
+  await page.goto('/learn/#/lesson/modifiers/stack-cushion');
+  await page.locator('[data-control="panel.properties.modifier"]').click();
+  await add('generate', 'modifier.subsurf.add');
+  await press('modifier.subsurf.levels', 1, 'Increase');
+  await add('generate', 'modifier.bevel.add');
+  await expect(page.locator('.modifier .modifier-head .name')).toHaveText(['Subdivision', 'Bevel']);
+
+  // The arrow opens Blender's menu; Move to First is offered, Move to Last is not (Bevel is already last).
+  await page.locator('[data-control="modifier.bevel.menu"]').click();
+  await expect(page.locator('.modifier-menu .item-label')).toHaveText(
+    ['Apply', 'Duplicate', 'Copy to Selected', 'Move to First', 'Move to Last', 'Pin to Last']);
+  await expect(page.locator('[data-control="modifier.bevel.apply"] .item-shortcut')).toHaveText('Ctrl A');
+  await page.locator('[data-control="modifier.bevel.move_to_first"]').click();
+  await expect(page.locator('#clue')).toHaveText('✓ Bevel moved to the top of the stack.');
+  await expect(page.locator('.modifier .modifier-head .name')).toHaveText(['Bevel', 'Subdivision']);
+
+  await press('modifier.bevel.amount', 2, 'Decrease');
+  await page.locator('[data-control="modifier.subsurf.show_viewport"]').click();
+  await expect(page.locator('#clue')).toHaveText('✓ Subdivision hidden in the viewport.');
+  await page.locator('[data-control="modifier.subsurf.show_viewport"]').click();
+  await page.locator('[data-control="modifier.bevel.menu"]').click();
+  await page.locator('[data-control="modifier.bevel.apply"]').click();
+  await expect(page.locator('.modifier .modifier-head .name')).toHaveText(['Subdivision']);
+  await expect(page.locator('#step-count')).toHaveText('Finished');
+});
+
 test('fine stepping stops on every action, including the open Add Modifier menu, and the menu stays on screen', async ({ page }) => {
   await page.goto('/learn/#/lesson/modifiers/cup');
   await expect(page.locator('#watch-controls')).toBeVisible();
@@ -236,7 +271,8 @@ test('home groups the lessons by module', async ({ page }) => {
   await expect(page.locator('.module[data-module="modifiers"] .lesson-card h3')).toHaveText(
     ['Low-poly cup', 'Your turn: bowl', 'Twisted column', 'Your turn: twisted candle',
       'Table from one corner', 'Your turn: bench', 'Staircase from one step', 'Your turn: floating steps',
-      'Birdhouse door', 'Your turn: lantern window', 'Garden path', 'Your turn: ring track']);
+      'Birdhouse door', 'Your turn: lantern window', 'Garden path', 'Your turn: ring track',
+      'Order in the stack', 'Your turn: cushion']);
   await expect(page.locator('.module[data-module="sculpt"] .lesson-card h3')).toHaveText(
     ['Pebble buddy', 'Your turn: sleepy buddy', 'Horned buddy', 'Your turn: antenna bug', 'Craggy rock', 'Your turn: split boulder']);
 });

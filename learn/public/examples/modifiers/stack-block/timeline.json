@@ -1,0 +1,294 @@
+{
+  "blenderVersion": "5.3.0",
+  "module": "modifiers",
+  "example": "stack-block",
+  "mode": "watch",
+  "title": "Order in the stack",
+  "object": "Block",
+  "initial": {
+    "panel": "panel.properties.object",
+    "camera": {
+      "position": [
+        2.1,
+        -2.7,
+        1.95
+      ],
+      "target": [
+        0,
+        0,
+        0.5
+      ],
+      "fov": 30
+    },
+    "text": "Modifiers run from top to bottom, each one on the result of the one above. Same two modifiers, two orders, two different shapes.",
+    "mesh": "step-00.glb"
+  },
+  "steps": [
+    {
+      "id": "panel.properties.modifier",
+      "action": "select_panel",
+      "value": null,
+      "value_type": null,
+      "shortcut": {
+        "keys": [
+          "Ctrl",
+          "Tab"
+        ],
+        "context": "Properties editor · next tab"
+      },
+      "duration": 1.4,
+      "autoAdvance": true,
+      "text": "Open the Modifier Properties tab, the wrench.",
+      "help": null,
+      "camera": {
+        "position": [
+          2.1,
+          -2.7,
+          1.95
+        ],
+        "target": [
+          0,
+          0,
+          0.5
+        ],
+        "fov": 30
+      },
+      "mesh": null
+    },
+    {
+      "id": "modifier.subsurf.add",
+      "action": "add_modifier",
+      "value": "Subdivision Surface",
+      "value_type": "string",
+      "modifier": "SUBSURF",
+      "shortcut": {
+        "keys": [
+          "Shift",
+          "A"
+        ],
+        "context": "Properties editor · Modifiers tab"
+      },
+      "duration": 2.8,
+      "autoAdvance": false,
+      "text": "Add Modifier → Generate → Subdivision Surface. The cube melts into a blob.",
+      "help": null,
+      "camera": {
+        "position": [
+          2.1,
+          -2.7,
+          1.95
+        ],
+        "target": [
+          0,
+          0,
+          0.5
+        ],
+        "fov": 30
+      },
+      "mesh": "step-02.glb"
+    },
+    {
+      "id": "modifier.subsurf.levels",
+      "action": "set_value",
+      "value": 2,
+      "value_type": "number",
+      "modifier": "SUBSURF",
+      "shortcut": {
+        "keys": [
+          "Ctrl",
+          "2"
+        ],
+        "context": "3D Viewport · Object Mode"
+      },
+      "duration": 2.2,
+      "autoAdvance": false,
+      "text": "Set Levels Viewport to 2: a smoother blob.",
+      "help": null,
+      "step": 1,
+      "camera": {
+        "position": [
+          2.1,
+          -2.7,
+          1.95
+        ],
+        "target": [
+          0,
+          0,
+          0.5
+        ],
+        "fov": 30
+      },
+      "mesh": "step-03.glb"
+    },
+    {
+      "id": "modifier.bevel.add",
+      "action": "add_modifier",
+      "value": "Bevel",
+      "value_type": "string",
+      "modifier": "BEVEL",
+      "shortcut": {
+        "keys": [
+          "Shift",
+          "A"
+        ],
+        "context": "Properties editor · Modifiers tab"
+      },
+      "duration": 2.8,
+      "autoAdvance": false,
+      "text": "Add a Bevel. It goes below Subdivision and works on its smooth result, where no edge is sharp enough to bevel.",
+      "help": null,
+      "camera": {
+        "position": [
+          2.1,
+          -2.7,
+          1.95
+        ],
+        "target": [
+          0,
+          0,
+          0.5
+        ],
+        "fov": 30
+      },
+      "mesh": null
+    },
+    {
+      "id": "modifier.bevel.move_to_first",
+      "action": "move_modifier",
+      "value": "FIRST",
+      "value_type": "enum",
+      "modifier": "BEVEL",
+      "shortcut": null,
+      "duration": 2.4,
+      "autoAdvance": false,
+      "text": "Open Bevel's menu, the small arrow in its header, and choose Move to First. Now Bevel runs on the cube, then Subdivision smooths it: a rounded block.",
+      "help": null,
+      "camera": {
+        "position": [
+          2.1,
+          -2.7,
+          1.95
+        ],
+        "target": [
+          0,
+          0,
+          0.5
+        ],
+        "fov": 30
+      },
+      "mesh": "step-05.glb"
+    },
+    {
+      "id": "modifier.bevel.amount",
+      "action": "set_value",
+      "value": 0.2,
+      "value_type": "number",
+      "modifier": "BEVEL",
+      "shortcut": null,
+      "duration": 2.2,
+      "autoAdvance": false,
+      "text": "Set Amount to 0.2 m for rounder edges.",
+      "help": null,
+      "step": 0.01,
+      "camera": {
+        "position": [
+          2.1,
+          -2.7,
+          1.95
+        ],
+        "target": [
+          0,
+          0,
+          0.5
+        ],
+        "fov": 30
+      },
+      "mesh": "step-06.glb"
+    },
+    {
+      "id": "modifier.subsurf.show_viewport",
+      "action": "toggle_modifier",
+      "value": false,
+      "value_type": "bool",
+      "modifier": "SUBSURF",
+      "shortcut": null,
+      "duration": 1.8,
+      "autoAdvance": false,
+      "text": "Hide Subdivision with its Realtime toggle, the screen icon in its header. You see what Bevel made on its own.",
+      "help": null,
+      "camera": {
+        "position": [
+          2.1,
+          -2.7,
+          1.95
+        ],
+        "target": [
+          0,
+          0,
+          0.5
+        ],
+        "fov": 30
+      },
+      "mesh": "step-07.glb"
+    },
+    {
+      "id": "modifier.subsurf.show_viewport",
+      "action": "toggle_modifier",
+      "value": true,
+      "value_type": "bool",
+      "modifier": "SUBSURF",
+      "shortcut": null,
+      "duration": 1.8,
+      "autoAdvance": false,
+      "text": "Turn it back on. Hiding never deletes a modifier or its settings.",
+      "help": null,
+      "camera": {
+        "position": [
+          2.1,
+          -2.7,
+          1.95
+        ],
+        "target": [
+          0,
+          0,
+          0.5
+        ],
+        "fov": 30
+      },
+      "mesh": "step-08.glb"
+    },
+    {
+      "id": "modifier.bevel.apply",
+      "action": "apply_modifier",
+      "value": null,
+      "value_type": null,
+      "modifier": "BEVEL",
+      "shortcut": {
+        "keys": [
+          "Ctrl",
+          "A"
+        ],
+        "context": "Properties editor · Modifiers tab"
+      },
+      "duration": 2.4,
+      "autoAdvance": false,
+      "text": "Apply Bevel from its menu. The shape stays the same, but the bevel is now part of the mesh and the modifier is gone.",
+      "help": null,
+      "camera": {
+        "position": [
+          2.1,
+          -2.7,
+          1.95
+        ],
+        "target": [
+          0,
+          0,
+          0.5
+        ],
+        "fov": 30
+      },
+      "mesh": null
+    }
+  ],
+  "outro": "Done: order changes the result, Realtime hides without losing anything, Apply makes it permanent. Now round a cushion yourself."
+}

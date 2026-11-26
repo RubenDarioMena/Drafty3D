@@ -308,6 +308,39 @@ def _subpanel(mod_type, sub):
             'header': f'modifier.{MODIFIER_SHORT[mod_type]}.{header[0]}' if header else None}
 
 
+def modifier_header():
+    """MOD_ui_common.cc modifier_panel_header for a mesh modifier: the display toggles, then the
+    extra-operators menu (modifier_ops_extra_draw) and the delete button. The menu's labels are written
+    in that C source; shortcuts come from the keymap. Apply as / Save as Shape Key only appear for
+    modifiers that keep the topology, which no menu lesson uses."""
+    rna = bpy.types.Modifier.bl_rna.properties
+
+    def op(item_id, label, operator=None):
+        entry = {'id': item_id, 'label': label}
+        if operator:
+            try:
+                entry['shortcut'] = shortcut('Property Editor', operator, 'Properties editor · Modifiers tab')
+            except LookupError:
+                pass
+        return entry
+
+    return {
+        'toggles': [{'id': prop, 'label': rna[prop].name, 'description': rna[prop].description}
+                    for prop in ('show_in_editmode', 'show_viewport', 'show_render')],
+        'menu': [
+            op('apply', 'Apply', 'object.modifier_apply'),
+            op('duplicate', 'Duplicate', 'object.modifier_copy'),
+            op('copy_to_selected', 'Copy to Selected'),
+            {'separator': True},
+            op('move_to_first', 'Move to First'),
+            op('move_to_last', 'Move to Last'),
+            {'separator': True},
+            {'id': 'pin_to_last', 'label': rna['use_pin_to_last'].name, 'checkbox': True},
+        ],
+        'delete': op('delete', 'Delete', 'object.modifier_remove'),
+    }
+
+
 def modifier_definitions(obj):
     """Adds each modifier through the real operator to read its true defaults, then removes it."""
     menu_labels = {item.identifier: item.name for item in bpy.types.Modifier.bl_rna.properties['type'].enum_items_static}

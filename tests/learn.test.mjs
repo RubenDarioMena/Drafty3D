@@ -19,11 +19,16 @@ test('every id in the timelines exists in the UI read from Blender (the pipeline
   const menuIds = new Set(ui.addModifierMenu.categories.flatMap(category => category.items.map(item => item.id)));
   const fields = new Map(Object.values(ui.modifiers).flatMap(definition => definition.fields.map(field => [field.id, field])));
   const fieldIds = new Set(fields.keys());
+  // Header controls: the Realtime toggle and the arrow menu's items, per modifier.
+  const headerIds = action => new Set(Object.values(ui.modifiers).flatMap(definition => (action === 'toggle_modifier'
+    ? ui.modifierHeader.toggles.map(toggle => toggle.id)
+    : ui.modifierHeader.menu.filter(item => !item.separator).map(item => item.id))
+    .map(id => `modifier.${definition.short}.${id}`)));
   for (const timeline of byModule('modifiers')) {
     assert.equal(timeline.blenderVersion, ui.blenderVersion);
     assert.ok(tabIds.has(timeline.initial.panel));
     for (const step of timeline.steps) {
-      const known = { select_panel: tabIds, add_modifier: menuIds, set_value: fieldIds }[step.action];
+      const known = { select_panel: tabIds, add_modifier: menuIds, set_value: fieldIds }[step.action] ?? headerIds(step.action);
       assert.ok(known?.has(step.id), `${timeline.example}: ${step.id}`);
       if (step.action === 'set_value' && fields.get(step.id).kind === 'enum') {
         assert.ok(fields.get(step.id).items.some(item => item.value === step.value), `${step.id} = ${step.value} is a Blender option`);

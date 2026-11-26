@@ -2,7 +2,7 @@ import { gsap } from 'gsap';
 import { animateStep } from './animate.js';
 import { formatValue } from './format.js';
 import { lessonProgress, saveLessonProgress } from './progress.js';
-import { applyStep, fieldSteps, interactiveFields, isSolved, lessonModifierTypes, stateAt, toolField } from './state.js';
+import { STACK_ACTIONS, applyStep, fieldSteps, interactiveFields, isSolved, lessonModifierTypes, stateAt, toolField } from './state.js';
 import { traceMatches } from './trace.js';
 
 const TABS = new Set(['panel.properties.object', 'panel.properties.modifier']);
@@ -88,8 +88,8 @@ export class YourTurnMode {
         onValue: (id, value) => this.setTool({ [id.slice('sculpt.'.length)]: value }),
       };
     }
-    const ids = [...interactiveFields(this.timeline, this.solved)]
-      .filter(id => this.live.modifiers.some(modifier => id in modifier.values));
+    const shorts = new Set(this.live.modifiers.map(modifier => this.ui.modifiers[modifier.type].short));
+    const ids = [...interactiveFields(this.timeline, this.solved)].filter(id => shorts.has(id.split('.')[1]));
     return {
       objectName: this.timeline.object,
       enabledTabs: TABS,
@@ -97,6 +97,7 @@ export class YourTurnMode {
       steps: this.steps,
       onTab: id => this.tab(id),
       onValue: (id, value) => this.value(id, value),
+      onStackOp: id => this.stackOp(id),
       onAddMenu: button => { if (!this.busy) this.menu.open(button); },
     };
   }
@@ -232,6 +233,17 @@ export class YourTurnMode {
     this.toast('Not this one yet');
   }
 
+  /** A header toggle or a menu item (Move to First, Apply): only the current step's control does anything. */
+  stackOp(id) {
+    if (this.busy) return;
+    const step = this.current();
+    if (step && STACK_ACTIONS.has(step.action) && step.id === id) this.succeed(false);
+    else {
+      this.toast('Not this one yet');
+      this.refresh();
+    }
+  }
+
   pickMode(mode) {
     const step = this.current();
     if (step?.action === 'set_mode' && step.value === mode) this.succeed(false);
@@ -259,6 +271,9 @@ export class YourTurnMode {
       case 'set_direction': return `✓ Direction: ${this.ui.sculpt.header.direction.items.find(item => item.value === step.value).label}.`;
       case 'set_symmetry': return `✓ Mirror ${step.id.split('.').pop().toUpperCase()} ${step.value ? 'on' : 'off'}.`;
       case 'stroke': return '✓ Stroke done. This is the surface Blender sculpted.';
+      case 'toggle_modifier': return `✓ ${this.ui.modifiers[step.modifier].defaultName} ${step.value ? 'shown' : 'hidden'} in the viewport.`;
+      case 'move_modifier': return `✓ ${this.ui.modifiers[step.modifier].defaultName} moved to the ${step.value === 'FIRST' ? 'top' : 'bottom'} of the stack.`;
+      case 'apply_modifier': return `✓ ${this.ui.modifiers[step.modifier].defaultName} applied: it is part of the mesh now.`;
       default: break;
     }
     if (!step.modifier) {

@@ -44,6 +44,32 @@ export async function animateStep({ step, to, editor, menu, modeMenu, cursor, re
     return null;
   }
 
+  if (step.action === 'toggle_modifier') {
+    await cursor.moveTo(editor.element(step.id), fly);
+    await cursor.tap();
+    render(to);
+    return editor.element(step.id);
+  }
+
+  // Move to First / Apply live in the header's arrow menu: open it, then pick the item.
+  if (step.action === 'move_modifier' || step.action === 'apply_modifier') {
+    const menuId = `modifier.${step.id.split('.')[1]}.menu`;
+    await cursor.moveTo(editor.element(menuId), fly);
+    await cursor.tap();
+    editor.openList = menuId;
+    editor.render(editor.state, editor.options);
+    await wait(0.25 * scale);
+    const item = editor.element(step.id);
+    item?.classList.add('on');
+    await cursor.moveTo(item, fly * 0.8);
+    await cursor.tap();
+    editor.openList = null;
+    render(to);
+    const card = editor.element(`modifier.${step.id.split('.')[1]}`);
+    card?.scrollIntoView({ block: 'nearest' });
+    return card ?? editor.element(menuId);
+  }
+
   if (step.action === 'select_panel') {
     await cursor.moveTo(editor.element(step.id), fly);
     await cursor.tap();

@@ -5,6 +5,7 @@ export function newModifier(ui, type) {
   return {
     type,
     name: definition.defaultName,
+    visible: true,
     values: Object.fromEntries(definition.fields.map(field => [field.id, field.default])),
   };
 }
@@ -26,6 +27,13 @@ export function applyStep(state, step, ui) {
   if (step.action === 'select_panel') next.panel = step.id;
   if (step.action === 'add_modifier') next.modifiers.push(newModifier(ui, step.modifier));
   if (step.action === 'set_value' && step.modifier) next.modifiers.find(mod => mod.type === step.modifier).values[step.id] = step.value;
+  if (step.action === 'toggle_modifier') next.modifiers.find(mod => mod.type === step.modifier).visible = step.value;
+  if (step.action === 'move_modifier') {
+    const moved = next.modifiers.find(mod => mod.type === step.modifier);
+    const rest = next.modifiers.filter(mod => mod !== moved);
+    next.modifiers = step.value === 'FIRST' ? [moved, ...rest] : [...rest, moved];
+  }
+  if (step.action === 'apply_modifier') next.modifiers = next.modifiers.filter(mod => mod.type !== step.modifier);
   if (step.action === 'set_mode') next.mode = step.value;
   // Sculpt steps carry the brush settings Blender reported after the step; take them as they are.
   if ('tool' in step) next.tool = step.tool;
@@ -55,6 +63,12 @@ export function toolField(step) {
 export function isSolved(live, step) {
   if (step.action === 'select_panel') return live.panel === step.id;
   if (step.action === 'add_modifier') return live.modifiers.some(mod => mod.type === step.modifier);
+  if (step.action === 'toggle_modifier') return live.modifiers.find(mod => mod.type === step.modifier)?.visible === step.value;
+  if (step.action === 'move_modifier') {
+    const index = live.modifiers.findIndex(mod => mod.type === step.modifier);
+    return index >= 0 && index === (step.value === 'FIRST' ? 0 : live.modifiers.length - 1);
+  }
+  if (step.action === 'apply_modifier') return !live.modifiers.some(mod => mod.type === step.modifier);
   if (step.action === 'set_mode') return live.mode === step.value;
   if (step.action === 'select_brush') return live.tool?.brush === step.value;
   if (step.action === 'set_direction') return live.tool?.direction === step.value;
@@ -72,9 +86,17 @@ export function isSolved(live, step) {
   return false;
 }
 
-/** Fields a learner may turn in Your turn: lesson targets whose step is not solved yet. */
+export const STACK_ACTIONS = new Set(['toggle_modifier', 'move_modifier', 'apply_modifier']);
+
+/** The header menu (the small arrow) that holds a step's control, if it lives in one. */
+export function menuOf(step) {
+  return step.action === 'move_modifier' || step.action === 'apply_modifier' ? `modifier.${step.id.split('.')[1]}.menu` : null;
+}
+
+/** Controls a learner may use in Your turn: lesson targets whose step is not solved yet. */
 export function interactiveFields(timeline, solvedCount) {
-  return new Set(timeline.steps.slice(solvedCount).filter(step => step.action === 'set_value').map(step => step.id));
+  const steps = timeline.steps.slice(solvedCount).filter(step => step.action === 'set_value' || STACK_ACTIONS.has(step.action));
+  return new Set(steps.flatMap(step => [step.id, menuOf(step)].filter(Boolean)));
 }
 
 /** Step size of each lesson field, from the timeline (the only source of slider granularity). */
