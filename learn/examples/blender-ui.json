@@ -1,0 +1,672 @@
+{
+  "blenderVersion": "5.3.0",
+  "propertiesTabs": [
+    {
+      "id": "panel.properties.tool",
+      "identifier": "TOOL",
+      "label": "Tool"
+    },
+    {
+      "separator": true
+    },
+    {
+      "id": "panel.properties.render",
+      "identifier": "RENDER",
+      "label": "Render"
+    },
+    {
+      "id": "panel.properties.output",
+      "identifier": "OUTPUT",
+      "label": "Output"
+    },
+    {
+      "id": "panel.properties.view_layer",
+      "identifier": "VIEW_LAYER",
+      "label": "View Layer"
+    },
+    {
+      "id": "panel.properties.scene",
+      "identifier": "SCENE",
+      "label": "Scene"
+    },
+    {
+      "id": "panel.properties.world",
+      "identifier": "WORLD",
+      "label": "World"
+    },
+    {
+      "id": "panel.properties.collection",
+      "identifier": "COLLECTION",
+      "label": "Collection"
+    },
+    {
+      "separator": true
+    },
+    {
+      "id": "panel.properties.object",
+      "identifier": "OBJECT",
+      "label": "Object"
+    },
+    {
+      "id": "panel.properties.modifier",
+      "identifier": "MODIFIER",
+      "label": "Modifiers"
+    },
+    {
+      "id": "panel.properties.particles",
+      "identifier": "PARTICLES",
+      "label": "Particles"
+    },
+    {
+      "id": "panel.properties.physics",
+      "identifier": "PHYSICS",
+      "label": "Physics"
+    },
+    {
+      "id": "panel.properties.constraint",
+      "identifier": "CONSTRAINT",
+      "label": "Constraints"
+    },
+    {
+      "id": "panel.properties.data",
+      "identifier": "DATA",
+      "label": "Data"
+    },
+    {
+      "id": "panel.properties.material",
+      "identifier": "MATERIAL",
+      "label": "Material"
+    },
+    {
+      "separator": true
+    },
+    {
+      "id": "panel.properties.texture",
+      "identifier": "TEXTURE",
+      "label": "Texture"
+    }
+  ],
+  "objectPanels": [
+    "Transform",
+    "Relations",
+    "Collections",
+    "Instancing",
+    "Motion Paths",
+    "Viewport Display",
+    "Shading",
+    "Visibility",
+    "Line Art",
+    "Animation",
+    "Custom Properties"
+  ],
+  "addModifierMenu": {
+    "id": "modifier.add_menu",
+    "label": "Add Modifier",
+    "shortcut": {
+      "keys": [
+        "Shift",
+        "A"
+      ],
+      "context": "Properties editor \u00b7 Modifiers tab"
+    },
+    "categories": [
+      {
+        "id": "modifier.add_menu.edit",
+        "label": "Edit",
+        "items": [
+          {
+            "id": "modifier.data_transfer.add",
+            "label": "Data Transfer",
+            "type": "DATA_TRANSFER"
+          },
+          {
+            "id": "modifier.mesh_cache.add",
+            "label": "Mesh Cache",
+            "type": "MESH_CACHE"
+          },
+          {
+            "id": "modifier.mesh_sequence_cache.add",
+            "label": "Mesh Sequence Cache",
+            "type": "MESH_SEQUENCE_CACHE"
+          },
+          {
+            "id": "modifier.uv_project.add",
+            "label": "UV Project",
+            "type": "UV_PROJECT"
+          },
+          {
+            "id": "modifier.uv_warp.add",
+            "label": "UV Warp",
+            "type": "UV_WARP"
+          },
+          {
+            "id": "modifier.vertex_weight_edit.add",
+            "label": "Vertex Weight Edit",
+            "type": "VERTEX_WEIGHT_EDIT"
+          },
+          {
+            "id": "modifier.vertex_weight_mix.add",
+            "label": "Vertex Weight Mix",
+            "type": "VERTEX_WEIGHT_MIX"
+          },
+          {
+            "id": "modifier.vertex_weight_proximity.add",
+            "label": "Vertex Weight Proximity",
+            "type": "VERTEX_WEIGHT_PROXIMITY"
+          }
+        ]
+      },
+      {
+        "id": "modifier.add_menu.generate",
+        "label": "Generate",
+        "items": [
+          {
+            "id": "modifier.asset.array.add",
+            "label": "Array",
+            "type": null
+          },
+          {
+            "id": "modifier.array.add",
+            "label": "Array (Legacy)",
+            "type": "ARRAY"
+          },
+          {
+            "id": "modifier.bevel.add",
+            "label": "Bevel",
+            "type": "BEVEL"
+          },
+          {
+            "id": "modifier.boolean.add",
+            "label": "Boolean",
+            "type": "BOOLEAN"
+          },
+          {
+            "id": "modifier.build.add",
+            "label": "Build",
+            "type": "BUILD"
+          },
+          {
+            "id": "modifier.asset.curve_to_tube.add",
+            "label": "Curve to Tube",
+            "type": null
+          },
+          {
+            "id": "modifier.decimate.add",
+            "label": "Decimate",
+            "type": "DECIMATE"
+          },
+          {
+            "id": "modifier.edge_split.add",
+            "label": "Edge Split",
+            "type": "EDGE_SPLIT"
+          },
+          {
+            "id": "modifier.mask.add",
+            "label": "Mask",
+            "type": "MASK"
+          },
+          {
+            "id": "modifier.mirror.add",
+            "label": "Mirror",
+            "type": "MIRROR"
+          },
+          {
+            "id": "modifier.multires.add",
+            "label": "Multiresolution",
+            "type": "MULTIRES"
+          },
+          {
+            "id": "modifier.remesh.add",
+            "label": "Remesh",
+            "type": "REMESH"
+          },
+          {
+            "id": "modifier.asset.scatter_on_surface.add",
+            "label": "Scatter on Surface",
+            "type": null
+          },
+          {
+            "id": "modifier.screw.add",
+            "label": "Screw",
+            "type": "SCREW"
+          },
+          {
+            "id": "modifier.skin.add",
+            "label": "Skin",
+            "type": "SKIN"
+          },
+          {
+            "id": "modifier.solidify.add",
+            "label": "Solidify",
+            "type": "SOLIDIFY"
+          },
+          {
+            "id": "modifier.subsurf.add",
+            "label": "Subdivision Surface",
+            "type": "SUBSURF"
+          },
+          {
+            "id": "modifier.triangulate.add",
+            "label": "Triangulate",
+            "type": "TRIANGULATE"
+          },
+          {
+            "id": "modifier.volume_to_mesh.add",
+            "label": "Volume to Mesh",
+            "type": "VOLUME_TO_MESH"
+          },
+          {
+            "id": "modifier.weld.add",
+            "label": "Weld",
+            "type": "WELD"
+          },
+          {
+            "id": "modifier.wireframe.add",
+            "label": "Wireframe",
+            "type": "WIREFRAME"
+          }
+        ]
+      },
+      {
+        "id": "modifier.add_menu.deform",
+        "label": "Deform",
+        "items": [
+          {
+            "id": "modifier.armature.add",
+            "label": "Armature",
+            "type": "ARMATURE"
+          },
+          {
+            "id": "modifier.cast.add",
+            "label": "Cast",
+            "type": "CAST"
+          },
+          {
+            "id": "modifier.curve.add",
+            "label": "Curve",
+            "type": "CURVE"
+          },
+          {
+            "id": "modifier.displace.add",
+            "label": "Displace",
+            "type": "DISPLACE"
+          },
+          {
+            "id": "modifier.hook.add",
+            "label": "Hook",
+            "type": "HOOK"
+          },
+          {
+            "id": "modifier.laplaciandeform.add",
+            "label": "Laplacian Deform",
+            "type": "LAPLACIANDEFORM"
+          },
+          {
+            "id": "modifier.lattice.add",
+            "label": "Lattice",
+            "type": "LATTICE"
+          },
+          {
+            "id": "modifier.mesh_deform.add",
+            "label": "Mesh Deform",
+            "type": "MESH_DEFORM"
+          },
+          {
+            "id": "modifier.shrinkwrap.add",
+            "label": "Shrinkwrap",
+            "type": "SHRINKWRAP"
+          },
+          {
+            "id": "modifier.simple_deform.add",
+            "label": "Simple Deform",
+            "type": "SIMPLE_DEFORM"
+          },
+          {
+            "id": "modifier.smooth.add",
+            "label": "Smooth",
+            "type": "SMOOTH"
+          },
+          {
+            "id": "modifier.corrective_smooth.add",
+            "label": "Smooth Corrective",
+            "type": "CORRECTIVE_SMOOTH"
+          },
+          {
+            "id": "modifier.laplaciansmooth.add",
+            "label": "Smooth Laplacian",
+            "type": "LAPLACIANSMOOTH"
+          },
+          {
+            "id": "modifier.surface_deform.add",
+            "label": "Surface Deform",
+            "type": "SURFACE_DEFORM"
+          },
+          {
+            "id": "modifier.warp.add",
+            "label": "Warp",
+            "type": "WARP"
+          },
+          {
+            "id": "modifier.wave.add",
+            "label": "Wave",
+            "type": "WAVE"
+          }
+        ]
+      },
+      {
+        "id": "modifier.add_menu.normals",
+        "label": "Normals",
+        "items": [
+          {
+            "id": "modifier.normal_edit.add",
+            "label": "Normal Edit",
+            "type": "NORMAL_EDIT"
+          },
+          {
+            "id": "modifier.weighted_normal.add",
+            "label": "Weighted Normal",
+            "type": "WEIGHTED_NORMAL"
+          }
+        ]
+      },
+      {
+        "id": "modifier.add_menu.physics",
+        "label": "Physics",
+        "items": [
+          {
+            "id": "modifier.cloth.add",
+            "label": "Cloth",
+            "type": "CLOTH"
+          },
+          {
+            "id": "modifier.collision.add",
+            "label": "Collision",
+            "type": "COLLISION"
+          },
+          {
+            "id": "modifier.dynamic_paint.add",
+            "label": "Dynamic Paint",
+            "type": "DYNAMIC_PAINT"
+          },
+          {
+            "id": "modifier.explode.add",
+            "label": "Explode",
+            "type": "EXPLODE"
+          },
+          {
+            "id": "modifier.fluid.add",
+            "label": "Fluid",
+            "type": "FLUID"
+          },
+          {
+            "id": "modifier.ocean.add",
+            "label": "Ocean",
+            "type": "OCEAN"
+          },
+          {
+            "id": "modifier.particle_instance.add",
+            "label": "Particle Instance",
+            "type": "PARTICLE_INSTANCE"
+          },
+          {
+            "id": "modifier.particle_system.add",
+            "label": "Particle System",
+            "type": "PARTICLE_SYSTEM"
+          },
+          {
+            "id": "modifier.soft_body.add",
+            "label": "Soft Body",
+            "type": "SOFT_BODY"
+          }
+        ]
+      }
+    ]
+  },
+  "modifiers": {
+    "SOLIDIFY": {
+      "short": "solidify",
+      "menuLabel": "Solidify",
+      "defaultName": "Solidify",
+      "fields": [
+        {
+          "id": "modifier.solidify.mode",
+          "rna": "solidify_mode",
+          "label": "Mode",
+          "kind": "enum",
+          "display": "dropdown",
+          "default": "EXTRUDE",
+          "items": [
+            {
+              "value": "EXTRUDE",
+              "label": "Simple"
+            },
+            {
+              "value": "NON_MANIFOLD",
+              "label": "Complex"
+            }
+          ]
+        },
+        {
+          "id": "modifier.solidify.thickness",
+          "rna": "thickness",
+          "label": "Thickness",
+          "kind": "float",
+          "unit": "m",
+          "softMin": -10.0,
+          "softMax": 10.0,
+          "default": 0.01
+        },
+        {
+          "id": "modifier.solidify.offset",
+          "rna": "offset",
+          "label": "Offset",
+          "kind": "float",
+          "unit": "",
+          "softMin": -1.0,
+          "softMax": 1.0,
+          "default": -1.0
+        },
+        {
+          "id": "modifier.solidify.even_thickness",
+          "rna": "use_even_offset",
+          "label": "Even Thickness",
+          "kind": "bool",
+          "default": false
+        },
+        {
+          "id": "modifier.solidify.rim_fill",
+          "rna": "use_rim",
+          "label": "Fill",
+          "heading": "Rim",
+          "kind": "bool",
+          "default": true
+        },
+        {
+          "id": "modifier.solidify.rim_only",
+          "rna": "use_rim_only",
+          "label": "Only Rim",
+          "kind": "bool",
+          "default": false
+        }
+      ],
+      "subpanels": [
+        "Normals",
+        "Materials",
+        "Edge Data",
+        "Thickness Clamp",
+        "Output Vertex Groups"
+      ]
+    },
+    "BEVEL": {
+      "short": "bevel",
+      "menuLabel": "Bevel",
+      "defaultName": "Bevel",
+      "fields": [
+        {
+          "id": "modifier.bevel.affect",
+          "rna": "affect",
+          "label": "Affect",
+          "kind": "enum",
+          "display": "expand",
+          "default": "EDGES",
+          "items": [
+            {
+              "value": "VERTICES",
+              "label": "Vertices"
+            },
+            {
+              "value": "EDGES",
+              "label": "Edges"
+            }
+          ]
+        },
+        {
+          "id": "modifier.bevel.width_type",
+          "rna": "offset_type",
+          "label": "Width Type",
+          "kind": "enum",
+          "display": "dropdown",
+          "default": "OFFSET",
+          "items": [
+            {
+              "value": "OFFSET",
+              "label": "Offset"
+            },
+            {
+              "value": "WIDTH",
+              "label": "Width"
+            },
+            {
+              "value": "DEPTH",
+              "label": "Depth"
+            },
+            {
+              "value": "PERCENT",
+              "label": "Percent"
+            },
+            {
+              "value": "ABSOLUTE",
+              "label": "Absolute"
+            }
+          ]
+        },
+        {
+          "id": "modifier.bevel.amount",
+          "rna": "width",
+          "label": "Amount",
+          "kind": "float",
+          "unit": "m",
+          "softMin": 0.0,
+          "softMax": 100.0,
+          "default": 0.1
+        },
+        {
+          "id": "modifier.bevel.segments",
+          "rna": "segments",
+          "label": "Segments",
+          "kind": "int",
+          "unit": "",
+          "softMin": 1,
+          "softMax": 100,
+          "default": 1
+        },
+        {
+          "id": "modifier.bevel.limit_method",
+          "rna": "limit_method",
+          "label": "Limit Method",
+          "kind": "enum",
+          "display": "expand",
+          "default": "ANGLE",
+          "items": [
+            {
+              "value": "NONE",
+              "label": "None"
+            },
+            {
+              "value": "ANGLE",
+              "label": "Angle"
+            },
+            {
+              "value": "WEIGHT",
+              "label": "Weight"
+            },
+            {
+              "value": "VGROUP",
+              "label": "Vertex Group"
+            }
+          ]
+        },
+        {
+          "id": "modifier.bevel.angle",
+          "rna": "angle_limit",
+          "label": "Angle",
+          "kind": "float",
+          "unit": "\u00b0",
+          "softMin": 0.0,
+          "softMax": 3.1415927410125732,
+          "default": 30.0
+        }
+      ],
+      "subpanels": [
+        "Profile",
+        "Geometry",
+        "Shading"
+      ]
+    },
+    "SUBSURF": {
+      "short": "subsurf",
+      "menuLabel": "Subdivision Surface",
+      "defaultName": "Subdivision",
+      "fields": [
+        {
+          "id": "modifier.subsurf.type",
+          "rna": "subdivision_type",
+          "label": "Subdivision Type",
+          "kind": "enum",
+          "display": "expand",
+          "default": "CATMULL_CLARK",
+          "items": [
+            {
+              "value": "CATMULL_CLARK",
+              "label": "Catmull-Clark"
+            },
+            {
+              "value": "SIMPLE",
+              "label": "Simple"
+            }
+          ]
+        },
+        {
+          "id": "modifier.subsurf.levels",
+          "rna": "levels",
+          "label": "Levels Viewport",
+          "kind": "int",
+          "unit": "",
+          "softMin": 0,
+          "softMax": 6,
+          "default": 1
+        },
+        {
+          "id": "modifier.subsurf.render",
+          "rna": "render_levels",
+          "label": "Render",
+          "kind": "int",
+          "unit": "",
+          "softMin": 0,
+          "softMax": 6,
+          "default": 2
+        },
+        {
+          "id": "modifier.subsurf.optimal_display",
+          "rna": "show_only_control_edges",
+          "label": "Optimal Display",
+          "kind": "bool",
+          "default": true
+        }
+      ],
+      "subpanels": [
+        "Advanced"
+      ]
+    }
+  }
+}
