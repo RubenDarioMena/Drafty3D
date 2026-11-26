@@ -87,7 +87,6 @@
     }
   ],
   "objectPanels": [
-    "",
     "Transform",
     "Relations",
     "Collections",
@@ -604,7 +603,7 @@
           "kind": "float",
           "unit": "°",
           "softMin": 0,
-          "softMax": 3.1415927410125732,
+          "softMax": 180,
           "default": 30
         }
       ],
@@ -667,6 +666,82 @@
       ],
       "subpanels": [
         "Advanced"
+      ]
+    },
+    "SIMPLE_DEFORM": {
+      "short": "simple_deform",
+      "menuLabel": "Simple Deform",
+      "defaultName": "SimpleDeform",
+      "fields": [
+        {
+          "id": "modifier.simple_deform.mode",
+          "rna": "deform_method",
+          "label": "Mode",
+          "kind": "enum",
+          "display": "expand",
+          "default": "TWIST",
+          "items": [
+            {
+              "value": "TWIST",
+              "label": "Twist"
+            },
+            {
+              "value": "BEND",
+              "label": "Bend"
+            },
+            {
+              "value": "TAPER",
+              "label": "Taper"
+            },
+            {
+              "value": "STRETCH",
+              "label": "Stretch"
+            }
+          ]
+        },
+        {
+          "id": "modifier.simple_deform.angle",
+          "rna": "angle",
+          "label": "Angle",
+          "kind": "float",
+          "unit": "°",
+          "softMin": -360,
+          "softMax": 360,
+          "default": 45
+        },
+        {
+          "id": "modifier.simple_deform.origin",
+          "rna": "origin",
+          "label": "Origin",
+          "kind": "pointer",
+          "default": null
+        },
+        {
+          "id": "modifier.simple_deform.axis",
+          "rna": "deform_axis",
+          "label": "Axis",
+          "labelled": true,
+          "kind": "enum",
+          "display": "expand",
+          "default": "X",
+          "items": [
+            {
+              "value": "X",
+              "label": "X"
+            },
+            {
+              "value": "Y",
+              "label": "Y"
+            },
+            {
+              "value": "Z",
+              "label": "Z"
+            }
+          ]
+        }
+      ],
+      "subpanels": [
+        "Restrictions"
       ]
     }
   },

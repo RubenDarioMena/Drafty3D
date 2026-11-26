@@ -1,0 +1,1190 @@
+{
+  "blenderVersion": "5.3.0",
+  "module": "sculpt",
+  "example": "rock",
+  "mode": "watch",
+  "title": "Craggy rock",
+  "object": "Rock",
+  "initial": {
+    "camera": {
+      "position": [
+        0,
+        -2.6,
+        0.62
+      ],
+      "target": [
+        0,
+        0,
+        0.04
+      ],
+      "fov": 30
+    },
+    "text": "A smooth pebble becomes a weathered rock: layers of clay, flat chipped faces and a deep crack.",
+    "mesh": "step-00.glb",
+    "mode": "OBJECT",
+    "tool": null
+  },
+  "steps": [
+    {
+      "id": "object.mode.sculpt",
+      "action": "set_mode",
+      "value": "SCULPT",
+      "value_type": "enum",
+      "shortcut": {
+        "keys": [
+          "Ctrl",
+          "Tab"
+        ],
+        "context": "3D Viewport · mode pie"
+      },
+      "duration": 1.6,
+      "autoAdvance": true,
+      "text": "Switch to Sculpt Mode.",
+      "help": null,
+      "tool": {
+        "brush": "Draw",
+        "size": 100,
+        "strength": 0.5,
+        "direction": "ADD",
+        "symmetry": []
+      },
+      "camera": {
+        "position": [
+          0,
+          -2.6,
+          0.62
+        ],
+        "target": [
+          0,
+          0,
+          0.04
+        ],
+        "fov": 30
+      },
+      "mesh": null
+    },
+    {
+      "id": "sculpt.brush.clay_strips",
+      "action": "select_brush",
+      "value": "Clay Strips",
+      "value_type": "string",
+      "shortcut": {
+        "keys": [
+          "C"
+        ],
+        "context": "3D Viewport · Sculpt Mode"
+      },
+      "duration": 2,
+      "autoAdvance": false,
+      "text": "Pick Clay Strips. It lays down flat strips, like adding slabs of clay.",
+      "help": null,
+      "tool": {
+        "brush": "Clay Strips",
+        "size": 100,
+        "strength": 0.5,
+        "direction": "ADD",
+        "symmetry": []
+      },
+      "camera": {
+        "position": [
+          0,
+          -2.6,
+          0.62
+        ],
+        "target": [
+          0,
+          0,
+          0.04
+        ],
+        "fov": 30
+      },
+      "mesh": null
+    },
+    {
+      "id": "sculpt.size",
+      "action": "set_value",
+      "value": 120,
+      "value_type": "number",
+      "step": 10,
+      "shortcut": {
+        "keys": [
+          "F"
+        ],
+        "context": "3D Viewport · Sculpt Mode"
+      },
+      "duration": 2,
+      "autoAdvance": false,
+      "text": "Set Size to 120 px: wide strips.",
+      "help": null,
+      "tool": {
+        "brush": "Clay Strips",
+        "size": 120,
+        "strength": 0.5,
+        "direction": "ADD",
+        "symmetry": []
+      },
+      "camera": {
+        "position": [
+          0,
+          -2.6,
+          0.62
+        ],
+        "target": [
+          0,
+          0,
+          0.04
+        ],
+        "fov": 30
+      },
+      "mesh": null
+    },
+    {
+      "id": "sculpt.stroke",
+      "action": "stroke",
+      "value": null,
+      "value_type": null,
+      "duration": 2.4,
+      "autoAdvance": false,
+      "text": "Drag one strip across the front. It builds a ledge, not a bump.",
+      "help": null,
+      "stroke": {
+        "brush": "Clay Strips",
+        "brushType": "CLAY_STRIPS",
+        "drag": false,
+        "path": [
+          [
+            -0.42,
+            -0.12
+          ],
+          [
+            -0.15,
+            0.02
+          ],
+          [
+            0.15,
+            0.12
+          ],
+          [
+            0.4,
+            0.2
+          ]
+        ],
+        "points": [
+          [
+            -0.2569,
+            -0.3881,
+            0.0514
+          ],
+          [
+            -0.2388,
+            -0.3945,
+            0.0622
+          ],
+          [
+            -0.2209,
+            -0.3998,
+            0.0727
+          ],
+          [
+            -0.2033,
+            -0.4042,
+            0.0829
+          ],
+          [
+            -0.1858,
+            -0.4076,
+            0.0928
+          ],
+          [
+            -0.1684,
+            -0.4102,
+            0.1024
+          ],
+          [
+            -0.1512,
+            -0.4121,
+            0.1119
+          ],
+          [
+            -0.1341,
+            -0.413,
+            0.1211
+          ],
+          [
+            -0.1171,
+            -0.4134,
+            0.1302
+          ],
+          [
+            -0.1001,
+            -0.413,
+            0.139
+          ],
+          [
+            -0.0828,
+            -0.4125,
+            0.1467
+          ],
+          [
+            -0.0647,
+            -0.412,
+            0.1528
+          ],
+          [
+            -0.0468,
+            -0.4111,
+            0.1587
+          ],
+          [
+            -0.0288,
+            -0.4094,
+            0.1645
+          ],
+          [
+            -0.0108,
+            -0.4071,
+            0.1701
+          ],
+          [
+            0.0072,
+            -0.4041,
+            0.1757
+          ],
+          [
+            0.0252,
+            -0.4006,
+            0.1811
+          ],
+          [
+            0.0433,
+            -0.3964,
+            0.1864
+          ],
+          [
+            0.0615,
+            -0.3914,
+            0.1915
+          ],
+          [
+            0.0797,
+            -0.3858,
+            0.1966
+          ],
+          [
+            0.0982,
+            -0.3795,
+            0.2015
+          ],
+          [
+            0.1169,
+            -0.3723,
+            0.2061
+          ],
+          [
+            0.1358,
+            -0.3643,
+            0.2107
+          ],
+          [
+            0.1549,
+            -0.3553,
+            0.2151
+          ],
+          [
+            0.1742,
+            -0.3453,
+            0.2194
+          ],
+          [
+            0.1937,
+            -0.3342,
+            0.2235
+          ],
+          [
+            0.2135,
+            -0.3217,
+            0.2274
+          ],
+          [
+            0.2337,
+            -0.3077,
+            0.2312
+          ],
+          [
+            0.2501,
+            -0.2953,
+            0.234
+          ]
+        ],
+        "radius": 0.0771,
+        "movedVertices": 428
+      },
+      "shortcut": null,
+      "tool": {
+        "brush": "Clay Strips",
+        "size": 120,
+        "strength": 0.5,
+        "direction": "ADD",
+        "symmetry": []
+      },
+      "camera": {
+        "position": [
+          0,
+          -2.6,
+          0.62
+        ],
+        "target": [
+          0,
+          0,
+          0.04
+        ],
+        "fov": 30
+      },
+      "mesh": "step-04.glb"
+    },
+    {
+      "id": "sculpt.stroke",
+      "action": "stroke",
+      "value": null,
+      "value_type": null,
+      "duration": 2.4,
+      "autoAdvance": false,
+      "text": "Add a second strip below it: rock strata.",
+      "help": null,
+      "stroke": {
+        "brush": "Clay Strips",
+        "brushType": "CLAY_STRIPS",
+        "drag": false,
+        "path": [
+          [
+            -0.4,
+            -0.36
+          ],
+          [
+            -0.1,
+            -0.26
+          ],
+          [
+            0.2,
+            -0.2
+          ],
+          [
+            0.42,
+            -0.08
+          ]
+        ],
+        "points": [
+          [
+            -0.2494,
+            -0.3775,
+            -0.1058
+          ],
+          [
+            -0.2293,
+            -0.3903,
+            -0.0951
+          ],
+          [
+            -0.2095,
+            -0.4013,
+            -0.0851
+          ],
+          [
+            -0.1901,
+            -0.4106,
+            -0.0757
+          ],
+          [
+            -0.1709,
+            -0.4188,
+            -0.0668
+          ],
+          [
+            -0.1521,
+            -0.4256,
+            -0.0583
+          ],
+          [
+            -0.1334,
+            -0.4315,
+            -0.0501
+          ],
+          [
+            -0.1148,
+            -0.4365,
+            -0.0422
+          ],
+          [
+            -0.0965,
+            -0.4405,
+            -0.0347
+          ],
+          [
+            -0.0782,
+            -0.4439,
+            -0.0274
+          ],
+          [
+            -0.0601,
+            -0.4464,
+            -0.0204
+          ],
+          [
+            -0.0412,
+            -0.4481,
+            -0.016
+          ],
+          [
+            -0.0225,
+            -0.4493,
+            -0.0118
+          ],
+          [
+            -0.0037,
+            -0.4498,
+            -0.0077
+          ],
+          [
+            0.015,
+            -0.4497,
+            -0.0039
+          ],
+          [
+            0.0337,
+            -0.449,
+            -0.0002
+          ],
+          [
+            0.0524,
+            -0.4476,
+            0.0033
+          ],
+          [
+            0.0712,
+            -0.4457,
+            0.0067
+          ],
+          [
+            0.09,
+            -0.4431,
+            0.0098
+          ],
+          [
+            0.1088,
+            -0.4399,
+            0.0128
+          ],
+          [
+            0.127,
+            -0.4361,
+            0.0179
+          ],
+          [
+            0.1441,
+            -0.4317,
+            0.0263
+          ],
+          [
+            0.1613,
+            -0.4264,
+            0.0344
+          ],
+          [
+            0.1786,
+            -0.4203,
+            0.0424
+          ],
+          [
+            0.1961,
+            -0.4135,
+            0.0502
+          ],
+          [
+            0.2137,
+            -0.4058,
+            0.0578
+          ],
+          [
+            0.2315,
+            -0.3971,
+            0.0653
+          ],
+          [
+            0.2496,
+            -0.3873,
+            0.0725
+          ],
+          [
+            0.2569,
+            -0.3831,
+            0.0753
+          ]
+        ],
+        "radius": 0.0786,
+        "movedVertices": 434
+      },
+      "shortcut": null,
+      "tool": {
+        "brush": "Clay Strips",
+        "size": 120,
+        "strength": 0.5,
+        "direction": "ADD",
+        "symmetry": []
+      },
+      "camera": {
+        "position": [
+          0,
+          -2.6,
+          0.62
+        ],
+        "target": [
+          0,
+          0,
+          0.04
+        ],
+        "fov": 30
+      },
+      "mesh": "step-05.glb"
+    },
+    {
+      "id": "sculpt.brush.scrape_fill",
+      "action": "select_brush",
+      "value": "Scrape/Fill",
+      "value_type": "string",
+      "shortcut": {
+        "keys": [
+          "Shift",
+          "T"
+        ],
+        "context": "3D Viewport · Sculpt Mode"
+      },
+      "duration": 2,
+      "autoAdvance": false,
+      "text": "Pick Scrape/Fill. It shaves off whatever sticks out above a plane, leaving a flat face.",
+      "help": null,
+      "tool": {
+        "brush": "Scrape/Fill",
+        "size": 120,
+        "strength": 0.7,
+        "direction": "ADD",
+        "symmetry": []
+      },
+      "camera": {
+        "position": [
+          0,
+          -2.6,
+          0.62
+        ],
+        "target": [
+          0,
+          0,
+          0.04
+        ],
+        "fov": 30
+      },
+      "mesh": null
+    },
+    {
+      "id": "sculpt.size",
+      "action": "set_value",
+      "value": 200,
+      "value_type": "number",
+      "step": 10,
+      "shortcut": {
+        "keys": [
+          "F"
+        ],
+        "context": "3D Viewport · Sculpt Mode"
+      },
+      "duration": 2,
+      "autoAdvance": false,
+      "text": "Set Size to 200 px.",
+      "help": null,
+      "tool": {
+        "brush": "Scrape/Fill",
+        "size": 200,
+        "strength": 0.7,
+        "direction": "ADD",
+        "symmetry": []
+      },
+      "camera": {
+        "position": [
+          0,
+          -2.6,
+          0.62
+        ],
+        "target": [
+          0,
+          0,
+          0.04
+        ],
+        "fov": 30
+      },
+      "mesh": null
+    },
+    {
+      "id": "sculpt.strength",
+      "action": "set_value",
+      "value": 1,
+      "value_type": "number",
+      "step": 0.1,
+      "shortcut": {
+        "keys": [
+          "Shift",
+          "F"
+        ],
+        "context": "3D Viewport · Sculpt Mode"
+      },
+      "duration": 2,
+      "autoAdvance": false,
+      "text": "Set Strength to 1.0 to shave hard.",
+      "help": null,
+      "tool": {
+        "brush": "Scrape/Fill",
+        "size": 200,
+        "strength": 1,
+        "direction": "ADD",
+        "symmetry": []
+      },
+      "camera": {
+        "position": [
+          0,
+          -2.6,
+          0.62
+        ],
+        "target": [
+          0,
+          0,
+          0.04
+        ],
+        "fov": 30
+      },
+      "mesh": null
+    },
+    {
+      "id": "sculpt.stroke",
+      "action": "stroke",
+      "value": null,
+      "value_type": null,
+      "duration": 3.4,
+      "autoAdvance": false,
+      "text": "Scrape up and down the right side. It shaves the strips and the bulge into one chipped, flat face.",
+      "help": null,
+      "stroke": {
+        "brush": "Scrape/Fill",
+        "brushType": "PLANE",
+        "drag": false,
+        "path": [
+          [
+            0.3,
+            0.3
+          ],
+          [
+            0.32,
+            0
+          ],
+          [
+            0.3,
+            -0.3
+          ],
+          [
+            0.32,
+            0
+          ],
+          [
+            0.3,
+            0.3
+          ],
+          [
+            0.32,
+            0
+          ],
+          [
+            0.3,
+            -0.3
+          ]
+        ],
+        "points": [
+          [
+            0.1892,
+            -0.2611,
+            0.2921
+          ],
+          [
+            0.1882,
+            -0.3186,
+            0.2565
+          ],
+          [
+            0.1891,
+            -0.3527,
+            0.2186
+          ],
+          [
+            0.1903,
+            -0.3815,
+            0.1806
+          ],
+          [
+            0.193,
+            -0.3921,
+            0.1393
+          ],
+          [
+            0.1905,
+            -0.4146,
+            0.101
+          ],
+          [
+            0.1875,
+            -0.4257,
+            0.0603
+          ],
+          [
+            0.185,
+            -0.4321,
+            0.0182
+          ],
+          [
+            0.1828,
+            -0.4336,
+            -0.0253
+          ],
+          [
+            0.1828,
+            -0.431,
+            -0.0301
+          ],
+          [
+            0.1848,
+            -0.4324,
+            0.0144
+          ],
+          [
+            0.1873,
+            -0.4266,
+            0.0565
+          ],
+          [
+            0.1902,
+            -0.4157,
+            0.0973
+          ],
+          [
+            0.1931,
+            -0.3947,
+            0.1359
+          ],
+          [
+            0.1904,
+            -0.3838,
+            0.1771
+          ],
+          [
+            0.1892,
+            -0.3555,
+            0.2151
+          ],
+          [
+            0.1883,
+            -0.322,
+            0.2531
+          ],
+          [
+            0.1892,
+            -0.2657,
+            0.2887
+          ],
+          [
+            0.1882,
+            -0.3153,
+            0.26
+          ],
+          [
+            0.189,
+            -0.3498,
+            0.222
+          ],
+          [
+            0.1901,
+            -0.3791,
+            0.1841
+          ],
+          [
+            0.193,
+            -0.3885,
+            0.1425
+          ],
+          [
+            0.1908,
+            -0.4133,
+            0.1047
+          ],
+          [
+            0.1878,
+            -0.4248,
+            0.064
+          ],
+          [
+            0.1852,
+            -0.4317,
+            0.0221
+          ],
+          [
+            0.183,
+            -0.4336,
+            -0.0213
+          ],
+          [
+            0.1831,
+            -0.4172,
+            -0.0545
+          ]
+        ],
+        "radius": 0.1325,
+        "movedVertices": 291
+      },
+      "shortcut": null,
+      "tool": {
+        "brush": "Scrape/Fill",
+        "size": 200,
+        "strength": 1,
+        "direction": "ADD",
+        "symmetry": []
+      },
+      "camera": {
+        "position": [
+          0,
+          -2.6,
+          0.62
+        ],
+        "target": [
+          0,
+          0,
+          0.04
+        ],
+        "fov": 30
+      },
+      "mesh": "step-09.glb"
+    },
+    {
+      "id": "sculpt.brush.draw_sharp",
+      "action": "select_brush",
+      "value": "Draw Sharp",
+      "value_type": "string",
+      "shortcut": null,
+      "duration": 2,
+      "autoAdvance": false,
+      "text": "Pick Draw Sharp. Like Draw, but with a hard edge, and it starts on Subtract (−): it carves a cut.",
+      "help": null,
+      "tool": {
+        "brush": "Draw Sharp",
+        "size": 200,
+        "strength": 0.5,
+        "direction": "SUBTRACT",
+        "symmetry": []
+      },
+      "camera": {
+        "position": [
+          0,
+          -2.6,
+          0.62
+        ],
+        "target": [
+          0,
+          0,
+          0.04
+        ],
+        "fov": 30
+      },
+      "mesh": null
+    },
+    {
+      "id": "sculpt.size",
+      "action": "set_value",
+      "value": 40,
+      "value_type": "number",
+      "step": 10,
+      "shortcut": {
+        "keys": [
+          "F"
+        ],
+        "context": "3D Viewport · Sculpt Mode"
+      },
+      "duration": 2,
+      "autoAdvance": false,
+      "text": "Set Size to 40 px.",
+      "help": null,
+      "tool": {
+        "brush": "Draw Sharp",
+        "size": 40,
+        "strength": 0.5,
+        "direction": "SUBTRACT",
+        "symmetry": []
+      },
+      "camera": {
+        "position": [
+          0,
+          -2.6,
+          0.62
+        ],
+        "target": [
+          0,
+          0,
+          0.04
+        ],
+        "fov": 30
+      },
+      "mesh": null
+    },
+    {
+      "id": "sculpt.strength",
+      "action": "set_value",
+      "value": 1,
+      "value_type": "number",
+      "step": 0.1,
+      "shortcut": {
+        "keys": [
+          "Shift",
+          "F"
+        ],
+        "context": "3D Viewport · Sculpt Mode"
+      },
+      "duration": 2,
+      "autoAdvance": false,
+      "text": "Set Strength to 1.0.",
+      "help": null,
+      "tool": {
+        "brush": "Draw Sharp",
+        "size": 40,
+        "strength": 1,
+        "direction": "SUBTRACT",
+        "symmetry": []
+      },
+      "camera": {
+        "position": [
+          0,
+          -2.6,
+          0.62
+        ],
+        "target": [
+          0,
+          0,
+          0.04
+        ],
+        "fov": 30
+      },
+      "mesh": null
+    },
+    {
+      "id": "sculpt.stroke",
+      "action": "stroke",
+      "value": null,
+      "value_type": null,
+      "duration": 3,
+      "autoAdvance": false,
+      "text": "Zigzag down the left side and back up: a crack through the layers.",
+      "help": null,
+      "stroke": {
+        "brush": "Draw Sharp",
+        "brushType": "DRAW_SHARP",
+        "drag": false,
+        "path": [
+          [
+            -0.18,
+            0.4
+          ],
+          [
+            -0.12,
+            0.26
+          ],
+          [
+            -0.2,
+            0.12
+          ],
+          [
+            -0.12,
+            -0.02
+          ],
+          [
+            -0.18,
+            -0.16
+          ],
+          [
+            -0.12,
+            -0.02
+          ],
+          [
+            -0.2,
+            0.12
+          ],
+          [
+            -0.12,
+            0.26
+          ],
+          [
+            -0.18,
+            0.4
+          ]
+        ],
+        "points": [
+          [
+            -0.1159,
+            -0.1979,
+            0.3481
+          ],
+          [
+            -0.1012,
+            -0.2485,
+            0.3243
+          ],
+          [
+            -0.0873,
+            -0.2878,
+            0.3001
+          ],
+          [
+            -0.074,
+            -0.3198,
+            0.2756
+          ],
+          [
+            -0.0891,
+            -0.3417,
+            0.2512
+          ],
+          [
+            -0.1042,
+            -0.3598,
+            0.2266
+          ],
+          [
+            -0.119,
+            -0.3809,
+            0.2028
+          ],
+          [
+            -0.1065,
+            -0.4049,
+            0.18
+          ],
+          [
+            -0.0908,
+            -0.4191,
+            0.1555
+          ],
+          [
+            -0.0753,
+            -0.4323,
+            0.1311
+          ],
+          [
+            -0.0802,
+            -0.442,
+            0.1051
+          ],
+          [
+            -0.0923,
+            -0.4448,
+            0.0772
+          ],
+          [
+            -0.1047,
+            -0.4395,
+            0.0471
+          ],
+          [
+            -0.0986,
+            -0.4403,
+            0.0617
+          ],
+          [
+            -0.0862,
+            -0.4459,
+            0.0918
+          ],
+          [
+            -0.0743,
+            -0.4379,
+            0.1184
+          ],
+          [
+            -0.083,
+            -0.4258,
+            0.1433
+          ],
+          [
+            -0.0986,
+            -0.4121,
+            0.1678
+          ],
+          [
+            -0.1144,
+            -0.3974,
+            0.1922
+          ],
+          [
+            -0.1118,
+            -0.3678,
+            0.2142
+          ],
+          [
+            -0.0967,
+            -0.3512,
+            0.2389
+          ],
+          [
+            -0.0816,
+            -0.3312,
+            0.2634
+          ],
+          [
+            -0.0806,
+            -0.3046,
+            0.2878
+          ],
+          [
+            -0.0941,
+            -0.2693,
+            0.3122
+          ],
+          [
+            -0.1084,
+            -0.225,
+            0.3363
+          ],
+          [
+            -0.1159,
+            -0.1979,
+            0.3481
+          ]
+        ],
+        "radius": 0.0271,
+        "movedVertices": 62
+      },
+      "shortcut": null,
+      "tool": {
+        "brush": "Draw Sharp",
+        "size": 40,
+        "strength": 1,
+        "direction": "SUBTRACT",
+        "symmetry": []
+      },
+      "camera": {
+        "position": [
+          0,
+          -2.6,
+          0.62
+        ],
+        "target": [
+          0,
+          0,
+          0.04
+        ],
+        "fov": 30
+      },
+      "mesh": "step-13.glb"
+    }
+  ],
+  "outro": "Done: Clay Strips to build, Scrape to chip flat faces, Draw Sharp to crack. Now shape a boulder yourself."
+}
