@@ -11,8 +11,11 @@ export function newModifier(ui, type) {
 
 export function initialState(timeline) {
   return {
-    panel: timeline.initial.panel,
+    panel: timeline.initial.panel ?? null,
     modifiers: [],
+    // Sculpt lessons: the object's mode and the active brush settings Blender reported.
+    mode: timeline.initial.mode ?? 'OBJECT',
+    tool: timeline.initial.tool ?? null,
     mesh: timeline.initial.mesh,
     camera: timeline.initial.camera,
   };
@@ -22,7 +25,10 @@ export function applyStep(state, step, ui) {
   const next = { ...state, modifiers: state.modifiers.map(mod => ({ ...mod, values: { ...mod.values } })) };
   if (step.action === 'select_panel') next.panel = step.id;
   if (step.action === 'add_modifier') next.modifiers.push(newModifier(ui, step.modifier));
-  if (step.action === 'set_value') next.modifiers.find(mod => mod.type === step.modifier).values[step.id] = step.value;
+  if (step.action === 'set_value' && step.modifier) next.modifiers.find(mod => mod.type === step.modifier).values[step.id] = step.value;
+  if (step.action === 'set_mode') next.mode = step.value;
+  // Sculpt steps carry the brush settings Blender reported after the step; take them as they are.
+  if ('tool' in step) next.tool = step.tool;
   if (step.mesh) next.mesh = step.mesh;
   next.camera = step.camera;
   return next;
@@ -40,10 +46,22 @@ export function ticks(value, step) {
   return Math.round(value / step);
 }
 
-/** Combination lock: is the current step's control in its target position? */
+/** Header field a sculpt set_value step changes: "sculpt.size" → "size". */
+export function toolField(step) {
+  return step.id.startsWith('sculpt.') ? step.id.slice('sculpt.'.length) : null;
+}
+
+/** Combination lock: is the current step's control in its target position? Strokes are judged by trace.js. */
 export function isSolved(live, step) {
   if (step.action === 'select_panel') return live.panel === step.id;
   if (step.action === 'add_modifier') return live.modifiers.some(mod => mod.type === step.modifier);
+  if (step.action === 'set_mode') return live.mode === step.value;
+  if (step.action === 'select_brush') return live.tool?.brush === step.value;
+  if (step.action === 'set_direction') return live.tool?.direction === step.value;
+  if (step.action === 'set_symmetry') return (live.tool?.symmetry ?? []).includes(step.id.split('.').pop().toUpperCase()) === step.value;
+  if (step.action === 'set_value' && !step.modifier) {
+    return Boolean(live.tool) && ticks(live.tool[toolField(step)], step.step) === ticks(step.value, step.step);
+  }
   if (step.action === 'set_value') {
     const mod = live.modifiers.find(candidate => candidate.type === step.modifier);
     return Boolean(mod) && ticks(mod.values[step.id], step.step) === ticks(step.value, step.step);

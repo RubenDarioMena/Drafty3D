@@ -6,8 +6,44 @@ import { wait } from './cursor.js';
  * semantic id, taps it, and the panel ends in Blender's recorded state `to`.
  * Used by Watch mode and by the "Show me" help of Your turn.
  */
-export async function animateStep({ step, to, editor, menu, cursor, render, scale = 1 }) {
+export async function animateStep({ step, to, editor, menu, modeMenu, cursor, render, viewer, geometries, from, scale = 1 }) {
   const fly = 0.55 * scale;
+  if (step.action === 'set_mode') {
+    const button = editor.element(modeMenu.ui.id);
+    await cursor.moveTo(button, fly);
+    await cursor.tap();
+    modeMenu.open(button, from?.mode);
+    await wait(0.25 * scale);
+    const item = modeMenu.element(step.id);
+    item?.classList.add('active');
+    await cursor.moveTo(item, fly * 0.8);
+    await cursor.tap();
+    modeMenu.close();
+    render(to);
+    return editor.element(modeMenu.ui.id);
+  }
+
+  if (step.action === 'select_brush') {
+    const item = editor.reveal(step.id);
+    await cursor.moveTo(item, fly);
+    await cursor.tap();
+    render(to);
+    return editor.element(step.id);
+  }
+
+  if (step.action === 'set_direction' || step.action === 'set_symmetry') {
+    await cursor.moveTo(editor.element(step.id), fly);
+    await cursor.tap();
+    render(to);
+    return editor.element(step.id);
+  }
+
+  if (step.action === 'stroke') {
+    await playStroke({ step, viewer, cursor, geometries, from, scale });
+    render(to);
+    return null;
+  }
+
   if (step.action === 'select_panel') {
     await cursor.moveTo(editor.element(step.id), fly);
     await cursor.tap();
@@ -54,4 +90,41 @@ export async function animateStep({ step, to, editor, menu, cursor, render, scal
 
   render(to);
   return null;
+}
+
+/** Cursor and brush ring travel along the recorded stroke while the mesh turns into Blender's result. */
+export async function playStroke({ step, viewer, cursor, geometries, from, scale = 1 }) {
+  const { stroke } = step;
+  await viewer.showCamera(step.camera, 0.5 * scale);
+  const canvas = viewer.canvas.getBoundingClientRect();
+  const screen = point => {
+    const pixel = viewer.project(point);
+    return { x: canvas.left + pixel.x, y: canvas.top + pixel.y };
+  };
+  const first = screen(stroke.points[0]);
+  await cursor.moveToPoint(first.x, first.y, 0.5 * scale);
+  viewer.showBrush(stroke.points[0], stroke.radius);
+  const morph = viewer.strokeMorph(geometries.get(from.mesh), geometries.get(step.mesh), stroke);
+  const along = { t: 0 };
+  const last = stroke.points.length - 1;
+  const pointAt = t => {
+    const position = t * last;
+    const index = Math.min(last - 1, Math.floor(position));
+    const local = position - index;
+    const a = stroke.points[index];
+    const b = stroke.points[Math.min(last, index + 1)];
+    return a.map((value, axis) => value + (b[axis] - value) * local);
+  };
+  await gsap.to(along, {
+    t: 1, duration: Math.max(0.6, (step.duration - 0.8)) * scale, ease: 'none',
+    onUpdate: () => {
+      const point = pointAt(along.t);
+      viewer.showBrush(point, stroke.radius);
+      const pixel = screen(point);
+      cursor.place(pixel.x, pixel.y);
+      morph(along.t);
+    },
+  });
+  morph(1);
+  viewer.hideBrush();
 }

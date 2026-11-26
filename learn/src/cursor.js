@@ -22,6 +22,17 @@ export class Cursor {
     await gsap.to(this.node, { x, y, opacity: 1, duration: this.reduced ? 0 : duration, ease: 'power2.inOut', overwrite: true });
   }
 
+  /** Flies the cursor tip to a screen point (strokes in the 3D view). */
+  async moveToPoint(x, y, duration = 0.5) {
+    if (gsap.getProperty(this.node, 'opacity') === 0) gsap.set(this.node, { x: x + 40, y: y + 50 });
+    await gsap.to(this.node, { x: x - TIP.x, y: y - TIP.y, opacity: 1, duration: this.reduced ? 0 : duration, ease: 'power2.inOut', overwrite: true });
+  }
+
+  /** Puts the cursor tip on a screen point immediately (follows a stroke frame by frame). */
+  place(x, y) {
+    gsap.set(this.node, { x: x - TIP.x, y: y - TIP.y, opacity: 1 });
+  }
+
   async tap() {
     if (this.reduced) return;
     gsap.fromTo(this.ripple, { scale: 0.3, opacity: 0.9 }, { scale: 1.5, opacity: 0, duration: 0.45, ease: 'power1.out' });

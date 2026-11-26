@@ -15,6 +15,7 @@ export class WatchMode {
     this.token = 0;
     this.steps = fieldSteps(this.timeline);
     this.last = this.timeline.steps.length - 1;
+    this.sculpt = this.timeline.module === 'sculpt';
     this.listeners = new AbortController();
     this.dom = {
       controls: document.getElementById('watch-controls'),
@@ -55,20 +56,33 @@ export class WatchMode {
     this.listeners.abort();
     this.dom.controls.hidden = true;
     this.menu.close();
+    this.modeMenu.close();
+    this.viewer.clearOverlay();
     this.cursor.hide(0);
   }
 
   render(state) {
     this.editor.render(state, {
       objectName: this.timeline.object, enabledTabs: TABS, interactive: new Set(), steps: this.steps, showAllEnabled: true,
+      enabled: new Set(),
     });
     this.viewer.setGeometry(this.geometries.get(state.mesh));
+  }
+
+  /** Semantic id a step points at: the modifier card, the mode dropdown, or the control itself. Strokes point at the 3D Viewport. */
+  targetOf(step) {
+    if (step.action === 'add_modifier') return `modifier.${step.id.split('.')[1]}`;
+    if (step.action === 'set_mode') return this.ui.sculpt.modeMenu.id;
+    if (step.action === 'stroke') return null;
+    return step.id;
   }
 
   jump(index, cameraDuration = 0.35) {
     this.index = index;
     this.stage = null;
     this.menu.close();
+    this.modeMenu.close();
+    this.viewer.clearOverlay();
     const state = stateAt(this.timeline, this.ui, index);
     this.render(state);
     this.viewer.showCamera(state.camera, cameraDuration);
@@ -86,8 +100,8 @@ export class WatchMode {
   }
 
   highlight(step) {
-    const id = step.action === 'add_modifier' ? `modifier.${step.id.split('.')[1]}` : step.id;
-    this.editor.element(id)?.classList.add('is-target');
+    const id = this.targetOf(step);
+    if (id) this.editor.element(id)?.classList.add('is-target');
   }
 
   updateControls() {
@@ -106,16 +120,23 @@ export class WatchMode {
     if (this.busy || this.index >= this.last) return;
     this.stage = null;
     this.menu.close();
+    this.modeMenu.close();
+    this.viewer.clearOverlay();
     const token = ++this.token;
     const index = this.index + 1;
     const step = this.timeline.steps[index];
+    const from = stateAt(this.timeline, this.ui, this.index);
     const to = stateAt(this.timeline, this.ui, index);
     this.busy = true;
     this.updateControls();
     this.bar.show({ count: `Step ${index + 1} of ${this.timeline.steps.length}`, text: step.text, shortcut: step.shortcut });
     this.bar.showClue('');
-    const camera = this.viewer.showCamera(step.camera, 0.8);
-    await animateStep({ step, to, editor: this.editor, menu: this.menu, cursor: this.cursor, render: state => this.render(state) });
+    // A stroke moves the camera itself before the brush starts.
+    const camera = step.action === 'stroke' ? null : this.viewer.showCamera(step.camera, 0.8);
+    await animateStep({
+      step, to, from, editor: this.editor, menu: this.menu, modeMenu: this.modeMenu, cursor: this.cursor,
+      viewer: this.viewer, geometries: this.geometries, render: state => this.render(state),
+    });
     await camera;
     if (token !== this.token) return;
     this.busy = false;
@@ -133,7 +154,9 @@ export class WatchMode {
 
   /** Actions inside a step, so the learner can stop on each one (e.g. the open menu). */
   stagesOf(step) {
-    return step.action === 'add_modifier' ? ['menu', 'submenu'] : ['target'];
+    if (step.action === 'add_modifier') return ['menu', 'submenu'];
+    if (step.action === 'set_mode') return ['menu', 'item'];
+    return ['target'];
   }
 
   /** Moves one action forward (+1) or back (-1), paused on that frame. */
@@ -170,14 +193,37 @@ export class WatchMode {
     const stage = this.stagesOf(step)[this.stage];
     this.render(stateAt(this.timeline, this.ui, this.index));
     this.menu.close();
-    this.viewer.showCamera(step.camera, 0.35);
+    this.modeMenu.close();
+    this.viewer.clearOverlay();
+    const camera = this.viewer.showCamera(step.camera, 0.35);
+    const token = this.token;
     const total = this.timeline.steps.length;
     const count = this.stagesOf(step).length;
     this.bar.show({ count: `Step ${index + 1} of ${total} · action ${this.stage + 1} of ${count + 1}`, text: step.text, shortcut: step.shortcut });
     this.bar.showClue('');
     let target;
-    if (stage === 'target') {
-      target = this.editor.element(step.id);
+    if (step.action === 'stroke') {
+      // Paused before a stroke: the dotted path it will follow, with the cursor on its start.
+      this.viewer.showGuide(step.stroke.points, step.stroke.radius);
+      this.cursor.hide(0);
+      this.updateControls();
+      camera.then(() => {
+        if (token !== this.token || this.stage === null) return;
+        const rect = this.viewer.canvas.getBoundingClientRect();
+        const start = this.viewer.project(step.stroke.points[0]);
+        this.cursor.moveToPoint(rect.left + start.x, rect.top + start.y, 0.3);
+      });
+      return;
+    }
+    if (step.action === 'set_mode') {
+      const button = this.editor.element(this.modeMenu.ui.id);
+      target = button;
+      if (stage === 'item') {
+        this.modeMenu.open(button, stateAt(this.timeline, this.ui, this.index).mode);
+        target = this.modeMenu.element(step.id);
+      }
+    } else if (stage === 'target') {
+      target = step.action === 'select_brush' ? this.editor.reveal(step.id) : this.editor.element(step.id);
     } else {
       const button = this.editor.element(this.menu.ui.id);
       this.menu.open(button);
@@ -187,7 +233,7 @@ export class WatchMode {
         target = this.menu.element(step.id);
       }
     }
-    target?.classList.add(stage === 'submenu' ? 'active' : 'is-target');
+    target?.classList.add(stage === 'submenu' || stage === 'item' ? 'active' : 'is-target');
     this.cursor.moveTo(target, 0.3);
     this.updateControls();
   }
@@ -197,6 +243,7 @@ export class WatchMode {
     this.busy = false;
     this.autoplay = this.dom.autoplay.checked = false;
     this.menu.close();
+    this.modeMenu.close();
     this.cursor.hide(0);
     this.jump(Math.max(-1, Math.min(this.last, index)));
   }

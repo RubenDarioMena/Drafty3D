@@ -60,6 +60,8 @@ export class Viewer {
     this.controls.enabled = false;
     this.controls.addEventListener('change', () => { this.needsRender = true; });
 
+    this.overlay = new StrokeOverlay(canvas.parentElement);
+
     new ResizeObserver(() => this.resize()).observe(canvas.parentElement);
     this.resize();
     this.renderer.setAnimationLoop(() => {
@@ -67,7 +69,112 @@ export class Viewer {
       if (!this.needsRender) return;
       this.needsRender = false;
       this.renderer.render(this.scene, this.camera);
+      this.overlay.update(this);
     });
+  }
+
+  showGuide(points, radius) {
+    this.overlay.showGuide(points, radius);
+    this.needsRender = true;
+  }
+
+  showBrush(point, radius) {
+    this.overlay.showBrush(point, radius);
+    this.needsRender = true;
+  }
+
+  hideBrush() {
+    this.overlay.hideBrush();
+  }
+
+  clearOverlay() {
+    this.overlay.clear();
+  }
+
+  /** Canvas pixel position of a point recorded in Blender's coordinates (Z up). */
+  project(point) {
+    const vector = new THREE.Vector3(...toThree(point)).project(this.camera);
+    const width = this.canvas.clientWidth;
+    const height = this.canvas.clientHeight;
+    return { x: (vector.x + 1) / 2 * width, y: (1 - vector.y) / 2 * height, z: vector.z };
+  }
+
+  /** On-screen radius of a brush of `radius` metres centred on a Blender point. */
+  projectRadius(point, radius) {
+    const center = new THREE.Vector3(...toThree(point));
+    const right = new THREE.Vector3().setFromMatrixColumn(this.camera.matrixWorld, 0).multiplyScalar(radius);
+    const a = this.project(point);
+    const edge = center.add(right).project(this.camera);
+    const b = { x: (edge.x + 1) / 2 * this.canvas.clientWidth, y: (1 - edge.y) / 2 * this.canvas.clientHeight };
+    return Math.hypot(b.x - a.x, b.y - a.y);
+  }
+
+  /**
+   * Plays one stroke as Blender computed it: both meshes come from Blender and share their
+   * vertices, so the in-between frames only blend the two results along the brush path.
+   * Grab moves its whole region with the cursor; other brushes change the surface as the
+   * brush passes over it. Returns a function that sets the progress (0..1).
+   */
+  strokeMorph(from, to, stroke) {
+    const start = from.getAttribute('position');
+    const end = to.getAttribute('position');
+    if (!start || !end || start.count !== end.count) return t => this.setGeometry(t < 1 ? from : to);
+    const geometry = from.clone();
+    const position = geometry.getAttribute('position');
+    const normal = geometry.getAttribute('normal');
+    const startNormal = from.getAttribute('normal');
+    const endNormal = to.getAttribute('normal');
+    const moving = [];
+    const timing = [];
+    const trail = stroke.points.map(point => new THREE.Vector3(...toThree(point)));
+    const vertex = new THREE.Vector3();
+    for (let i = 0; i < start.count; i += 1) {
+      const dx = end.getX(i) - start.getX(i);
+      const dy = end.getY(i) - start.getY(i);
+      const dz = end.getZ(i) - start.getZ(i);
+      if (dx * dx + dy * dy + dz * dz < 1e-12) continue;
+      moving.push(i);
+      if (stroke.brushType === 'GRAB') {
+        timing.push(0);
+        continue;
+      }
+      // When the brush is closest to this vertex (mirrored copies use the mirrored trail).
+      vertex.set(start.getX(i), start.getY(i), start.getZ(i));
+      const mirror = vertex.x < 0 && trail.every(point => point.x >= 0);
+      if (mirror) vertex.x = -vertex.x;
+      let best = Infinity;
+      let when = 0;
+      trail.forEach((point, index) => {
+        const distance = point.distanceToSquared(vertex);
+        if (distance < best) {
+          best = distance;
+          when = index / Math.max(1, trail.length - 1);
+        }
+      });
+      timing.push(when);
+    }
+    this.setGeometry(geometry);
+    const soft = 0.18;
+    return t => {
+      moving.forEach((i, k) => {
+        const local = stroke.brushType === 'GRAB' ? t : Math.min(1, Math.max(0, (t * (1 + soft) - timing[k]) / soft));
+        position.setXYZ(i, start.getX(i) + (end.getX(i) - start.getX(i)) * local,
+          start.getY(i) + (end.getY(i) - start.getY(i)) * local,
+          start.getZ(i) + (end.getZ(i) - start.getZ(i)) * local);
+        if (normal && startNormal && endNormal) {
+          normal.setXYZ(i, startNormal.getX(i) + (endNormal.getX(i) - startNormal.getX(i)) * local,
+            startNormal.getY(i) + (endNormal.getY(i) - startNormal.getY(i)) * local,
+            startNormal.getZ(i) + (endNormal.getZ(i) - startNormal.getZ(i)) * local);
+        }
+      });
+      position.needsUpdate = true;
+      if (normal) normal.needsUpdate = true;
+      this.needsRender = true;
+      if (t >= 1) {
+        this.setGeometry(to);
+        geometry.dispose();
+      }
+    };
   }
 
   resize() {
@@ -121,5 +228,97 @@ export class Viewer {
         onUpdate: () => apply(progress.t), onComplete: resolve, onInterrupt: resolve,
       });
     });
+  }
+}
+
+/**
+ * 2D layer over the 3D view: the brush ring (Blender's circle cursor) and the dotted guide
+ * of a stroke. Both are kept in 3D and re-projected every frame, so they follow the camera.
+ */
+class StrokeOverlay {
+  constructor(parent) {
+    const ns = 'http://www.w3.org/2000/svg';
+    this.svg = document.createElementNS(ns, 'svg');
+    this.svg.classList.add('stroke-overlay');
+    this.svg.setAttribute('aria-hidden', 'true');
+    this.guide = document.createElementNS(ns, 'polyline');
+    this.guide.classList.add('guide');
+    this.startDot = document.createElementNS(ns, 'circle');
+    this.startDot.classList.add('guide-start');
+    this.startDot.setAttribute('r', '7');
+    this.endMark = document.createElementNS(ns, 'path');
+    this.endMark.classList.add('guide-end');
+    this.trace = document.createElementNS(ns, 'polyline');
+    this.trace.classList.add('trace');
+    this.ring = document.createElementNS(ns, 'circle');
+    this.ring.classList.add('brush-ring');
+    this.inner = document.createElementNS(ns, 'circle');
+    this.inner.classList.add('brush-ring', 'inner');
+    this.svg.append(this.guide, this.startDot, this.endMark, this.trace, this.ring, this.inner);
+    parent.append(this.svg);
+    this.state = { guide: null, brush: null, trace: [] };
+    this.clear();
+  }
+
+  /** Points in Blender coordinates; `radius` in metres. */
+  showGuide(points, radius) {
+    this.state.guide = { points, radius };
+  }
+
+  showBrush(point, radius) {
+    this.state.brush = { point, radius };
+  }
+
+  /** The learner's finger path, in canvas pixels. */
+  showTrace(points) {
+    this.state.trace = points;
+    this.trace.setAttribute('points', points.map(point => `${point.x},${point.y}`).join(' '));
+  }
+
+  hideBrush() {
+    this.state.brush = null;
+    this.ring.style.display = this.inner.style.display = 'none';
+  }
+
+  clear() {
+    this.state = { guide: null, brush: null, trace: [] };
+    for (const node of [this.guide, this.startDot, this.endMark, this.ring, this.inner]) node.style.display = 'none';
+    this.trace.setAttribute('points', '');
+  }
+
+  /** Guide in canvas pixels (for matching the learner's trace). */
+  guidePixels(viewer) {
+    return this.state.guide ? this.state.guide.points.map(point => viewer.project(point)) : [];
+  }
+
+  update(viewer) {
+    const { guide, brush } = this.state;
+    const show = (node, visible) => { node.style.display = visible ? '' : 'none'; };
+    show(this.guide, guide);
+    show(this.startDot, guide);
+    show(this.endMark, guide);
+    if (guide) {
+      const pixels = this.guidePixels(viewer);
+      this.guide.setAttribute('points', pixels.map(point => `${point.x.toFixed(1)},${point.y.toFixed(1)}`).join(' '));
+      this.guide.style.strokeWidth = `${Math.max(3, Math.min(14, viewer.projectRadius(guide.points[0], guide.radius) * 0.5))}px`;
+      this.startDot.setAttribute('cx', pixels[0].x);
+      this.startDot.setAttribute('cy', pixels[0].y);
+      const last = pixels[pixels.length - 1];
+      const before = pixels[Math.max(0, pixels.length - 3)];
+      const angle = Math.atan2(last.y - before.y, last.x - before.x);
+      const arrow = (dx, dy) => `${last.x + Math.cos(angle) * dx - Math.sin(angle) * dy},${last.y + Math.sin(angle) * dx + Math.cos(angle) * dy}`;
+      this.endMark.setAttribute('d', `M${arrow(-12, -8)} L${arrow(0, 0)} L${arrow(-12, 8)}`);
+    }
+    show(this.ring, brush);
+    show(this.inner, brush);
+    if (brush) {
+      const center = viewer.project(brush.point);
+      const radius = viewer.projectRadius(brush.point, brush.radius);
+      for (const [node, scale] of [[this.ring, 1], [this.inner, 0.5]]) {
+        node.setAttribute('cx', center.x);
+        node.setAttribute('cy', center.y);
+        node.setAttribute('r', Math.max(2, radius * scale));
+      }
+    }
   }
 }

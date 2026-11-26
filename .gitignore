@@ -17,3 +17,4 @@ playwright-report/
 # Drafty3D Learn pipeline (Blender venv y salidas intermedias)
 learn/pipeline/.venv/
 learn/pipeline/.out/
+learn/pipeline/.blender/

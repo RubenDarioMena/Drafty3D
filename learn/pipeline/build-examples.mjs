@@ -15,13 +15,40 @@ const out = resolve(pipeline, '.out');
 const examples = resolve(root, 'learn/public/examples');
 const fixtures = resolve(root, 'tests/fixtures/learn');
 const python = resolve(pipeline, '.venv/bin/python');
+const blenderApp = process.env.BLENDER_APP ?? resolve(pipeline, '.blender/blender-5.3.0-linux-x64/blender');
 
-if (!process.argv.includes('--skip-blender')) {
-  if (!(await stat(python).catch(() => null))) {
+// --skip-blender reuses everything in .out; --only=modifiers|sculpt records one module again.
+const only = process.argv.find(arg => arg.startsWith('--only='))?.slice('--only='.length);
+const record = module => !process.argv.includes('--skip-blender') && (!only || only === module);
+const exists = path => stat(path).then(() => true, () => false);
+
+if (record('modifiers')) {
+  if (!(await exists(python))) {
     throw new Error('Falta el entorno de Blender. Crear con: python3.13 -m venv learn/pipeline/.venv && learn/pipeline/.venv/bin/pip install -r learn/pipeline/requirements.txt');
   }
-  await rm(out, { recursive: true, force: true });
+  await rm(join(out, 'modifiers'), { recursive: true, force: true });
   execFileSync(python, [resolve(pipeline, 'blender/build.py'), '--', out], { stdio: 'inherit' });
+}
+
+if (record('sculpt')) {
+  // Strokes need Blender's windowed event loop: the full app on a virtual display, driven by xdotool.
+  if (!(await exists(blenderApp))) throw new Error('Falta Blender 5.3 (app completa). Descargar con: learn/pipeline/get-blender.sh');
+  for (const tool of ['xvfb-run', 'xdotool']) {
+    try { execFileSync('which', [tool]); } catch { throw new Error(`Falta ${tool}: apt-get install -y xvfb xdotool`); }
+  }
+  await rm(join(out, 'sculpt'), { recursive: true, force: true });
+  await mkdir(out, { recursive: true });
+  const start = join(out, 'start.blend');
+  execFileSync(blenderApp, ['-b', '--factory-startup', '--python-expr',
+    `import bpy; bpy.ops.wm.read_factory_settings(use_empty=True); bpy.ops.wm.save_as_mainfile(filepath=${JSON.stringify(start)})`],
+  { stdio: 'ignore' });
+  // A fixed 1920×1080 screen keeps brush sizes in pixels, and therefore the strokes, reproducible.
+  // One Blender process per lesson: brush settings live in the session, so each lesson starts from factory brushes.
+  for (const lesson of ['buddy', 'sleepy']) {
+    execFileSync('xvfb-run', ['-a', '-s', '-screen 0 1920x1080x24', blenderApp, '--factory-startup', '--gpu-backend', 'opengl',
+      start, '--python', resolve(pipeline, 'blender/build_sculpt.py'), '--', out],
+    { stdio: 'inherit', env: { ...process.env, LEARN_SCULPT_ONLY: lesson } });
+  }
 }
 
 const io = new NodeIO().registerExtensions(ALL_EXTENSIONS).registerDependencies({
@@ -32,7 +59,9 @@ const io = new NodeIO().registerExtensions(ALL_EXTENSIONS).registerDependencies(
 await rm(examples, { recursive: true, force: true });
 await rm(fixtures, { recursive: true, force: true });
 await mkdir(examples, { recursive: true });
-await copyFile(join(out, 'blender-ui.json'), join(examples, 'blender-ui.json'));
+const ui = JSON.parse(await readFile(join(out, 'blender-ui.json'), 'utf8'));
+ui.sculpt = JSON.parse(await readFile(join(out, 'sculpt-ui.json'), 'utf8'));
+await writeFile(join(examples, 'blender-ui.json'), JSON.stringify(ui, null, 2) + '\n');
 
 const lessons = [];
 for (const module of await readdir(join(out), { withFileTypes: true })) {
@@ -58,6 +87,7 @@ for (const module of await readdir(join(out), { withFileTypes: true })) {
       raw += (await stat(join(source, 'raw', file))).size;
       packed += bytes.byteLength;
     }
+    if (timeline.module === 'sculpt') await checkSharedTopology(target, timeline);
     for (const file of await readdir(join(source, 'renders'))) {
       await copyFile(join(source, 'renders', file), join(fixtureDir, file));
     }
@@ -69,5 +99,24 @@ for (const module of await readdir(join(out), { withFileTypes: true })) {
     console.log(`${module.name}/${example}: ${timeline.steps.length} pasos, mallas ${(raw / 1024).toFixed(0)} KiB → ${(packed / 1024).toFixed(0)} KiB con Draco`);
   }
 }
-lessons.sort((a, b) => (a.mode === b.mode ? 0 : a.mode === 'watch' ? -1 : 1));
+// Home lists modules in this order; inside a module, Watch comes before its Your turn variant.
+const MODULE_ORDER = ['modifiers', 'sculpt'];
+lessons.sort((a, b) => (MODULE_ORDER.indexOf(a.module) - MODULE_ORDER.indexOf(b.module))
+  || (a.mode === b.mode ? 0 : a.mode === 'watch' ? -1 : 1));
 await writeFile(join(examples, 'index.json'), JSON.stringify({ lessons }, null, 2) + '\n');
+
+// Sculpting moves vertices but never changes the mesh's connectivity (no Dyntopo, no Remesh),
+// so the app can play a stroke as a morph between two of Blender's results. Prove it holds
+// after Draco, which is free to reorder vertices.
+async function checkSharedTopology(folder, timeline) {
+  const meshes = [timeline.initial.mesh, ...timeline.steps.map(step => step.mesh).filter(Boolean)];
+  const signature = async name => {
+    const primitive = (await io.read(join(folder, name))).getRoot().listMeshes()[0].listPrimitives()[0];
+    return [primitive.getAttribute('POSITION').getCount(), Array.from(primitive.getIndices().getArray()).join(',')];
+  };
+  const [count, indices] = await signature(meshes[0]);
+  for (const name of meshes.slice(1)) {
+    const [otherCount, otherIndices] = await signature(name);
+    if (otherCount !== count || otherIndices !== indices) throw new Error(`${folder}/${name}: Draco cambió el orden de los vértices`);
+  }
+}

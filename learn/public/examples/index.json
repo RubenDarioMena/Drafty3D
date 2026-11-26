@@ -15,6 +15,22 @@
       "title": "Your turn: bowl",
       "variantOf": "cup",
       "timeline": "modifiers/bowl/timeline.json"
+    },
+    {
+      "module": "sculpt",
+      "example": "pebble-buddy",
+      "mode": "watch",
+      "title": "Pebble buddy",
+      "variantOf": null,
+      "timeline": "sculpt/pebble-buddy/timeline.json"
+    },
+    {
+      "module": "sculpt",
+      "example": "sleepy-buddy",
+      "mode": "your-turn",
+      "title": "Your turn: sleepy buddy",
+      "variantOf": "pebble-buddy",
+      "timeline": "sculpt/sleepy-buddy/timeline.json"
     }
   ]
 }

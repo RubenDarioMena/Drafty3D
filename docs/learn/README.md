@@ -1,6 +1,6 @@
 # Drafty3D Learn: guía de prueba y decisiones
 
-Prototipo del módulo **Modificadores**. Incluye una lección para ver (la taza, *Low-poly cup*) y una práctica (*Your turn: bowl*). Todo funciona sin conexión: en el navegador y en el APK.
+Prototipo con dos módulos. **Modificadores**: una lección para ver (la taza, *Low-poly cup*) y una práctica (*Your turn: bowl*). **Sculpting**: una lección para ver (*Pebble buddy*) y una práctica (*Your turn: sleepy buddy*). Todo funciona sin conexión: en el navegador y en el APK.
 
 > La app está en inglés, como Blender. Esta guía está en español porque es para revisar el producto.
 
@@ -59,6 +59,10 @@ Mientras no existan los secretos, Actions genera un **APK de depuración**. Cada
 
 **Your turn (bowl).** Es un candado de combinación: haz cada paso con los controles de verdad. Nada cuenta como error. Cuando aciertas aparece una pista verde (por ejemplo `✓ Thickness: 0.06 m.`), una vibración corta en Android y la malla cambia a lo que Blender calculó. Los números se cambian con ◀ ▶, arrastrando sobre el valor o tocándolo para escribirlo. **Show me** (amarillo) hace el paso por ti y explica dónde estaba. El progreso queda guardado en el dispositivo. **Restart** vuelve a empezar.
 
+**Sculpting · Ver (Pebble buddy).** Un guijarro liso se vuelve un personaje con tres pinceles: **Grab** estira la cabeza, **Draw** en modo resta (−) con simetría X talla los ojos y la sonrisa, y **Smooth** redondea la punta. Arriba de la vista 3D está el *tool header* de Sculpt Mode: modo, pincel, Size, Strength, + / − y espejo X Y Z. Debajo está la repisa de pinceles (*asset shelf*) con las pestañas de Blender. Cada trazo se reproduce con el aro del pincel siguiendo el recorrido mientras la malla se convierte, poco a poco, en la que Blender esculpió. Con **‹ ›** puedes pararte antes de un trazo: se ve la línea punteada que va a seguir y el cursor en su inicio.
+
+**Sculpting · Your turn (sleepy buddy).** Los mismos pinceles en el mismo orden, con otra cara: ojos cerrados, boca redonda y la cabeza inclinada. Los ajustes funcionan como en el bowl: menú de modo, pincel en la repisa, Size y Strength con ◀ ▶, arrastre o escribiendo, + / −, espejo. Un pincel o un modo que no toca muestra "Not this one yet" y no cambia nada. En un paso de trazo aparece una **línea punteada** con un punto naranja en el inicio y una flecha al final. Repásala con un dedo empezando en el punto. Si te sales, empiezas al revés o solo tocas, aparece un aviso ("Follow the dotted line", "Start at the dot", "Drag along the whole line") y puedes reintentar. En los círculos (boca, punta de la cabeza) puedes empezar en cualquier parte. Mientras haya un trazo pendiente, un dedo dibuja en vez de girar la vista.
+
 ## Decisiones que tomé por ti
 
 Tomadas con los principios del registro de decisiones. Para el modo práctica, la regla del candado la decidiste tú.
@@ -77,14 +81,25 @@ Tomadas con los principios del registro de decisiones. Para el modo práctica, l
 | Sin Internet en Android | Quité el permiso `INTERNET` del APK. Las pruebas fallan si la app pide algo fuera de `/learn/`. | 1 |
 | Icono y splash | Icono propio (rombo naranja con ▶). Splash oscuro liso en vez del logo de Capacitor. | Marca |
 | `/workspace/` | Sigue funcionando para enlaces viejos, pero ahora sale del mismo `index.html` en el build: ya no hay dos archivos iguales. El espacio de diseño tiene una tarjeta hacia Drafty3D Learn. | 3 |
+| Grabar los trazos de escultura | **No usé "computer use"**: no estaba disponible en esta conversación. Hice el equivalente reproducible: la app completa de Blender 5.3 en una pantalla virtual (Xvfb de 1920×1080) y trazos con el ratón real vía `xdotool` (botón abajo → movimientos → botón arriba). Probé antes `sculpt.brush_stroke` desde un script: Blender responde "FINISHED" pero no mueve ni un vértice. Por eso el trazo tiene que pasar por el bucle de eventos, igual que un arrastre de ratón. Cada lección se graba en su propio proceso de Blender, porque los ajustes de pincel persisten dentro de una sesión. | 2 |
+| Qué guarda un trazo | El recorrido en 3D (puntos sobre la superficie, ~24), el radio del pincel en metros y cuántos vértices movió Blender. El pipeline falla si un trazo no mueve nada. La malla de antes y la de después tienen los mismos vértices en el mismo orden (lo comprueba el pipeline después de Draco). Así la app reproduce el trazo como una transición vértice a vértice entre dos mallas reales de Blender. three.js no esculpe nada. | 2 |
+| Animación del trazo | Grab se mueve de forma uniforme. Los demás pinceles se revelan según el punto del recorrido más cercano a cada vértice, con el mismo tiempo para el vértice espejo en X. El resultado final siempre es exactamente la malla de Blender. | 2, 4 |
+| Contenido de escultura | Guijarro (ico sphere de 10 242 vértices, escala 1 × 0.9 × 0.85). Ver: Grab a 300 px, Draw 60 px con Strength 1.0, Subtract y espejo X para ojos (dos vueltas) y media sonrisa, y Smooth a 200 px en tres círculos sobre la punta. Your turn: Grab hacia la izquierda, Draw 50 px, ojos cerrados (línea curva) y boca redonda (un círculo), y Smooth en dos círculos. La primera versión de Smooth (una pasada encima de la cabeza) casi no cambiaba nada; la prueba Blender vs three.js lo detectó y lo cambié. | 6 |
+| Cámara de escultura | Frontal y centrada en X, para que la simetría X se vea como espejo. Se usa la misma cámara para grabar en Blender y para mostrar en la app, así la línea punteada cae donde Blender pintó. | 4 |
+| Tolerancia del trazo | El trazo vale si cubre ≥ 80 % de la guía, ≥ 75 % de tu recorrido está cerca, mide al menos la mitad de la guía y empieza más cerca del inicio que del final (no se pide en círculos). "Cerca" es el mayor entre 28 px y 1.2 × el radio del aro del pincel en pantalla. Pensado para dedo, no para precisión de ratón. | 3, 4 |
+| Repisa de pinceles | Los 70+ pinceles de Blender 5.3, con las pestañas y grupos leídos de sus catálogos. Todos se pueden tocar (para aprender dónde están), pero solo el correcto avanza. Los puntos de color por grupo son propios, no los iconos de Blender. | 2, 4 |
+| + / − en Smooth | Blender no muestra + / − para Smooth (su dirección es "Smooth"), así que la app tampoco. | 2 |
+| Layout de escultura | En celular, la vista 3D va arriba y el header y la repisa abajo. En PC van en la columna derecha, donde están los Properties en los modificadores. En Blender el header está encima de la vista y la repisa abajo de ella; lo reacomodé para el pulgar. | 4 |
+| Inicio | Las lecciones se agrupan por módulo (Modifiers, Sculpting), con Ver antes de su Your turn. | 4 |
 | Releases | Un release fijo `learn-preview` que se reemplaza en cada build. El `versionCode` es el número de ejecución del workflow, así cada APK es más nuevo que el anterior. | 5 |
 
 ## Cómo se verifica
 
-- `npm test`: comprueba el contrato pipeline ↔ UI. Cada ID de los timelines existe en lo que se leyó de Blender, cada malla existe, los valores caen en su paso fijo y el bowl usa las mismas herramientas que la taza. También prueba la lógica del candado.
+- `npm test`: comprueba el contrato pipeline ↔ UI. Cada ID de los timelines existe en lo que se leyó de Blender (también modo, pinceles y campos del header de escultura), cada malla existe, los valores caen en su paso fijo, cada trazo movió vértices de verdad y cada Your turn usa las mismas herramientas que su Ver. También prueba la lógica del candado y la regla del trazo. Una prueba exige que **ningún paso de Your turn llegue ya resuelto**: así encontré que Blender arrastraba Strength y Subtract de la primera lección a la segunda.
 - `npm run test:browser` (después de `npm run build`):
   - **Blender vs three.js por paso** (`tests/browser/learn-verify.spec.mjs`). Blender renderiza las normales del objeto como colores; three.js dibuja lo mismo con el cargador y la cámara de la app. Umbrales: IoU ≥ 0.99, diferencia media ≤ 0.006, píxeles malos ≤ 1 %. Los pasos correctos dan ≤ 0.004 y la malla del paso anterior da ≥ 0.009, así que la prueba sí puede fallar. Esta prueba encontró dos errores reales que ya están corregidos: los niveles Render vs Viewport de Subdivision y el Amount del bowl que no cambiaba nada.
-  - Recorridos completos de Ver y Your turn en tamaño celular, sin peticiones fuera de `/learn/` y sin errores de página.
+    Las lecciones de escultura pasan con los mismos umbrales en todos sus pasos, incluida la condición de que cada trazo cambie lo que se ve.
+  - Recorridos completos de Ver y Your turn en tamaño celular, sin peticiones fuera de `/learn/` y sin errores de página. En escultura, la prueba dibuja cada trazo con el ratón sobre la guía proyectada, incluidos un trazo fuera de la línea y uno al revés.
 
 ## Regenerar los ejemplos
 
@@ -100,11 +115,30 @@ npm run learn:examples
 
 Esto graba cada lección con `bpy==5.3.0`, comprime las mallas con Draco (`gltf-transform`, verificando que de verdad se aplicó) y actualiza los renders de referencia de `tests/fixtures/learn/`. El contrato de datos está en [PIPELINE_CONTRACT.md](PIPELINE_CONTRACT.md).
 
+Escultura necesita además la app completa de Blender (no `bpy`), Xvfb y xdotool:
+
+```bash
+sudo apt-get install -y xvfb xdotool
+```
+
+```bash
+learn/pipeline/get-blender.sh
+```
+
+```bash
+npm run learn:examples -- --only=sculpt
+```
+
+`get-blender.sh` descarga Blender 5.3.0 de download.blender.org a `learn/pipeline/.blender/` (ignorado por git) y verifica su sha256. `--only=modifiers` o `--only=sculpt` graba un solo módulo; `--skip-blender` solo vuelve a empaquetar lo que ya está en `.out`. Con `LEARN_DEBUG=1` el grabador guarda una captura de la ventana de Blender después de cada trazo. Los scripts son `learn/pipeline/blender/sculpt.py` (grabador) y `build_sculpt.py` (lecciones).
+
 ## Limitaciones conocidas
 
 - **Orden de los campos en los paneles de modificadores.** Blender los dibuja en C y ese código no viene en `bpy`. El orden y unos pocos textos ("Amount", "Levels Viewport", "Render", "Rim / Fill") salen de ese código fuente, no de una extracción automática. Lo mismo pasa con el orden de las pestañas de Properties; omití la pestaña nueva "Compositor & Effects" porque no pude confirmar su posición. Vale la pena compararlos con Blender 5.3 real.
 - **Vista 3D.** No hay contorno naranja de selección ni wireframe: es sombreado tipo *Solid*.
 - **Tamaño.** El build pesa unos 2.2 MB. Vite incluye las tres variantes del decodificador Draco que referencia three.js (~1 MB que no se usa).
 - **Android 7.x.** En esas versiones aún se ve el icono por defecto de Capacitor; desde Android 8 sale el icono propio.
+- **Escultura: posición del pincel.** El trazo se graba en una ventana de 1920×1080. Size está en píxeles de pantalla, como en Blender, así que el mismo número en otra pantalla daría otro radio en metros. La app muestra el radio grabado, no lo recalcula.
+- **Escultura: más pinceles.** Solo Grab, Draw y Smooth tienen lección. Los demás se pueden tocar en la repisa, pero no hacen nada fuera de la lección.
+- **Escultura: la rejilla.** El guijarro está centrado en el origen, así que la rejilla del suelo lo corta por la mitad, igual que en Blender.
 - **Escritorio.** El diseño está pensado primero para celular. En PC funciona, pero está menos pulido.
 - **Builds de Vercel.** Las tres ramas `research/*` del mapa salieron de un commit sin `ignoreCommand` y gastaron tres builds de preview. Desde entonces, toda rama nueva lo incluye.

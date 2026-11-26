@@ -87,6 +87,7 @@
     }
   ],
   "objectPanels": [
+    "",
     "Transform",
     "Relations",
     "Collections",
@@ -107,7 +108,7 @@
         "Shift",
         "A"
       ],
-      "context": "Properties editor \u00b7 Modifiers tab"
+      "context": "Properties editor · Modifiers tab"
     },
     "categories": [
       {
@@ -452,8 +453,8 @@
           "label": "Thickness",
           "kind": "float",
           "unit": "m",
-          "softMin": -10.0,
-          "softMax": 10.0,
+          "softMin": -10,
+          "softMax": 10,
           "default": 0.01
         },
         {
@@ -462,9 +463,9 @@
           "label": "Offset",
           "kind": "float",
           "unit": "",
-          "softMin": -1.0,
-          "softMax": 1.0,
-          "default": -1.0
+          "softMin": -1,
+          "softMax": 1,
+          "default": -1
         },
         {
           "id": "modifier.solidify.even_thickness",
@@ -556,8 +557,8 @@
           "label": "Amount",
           "kind": "float",
           "unit": "m",
-          "softMin": 0.0,
-          "softMax": 100.0,
+          "softMin": 0,
+          "softMax": 100,
           "default": 0.1
         },
         {
@@ -601,10 +602,10 @@
           "rna": "angle_limit",
           "label": "Angle",
           "kind": "float",
-          "unit": "\u00b0",
-          "softMin": 0.0,
+          "unit": "°",
+          "softMin": 0,
           "softMax": 3.1415927410125732,
-          "default": 30.0
+          "default": 30
         }
       ],
       "subpanels": [
@@ -666,6 +667,645 @@
       ],
       "subpanels": [
         "Advanced"
+      ]
+    }
+  },
+  "sculpt": {
+    "modeMenu": {
+      "id": "object.mode",
+      "shortcut": {
+        "keys": [
+          "Ctrl",
+          "Tab"
+        ],
+        "context": "3D Viewport · mode pie"
+      },
+      "items": [
+        {
+          "id": "object.mode.object",
+          "value": "OBJECT",
+          "label": "Object Mode"
+        },
+        {
+          "id": "object.mode.edit",
+          "value": "EDIT",
+          "label": "Edit Mode"
+        },
+        {
+          "id": "object.mode.sculpt",
+          "value": "SCULPT",
+          "label": "Sculpt Mode"
+        },
+        {
+          "id": "object.mode.vertex_paint",
+          "value": "VERTEX_PAINT",
+          "label": "Vertex Paint"
+        },
+        {
+          "id": "object.mode.weight_paint",
+          "value": "WEIGHT_PAINT",
+          "label": "Weight Paint"
+        },
+        {
+          "id": "object.mode.texture_paint",
+          "value": "TEXTURE_PAINT",
+          "label": "Texture Paint"
+        }
+      ]
+    },
+    "header": {
+      "brush": {
+        "id": "sculpt.brush"
+      },
+      "size": {
+        "id": "sculpt.size",
+        "label": "Size",
+        "kind": "int",
+        "unit": "px",
+        "precision": 0,
+        "softMin": 1,
+        "softMax": 1000,
+        "shortcut": {
+          "keys": [
+            "F"
+          ],
+          "context": "3D Viewport · Sculpt Mode"
+        }
+      },
+      "strength": {
+        "id": "sculpt.strength",
+        "label": "Strength",
+        "kind": "float",
+        "unit": "",
+        "precision": 3,
+        "softMin": 0,
+        "softMax": 1,
+        "shortcut": {
+          "keys": [
+            "Shift",
+            "F"
+          ],
+          "context": "3D Viewport · Sculpt Mode"
+        }
+      },
+      "direction": {
+        "id": "sculpt.direction",
+        "items": [
+          {
+            "id": "sculpt.direction.add",
+            "value": "ADD",
+            "label": "Add"
+          },
+          {
+            "id": "sculpt.direction.subtract",
+            "value": "SUBTRACT",
+            "label": "Subtract"
+          }
+        ],
+        "shortcut": {
+          "keys": [
+            "Ctrl",
+            "Drag"
+          ],
+          "context": "hold while sculpting"
+        }
+      },
+      "symmetry": {
+        "id": "sculpt.symmetry",
+        "items": [
+          {
+            "id": "sculpt.symmetry.x",
+            "axis": "X",
+            "label": "X"
+          },
+          {
+            "id": "sculpt.symmetry.y",
+            "axis": "Y",
+            "label": "Y"
+          },
+          {
+            "id": "sculpt.symmetry.z",
+            "axis": "Z",
+            "label": "Z"
+          }
+        ]
+      }
+    },
+    "shelf": {
+      "id": "sculpt.shelf",
+      "tabs": [
+        "All",
+        "General",
+        "Paint",
+        "Simulation"
+      ],
+      "groups": [
+        "Add & Subtract",
+        "Contrast",
+        "Transform",
+        "Utilities"
+      ],
+      "brushes": [
+        {
+          "id": "sculpt.brush.airbrush",
+          "name": "Airbrush",
+          "tab": "Paint",
+          "group": null,
+          "shortcut": null
+        },
+        {
+          "id": "sculpt.brush.bend_boundary_cloth",
+          "name": "Bend Boundary Cloth",
+          "tab": "Simulation",
+          "group": null,
+          "shortcut": null
+        },
+        {
+          "id": "sculpt.brush.bend_twist_cloth",
+          "name": "Bend/Twist Cloth",
+          "tab": "Simulation",
+          "group": null,
+          "shortcut": null
+        },
+        {
+          "id": "sculpt.brush.blend_hard",
+          "name": "Blend Hard",
+          "tab": "Paint",
+          "group": null,
+          "shortcut": null
+        },
+        {
+          "id": "sculpt.brush.blend_soft",
+          "name": "Blend Soft",
+          "tab": "Paint",
+          "group": null,
+          "shortcut": null
+        },
+        {
+          "id": "sculpt.brush.blend_square",
+          "name": "Blend Square",
+          "tab": "Paint",
+          "group": null,
+          "shortcut": null
+        },
+        {
+          "id": "sculpt.brush.blob",
+          "name": "Blob",
+          "tab": "General",
+          "group": "Add & Subtract",
+          "shortcut": null
+        },
+        {
+          "id": "sculpt.brush.blur",
+          "name": "Blur",
+          "tab": "Paint",
+          "group": null,
+          "shortcut": null
+        },
+        {
+          "id": "sculpt.brush.boundary",
+          "name": "Boundary",
+          "tab": "General",
+          "group": "Transform",
+          "shortcut": null
+        },
+        {
+          "id": "sculpt.brush.clay",
+          "name": "Clay",
+          "tab": "General",
+          "group": "Add & Subtract",
+          "shortcut": null
+        },
+        {
+          "id": "sculpt.brush.clay_strips",
+          "name": "Clay Strips",
+          "tab": "General",
+          "group": "Add & Subtract",
+          "shortcut": {
+            "keys": [
+              "C"
+            ],
+            "context": "3D Viewport · Sculpt Mode"
+          }
+        },
+        {
+          "id": "sculpt.brush.clay_thumb",
+          "name": "Clay Thumb",
+          "tab": "General",
+          "group": "Add & Subtract",
+          "shortcut": null
+        },
+        {
+          "id": "sculpt.brush.crease_polish",
+          "name": "Crease Polish",
+          "tab": "General",
+          "group": "Add & Subtract",
+          "shortcut": {
+            "keys": [
+              "Shift",
+              "C"
+            ],
+            "context": "3D Viewport · Sculpt Mode"
+          }
+        },
+        {
+          "id": "sculpt.brush.crease_sharp",
+          "name": "Crease Sharp",
+          "tab": "General",
+          "group": "Add & Subtract",
+          "shortcut": null
+        },
+        {
+          "id": "sculpt.brush.density",
+          "name": "Density",
+          "tab": "General",
+          "group": "Utilities",
+          "shortcut": null
+        },
+        {
+          "id": "sculpt.brush.drag_cloth",
+          "name": "Drag Cloth",
+          "tab": "Simulation",
+          "group": null,
+          "shortcut": null
+        },
+        {
+          "id": "sculpt.brush.draw",
+          "name": "Draw",
+          "tab": "General",
+          "group": "Add & Subtract",
+          "shortcut": {
+            "keys": [
+              "V"
+            ],
+            "context": "3D Viewport · Sculpt Mode"
+          }
+        },
+        {
+          "id": "sculpt.brush.draw_sharp",
+          "name": "Draw Sharp",
+          "tab": "General",
+          "group": "Add & Subtract",
+          "shortcut": null
+        },
+        {
+          "id": "sculpt.brush.elastic_grab",
+          "name": "Elastic Grab",
+          "tab": "General",
+          "group": "Transform",
+          "shortcut": null
+        },
+        {
+          "id": "sculpt.brush.elastic_snake_hook",
+          "name": "Elastic Snake Hook",
+          "tab": "General",
+          "group": "Transform",
+          "shortcut": null
+        },
+        {
+          "id": "sculpt.brush.erase_multires_displacement",
+          "name": "Erase Multires Displacement",
+          "tab": "General",
+          "group": "Utilities",
+          "shortcut": null
+        },
+        {
+          "id": "sculpt.brush.expand_contract_cloth",
+          "name": "Expand/Contract Cloth",
+          "tab": "Simulation",
+          "group": null,
+          "shortcut": null
+        },
+        {
+          "id": "sculpt.brush.face_set_paint",
+          "name": "Face Set Paint",
+          "tab": "General",
+          "group": "Utilities",
+          "shortcut": null
+        },
+        {
+          "id": "sculpt.brush.fill_deepen",
+          "name": "Fill/Deepen",
+          "tab": "General",
+          "group": "Contrast",
+          "shortcut": null
+        },
+        {
+          "id": "sculpt.brush.flatten_contrast",
+          "name": "Flatten/Contrast",
+          "tab": "General",
+          "group": "Contrast",
+          "shortcut": null
+        },
+        {
+          "id": "sculpt.brush.grab",
+          "name": "Grab",
+          "tab": "General",
+          "group": "Transform",
+          "shortcut": {
+            "keys": [
+              "G"
+            ],
+            "context": "3D Viewport · Sculpt Mode"
+          }
+        },
+        {
+          "id": "sculpt.brush.grab_2d",
+          "name": "Grab 2D",
+          "tab": "General",
+          "group": "Transform",
+          "shortcut": null
+        },
+        {
+          "id": "sculpt.brush.grab_cloth",
+          "name": "Grab Cloth",
+          "tab": "Simulation",
+          "group": null,
+          "shortcut": null
+        },
+        {
+          "id": "sculpt.brush.grab_planar_cloth_",
+          "name": "Grab Planar Cloth ",
+          "tab": "Simulation",
+          "group": null,
+          "shortcut": null
+        },
+        {
+          "id": "sculpt.brush.grab_random_cloth",
+          "name": "Grab Random Cloth",
+          "tab": "Simulation",
+          "group": null,
+          "shortcut": null
+        },
+        {
+          "id": "sculpt.brush.grab_silhouette",
+          "name": "Grab Silhouette",
+          "tab": "General",
+          "group": "Transform",
+          "shortcut": null
+        },
+        {
+          "id": "sculpt.brush.inflate_cloth",
+          "name": "Inflate Cloth",
+          "tab": "Simulation",
+          "group": null,
+          "shortcut": null
+        },
+        {
+          "id": "sculpt.brush.inflate_deflate",
+          "name": "Inflate/Deflate",
+          "tab": "General",
+          "group": "Add & Subtract",
+          "shortcut": {
+            "keys": [
+              "I"
+            ],
+            "context": "3D Viewport · Sculpt Mode"
+          }
+        },
+        {
+          "id": "sculpt.brush.layer",
+          "name": "Layer",
+          "tab": "General",
+          "group": "Add & Subtract",
+          "shortcut": null
+        },
+        {
+          "id": "sculpt.brush.mask",
+          "name": "Mask",
+          "tab": "General",
+          "group": "Utilities",
+          "shortcut": {
+            "keys": [
+              "M"
+            ],
+            "context": "3D Viewport · Sculpt Mode"
+          }
+        },
+        {
+          "id": "sculpt.brush.nudge",
+          "name": "Nudge",
+          "tab": "General",
+          "group": "Transform",
+          "shortcut": null
+        },
+        {
+          "id": "sculpt.brush.paint_blend",
+          "name": "Paint Blend",
+          "tab": "Paint",
+          "group": null,
+          "shortcut": null
+        },
+        {
+          "id": "sculpt.brush.paint_hard",
+          "name": "Paint Hard",
+          "tab": "Paint",
+          "group": null,
+          "shortcut": null
+        },
+        {
+          "id": "sculpt.brush.paint_hard_pressure",
+          "name": "Paint Hard Pressure",
+          "tab": "Paint",
+          "group": null,
+          "shortcut": null
+        },
+        {
+          "id": "sculpt.brush.paint_soft",
+          "name": "Paint Soft",
+          "tab": "Paint",
+          "group": null,
+          "shortcut": null
+        },
+        {
+          "id": "sculpt.brush.paint_soft_pressure",
+          "name": "Paint Soft Pressure",
+          "tab": "Paint",
+          "group": null,
+          "shortcut": null
+        },
+        {
+          "id": "sculpt.brush.paint_square",
+          "name": "Paint Square",
+          "tab": "Paint",
+          "group": null,
+          "shortcut": null
+        },
+        {
+          "id": "sculpt.brush.pinch_folds_cloth",
+          "name": "Pinch Folds Cloth",
+          "tab": "Simulation",
+          "group": null,
+          "shortcut": null
+        },
+        {
+          "id": "sculpt.brush.pinch_point_cloth",
+          "name": "Pinch Point Cloth",
+          "tab": "Simulation",
+          "group": null,
+          "shortcut": null
+        },
+        {
+          "id": "sculpt.brush.pinch_magnify",
+          "name": "Pinch/Magnify",
+          "tab": "General",
+          "group": "Transform",
+          "shortcut": {
+            "keys": [
+              "P"
+            ],
+            "context": "3D Viewport · Sculpt Mode"
+          }
+        },
+        {
+          "id": "sculpt.brush.plateau",
+          "name": "Plateau",
+          "tab": "General",
+          "group": "Contrast",
+          "shortcut": null
+        },
+        {
+          "id": "sculpt.brush.pose",
+          "name": "Pose",
+          "tab": "General",
+          "group": "Transform",
+          "shortcut": null
+        },
+        {
+          "id": "sculpt.brush.pull",
+          "name": "Pull",
+          "tab": "General",
+          "group": "Transform",
+          "shortcut": null
+        },
+        {
+          "id": "sculpt.brush.push_cloth",
+          "name": "Push Cloth",
+          "tab": "Simulation",
+          "group": null,
+          "shortcut": null
+        },
+        {
+          "id": "sculpt.brush.relax_pinch",
+          "name": "Relax Pinch",
+          "tab": "General",
+          "group": "Transform",
+          "shortcut": null
+        },
+        {
+          "id": "sculpt.brush.relax_slide",
+          "name": "Relax Slide",
+          "tab": "General",
+          "group": "Transform",
+          "shortcut": null
+        },
+        {
+          "id": "sculpt.brush.scene_project",
+          "name": "Scene Project",
+          "tab": "General",
+          "group": "Transform",
+          "shortcut": null
+        },
+        {
+          "id": "sculpt.brush.scrape_multiplane",
+          "name": "Scrape Multiplane",
+          "tab": "General",
+          "group": "Contrast",
+          "shortcut": null
+        },
+        {
+          "id": "sculpt.brush.scrape_fill",
+          "name": "Scrape/Fill",
+          "tab": "General",
+          "group": "Contrast",
+          "shortcut": {
+            "keys": [
+              "Shift",
+              "T"
+            ],
+            "context": "3D Viewport · Sculpt Mode"
+          }
+        },
+        {
+          "id": "sculpt.brush.sharpen",
+          "name": "Sharpen",
+          "tab": "Paint",
+          "group": null,
+          "shortcut": null
+        },
+        {
+          "id": "sculpt.brush.smear",
+          "name": "Smear",
+          "tab": "Paint",
+          "group": null,
+          "shortcut": null
+        },
+        {
+          "id": "sculpt.brush.smear_multires_displacement",
+          "name": "Smear Multires Displacement",
+          "tab": "General",
+          "group": "Utilities",
+          "shortcut": null
+        },
+        {
+          "id": "sculpt.brush.smooth",
+          "name": "Smooth",
+          "tab": "General",
+          "group": "Contrast",
+          "shortcut": {
+            "keys": [
+              "S"
+            ],
+            "context": "3D Viewport · Sculpt Mode"
+          }
+        },
+        {
+          "id": "sculpt.brush.snake_hook",
+          "name": "Snake Hook",
+          "tab": "General",
+          "group": "Transform",
+          "shortcut": {
+            "keys": [
+              "K"
+            ],
+            "context": "3D Viewport · Sculpt Mode"
+          }
+        },
+        {
+          "id": "sculpt.brush.stretch_move_cloth",
+          "name": "Stretch/Move Cloth",
+          "tab": "Simulation",
+          "group": null,
+          "shortcut": null
+        },
+        {
+          "id": "sculpt.brush.thumb",
+          "name": "Thumb",
+          "tab": "General",
+          "group": "Transform",
+          "shortcut": null
+        },
+        {
+          "id": "sculpt.brush.trim",
+          "name": "Trim",
+          "tab": "General",
+          "group": "Contrast",
+          "shortcut": null
+        },
+        {
+          "id": "sculpt.brush.twist",
+          "name": "Twist",
+          "tab": "General",
+          "group": "Transform",
+          "shortcut": null
+        },
+        {
+          "id": "sculpt.brush.twist_boundary_cloth",
+          "name": "Twist Boundary Cloth",
+          "tab": "Simulation",
+          "group": null,
+          "shortcut": null
+        }
       ]
     }
   }

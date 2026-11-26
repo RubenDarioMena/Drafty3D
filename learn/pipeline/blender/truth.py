@@ -52,7 +52,7 @@ TAB_ORDER = ['TOOL', None, 'RENDER', 'OUTPUT', 'VIEW_LAYER', 'SCENE', 'WORLD', '
              'OBJECT', 'MODIFIER', 'PARTICLES', 'PHYSICS', 'CONSTRAINT', 'DATA', 'MATERIAL', None, 'TEXTURE']
 
 KEY_NAMES = {'ZERO': '0', 'ONE': '1', 'TWO': '2', 'THREE': '3', 'FOUR': '4', 'FIVE': '5',
-             'TAB': 'Tab', 'DEL': 'Delete', 'WHEELUPMOUSE': 'Wheel Up', 'WHEELDOWNMOUSE': 'Wheel Down'}
+             'TAB': 'Tab', 'DEL': 'Delete', 'LEFTMOUSE': 'Drag', 'WHEELUPMOUSE': 'Wheel Up', 'WHEELDOWNMOUSE': 'Wheel Down'}
 
 
 def _keymaps():

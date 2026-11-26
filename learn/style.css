@@ -106,6 +106,52 @@ button { cursor: pointer; }
 .subpanel { font-size: 13px; color: #cfcfcf; padding: 4px 2px; border-top: 1px solid #353535; }
 .subpanel::before { content: "▸ "; color: var(--muted); }
 
+/* Sculpt Mode: 3D Viewport tool header and brush asset shelf (replace Properties in sculpt lessons) */
+.sculpt-tools { display: none; min-height: 0; background: var(--region); border-top: 1px solid #111; flex-direction: column; }
+.lesson[data-module="sculpt"] .properties { display: none; }
+.lesson[data-module="sculpt"] .sculpt-tools { display: flex; }
+.lesson[data-module="sculpt"] { grid-template-rows: minmax(220px, 1.25fr) minmax(180px, 1fr) auto; }
+.tool-header { flex: none; display: flex; flex-wrap: wrap; align-items: center; gap: 6px 8px; padding: 6px 8px; background: #303030; border-bottom: 1px solid #1a1a1a; font-size: 13px; }
+.tool-header .mode { gap: 6px; border: 0; min-height: 30px; }
+.tool-header .mode:disabled { cursor: default; color: var(--text); }
+.tool-header .caret { color: var(--muted); }
+.header-note { color: var(--muted); }
+.brush-name { display: inline-flex; align-items: center; gap: 6px; min-height: 30px; padding: 0 10px; background: #282828; border-radius: var(--radius); font-weight: 600; }
+.dot { width: 10px; height: 10px; border-radius: 50%; flex: none; display: inline-block; }
+.tool-numbers { display: flex; gap: 8px; flex-wrap: wrap; }
+.tool-field { display: flex; align-items: center; gap: 6px; }
+.tool-field .label { color: #cfcfcf; }
+.tool-field .number { width: 128px; height: 30px; grid-template-columns: 30px 1fr 30px; }
+.tool-toggles { display: flex; gap: 8px; flex-wrap: wrap; }
+.segmented { display: inline-flex; align-items: center; background: var(--field); border-radius: var(--radius); overflow: hidden; }
+.segmented button { min-width: 34px; height: 30px; border: 0; background: transparent; padding: 0 8px; font-weight: 600; }
+.segmented button + button { border-left: 1px solid #444; }
+.segmented button.on { background: var(--blue); color: #fff; }
+.segmented button:disabled { cursor: default; color: #b5b5b5; }
+.segmented button.on:disabled { color: #fff; }
+.mirror-icon { padding: 0 6px 0 8px; color: var(--muted); }
+.shelf { flex: 1; min-height: 0; display: flex; flex-direction: column; }
+.shelf.empty { justify-content: center; }
+.shelf-note { color: var(--muted); font-size: 13px; text-align: center; margin: 12px; }
+.shelf-tabs { flex: none; display: flex; gap: 2px; padding: 6px 8px 0; overflow-x: auto; }
+.shelf-tabs button { border: 0; background: transparent; color: var(--muted); padding: 4px 10px; border-radius: var(--radius) var(--radius) 0 0; min-height: 30px; font-size: 13px; }
+.shelf-tabs button.on { background: var(--panel); color: var(--text); }
+.shelf-items { flex: 1; min-height: 0; overflow-y: auto; display: grid; grid-template-columns: repeat(auto-fill, minmax(96px, 1fr)); gap: 4px; align-content: start; padding: 6px 8px 10px; background: var(--panel); }
+.shelf-items .brush { display: flex; align-items: center; gap: 6px; min-height: 36px; padding: 4px 8px; border: 0; border-radius: var(--radius); background: #4a4a4a; text-align: left; font-size: 12px; }
+.shelf-items .brush .name { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.shelf-items .brush.active { background: var(--blue); color: #fff; }
+.shelf-items .brush:disabled { cursor: default; color: #d0d0d0; }
+.shelf-items .brush.active:disabled { color: #fff; }
+
+/* Brush ring and dotted stroke guide over the 3D Viewport */
+.stroke-overlay { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; overflow: visible; }
+.stroke-overlay .guide { fill: none; stroke: rgba(255, 255, 255, .85); stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 0.1 14; filter: drop-shadow(0 0 2px rgba(0, 0, 0, .8)); }
+.stroke-overlay .guide-start { fill: var(--orange); stroke: #111; stroke-width: 2; }
+.stroke-overlay .guide-end { fill: none; stroke: #fff; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; filter: drop-shadow(0 0 2px rgba(0, 0, 0, .8)); }
+.stroke-overlay .trace { fill: none; stroke: var(--orange); stroke-width: 4; stroke-linecap: round; stroke-linejoin: round; opacity: .85; }
+.stroke-overlay .brush-ring { fill: none; stroke: #fff; stroke-width: 1.5; opacity: .9; }
+.stroke-overlay .brush-ring.inner { stroke-width: 1; opacity: .45; }
+
 /* Highlights driven by the lesson */
 .is-target { outline: 2px solid var(--orange); outline-offset: 1px; box-shadow: 0 0 12px rgba(255, 165, 58, .55); }
 .is-solved { outline: 2px solid var(--green); outline-offset: 1px; box-shadow: 0 0 12px rgba(89, 196, 106, .55); }
@@ -158,6 +204,8 @@ button { cursor: pointer; }
   .lesson { grid-template-columns: 1fr 380px; grid-template-rows: 1fr auto; }
   .viewport { grid-row: 1; grid-column: 1; }
   .properties { grid-row: 1; grid-column: 2; border-top: 0; border-left: 1px solid #111; }
+  .lesson[data-module="sculpt"] { grid-template-rows: 1fr auto; }
+  .sculpt-tools { grid-row: 1; grid-column: 2; border-top: 0; border-left: 1px solid #111; }
   .lesson-bar { grid-column: 1 / span 2; grid-template-columns: 1fr 420px; align-items: center; }
 }
 
