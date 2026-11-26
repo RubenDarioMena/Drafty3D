@@ -65,6 +65,38 @@
       "timeline": "modifiers/array-floating-steps/timeline.json"
     },
     {
+      "module": "modifiers",
+      "example": "boolean-birdhouse",
+      "mode": "watch",
+      "title": "Birdhouse door",
+      "variantOf": null,
+      "timeline": "modifiers/boolean-birdhouse/timeline.json"
+    },
+    {
+      "module": "modifiers",
+      "example": "boolean-lantern",
+      "mode": "your-turn",
+      "title": "Your turn: lantern window",
+      "variantOf": "boolean-birdhouse",
+      "timeline": "modifiers/boolean-lantern/timeline.json"
+    },
+    {
+      "module": "modifiers",
+      "example": "curve-garden-path",
+      "mode": "watch",
+      "title": "Garden path",
+      "variantOf": null,
+      "timeline": "modifiers/curve-garden-path/timeline.json"
+    },
+    {
+      "module": "modifiers",
+      "example": "curve-ring-track",
+      "mode": "your-turn",
+      "title": "Your turn: ring track",
+      "variantOf": "curve-garden-path",
+      "timeline": "modifiers/curve-ring-track/timeline.json"
+    },
+    {
       "module": "sculpt",
       "example": "pebble-buddy",
       "mode": "watch",

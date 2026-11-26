@@ -1,0 +1,298 @@
+{
+  "blenderVersion": "5.3.0",
+  "module": "modifiers",
+  "example": "boolean-lantern",
+  "mode": "your-turn",
+  "title": "Your turn: lantern window",
+  "object": "Lantern",
+  "initial": {
+    "panel": "panel.properties.object",
+    "camera": {
+      "position": [
+        0.95,
+        -1.9,
+        1
+      ],
+      "target": [
+        0,
+        0,
+        0.3
+      ],
+      "fov": 30
+    },
+    "text": "A lantern box and a box named Window. Cut the window with a Boolean, compare it with Union, then cut again.",
+    "mesh": "step-00.glb"
+  },
+  "steps": [
+    {
+      "id": "panel.properties.modifier",
+      "action": "select_panel",
+      "value": null,
+      "value_type": null,
+      "shortcut": {
+        "keys": [
+          "Ctrl",
+          "Tab"
+        ],
+        "context": "Properties editor · next tab"
+      },
+      "duration": 1.4,
+      "autoAdvance": true,
+      "text": "Open the Modifier Properties tab.",
+      "help": "The wrench icon, right below the orange Object square.",
+      "camera": {
+        "position": [
+          0.95,
+          -1.9,
+          1
+        ],
+        "target": [
+          0,
+          0,
+          0.3
+        ],
+        "fov": 30
+      },
+      "mesh": null
+    },
+    {
+      "id": "modifier.boolean.add",
+      "action": "add_modifier",
+      "value": "Boolean",
+      "value_type": "string",
+      "modifier": "BOOLEAN",
+      "shortcut": {
+        "keys": [
+          "Shift",
+          "A"
+        ],
+        "context": "Properties editor · Modifiers tab"
+      },
+      "duration": 2.8,
+      "autoAdvance": false,
+      "text": "Add a Boolean modifier.",
+      "help": "Add Modifier → Generate → Boolean.",
+      "camera": {
+        "position": [
+          0.95,
+          -1.9,
+          1
+        ],
+        "target": [
+          0,
+          0,
+          0.3
+        ],
+        "fov": 30
+      },
+      "mesh": null
+    },
+    {
+      "id": "modifier.boolean.object",
+      "action": "set_value",
+      "value": "Window",
+      "value_type": "object",
+      "modifier": "BOOLEAN",
+      "shortcut": null,
+      "duration": 2.2,
+      "autoAdvance": false,
+      "text": "Point it at the Window box.",
+      "help": "Tap the empty Object field and pick Window.",
+      "camera": {
+        "position": [
+          0.95,
+          -1.9,
+          1
+        ],
+        "target": [
+          0,
+          0,
+          0.3
+        ],
+        "fov": 30
+      },
+      "mesh": "step-03.glb"
+    },
+    {
+      "id": "modifier.boolean.operation",
+      "action": "set_value",
+      "value": "UNION",
+      "value_type": "enum",
+      "modifier": "BOOLEAN",
+      "shortcut": null,
+      "duration": 2.2,
+      "autoAdvance": false,
+      "text": "Switch to Union to see the box added instead.",
+      "help": "Union is the middle of the Intersect / Union / Difference buttons.",
+      "camera": {
+        "position": [
+          0.95,
+          -1.9,
+          1
+        ],
+        "target": [
+          0,
+          0,
+          0.3
+        ],
+        "fov": 30
+      },
+      "mesh": "step-04.glb"
+    },
+    {
+      "id": "modifier.boolean.operation",
+      "action": "set_value",
+      "value": "DIFFERENCE",
+      "value_type": "enum",
+      "modifier": "BOOLEAN",
+      "shortcut": null,
+      "duration": 2.2,
+      "autoAdvance": false,
+      "text": "Back to Difference: the window is cut out.",
+      "help": "Difference is the last of the three buttons.",
+      "camera": {
+        "position": [
+          0.95,
+          -1.9,
+          1
+        ],
+        "target": [
+          0,
+          0,
+          0.3
+        ],
+        "fov": 30
+      },
+      "mesh": "step-05.glb"
+    }
+  ],
+  "variantOf": "boolean-birdhouse",
+  "helpers": [
+    {
+      "name": "Window",
+      "segments": [
+        [
+          -0.11,
+          -0.08,
+          0.2
+        ],
+        [
+          -0.11,
+          -0.36,
+          0.2
+        ],
+        [
+          -0.11,
+          -0.36,
+          0.2
+        ],
+        [
+          -0.11,
+          -0.36,
+          0.44
+        ],
+        [
+          -0.11,
+          -0.36,
+          0.44
+        ],
+        [
+          -0.11,
+          -0.08,
+          0.44
+        ],
+        [
+          -0.11,
+          -0.08,
+          0.44
+        ],
+        [
+          -0.11,
+          -0.08,
+          0.2
+        ],
+        [
+          0.11,
+          -0.36,
+          0.44
+        ],
+        [
+          0.11,
+          -0.36,
+          0.2
+        ],
+        [
+          0.11,
+          -0.36,
+          0.2
+        ],
+        [
+          0.11,
+          -0.08,
+          0.2
+        ],
+        [
+          0.11,
+          -0.08,
+          0.2
+        ],
+        [
+          0.11,
+          -0.08,
+          0.44
+        ],
+        [
+          0.11,
+          -0.08,
+          0.44
+        ],
+        [
+          0.11,
+          -0.36,
+          0.44
+        ],
+        [
+          -0.11,
+          -0.36,
+          0.2
+        ],
+        [
+          0.11,
+          -0.36,
+          0.2
+        ],
+        [
+          0.11,
+          -0.36,
+          0.44
+        ],
+        [
+          -0.11,
+          -0.36,
+          0.44
+        ],
+        [
+          0.11,
+          -0.08,
+          0.2
+        ],
+        [
+          -0.11,
+          -0.08,
+          0.2
+        ],
+        [
+          -0.11,
+          -0.08,
+          0.44
+        ],
+        [
+          0.11,
+          -0.08,
+          0.44
+        ]
+      ]
+    }
+  ],
+  "outro": "Lantern window finished: one Boolean, three ways to combine two objects."
+}
