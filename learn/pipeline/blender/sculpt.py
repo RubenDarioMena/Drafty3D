@@ -197,11 +197,13 @@ def mask_values(mesh):
 
 
 class SculptLesson(Lesson):
-    def __init__(self, *, mask=False, **kwargs):
+    def __init__(self, *, mask=False, panel=None, **kwargs):
         # A lesson that uses the Mask brush exports the mask with every mesh, so the app can shade it.
         self.export_attributes = mask
-        super().__init__(panel='TOOL', **kwargs)
-        self.data['initial'].pop('panel')
+        super().__init__(panel=panel or 'TOOL', **kwargs)
+        # Only a lesson with modifier steps (Multires) shows the Properties editor, from this tab.
+        if not panel:
+            self.data['initial'].pop('panel')
         self.data['initial']['mode'] = 'OBJECT'
         self.data['initial']['tool'] = None
 
@@ -227,7 +229,12 @@ class SculptLesson(Lesson):
             mode_set(self.obj, mode)
 
     def _signature(self):
+        # Multires keeps sculpted detail apart until Sculpt Mode hands it back: measure in Object Mode.
+        mode = self.obj.mode
+        mode_set(self.obj, 'OBJECT')
+        bpy.context.view_layer.update()
         signature = super()._signature()
+        mode_set(self.obj, mode)
         return (*signature, tuple(np.round(self._mask(), 3))) if self.export_attributes else signature
 
     def _tool_state(self):
@@ -251,6 +258,35 @@ class SculptLesson(Lesson):
         step.setdefault('help', None)
         step['tool'] = self._tool_state() if self.obj.mode == 'SCULPT' else None
         self._record(step, changes_mesh=changes_mesh, camera=camera)
+
+    # Modifier steps (Multires) work like in the modifier lessons, in the lesson's window context.
+    def select_panel(self, identifier, **kwargs):
+        super().select_panel(identifier, **kwargs)
+        self.steps[-1]['tool'] = self._tool_state() if self.obj.mode == 'SCULPT' else None
+
+    def add_modifier(self, mod_type, **kwargs):
+        with override(object=self.obj, active_object=self.obj):
+            super().add_modifier(mod_type, **kwargs)
+        self.steps[-1]['tool'] = self._tool_state() if self.obj.mode == 'SCULPT' else None
+
+    def set_value(self, mod_type, field_id, value, **kwargs):
+        super().set_value(mod_type, field_id, value, **kwargs)
+        self.steps[-1]['tool'] = self._tool_state() if self.obj.mode == 'SCULPT' else None
+
+    def multires_subdivide(self, *, text, help=None, camera=None):
+        """The Multires panel's Subdivide button: one more level of Catmull-Clark detail to sculpt on."""
+        mod = self._modifier('MULTIRES')
+        with override(object=self.obj, active_object=self.obj):
+            result = bpy.ops.object.multires_subdivide(modifier=mod.name, mode='CATMULL_CLARK')
+        if result != {'FINISHED'}:
+            raise RuntimeError('Multires could not subdivide')
+        self._step({
+            'id': 'modifier.multires.subdivide', 'action': 'multires_subdivide', 'value': None, 'value_type': None,
+            'modifier': 'MULTIRES', 'duration': 2.0, 'autoAdvance': False, 'text': text, 'help': help,
+            # Subdivide raises all three levels; the app shows the numbers Blender reports.
+            'values': {f'modifier.multires.{field}': getattr(mod, rna) for field, rna in
+                       (('levels', 'levels'), ('sculpt', 'sculpt_levels'), ('render', 'render_levels'))},
+        }, changes_mesh=True, camera=camera)
 
     def set_mode(self, mode, *, text, help=None, camera=None):
         mode_set(self.obj, mode)
@@ -431,11 +467,14 @@ class SculptLesson(Lesson):
         return values
 
     def _positions(self):
+        """Vertex positions as Blender shows them: with Multires, sculpting moves the subdivided surface."""
         mode = self.obj.mode
         mode_set(self.obj, 'OBJECT')
-        mesh = self.obj.data
+        evaluated = self.obj.evaluated_get(bpy.context.evaluated_depsgraph_get())
+        mesh = evaluated.to_mesh()
         positions = np.empty(len(mesh.vertices) * 3)
         mesh.vertices.foreach_get('co', positions)
+        evaluated.to_mesh_clear()
         mode_set(self.obj, mode)
         return positions.reshape(-1, 3)
 

@@ -1,4 +1,5 @@
 import { Cursor } from './cursor.js';
+import { DualEditor } from './dual-editor.js';
 import { LessonBar } from './lesson-bar.js';
 import { AddModifierMenu, ModeMenu } from './menu.js';
 import { PropertiesEditor } from './panel.js';
@@ -23,6 +24,7 @@ const editors = {
   modifiers: new PropertiesEditor(document.getElementById('tabs'), document.getElementById('panel'), ui),
   sculpt: new SculptEditor(document.getElementById('sculpt-tools'), ui),
 };
+const dualEditor = new DualEditor(editors.modifiers, editors.sculpt, lessonView);
 const MODULE_TITLES = { modifiers: 'Modifiers', sculpt: 'Sculpting' };
 const menu = new AddModifierMenu(document.getElementById('menu-layer'), ui);
 const modeMenu = new ModeMenu(document.getElementById('menu-layer'), ui);
@@ -122,7 +124,9 @@ async function openLesson(key) {
   lessonView.dataset.module = timeline.module;
   viewer ??= new Viewer(document.getElementById('viewport-canvas'));
   viewer.setHelpers(timeline.helpers ?? []);
-  const editor = editors[timeline.module] ?? editors.modifiers;
+  // Sculpt lessons with modifier steps (Multires) use both editors.
+  const editor = timeline.module === 'sculpt' && timeline.steps.some(step => step.modifier)
+    ? dualEditor : editors[timeline.module] ?? editors.modifiers;
   // The objects an Object field may point at: the lesson's helpers, as Blender would list them.
   editor.objects = (timeline.helpers ?? []).map(helper => helper.name);
   editor.openList = null;

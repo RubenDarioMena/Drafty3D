@@ -44,7 +44,7 @@ export async function animateStep({ step, to, editor, menu, modeMenu, cursor, re
     return null;
   }
 
-  if (step.action === 'toggle_modifier') {
+  if (step.action === 'toggle_modifier' || step.action === 'multires_subdivide') {
     await cursor.moveTo(editor.element(step.id), fly);
     await cursor.tap();
     render(to);

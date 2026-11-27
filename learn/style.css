@@ -129,6 +129,11 @@ button { cursor: pointer; }
 .subpanel-head::before { content: "▸"; color: var(--muted); width: 12px; }
 .subpanel.open > .subpanel-head::before { content: "▾"; }
 .subpanel-body { padding-top: 4px; display: grid; gap: 5px; }
+.operator-row { display: flex; gap: 4px; }
+.operator { flex: 1; min-height: 28px; border: 0; border-radius: var(--radius); background: #545454; color: var(--text); font-size: 13px; }
+.operator:disabled { cursor: default; }
+.operator.interactive { outline: 1px solid var(--blue); background: var(--field-hover); }
+.operator-gap { height: 4px; }
 button.check { border: 0; background: transparent; padding: 0; color: inherit; text-align: left; }
 button.check .box { background: var(--field-hover); outline: 1px solid var(--blue); }
 .row-controls { display: flex; align-items: center; gap: 6px; min-width: 0; }

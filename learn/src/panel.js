@@ -112,7 +112,7 @@ export class PropertiesEditor {
       }
       return button;
     };
-    for (const toggle of toggles) {
+    for (const toggle of toggles.filter(candidate => (definition.toggles ?? [candidate.id]).includes(candidate.id))) {
       const id = `modifier.${definition.short}.${toggle.id}`;
       const pressed = toggle.id === 'show_viewport' ? modifier.visible !== false : true;
       const button = control(id, HEADER_ICONS[toggle.id], `${toggle.label}: ${toggle.description}`, pressed);
@@ -216,9 +216,25 @@ export class PropertiesEditor {
     if (subpanel.open) {
       const body = el('div', 'subpanel-body');
       this.renderFields(body, fields.filter(field => field.subpanel === index && field.id !== subpanel.header), modifier);
+      for (const row of subpanel.operators ?? []) body.append(row ? this.renderOperators(row) : el('div', 'operator-gap'));
       box.append(body);
     }
     return box;
+  }
+
+  /** A row of operator buttons (Multires: Subdivide; Simple, Linear). Only the lesson's current one is live. */
+  renderOperators(row) {
+    const line = el('div', 'operator-row');
+    for (const operator of row) {
+      const interactive = this.options.interactive.has(operator.id);
+      const button = el('button', `operator${interactive ? ' interactive' : ''}`, operator.label);
+      button.type = 'button';
+      button.dataset.control = operator.id;
+      button.disabled = !interactive;
+      button.addEventListener('click', () => this.options.onStackOp?.(operator.id));
+      line.append(button);
+    }
+    return line;
   }
 
   renderField(field, value) {

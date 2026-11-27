@@ -8,7 +8,7 @@ import bpy
 
 MODIFIER_SHORT = {'SOLIDIFY': 'solidify', 'BEVEL': 'bevel', 'SUBSURF': 'subsurf',
                   'SIMPLE_DEFORM': 'simple_deform', 'MIRROR': 'mirror', 'ARRAY': 'array',
-                  'BOOLEAN': 'boolean', 'CURVE': 'curve'}
+                  'BOOLEAN': 'boolean', 'CURVE': 'curve', 'MULTIRES': 'multires'}
 
 
 def _axis_row(field_prefix, rna, heading, labels=('X', 'Y', 'Z')):
@@ -126,6 +126,27 @@ PANELS = {
             ('vertex_group', 'vertex_group', {}),
         ],
         'subpanels': [],
+    },
+    # MOD_multires.cc: the three levels, then Subdivision, the one subpanel open by default, whose
+    # buttons run object.multires_subdivide (Catmull-Clark, Simple, Linear) and the two level operators.
+    # Multires has no Edit Mode support, so its header has no Edit Mode toggle.
+    'MULTIRES': {
+        'fields': [
+            ('levels', 'levels', {'label': 'Levels Viewport'}),
+            ('sculpt', 'sculpt_levels', {'label': 'Sculpt'}),
+            ('render', 'render_levels', {'label': 'Render'}),
+            ('sculpt_base_mesh', 'use_sculpt_base_mesh', {}),
+            ('optimal_display', 'show_only_control_edges', {}),
+        ],
+        'subpanels': [
+            {'label': 'Subdivision', 'open': True, 'fields': [],
+             'operators': [[('subdivide', 'Subdivide')], [('simple', 'Simple'), ('linear', 'Linear')], None,
+                           [('unsubdivide', 'Unsubdivide')], [('delete_higher', 'Delete Higher')]]},
+            'Shape',
+            'Generate',
+            'Advanced',
+        ],
+        'toggles': ('show_viewport', 'show_render'),
     },
 }
 
@@ -304,8 +325,13 @@ def _subpanel(mod_type, sub):
     if isinstance(sub, str):
         return {'label': sub, 'open': False, 'header': None}
     header = sub.get('header')
-    return {'label': sub['label'], 'open': bool(sub.get('open')),
-            'header': f'modifier.{MODIFIER_SHORT[mod_type]}.{header[0]}' if header else None}
+    entry = {'label': sub['label'], 'open': bool(sub.get('open')),
+             'header': f'modifier.{MODIFIER_SHORT[mod_type]}.{header[0]}' if header else None}
+    if sub.get('operators'):
+        # Rows of operator buttons; None is the gap Blender leaves between groups.
+        entry['operators'] = [None if row is None else [{'id': f'modifier.{MODIFIER_SHORT[mod_type]}.{op_id}', 'label': label}
+                                                        for op_id, label in row] for row in sub['operators']]
+    return entry
 
 
 def modifier_header():
@@ -354,6 +380,8 @@ def modifier_definitions(obj):
             'defaultName': mod.name,
             'fields': [_rna_field(mod_type, *field[:3], mod, field[3]) for field in panel_fields(mod_type)],
             'subpanels': [_subpanel(mod_type, sub) for sub in panel['subpanels']],
+            # The header's display toggles this modifier supports (Edit Mode needs edit-mode support).
+            'toggles': list(panel.get('toggles', ('show_in_editmode', 'show_viewport', 'show_render'))),
         }
         obj.modifiers.remove(mod)
     return definitions

@@ -104,31 +104,28 @@ for (const module of await readdir(join(out), { withFileTypes: true })) {
 }
 // Home lists modules in this order, then each Watch lesson (easiest first) followed by its Your turn variant.
 const MODULE_ORDER = ['modifiers', 'sculpt'];
-const WATCH_ORDER = ['cup', 'twisted-column', 'mirror-table', 'array-stairs', 'boolean-birdhouse', 'curve-garden-path', 'stack-block', 'project-ladder', 'pebble-buddy', 'horned-buddy', 'rock', 'belted-pebble', 'leaning-buddy', 'bobble-pebble'];
+const WATCH_ORDER = ['cup', 'twisted-column', 'mirror-table', 'array-stairs', 'boolean-birdhouse', 'curve-garden-path', 'stack-block', 'project-ladder', 'pebble-buddy', 'horned-buddy', 'rock', 'belted-pebble', 'leaning-buddy', 'bobble-pebble', 'wrinkled-pebble'];
 const rank = (list, item) => (list.indexOf(item) + list.length + 1) % (list.length + 1);
 lessons.sort((a, b) => (rank(MODULE_ORDER, a.module) - rank(MODULE_ORDER, b.module))
   || (rank(WATCH_ORDER, a.variantOf ?? a.example) - rank(WATCH_ORDER, b.variantOf ?? b.example))
   || (a.mode === b.mode ? 0 : a.mode === 'watch' ? -1 : 1));
 await writeFile(join(examples, 'index.json'), JSON.stringify({ lessons }, null, 2) + '\n');
 
-// Sculpting moves vertices but never changes the mesh's connectivity (no Dyntopo; Remesh starts over),
-// so the app can play a stroke as a morph between two of Blender's results. Prove it holds
-// after Draco, which is free to reorder vertices.
+// A stroke moves vertices but never changes the mesh's connectivity (no Dyntopo), so the app plays
+// it as a morph between two of Blender's results. Prove each stroke's pair still shares one topology
+// after Draco, which is free to reorder vertices. Remesh and Multires Subdivide rebuild the mesh on
+// purpose; the app swaps those meshes instead of morphing.
 async function checkSharedTopology(folder, timeline) {
-  const meshes = [timeline.initial.mesh, ...timeline.steps.map(step => step.mesh).filter(Boolean)];
   const signature = async name => {
     const primitive = (await io.read(join(folder, name))).getRoot().listMeshes()[0].listPrimitives()[0];
-    return [primitive.getAttribute('POSITION').getCount(), Array.from(primitive.getIndices().getArray()).join(',')];
+    return `${primitive.getAttribute('POSITION').getCount()}:${Array.from(primitive.getIndices().getArray()).join(',')}`;
   };
-  // Remesh rebuilds the mesh on purpose: the shared topology starts over after it.
-  const remeshed = new Set(timeline.steps.filter(step => step.action === 'remesh').map(step => step.mesh));
-  let [count, indices] = await signature(meshes[0]);
-  for (const name of meshes.slice(1)) {
-    const [otherCount, otherIndices] = await signature(name);
-    if (remeshed.has(name)) {
-      [count, indices] = [otherCount, otherIndices];
-      continue;
+  let previous = timeline.initial.mesh;
+  for (const step of timeline.steps) {
+    if (!step.mesh) continue;
+    if (step.action === 'stroke' && (await signature(previous)) !== (await signature(step.mesh))) {
+      throw new Error(`${folder}/${step.mesh}: Draco cambió el orden de los vértices`);
     }
-    if (otherCount !== count || otherIndices !== indices) throw new Error(`${folder}/${name}: Draco cambió el orden de los vértices`);
+    previous = step.mesh;
   }
 }

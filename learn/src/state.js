@@ -34,6 +34,8 @@ export function applyStep(state, step, ui) {
     next.modifiers = step.value === 'FIRST' ? [moved, ...rest] : [...rest, moved];
   }
   if (step.action === 'apply_modifier') next.modifiers = next.modifiers.filter(mod => mod.type !== step.modifier);
+  // Multires Subdivide raises the levels; the step carries the numbers Blender reported.
+  if (step.action === 'multires_subdivide') Object.assign(next.modifiers.find(mod => mod.type === step.modifier).values, step.values);
   if (step.action === 'set_mode') next.mode = step.value;
   // Sculpt steps carry the brush settings Blender reported after the step; take them as they are.
   if ('tool' in step) next.tool = step.tool;
@@ -86,7 +88,8 @@ export function isSolved(live, step) {
   return false;
 }
 
-export const STACK_ACTIONS = new Set(['toggle_modifier', 'move_modifier', 'apply_modifier']);
+/** Buttons that do something once (header toggles, menu items, Multires Subdivide): pressing the right one solves the step. */
+export const STACK_ACTIONS = new Set(['toggle_modifier', 'move_modifier', 'apply_modifier', 'multires_subdivide']);
 
 /** The header menu (the small arrow) that holds a step's control, if it lives in one. */
 export function menuOf(step) {

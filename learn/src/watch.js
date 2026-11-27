@@ -87,6 +87,7 @@ export class WatchMode {
     const done = this.timeline.steps[index];
     const keepOpen = done?.action === 'set_value' && this.editor.popoverOf?.(done.id);
     this.editor.openList = keepOpen || null;
+    this.editor.focus?.(done ?? this.timeline.steps[0]);
     const state = stateAt(this.timeline, this.ui, index);
     this.render(state);
     this.viewer.showCamera(state.camera, cameraDuration);
@@ -135,6 +136,7 @@ export class WatchMode {
     this.updateControls();
     this.bar.show({ count: `Step ${index + 1} of ${this.timeline.steps.length}`, text: step.text, shortcut: step.shortcut });
     this.bar.showClue('');
+    this.editor.focus?.(step);
     // A stroke moves the camera itself before the brush starts.
     const camera = step.action === 'stroke' ? null : this.viewer.showCamera(step.camera, 0.8);
     await animateStep({
@@ -196,6 +198,7 @@ export class WatchMode {
     const index = this.index + 1;
     const step = this.timeline.steps[index];
     const stage = this.stagesOf(step)[this.stage];
+    this.editor.focus?.(step);
     const popover = this.editor.popoverOf?.(step.id);
     if (popover) this.editor.openList = stage === 'target' ? popover : null;
     this.render(stateAt(this.timeline, this.ui, this.index));

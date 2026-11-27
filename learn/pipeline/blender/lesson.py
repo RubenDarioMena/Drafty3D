@@ -241,16 +241,16 @@ class Lesson:
         # The app shows the viewport evaluation (what the glTF exporter applied), so the reference
         # render must use viewport subdivision levels, not the modifier's separate Render levels.
         # Likewise a modifier hidden in the viewport is left out of the reference render.
-        render_levels = {mod.name: mod.render_levels for mod in self.obj.modifiers if mod.type == 'SUBSURF'}
+        render_levels = {mod.name: mod.render_levels for mod in self.obj.modifiers if mod.type in ('SUBSURF', 'MULTIRES')}
         show_render = {mod.name: mod.show_render for mod in self.obj.modifiers}
         for mod in self.obj.modifiers:
             mod.show_render = mod.show_viewport
-            if mod.type == 'SUBSURF':
+            if mod.type in ('SUBSURF', 'MULTIRES'):
                 mod.render_levels = mod.levels
         bpy.ops.render.render(write_still=True)
         for mod in self.obj.modifiers:
             mod.show_render = show_render[mod.name]
-            if mod.type == 'SUBSURF':
+            if mod.type in ('SUBSURF', 'MULTIRES'):
                 mod.render_levels = render_levels[mod.name]
         return f'{name}.glb'
 

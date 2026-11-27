@@ -18,6 +18,9 @@ for (const lesson of index.lessons.map(entry => `${entry.module}/${entry.example
     // A Mask stroke only paints Blender's mask: the shape must still match, but it cannot look different.
     // tests/learn.test.mjs proves instead that its mesh carries more mask than the step before.
     const masksOnly = shot => shot.stroke?.brushType === 'MASK';
+    // Multires Subdivide on a smooth surface adds faces, not shape: tests/learn.test.mjs proves the
+    // shipped mesh gains Blender's new level instead.
+    const addsLevelsOnly = shot => shot.action === 'multires_subdivide';
     await page.goto('/learn/verify.html');
     await expect(page.locator('html')).toHaveAttribute('data-ready', 'true');
     const run = async (mesh, camera, reference) => page.evaluate(args => window.verifyStep(args), {
@@ -27,7 +30,7 @@ for (const lesson of index.lessons.map(entry => `${entry.module}/${entry.example
       const reference = await fixture(lesson, shot.mesh);
       const result = await run(shot.mesh, shot.camera, reference);
       expect(passes(result), `${shot.mesh} ${JSON.stringify(result)}`).toBe(true);
-      if (index === 0 || masksOnly(shot)) continue;
+      if (index === 0 || masksOnly(shot) || addsLevelsOnly(shot)) continue;
       const previous = await run(shots[index - 1].mesh, shot.camera, reference);
       expect(passes(previous), `${shot.mesh} must look different from the step before ${JSON.stringify(previous)}`).toBe(false);
     }

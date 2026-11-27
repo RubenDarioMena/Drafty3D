@@ -23,6 +23,8 @@ export class YourTurnMode {
     this.steps = fieldSteps(this.timeline);
     this.total = this.timeline.steps.length;
     this.sculpt = this.timeline.module === 'sculpt';
+    // Sculpt lessons with modifier steps (Multires) also use the Properties editor.
+    this.dual = this.sculpt && this.timeline.steps.some(step => step.modifier);
     this.busy = false;
     this.listeners = new AbortController();
     this.dom = {
@@ -78,7 +80,7 @@ export class YourTurnMode {
       const sculptValue = idle && step.action === 'set_value' && !step.modifier;
       const { size, strength } = this.ui.sculpt.header;
       const enabled = [idle && SCULPT_CONTROLS[step.action], idle && this.editor.popoverOf(step.id) && 'remesh'].filter(Boolean);
-      return {
+      const sculptOptions = {
         objectName: this.timeline.object,
         interactive: new Set(sculptValue ? [size.id, strength.id, step.id] : []),
         enabled: new Set(enabled),
@@ -90,7 +92,18 @@ export class YourTurnMode {
         onSymmetry: axis => this.toggleAxis(axis),
         onValue: (id, value) => this.setTool({ [id.slice('sculpt.'.length)]: value }),
       };
+      if (!this.dual) return sculptOptions;
+      const modifierOptions = this.modifierOptions();
+      return {
+        ...modifierOptions, ...sculptOptions,
+        interactive: new Set([...modifierOptions.interactive, ...sculptOptions.interactive]),
+        onValue: (id, value) => (id.startsWith('sculpt.') ? sculptOptions : modifierOptions).onValue(id, value),
+      };
     }
+    return this.modifierOptions();
+  }
+
+  modifierOptions() {
     const shorts = new Set(this.live.modifiers.map(modifier => this.ui.modifiers[modifier.type].short));
     const ids = [...interactiveFields(this.timeline, this.solved)].filter(id => shorts.has(id.split('.')[1]));
     return {
@@ -106,6 +119,7 @@ export class YourTurnMode {
   }
 
   refresh() {
+    this.editor.focus?.(this.current() ?? this.timeline.steps.at(-1));
     this.editor.render(this.live, this.renderOptions());
     this.viewer.setGeometry(this.geometries.get(this.live.mesh));
     const step = this.current();
@@ -284,6 +298,7 @@ export class YourTurnMode {
       case 'toggle_modifier': return `✓ ${this.ui.modifiers[step.modifier].defaultName} ${step.value ? 'shown' : 'hidden'} in the viewport.`;
       case 'move_modifier': return `✓ ${this.ui.modifiers[step.modifier].defaultName} moved to the ${step.value === 'FIRST' ? 'top' : 'bottom'} of the stack.`;
       case 'remesh': return `✓ Remeshed: ${step.remesh.before.toLocaleString('en')} → ${step.remesh.vertices.toLocaleString('en')} vertices, all about ${formatValue(this.editor.field('sculpt.voxel_size'), step.tool.voxel_size)} apart.`;
+      case 'multires_subdivide': return `✓ Subdivided: Multires is at level ${step.values[`modifier.multires.levels`]}.`;
       case 'apply_modifier': return `✓ ${this.ui.modifiers[step.modifier].defaultName} applied: it is part of the mesh now.`;
       default: break;
     }

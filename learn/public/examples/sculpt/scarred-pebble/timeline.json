@@ -1,0 +1,808 @@
+{
+  "blenderVersion": "5.3.0",
+  "module": "sculpt",
+  "example": "scarred-pebble",
+  "mode": "your-turn",
+  "title": "Your turn: scarred pebble",
+  "object": "Pebble",
+  "initial": {
+    "panel": "panel.properties.object",
+    "camera": {
+      "position": [
+        0,
+        -2.6,
+        0.62
+      ],
+      "target": [
+        0,
+        0,
+        0.04
+      ],
+      "fov": 30
+    },
+    "text": "Add Multires, subdivide twice, then carve two scars with Crease Sharp.",
+    "mesh": "step-00.glb",
+    "mode": "OBJECT",
+    "tool": null
+  },
+  "steps": [
+    {
+      "id": "panel.properties.modifier",
+      "action": "select_panel",
+      "value": null,
+      "value_type": null,
+      "shortcut": null,
+      "duration": 1.4,
+      "autoAdvance": true,
+      "text": "Open the Modifier tab (the wrench) in the Properties editor.",
+      "help": "The wrench tab in the Properties editor.",
+      "camera": {
+        "position": [
+          0,
+          -2.6,
+          0.62
+        ],
+        "target": [
+          0,
+          0,
+          0.04
+        ],
+        "fov": 30
+      },
+      "mesh": null,
+      "tool": null
+    },
+    {
+      "id": "modifier.multires.add",
+      "action": "add_modifier",
+      "value": "Multiresolution",
+      "value_type": "string",
+      "modifier": "MULTIRES",
+      "shortcut": null,
+      "duration": 2.8,
+      "autoAdvance": false,
+      "text": "Add Modifier ▸ Generate ▸ Multiresolution. It starts at level 0: nothing changes yet.",
+      "help": "Add Modifier, then Generate, then Multiresolution.",
+      "camera": {
+        "position": [
+          0,
+          -2.6,
+          0.62
+        ],
+        "target": [
+          0,
+          0,
+          0.04
+        ],
+        "fov": 30
+      },
+      "mesh": null,
+      "tool": null
+    },
+    {
+      "id": "modifier.multires.subdivide",
+      "action": "multires_subdivide",
+      "value": null,
+      "value_type": null,
+      "modifier": "MULTIRES",
+      "duration": 2,
+      "autoAdvance": false,
+      "text": "Press Subdivide: every face splits into smaller ones. The smooth surface barely changes; the new faces wait for detail.",
+      "help": "Subdivide is the first button under Subdivision in the Multires panel.",
+      "values": {
+        "modifier.multires.levels": 1,
+        "modifier.multires.sculpt": 1,
+        "modifier.multires.render": 1
+      },
+      "shortcut": null,
+      "tool": null,
+      "camera": {
+        "position": [
+          0,
+          -2.6,
+          0.62
+        ],
+        "target": [
+          0,
+          0,
+          0.04
+        ],
+        "fov": 30
+      },
+      "mesh": "step-03.glb"
+    },
+    {
+      "id": "modifier.multires.subdivide",
+      "action": "multires_subdivide",
+      "value": null,
+      "value_type": null,
+      "modifier": "MULTIRES",
+      "duration": 2,
+      "autoAdvance": false,
+      "text": "Press Subdivide again: level 2, about 15,000 vertices to sculpt fine detail on.",
+      "help": "Subdivide is the first button under Subdivision in the Multires panel.",
+      "values": {
+        "modifier.multires.levels": 2,
+        "modifier.multires.sculpt": 2,
+        "modifier.multires.render": 2
+      },
+      "shortcut": null,
+      "tool": null,
+      "camera": {
+        "position": [
+          0,
+          -2.6,
+          0.62
+        ],
+        "target": [
+          0,
+          0,
+          0.04
+        ],
+        "fov": 30
+      },
+      "mesh": "step-04.glb"
+    },
+    {
+      "id": "object.mode.sculpt",
+      "action": "set_mode",
+      "value": "SCULPT",
+      "value_type": "enum",
+      "shortcut": {
+        "keys": [
+          "Ctrl",
+          "Tab"
+        ],
+        "context": "3D Viewport · mode pie"
+      },
+      "duration": 1.6,
+      "autoAdvance": true,
+      "text": "Switch to Sculpt Mode. You sculpt on the top level, the Sculpt level.",
+      "help": "The mode menu at the left of the 3D Viewport header.",
+      "tool": {
+        "brush": "Draw",
+        "size": 100,
+        "strength": 0.5,
+        "direction": "ADD",
+        "symmetry": [],
+        "voxel_size": 0.1
+      },
+      "camera": {
+        "position": [
+          0,
+          -2.6,
+          0.62
+        ],
+        "target": [
+          0,
+          0,
+          0.04
+        ],
+        "fov": 30
+      },
+      "mesh": null
+    },
+    {
+      "id": "sculpt.brush.crease_sharp",
+      "action": "select_brush",
+      "value": "Crease Sharp",
+      "value_type": "string",
+      "shortcut": null,
+      "duration": 2,
+      "autoAdvance": false,
+      "text": "Pick Crease Sharp: it pinches a thin, sharp line into the surface.",
+      "help": "Crease Sharp is in the General tab, next to Crease Polish.",
+      "tool": {
+        "brush": "Crease Sharp",
+        "size": 100,
+        "strength": 0.6,
+        "direction": "SUBTRACT",
+        "symmetry": [],
+        "voxel_size": 0.1
+      },
+      "camera": {
+        "position": [
+          0,
+          -2.6,
+          0.62
+        ],
+        "target": [
+          0,
+          0,
+          0.04
+        ],
+        "fov": 30
+      },
+      "mesh": null
+    },
+    {
+      "id": "sculpt.size",
+      "action": "set_value",
+      "value": 90,
+      "value_type": "number",
+      "step": 10,
+      "shortcut": {
+        "keys": [
+          "F"
+        ],
+        "context": "3D Viewport · Sculpt Mode"
+      },
+      "duration": 2,
+      "autoAdvance": false,
+      "text": "Set Size to 90 px: fine lines need a small brush.",
+      "help": "Size is in the header, right of the brush.",
+      "tool": {
+        "brush": "Crease Sharp",
+        "size": 90,
+        "strength": 0.6,
+        "direction": "SUBTRACT",
+        "symmetry": [],
+        "voxel_size": 0.1
+      },
+      "camera": {
+        "position": [
+          0,
+          -1.25,
+          0.32
+        ],
+        "target": [
+          0,
+          0,
+          0.14
+        ],
+        "fov": 30
+      },
+      "mesh": null
+    },
+    {
+      "id": "sculpt.strength",
+      "action": "set_value",
+      "value": 1,
+      "value_type": "number",
+      "step": 0.1,
+      "shortcut": {
+        "keys": [
+          "Shift",
+          "F"
+        ],
+        "context": "3D Viewport · Sculpt Mode"
+      },
+      "duration": 2,
+      "autoAdvance": false,
+      "text": "Set Strength to 1.0 so each line cuts deep enough to read.",
+      "help": "Strength is right of Size. Shift F changes it.",
+      "tool": {
+        "brush": "Crease Sharp",
+        "size": 90,
+        "strength": 1,
+        "direction": "SUBTRACT",
+        "symmetry": [],
+        "voxel_size": 0.1
+      },
+      "camera": {
+        "position": [
+          0,
+          -1.25,
+          0.32
+        ],
+        "target": [
+          0,
+          0,
+          0.14
+        ],
+        "fov": 30
+      },
+      "mesh": null
+    },
+    {
+      "id": "sculpt.stroke",
+      "action": "stroke",
+      "value": null,
+      "value_type": null,
+      "duration": 2.6,
+      "autoAdvance": false,
+      "text": "Carve a scar going down to the right.",
+      "help": "Follow the dotted line from its dot.",
+      "stroke": {
+        "brush": "Crease Sharp",
+        "brushType": "CREASE",
+        "drag": false,
+        "path": [
+          [
+            -0.6,
+            0.375
+          ],
+          [
+            -0.5312,
+            0.3312
+          ],
+          [
+            -0.4625,
+            0.2875
+          ],
+          [
+            -0.3937,
+            0.2438
+          ],
+          [
+            -0.325,
+            0.2
+          ],
+          [
+            -0.2563,
+            0.1562
+          ],
+          [
+            -0.1875,
+            0.1125
+          ],
+          [
+            -0.1188,
+            0.0688
+          ],
+          [
+            -0.05,
+            0.025
+          ]
+        ],
+        "points": [
+          [
+            -0.1507,
+            -0.3087,
+            0.2796
+          ],
+          [
+            -0.1441,
+            -0.3149,
+            0.2763
+          ],
+          [
+            -0.1377,
+            -0.3201,
+            0.2729
+          ],
+          [
+            -0.1313,
+            -0.3253,
+            0.2696
+          ],
+          [
+            -0.1251,
+            -0.3302,
+            0.2662
+          ],
+          [
+            -0.1189,
+            -0.3347,
+            0.263
+          ],
+          [
+            -0.1128,
+            -0.3392,
+            0.2597
+          ],
+          [
+            -0.1067,
+            -0.3437,
+            0.2564
+          ],
+          [
+            -0.1007,
+            -0.3482,
+            0.2532
+          ],
+          [
+            -0.0948,
+            -0.352,
+            0.25
+          ],
+          [
+            -0.089,
+            -0.3555,
+            0.2468
+          ],
+          [
+            -0.0832,
+            -0.3591,
+            0.2436
+          ],
+          [
+            -0.0775,
+            -0.3626,
+            0.2404
+          ],
+          [
+            -0.0718,
+            -0.3661,
+            0.2372
+          ],
+          [
+            -0.0661,
+            -0.3695,
+            0.2341
+          ],
+          [
+            -0.0605,
+            -0.3728,
+            0.2309
+          ],
+          [
+            -0.0549,
+            -0.3758,
+            0.2278
+          ],
+          [
+            -0.0494,
+            -0.3787,
+            0.2247
+          ],
+          [
+            -0.0439,
+            -0.3811,
+            0.2215
+          ],
+          [
+            -0.0385,
+            -0.3834,
+            0.2183
+          ],
+          [
+            -0.033,
+            -0.3855,
+            0.2152
+          ],
+          [
+            -0.0277,
+            -0.3876,
+            0.212
+          ],
+          [
+            -0.0223,
+            -0.3897,
+            0.2088
+          ],
+          [
+            -0.0169,
+            -0.3917,
+            0.2057
+          ],
+          [
+            -0.0116,
+            -0.3938,
+            0.2026
+          ],
+          [
+            -0.0116,
+            -0.3938,
+            0.2026
+          ]
+        ],
+        "radius": 0.0237,
+        "movedVertices": 43
+      },
+      "shortcut": null,
+      "tool": {
+        "brush": "Crease Sharp",
+        "size": 90,
+        "strength": 1,
+        "direction": "SUBTRACT",
+        "symmetry": [],
+        "voxel_size": 0.1
+      },
+      "camera": {
+        "position": [
+          0,
+          -1.25,
+          0.32
+        ],
+        "target": [
+          0,
+          0,
+          0.14
+        ],
+        "fov": 30
+      },
+      "mesh": "step-09.glb"
+    },
+    {
+      "id": "sculpt.stroke",
+      "action": "stroke",
+      "value": null,
+      "value_type": null,
+      "duration": 2.6,
+      "autoAdvance": false,
+      "text": "And one rising to the right.",
+      "help": "Follow the dotted line from its dot.",
+      "stroke": {
+        "brush": "Crease Sharp",
+        "brushType": "CREASE",
+        "drag": false,
+        "path": [
+          [
+            0.05,
+            -0.15
+          ],
+          [
+            0.1187,
+            -0.1125
+          ],
+          [
+            0.1875,
+            -0.075
+          ],
+          [
+            0.2562,
+            -0.0375
+          ],
+          [
+            0.325,
+            0
+          ],
+          [
+            0.3937,
+            0.0375
+          ],
+          [
+            0.4625,
+            0.075
+          ],
+          [
+            0.5312,
+            0.1125
+          ],
+          [
+            0.6,
+            0.15
+          ]
+        ],
+        "points": [
+          [
+            0.0114,
+            -0.4133,
+            0.165
+          ],
+          [
+            0.0166,
+            -0.4119,
+            0.1676
+          ],
+          [
+            0.0219,
+            -0.4104,
+            0.1703
+          ],
+          [
+            0.0272,
+            -0.4089,
+            0.1729
+          ],
+          [
+            0.0324,
+            -0.4075,
+            0.1755
+          ],
+          [
+            0.0377,
+            -0.4059,
+            0.1782
+          ],
+          [
+            0.0431,
+            -0.404,
+            0.1808
+          ],
+          [
+            0.0484,
+            -0.4022,
+            0.1834
+          ],
+          [
+            0.0538,
+            -0.4003,
+            0.186
+          ],
+          [
+            0.0592,
+            -0.3984,
+            0.1886
+          ],
+          [
+            0.0646,
+            -0.3964,
+            0.1912
+          ],
+          [
+            0.07,
+            -0.3945,
+            0.1939
+          ],
+          [
+            0.0754,
+            -0.3926,
+            0.1965
+          ],
+          [
+            0.0809,
+            -0.3905,
+            0.1992
+          ],
+          [
+            0.0865,
+            -0.388,
+            0.2018
+          ],
+          [
+            0.0921,
+            -0.385,
+            0.2043
+          ],
+          [
+            0.0977,
+            -0.382,
+            0.2069
+          ],
+          [
+            0.1034,
+            -0.379,
+            0.2094
+          ],
+          [
+            0.1091,
+            -0.376,
+            0.212
+          ],
+          [
+            0.1149,
+            -0.3729,
+            0.2146
+          ],
+          [
+            0.1207,
+            -0.3699,
+            0.2172
+          ],
+          [
+            0.1265,
+            -0.3668,
+            0.2199
+          ],
+          [
+            0.1323,
+            -0.3636,
+            0.2225
+          ],
+          [
+            0.1383,
+            -0.3599,
+            0.2251
+          ],
+          [
+            0.1444,
+            -0.3559,
+            0.2277
+          ],
+          [
+            0.1444,
+            -0.3559,
+            0.2277
+          ]
+        ],
+        "radius": 0.0215,
+        "movedVertices": 45
+      },
+      "shortcut": null,
+      "tool": {
+        "brush": "Crease Sharp",
+        "size": 90,
+        "strength": 1,
+        "direction": "SUBTRACT",
+        "symmetry": [],
+        "voxel_size": 0.1
+      },
+      "camera": {
+        "position": [
+          0,
+          -1.25,
+          0.32
+        ],
+        "target": [
+          0,
+          0,
+          0.14
+        ],
+        "fov": 30
+      },
+      "mesh": "step-10.glb"
+    },
+    {
+      "id": "object.mode.object",
+      "action": "set_mode",
+      "value": "OBJECT",
+      "value_type": "enum",
+      "shortcut": {
+        "keys": [
+          "Ctrl",
+          "Tab"
+        ],
+        "context": "3D Viewport · mode pie"
+      },
+      "duration": 1.6,
+      "autoAdvance": true,
+      "text": "Back to Object Mode.",
+      "help": "The mode menu again: Object Mode. Tab also toggles it.",
+      "tool": null,
+      "camera": {
+        "position": [
+          0,
+          -1.25,
+          0.32
+        ],
+        "target": [
+          0,
+          0,
+          0.14
+        ],
+        "fov": 30
+      },
+      "mesh": null
+    },
+    {
+      "id": "modifier.multires.levels",
+      "action": "set_value",
+      "value": 0,
+      "value_type": "number",
+      "modifier": "MULTIRES",
+      "shortcut": null,
+      "duration": 2.2,
+      "autoAdvance": false,
+      "text": "Set Levels Viewport to 0: the plain base mesh is still there, untouched by the detail.",
+      "help": "Levels Viewport is the first field of the Multires panel.",
+      "step": 1,
+      "camera": {
+        "position": [
+          0,
+          -1.25,
+          0.32
+        ],
+        "target": [
+          0,
+          0,
+          0.14
+        ],
+        "fov": 30
+      },
+      "mesh": "step-12.glb",
+      "tool": null
+    },
+    {
+      "id": "modifier.multires.levels",
+      "action": "set_value",
+      "value": 2,
+      "value_type": "number",
+      "modifier": "MULTIRES",
+      "shortcut": null,
+      "duration": 2.2,
+      "autoAdvance": false,
+      "text": "Set it back to 2: the detail returns. Multires keeps it in its own levels.",
+      "help": "Levels Viewport again.",
+      "step": 1,
+      "camera": {
+        "position": [
+          0,
+          -1.25,
+          0.32
+        ],
+        "target": [
+          0,
+          0,
+          0.14
+        ],
+        "fov": 30
+      },
+      "mesh": "step-13.glb",
+      "tool": null
+    }
+  ],
+  "variantOf": "wrinkled-pebble",
+  "outro": "Scarred pebble finished: Subdivide for detail, Crease Sharp for scars, and the base mesh is still simple."
+}

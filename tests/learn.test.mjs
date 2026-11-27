@@ -22,16 +22,22 @@ test('every id in the timelines exists in the UI read from Blender (the pipeline
   const menuIds = new Set(ui.addModifierMenu.categories.flatMap(category => category.items.map(item => item.id)));
   const fields = new Map(Object.values(ui.modifiers).flatMap(definition => definition.fields.map(field => [field.id, field])));
   const fieldIds = new Set(fields.keys());
-  // Header controls: the Realtime toggle and the arrow menu's items, per modifier.
+  // Header controls: the display toggles each modifier has and the arrow menu's items.
   const headerIds = action => new Set(Object.values(ui.modifiers).flatMap(definition => (action === 'toggle_modifier'
-    ? ui.modifierHeader.toggles.map(toggle => toggle.id)
+    ? definition.toggles
     : ui.modifierHeader.menu.filter(item => !item.separator).map(item => item.id))
     .map(id => `modifier.${definition.short}.${id}`)));
-  for (const timeline of byModule('modifiers')) {
+  // Operator buttons inside a subpanel (Multires: Subdivide).
+  const operatorIds = new Set(Object.values(ui.modifiers).flatMap(definition => definition.subpanels
+    .flatMap(subpanel => (subpanel.operators ?? []).flat().filter(Boolean).map(operator => operator.id))));
+  // Modifier lessons, and the modifier steps of sculpt lessons (Multires).
+  for (const timeline of Object.values(timelines)) {
     assert.equal(timeline.blenderVersion, ui.blenderVersion);
-    assert.ok(tabIds.has(timeline.initial.panel));
+    if (timeline.module === 'modifiers' || timeline.steps.some(step => step.modifier)) assert.ok(tabIds.has(timeline.initial.panel));
     for (const step of timeline.steps) {
-      const known = { select_panel: tabIds, add_modifier: menuIds, set_value: fieldIds }[step.action] ?? headerIds(step.action);
+      if (timeline.module === 'sculpt' && !step.modifier && step.action !== 'select_panel') continue;
+      const known = { select_panel: tabIds, add_modifier: menuIds, set_value: fieldIds, multires_subdivide: operatorIds }[step.action]
+        ?? headerIds(step.action);
       assert.ok(known?.has(step.id), `${timeline.example}: ${step.id}`);
       if (step.action === 'set_value' && fields.get(step.id).kind === 'enum') {
         assert.ok(fields.get(step.id).items.some(item => item.value === step.value), `${step.id} = ${step.value} is a Blender option`);
@@ -66,11 +72,17 @@ test('sculpt timelines only name controls of Blender\'s Sculpt Mode header, mode
   for (const timeline of byModule('sculpt')) {
     assert.equal(timeline.blenderVersion, ui.blenderVersion);
     assert.equal(timeline.initial.mode, 'OBJECT');
+    let mode = timeline.initial.mode;
     for (const step of timeline.steps) {
+      if (step.action === 'set_mode') mode = step.value;
+      // Brush settings exist in Sculpt Mode only.
+      if (mode === 'SCULPT') assert.ok(step.tool, `${step.id} carries the brush settings Blender reported`);
+      else assert.equal(step.tool ?? null, null);
+      // Modifier steps (Multires) follow the Properties editor's contract above.
+      if (step.modifier || step.action === 'select_panel') continue;
       assert.ok(known[step.action]?.has(step.id), `${timeline.example}: ${step.action} ${step.id}`);
       if (step.action === 'select_brush') assert.equal(brushes.get(step.id).name, step.value);
       if (step.action === 'set_value') assert.equal(roundToStep(step.value, step.step), step.value);
-      if (step.action !== 'set_mode') assert.ok(step.tool, `${step.id} carries the brush settings Blender reported`);
       if (step.action === 'stroke') {
         assert.ok(step.mesh, 'a stroke changes the mesh');
         assert.ok(step.stroke.points.length >= 2 && step.stroke.radius > 0);
@@ -155,6 +167,27 @@ test('Remesh rebuilds the mesh: the shipped mesh has the vertex count Blender re
         assert.equal(await count(timeline, previous), step.remesh.before);
         assert.equal(await count(timeline, step.mesh), step.remesh.vertices);
         assert.ok(step.remesh.vertices > 4 * step.remesh.before, `${timeline.example}: ${step.remesh.before} → ${step.remesh.vertices}`);
+      }
+      if (step.mesh) previous = step.mesh;
+    }
+  }
+});
+
+test('Multires Subdivide adds a level: each press multiplies the shipped mesh and raises all three levels by one', async () => {
+  const io = new NodeIO().registerExtensions(ALL_EXTENSIONS).registerDependencies({ 'draco3d.decoder': await draco3d.createDecoderModule() });
+  const count = async (timeline, mesh) => (await io.read(new URL(`sculpt/${timeline.example}/${mesh}`, examples).pathname))
+    .getRoot().listMeshes()[0].listPrimitives()[0].getAttribute('POSITION').getCount();
+  const multires = byModule('sculpt').filter(timeline => timeline.steps.some(step => step.action === 'multires_subdivide'));
+  assert.ok(multires.length >= 2);
+  for (const timeline of multires) {
+    let previous = timeline.initial.mesh;
+    let level = 0;
+    for (const step of timeline.steps) {
+      if (step.action === 'multires_subdivide') {
+        level += 1;
+        assert.deepEqual(Object.values(step.values), [level, level, level], `${timeline.example}: Viewport, Sculpt and Render levels`);
+        const [before, after] = [await count(timeline, previous), await count(timeline, step.mesh)];
+        assert.ok(after > 3.5 * before, `${timeline.example}: ${before} → ${after} vertices`);
       }
       if (step.mesh) previous = step.mesh;
     }

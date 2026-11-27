@@ -26,6 +26,8 @@ const MODIFIERS = {
   MIRROR: svg('<path d="M10 3v14" stroke="#4f8ef2" stroke-width="1.2" stroke-dasharray="2 2"/><path d="M8 5L3 15h5zM12 5l5 10h-5z" stroke="#4f8ef2" stroke-width="1.6"/>'),
   ARRAY: svg('<rect x="2.5" y="7" width="4.5" height="6" stroke="#4f8ef2" stroke-width="1.5"/><rect x="7.75" y="7" width="4.5" height="6" stroke="#4f8ef2" stroke-width="1.5"/><rect x="13" y="7" width="4.5" height="6" stroke="#4f8ef2" stroke-width="1.5"/>'),
   SUBSURF: svg('<rect x="3.5" y="3.5" width="13" height="13" rx="1" stroke="#4f8ef2" stroke-width="1.2"/><circle cx="10" cy="10" r="5" stroke="#4f8ef2" stroke-width="1.6"/>'),
+  // Our own grid of shrinking cells for Multiresolution's levels, not Blender's artwork.
+  MULTIRES: svg('<rect x="3.5" y="3.5" width="13" height="13" stroke="#4f8ef2" stroke-width="1.4"/><path d="M10 3.5v13M3.5 10h13M13.25 10v6.5M10 13.25h6.5" stroke="#4f8ef2" stroke-width="1.1"/>'),
 };
 
 // Modifier header: edit mode, Realtime (viewport) and render toggles, the extra menu arrow.

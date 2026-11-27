@@ -275,7 +275,41 @@ test('home groups the lessons by module', async ({ page }) => {
       'Order in the stack', 'Your turn: cushion', 'Project: wooden ladder', 'Your turn: bookshelf']);
   await expect(page.locator('.module[data-module="sculpt"] .lesson-card h3')).toHaveText(
     ['Pebble buddy', 'Your turn: sleepy buddy', 'Horned buddy', 'Your turn: antenna bug', 'Craggy rock', 'Your turn: split boulder',
-      'Belted pebble', 'Your turn: seamed pebble', 'Leaning buddy', 'Your turn: peeking buddy', 'Remesh an antenna', 'Your turn: side antenna']);
+      'Belted pebble', 'Your turn: seamed pebble', 'Leaning buddy', 'Your turn: peeking buddy', 'Remesh an antenna', 'Your turn: side antenna',
+      'Fine wrinkles', 'Your turn: scarred pebble']);
+});
+
+test('Sculpting Your turn with Multires: the Properties editor for the modifier, then the sculpt header', async ({ page }) => {
+  await page.goto('/learn/#/lesson/sculpt/scarred-pebble');
+  const lesson = page.locator('#lesson');
+  await expect(page.locator('#step-count')).toHaveText('Step 1 of 13');
+  // Modifier steps show the Properties editor, as a modifier lesson does.
+  await expect(lesson).toHaveAttribute('data-module', 'modifiers');
+  await page.locator('[data-control="panel.properties.modifier"]').click();
+  await page.locator('[data-control="modifier.add_menu"]').click();
+  await page.locator('[data-control="modifier.add_menu.generate"]').click();
+  await page.locator('[data-control="modifier.multires.add"]').click();
+  await expect(page.locator('#step-count')).toHaveText('Step 3 of 13');
+  await expect(page.locator('[data-control="modifier.multires.levels"]')).toContainText('0');
+
+  // Subdivide is a button in the open Subdivision subpanel; the other operators are shown but not live.
+  const subdivide = page.locator('[data-control="modifier.multires.subdivide"]');
+  await expect(page.locator('[data-control="modifier.multires.unsubdivide"]')).toBeDisabled();
+  await subdivide.click();
+  await expect(page.locator('#clue')).toHaveText('✓ Subdivided: Multires is at level 1.');
+  await expect(page.locator('#step-count')).toHaveText('Step 4 of 13');
+  await subdivide.click();
+  await expect(page.locator('#clue')).toHaveText('✓ Subdivided: Multires is at level 2.');
+  await expect(page.locator('[data-control="modifier.multires.levels"]')).toContainText('2');
+  await expect(page.locator('[data-control="modifier.multires.sculpt"]')).toContainText('2');
+
+  // The next step is a mode switch: the lesson shows the 3D Viewport header and brushes.
+  await expect(page.locator('#step-count')).toHaveText('Step 5 of 13');
+  await expect(lesson).toHaveAttribute('data-module', 'sculpt');
+  await page.locator('#help').click();
+  await expect(page.locator('#step-count')).toHaveText('Step 6 of 13', { timeout: 15000 });
+  await expect(page.locator('#viewport-mode')).toHaveText('Sculpt Mode');
+  await expect(page.locator('[data-control="sculpt.brush.crease_sharp"]')).toBeVisible();
 });
 
 test('Sculpting Your turn with Remesh: Voxel Size in the header popover, then the Remesh button rebuilds the mesh', async ({ page }) => {

@@ -516,6 +516,11 @@
           "open": false,
           "header": null
         }
+      ],
+      "toggles": [
+        "show_in_editmode",
+        "show_viewport",
+        "show_render"
       ]
     },
     "BEVEL": {
@@ -644,6 +649,11 @@
           "open": false,
           "header": null
         }
+      ],
+      "toggles": [
+        "show_in_editmode",
+        "show_viewport",
+        "show_render"
       ]
     },
     "SUBSURF": {
@@ -703,6 +713,11 @@
           "open": false,
           "header": null
         }
+      ],
+      "toggles": [
+        "show_in_editmode",
+        "show_viewport",
+        "show_render"
       ]
     },
     "SIMPLE_DEFORM": {
@@ -783,6 +798,11 @@
           "open": false,
           "header": null
         }
+      ],
+      "toggles": [
+        "show_in_editmode",
+        "show_viewport",
+        "show_render"
       ]
     },
     "MIRROR": {
@@ -931,6 +951,11 @@
           "open": false,
           "header": null
         }
+      ],
+      "toggles": [
+        "show_in_editmode",
+        "show_viewport",
+        "show_render"
       ]
     },
     "ARRAY": {
@@ -1142,6 +1167,11 @@
           "open": false,
           "header": null
         }
+      ],
+      "toggles": [
+        "show_in_editmode",
+        "show_viewport",
+        "show_render"
       ]
     },
     "BOOLEAN": {
@@ -1226,6 +1256,11 @@
           "open": false,
           "header": null
         }
+      ],
+      "toggles": [
+        "show_in_editmode",
+        "show_viewport",
+        "show_render"
       ]
     },
     "CURVE": {
@@ -1283,7 +1318,120 @@
           "default": null
         }
       ],
-      "subpanels": []
+      "subpanels": [],
+      "toggles": [
+        "show_in_editmode",
+        "show_viewport",
+        "show_render"
+      ]
+    },
+    "MULTIRES": {
+      "short": "multires",
+      "menuLabel": "Multiresolution",
+      "defaultName": "Multires",
+      "fields": [
+        {
+          "id": "modifier.multires.levels",
+          "rna": "levels",
+          "label": "Levels Viewport",
+          "kind": "int",
+          "unit": "",
+          "softMin": 0,
+          "softMax": 255,
+          "default": 0
+        },
+        {
+          "id": "modifier.multires.sculpt",
+          "rna": "sculpt_levels",
+          "label": "Sculpt",
+          "kind": "int",
+          "unit": "",
+          "softMin": 0,
+          "softMax": 255,
+          "default": 0
+        },
+        {
+          "id": "modifier.multires.render",
+          "rna": "render_levels",
+          "label": "Render",
+          "kind": "int",
+          "unit": "",
+          "softMin": 0,
+          "softMax": 255,
+          "default": 0
+        },
+        {
+          "id": "modifier.multires.sculpt_base_mesh",
+          "rna": "use_sculpt_base_mesh",
+          "label": "Sculpt Base Mesh",
+          "kind": "bool",
+          "default": false
+        },
+        {
+          "id": "modifier.multires.optimal_display",
+          "rna": "show_only_control_edges",
+          "label": "Optimal Display",
+          "kind": "bool",
+          "default": true
+        }
+      ],
+      "subpanels": [
+        {
+          "label": "Subdivision",
+          "open": true,
+          "header": null,
+          "operators": [
+            [
+              {
+                "id": "modifier.multires.subdivide",
+                "label": "Subdivide"
+              }
+            ],
+            [
+              {
+                "id": "modifier.multires.simple",
+                "label": "Simple"
+              },
+              {
+                "id": "modifier.multires.linear",
+                "label": "Linear"
+              }
+            ],
+            null,
+            [
+              {
+                "id": "modifier.multires.unsubdivide",
+                "label": "Unsubdivide"
+              }
+            ],
+            [
+              {
+                "id": "modifier.multires.delete_higher",
+                "label": "Delete Higher"
+              }
+            ]
+          ]
+        },
+        {
+          "label": "Shape",
+          "open": false,
+          "header": null
+        },
+        {
+          "label": "Generate",
+          "open": false,
+          "header": null
+        },
+        {
+          "label": "Advanced",
+          "open": false,
+          "header": null
+        }
+      ],
+      "toggles": [
+        "show_viewport",
+        "show_render"
+      ]
     }
   },
   "modifierHeader": {

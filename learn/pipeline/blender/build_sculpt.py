@@ -364,7 +364,76 @@ def peeking():
     lesson.finish(text='Peeking buddy finished with the same two brushes as the leaning buddy.')
 
 
-LESSONS = ('buddy', 'sleepy', 'horned', 'bug', 'rock', 'boulder', 'belted', 'seamed', 'leaning', 'peeking', 'bobble', 'antenna')
+FACE = {'position': [0, -1.25, 0.32], 'target': [0, 0, 0.14], 'fov': 30}
+
+
+def wave(y, *, x0=-0.6, x1=0.6, amplitude=0.04, waves=2.5, points=16, tilt=0.0):
+    """A gently wavy line across the face (a wrinkle), optionally tilted (a scar)."""
+    return [(x0 + (x1 - x0) * i / points,
+             y + tilt * (i / points - 0.5) + amplitude * math.sin(2 * math.pi * waves * i / points)) for i in range(points + 1)]
+
+
+def multires_lesson(example, mode, title, intro, *, variant_of=None, size, strokes, outro, helps):
+    """Multires adds levels of detail on top of a simple base mesh; sculpting happens on the top level."""
+    clear_scene()
+    obj = pebble('Pebble', subdivisions=4)
+    lesson = SculptLesson(module='sculpt', example=example, mode=mode, title=title, variant_of=variant_of, panel='OBJECT',
+                          out_dir=os.path.join(OUT, 'sculpt', example), obj=obj, camera=FRONT, text=intro)
+    lesson.select_panel('MODIFIER', text='Open the Modifier tab (the wrench) in the Properties editor.',
+                        help=helps.get('panel'))
+    lesson.add_modifier('MULTIRES', text='Add Modifier ▸ Generate ▸ Multiresolution. It starts at level 0: nothing changes yet.',
+                        help=helps.get('add'))
+    lesson.multires_subdivide(text='Press Subdivide: every face splits into smaller ones. The smooth surface barely changes; the new faces wait for detail.',
+                              help=helps.get('subdivide'))
+    lesson.multires_subdivide(text='Press Subdivide again: level 2, about 15,000 vertices to sculpt fine detail on.', help=helps.get('subdivide'))
+    lesson.set_mode('SCULPT', text='Switch to Sculpt Mode. You sculpt on the top level, the Sculpt level.', help=helps.get('mode'))
+    lesson.select_brush('Crease Sharp', text='Pick Crease Sharp: it pinches a thin, sharp line into the surface.', help=helps.get('brush'))
+    lesson.set_tool_value('size', size, step=10, camera=FACE, text=f'Set Size to {size} px: fine lines need a small brush.', help=helps.get('size'))
+    lesson.set_tool_value('strength', 1.0, step=0.1, camera=FACE, text='Set Strength to 1.0 so each line cuts deep enough to read.',
+                          help=helps.get('strength'))
+    for path, text, help in strokes:
+        yield from lesson.stroke(path, seconds=1.8, camera=FACE, text=text, help=help)
+    lesson.set_mode('OBJECT', text='Back to Object Mode.', help=helps.get('object'))
+    lesson.set_value('MULTIRES', 'levels', 0, step=1, camera=FACE,
+                     text='Set Levels Viewport to 0: the plain base mesh is still there, untouched by the detail.', help=helps.get('levels0'))
+    lesson.set_value('MULTIRES', 'levels', 2, step=1, camera=FACE,
+                     text='Set it back to 2: the detail returns. Multires keeps it in its own levels.', help=helps.get('levels2'))
+    lesson.finish(text=outro)
+
+
+def wrinkled():
+    yield from multires_lesson(
+        'wrinkled-pebble', 'watch', 'Fine wrinkles',
+        'Fine detail needs many small faces, but you do not want to shape a heavy mesh by hand. Multiresolution adds the faces as levels on top of a simple base.',
+        size=80,
+        strokes=[(wave(0.3), 'Drag a wavy line across the forehead: a wrinkle.', None),
+                 (wave(0.08, x0=-0.5, x1=0.5), 'And a second one just below.', None)],
+        outro='Done: Multires for fine detail, while the base mesh stays light and simple. Now carve some scars yourself.',
+        helps={})
+
+
+def scarred():
+    yield from multires_lesson(
+        'scarred-pebble', 'your-turn', 'Your turn: scarred pebble',
+        'Add Multires, subdivide twice, then carve two scars with Crease Sharp.', variant_of='wrinkled-pebble',
+        size=90,
+        strokes=[(wave(0.2, x0=-0.6, x1=-0.05, amplitude=0.0, points=8, tilt=-0.35), 'Carve a scar going down to the right.', 'Follow the dotted line from its dot.'),
+                 (wave(0.0, x0=0.05, x1=0.6, amplitude=0.0, points=8, tilt=0.3), 'And one rising to the right.', 'Follow the dotted line from its dot.')],
+        outro='Scarred pebble finished: Subdivide for detail, Crease Sharp for scars, and the base mesh is still simple.',
+        helps={'panel': 'The wrench tab in the Properties editor.',
+               'add': 'Add Modifier, then Generate, then Multiresolution.',
+               'subdivide': 'Subdivide is the first button under Subdivision in the Multires panel.',
+               'mode': 'The mode menu at the left of the 3D Viewport header.',
+               'brush': 'Crease Sharp is in the General tab, next to Crease Polish.',
+               'size': 'Size is in the header, right of the brush.',
+               'strength': 'Strength is right of Size. Shift F changes it.',
+               'object': 'The mode menu again: Object Mode. Tab also toggles it.',
+               'levels0': 'Levels Viewport is the first field of the Multires panel.',
+               'levels2': 'Levels Viewport again.'})
+
+
+LESSONS = ('buddy', 'sleepy', 'horned', 'bug', 'rock', 'boulder', 'belted', 'seamed', 'leaning', 'peeking', 'bobble', 'antenna',
+           'wrinkled', 'scarred')
 
 
 def main():
