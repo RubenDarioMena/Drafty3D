@@ -104,7 +104,7 @@ for (const module of await readdir(join(out), { withFileTypes: true })) {
 }
 // Home lists modules in this order, then each Watch lesson (easiest first) followed by its Your turn variant.
 const MODULE_ORDER = ['modifiers', 'sculpt'];
-const WATCH_ORDER = ['cup', 'twisted-column', 'mirror-table', 'array-stairs', 'boolean-birdhouse', 'curve-garden-path', 'stack-block', 'project-ladder', 'pebble-buddy', 'horned-buddy', 'rock', 'belted-pebble', 'leaning-buddy', 'bobble-pebble', 'wrinkled-pebble'];
+const WATCH_ORDER = ['cup', 'twisted-column', 'mirror-table', 'array-stairs', 'boolean-birdhouse', 'curve-garden-path', 'stack-block', 'project-ladder', 'pebble-buddy', 'horned-buddy', 'rock', 'belted-pebble', 'leaning-buddy', 'bobble-pebble', 'wrinkled-pebble', 'troll-head'];
 const rank = (list, item) => (list.indexOf(item) + list.length + 1) % (list.length + 1);
 lessons.sort((a, b) => (rank(MODULE_ORDER, a.module) - rank(MODULE_ORDER, b.module))
   || (rank(WATCH_ORDER, a.variantOf ?? a.example) - rank(WATCH_ORDER, b.variantOf ?? b.example))

@@ -71,7 +71,7 @@ Cada paso:
 | Campo | Tipo | Notas |
 | --- | --- | --- |
 | `id` | string | Ver sección 1. |
-| `action` | enum | `select_panel`, `add_modifier`, `set_value`, `set_mode`, `select_brush`, `set_direction`, `set_symmetry`, `stroke` (en uso); `apply_modifier`, `select_object` (reservados). |
+| `action` | enum | `select_panel`, `add_modifier`, `set_value`, `move_modifier`, `toggle_modifier`, `apply_modifier`, `multires_subdivide`, `set_mode`, `select_brush`, `set_direction`, `set_symmetry`, `stroke`, `remesh` (en uso); `select_object` (reservado). |
 | `modifier` | string | Tipo RNA del modificador (`SOLIDIFY`, `BEVEL`, `SUBSURF`, `SIMPLE_DEFORM`) en `add_modifier` y `set_value` de modificadores. Un `set_value` sin `modifier` cambia un campo del header de escultura. |
 | `value` / `value_type` | `number`/`string`/`boolean`/`null` | `add_modifier` lleva el texto del menú (ej. `"Subdivision Surface"`); `set_value` el número (`value_type: "number"`) o, en un enum, el identificador RNA de la opción (`value_type: "enum"`, ej. `"Z"`); `select_panel` lleva `null`. |
 | `step` | number | Solo en `set_value` numérico (un enum no lleva `step`). Es el paso fijo del slider: la UI lo usa para ◀ ▶ y el arrastre, y la validación compara `round(valor/step)`. |
@@ -85,16 +85,19 @@ Cada paso:
 
 ### Pasos de escultura
 
-`module: "sculpt"`. `initial` lleva `mode: "OBJECT"` y `tool: null`, sin `panel`.
+`module: "sculpt"`. `initial` lleva `mode: "OBJECT"` y `tool: null`. Solo lleva `panel` si la lección tiene pasos de modificador (Multires): entonces la app muestra el editor Properties en esos pasos y el header de escultura en los demás.
 
 | Acción | `value` | Notas |
 | --- | --- | --- |
 | `set_mode` | `"SCULPT"` | `autoAdvance: true`. |
 | `select_brush` | nombre del pincel (`"Grab"`) | |
-| `set_value` | número | `id` `sculpt.size` (px) o `sculpt.strength`; con `step`. |
+| `set_value` | número | `id` `sculpt.size` (px), `sculpt.strength` o `sculpt.voxel_size` (m, en el popover Remesh del header); con `step`. |
 | `set_direction` | `"ADD"` / `"SUBTRACT"` | |
 | `set_symmetry` | `true` / `false` | El eje sale del `id`. |
 | `stroke` | `null` | Lleva `stroke` y `mesh`. |
+| `remesh` | `null` | `id` `sculpt.remesh.apply`. Lleva `remesh: { before, vertices }` (vértices antes y después) y `mesh`. |
+
+Una lección de escultura también puede tener pasos de modificador (`select_panel`, `add_modifier`, `multires_subdivide`, `set_value` con `modifier`). Fuera de Sculpt Mode su `tool` es `null`.
 
 - `tool` (todos los pasos en Sculpt Mode): `{ brush, size, strength, direction, symmetry }` tal como Blender los reporta **después** del paso. `direction` es `null` si el pincel no tiene + / − (Grab), y vale `"SMOOTH"` en Smooth. `symmetry` es una lista de ejes (`["X"]`). Los valores son los efectivos del header: si el pincel usa tamaño unificado, `size` es el unificado.
 - `stroke`: `{ brush, brushType, drag, path, points, radius, movedVertices }`.
@@ -103,13 +106,17 @@ Cada paso:
   - `points`: el mismo recorrido en coordenadas de Blender (~24 puntos sobre la superficie; en pinceles de arrastre, sobre el plano de la profundidad inicial).
   - `radius`: radio del pincel en metros a esa profundidad.
   - `movedVertices`: vértices que Blender movió. El pipeline falla si es 0.
+  - En un trazo de Mask (`brushType: "MASK"`) va `maskedVertices` en vez de `movedVertices`: los vértices cuya máscara cambió. La forma no cambia.
+- Una lección con Mask (`mask=True` en el grabador) exporta la máscara de Blender (0 libre, 1 protegido) en el atributo `_MASK` de cada malla. La app la oscurece en Sculpt Mode, como Blender.
 - El `camera` de un trazo es la vista con la que Blender lo grabó. La app la usa para que la guía caiga en el mismo lugar.
 
 ## 3. Malla por paso
 
 - Un `.glb` por paso que cambia la geometría (`step-NN.glb`, NN = índice del paso; `00` es el inicial). Es un snapshot completo, nunca un delta.
 - El pipeline exporta en dos pasos: `bpy` exporta glTF sin comprimir y `gltf-transform` aplica Draco. El pipeline vuelve a leer cada archivo y falla si no tiene `KHR_draco_mesh_compression` (`bpy` reporta éxito aunque no comprima).
-- En escultura, todas las mallas de una lección tienen los mismos vértices en el mismo orden, también después de Draco (el pipeline lo comprueba). La app anima un trazo interpolando vértice a vértice de la malla anterior a la nueva.
+- En escultura, la malla de un trazo tiene los mismos vértices en el mismo orden que la malla anterior, también después de Draco (el pipeline lo comprueba en cada par de trazo). La app anima un trazo interpolando vértice a vértice de una a otra. Remesh y Multires Subdivide rehacen la malla a propósito: la app cambia de una malla a la otra sin interpolar.
+- Las mallas se triangulan con diagonal fija (`TRIANGULATE`, `quad_method='FIXED'`) antes de exportar y de renderizar la referencia. El exportador de glTF corta cada cuadrado por su diagonal más corta, y un trazo podía voltear triángulos y romper la topología compartida.
+- Con Multires, el grabador mide la malla evaluada en Object Mode: el detalle esculpido vive en los niveles del modificador, no en la malla base.
 - three.js solo muestra la malla; nunca recalcula modificadores. Se usa la evaluación de viewport (`Levels Viewport`), que es la que aplica el exportador.
 
 ## 4. Mapeo de ID a control
@@ -129,6 +136,9 @@ Cada paso:
 - Los enums con `display: "expand"` se dibujan como fila de botones con `data-control="<id>.<opción en minúsculas>"`. Su etiqueta se oculta, salvo si el campo trae `labelled: true` (Axis de Simple Deform).
 - Los campos de ángulo (`unit: "°"`) traen `default`, `softMin` y `softMax` en grados.
 
+- `modifiers[TIPO].toggles`: los interruptores que ese modificador muestra en su cabecera (Multires no tiene Edit Mode).
+- Un subpanel puede traer `operators`: filas de botones `{ id, label }` (`modifier.multires.subdivide`); `null` es un hueco entre filas. Solo el botón del paso actual es tocable.
+
 ## Cambios desde #7
 
 - Se quitó `fallable`: con el candado de combinación de #8 ya no se cuentan intentos.
@@ -138,3 +148,4 @@ Cada paso:
 - Nuevo `blender-ui.json`: la UI no escribe a mano etiquetas, menús ni valores por defecto.
 - Escultura: acciones `set_mode`, `select_brush`, `set_direction`, `set_symmetry` y `stroke`; campos `tool` y `stroke`; `initial.mode` e `initial.tool`; sección `sculpt` en `blender-ui.json`; topología compartida entre mallas.
 - Más ejemplos: `set_value` de enum (`value_type: "enum"`, sin `step`), campos `pointer` y `labelled`, límites de ángulo en grados y `stroke.drag`.
+- Niveles 3 y 4: acciones `move_modifier` (`value: "FIRST"`), `toggle_modifier` (`value` booleano del toggle de cabecera), `apply_modifier`, `multires_subdivide` (lleva `values` con los tres niveles después de Subdivide) y `remesh`; `sculpt.voxel_size`; `maskedVertices` y el atributo `_MASK`; `initial.panel` en escultura con modificadores; topología compartida solo entre pares de trazo; triangulación con diagonal fija; `toggles` y `operators` en `blender-ui.json`.

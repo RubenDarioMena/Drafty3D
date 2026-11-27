@@ -26,16 +26,16 @@ Eso es lo que llamamos **intermedio**. **Principiante completo** es llegar hasta
 | 1 | Moverse y crear | Principiante | 6 | 0 |
 | 2 | Dar forma (modelado) | Principiante | 8 | 0 |
 | 3 | Modificadores | Principiante | 8 | 8 |
-| 4 | Escultura | Principiante | 8 | 3 |
+| 4 | Escultura | Principiante | 8 | 8 |
 | 5 | Materiales, luz y render | Principiante | 8 | 0 |
-| | **Principiante completo** | | **38** | **11** |
+| | **Principiante completo** | | **38** | **16** |
 | 6 | Texturas | Intermedio | 6 | 0 |
 | 7 | Animación | Intermedio | 5 | 0 |
 | 8 | Curvas, texto y nodos | Intermedio | 5 | 0 |
 | 9 | Articular objetos (rigging básico) | Intermedio | 4 | 0 |
-| | **Intermedio (horizonte)** | | **58** | **11 (≈ 19 %)** |
+| | **Intermedio (horizonte)** | | **58** | **16 (≈ 28 %)** |
 
-Lo hecho hasta ahora está en los niveles 3 y 4 porque eran los que la app podía enseñar con lo que ya sabía hacer. El orden de **aprendizaje** empieza en el nivel 1; el orden en que conviene **construir** está en "Qué sigue" al final.
+Los niveles 3 y 4 ya están completos: eran los que la app podía enseñar con lo que ya sabía hacer, más la máscara, Remesh y Multiresolution. El orden de **aprendizaje** empieza en el nivel 1; el orden en que conviene **construir** está en "Qué sigue" al final.
 
 ---
 
@@ -93,11 +93,11 @@ Lo hecho hasta ahora está en los niveles 3 y 4 porque eran los que la app podí
 | ✅ | 4.1 Primeros pinceles | **Grab** (jalar), **Draw** (subir o tallar), **Smooth** (suavizar), con tamaño, fuerza, + / − y espejo. *Pebble buddy* → *Your turn: sleepy buddy*. |
 | ✅ | 4.2 Formas que salen | **Snake Hook** (estirar cuernos o antenas), **Inflate** (inflar), **Crease** (líneas marcadas). *Horned buddy* → *Your turn: antenna bug*. |
 | ✅ | 4.3 Superficies duras | **Clay Strips** (capas de barro), **Scrape** (aplanar), **Draw Sharp** (grietas). *Craggy rock* → *Your turn: split boulder*. |
-| ⬜ | 4.4 Proteger zonas | **Mask**: pintar lo que no se debe tocar y esculpir solo el resto. |
-| ⬜ | 4.5 Mover partes grandes | **Pose** y **Elastic Deform**: girar una cabeza o estirar un brazo sin deformarlo. |
-| ⬜ | 4.6 Más detalle donde haga falta | **Remesh**: rehacer la malla para tener detalle parejo después de estirar mucho. |
-| ⬜ | 4.7 Detalle fino | **Multiresolution**: arrugas y texturas finas sin perder la forma base. |
-| ⬜ | **Proyecto 4: cabeza de personaje estilizado** | Forma base con Grab y Snake Hook, rasgos con Draw y Crease, protección con Mask y detalle con Multiresolution. |
+| ✅ | 4.4 Proteger zonas | **Mask**: pintar lo que no se debe tocar y esculpir solo el resto. *Belted pebble* → *Your turn: seamed pebble*. |
+| ✅ | 4.5 Mover partes grandes | **Pose** y **Elastic Grab**: girar una cabeza o estirar un brazo sin deformarlo. *Leaning buddy* → *Your turn: peeking buddy*. |
+| ✅ | 4.6 Más detalle donde haga falta | **Remesh** (con **Voxel Size**): rehacer la malla para tener detalle parejo después de estirar mucho. *Remesh an antenna* → *Your turn: side antenna*. |
+| ✅ | 4.7 Detalle fino | **Multiresolution**: **Subdivide**, esculpir arriba con **Crease Sharp** y ver que la malla base sigue intacta (**Levels Viewport**). *Fine wrinkles* → *Your turn: scarred pebble*. |
+| ✅ | **Proyecto 4: cabeza de personaje estilizado** | Forma base con Grab y Snake Hook, Mask para proteger las orejas mientras Inflate llena la cabeza, Multiresolution y al final ojos con Draw y boca con Crease. *Project: troll head* → *Your turn: imp head*. |
 
 ### Nivel 5 · Materiales, luz y render
 
@@ -181,7 +181,7 @@ Algunos niveles se pueden hacer solo grabando lecciones nuevas; otros piden cons
 | Nivel | Qué falta construir | Tamaño |
 | --- | --- | --- |
 | 3 Modificadores | Casi nada: Mirror y Array piden botones X Y Z y subpaneles abiertos; Boolean y Curve piden escenas con dos objetos. | Chico |
-| 4 Escultura | Mostrar la máscara sobre la malla. Remesh y Multiresolution cambian la malla entera, así que la app no podría animar el trazo punto por punto y tendría que cortar entre una malla y otra. | Chico a mediano |
+| 4 Escultura | ✅ Hecho: la máscara se ve sobre la malla, Remesh y Multiresolution cambian de una malla a otra, y una lección de escultura puede usar también el panel de modificadores. | — |
 | 1 Moverse y crear | Seleccionar objetos tocándolos, flechas para moverlos (gizmo), panel de medidas, Outliner y varios objetos en escena. | Mediano |
 | 5 Materiales, luz y render | Colores y luces en la vista; la verificación contra Blender hoy compara formas, no colores. Mostrar el render de Blender como imagen. | Mediano |
 | 2 Modelado | Tocar puntos, líneas y caras sobre la malla y reproducir operaciones que agregan geometría. Es la pieza más grande y la más importante. | Grande |
@@ -194,7 +194,7 @@ Pendiente aparte: el modificador **Wireframe** se probó y se quitó, porque con
 Propuesta de orden de construcción (no es el orden de aprendizaje):
 
 1. ✅ **Terminar el nivel 3** (Mirror, Array, Boolean, Curve, Apply y su proyecto). Lattice quedó para después del nivel 2.
-2. **Terminar el nivel 4** (Mask y Pose primero; Remesh y Multiresolution después del cambio de reproducción).
+2. ✅ **Terminar el nivel 4** (Mask, Pose, Remesh, Multiresolution y su proyecto).
 3. **Nivel 1** completo: es la puerta de entrada de la ruta, y su selección y gizmo se reutilizan en el nivel 2.
 4. **Nivel 2** (modelado): la pieza grande.
 5. **Nivel 5**: con esto queda la **etapa principiante completa**.

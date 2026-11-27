@@ -432,8 +432,109 @@ def scarred():
                'levels2': 'Levels Viewport again.'})
 
 
+def head_project(example, mode, title, intro, *, variant_of=None, base, base_camera=FRONT, ears, mask, inflate, eye, mouth, outro, helps, texts):
+    """Project 4: the whole Level 4 kit on one head, in the order a sculptor works: big shapes on a light
+    base mesh, Mask to protect what is finished, Multires last for the small details."""
+    clear_scene()
+    obj = pebble('Head', subdivisions=5)
+    lesson = SculptLesson(module='sculpt', example=example, mode=mode, title=title, variant_of=variant_of, mask=True, panel='OBJECT',
+                          out_dir=os.path.join(OUT, 'sculpt', example), obj=obj, camera=FRONT, text=intro)
+    lesson.set_mode('SCULPT', text='Switch to Sculpt Mode.', help=helps.get('mode'))
+    lesson.select_brush('Grab', text='Pick Grab for the big shape.', help=helps.get('grab'))
+    lesson.set_tool_value('size', 300, step=10, text='Set Size to 300 px.', help=helps.get('size'))
+    yield from lesson.stroke(base, seconds=1.5, camera=base_camera, text=texts['base'], help=helps.get('base'))
+    lesson.select_brush('Snake Hook', camera=FRONT, text='Pick Snake Hook to pull out long shapes.', help=helps.get('snake'))
+    lesson.set_tool_value('size', 110, step=10, text='Set Size to 110 px.', help=helps.get('size'))
+    lesson.set_symmetry('X', True, text='Turn on X symmetry: one stroke shapes both sides.', help=helps.get('symmetry'))
+    yield from lesson.stroke(ears, seconds=1.6, text=texts['ears'], help=helps.get('ears'))
+    lesson.select_brush('Mask', text='Pick Mask: protect the finished part before the next brush.', help=helps.get('mask'))
+    lesson.set_tool_value('size', 150, step=10, text='Set Size to 150 px.', help=helps.get('size'))
+    yield from lesson.stroke(mask, seconds=2.0, text=texts['mask'], help=helps.get('mask_stroke'))
+    lesson.select_brush('Inflate/Deflate', text='Pick Inflate/Deflate.', help=helps.get('inflate'))
+    lesson.set_tool_value('size', 300, step=10, text='Set Size to 300 px.', help=helps.get('size'))
+    lesson.set_tool_value('strength', 1.0, step=0.1, text='Set Strength to 1.0.', help=helps.get('strength'))
+    yield from lesson.stroke(inflate, seconds=2.6, text=texts['inflate'], help=helps.get('inflate_stroke'))
+    lesson.set_mode('OBJECT', text='Back to Object Mode: the details need Multires first.', help=helps.get('object'))
+    lesson.select_panel('MODIFIER', text='Open the Modifier tab (the wrench).', help=helps.get('panel'))
+    lesson.add_modifier('MULTIRES', text='Add Modifier ▸ Generate ▸ Multiresolution.', help=helps.get('add'))
+    lesson.multires_subdivide(text='Press Subdivide once: about 15,000 vertices for the face. It also smooths the base, so thin tips get shorter.',
+                              help=helps.get('subdivide'))
+    lesson.set_mode('SCULPT', text='Back to Sculpt Mode, now on the Multires level.', help=helps.get('mode'))
+    lesson.select_brush('Draw', text='Pick Draw.', help=helps.get('draw'))
+    lesson.set_tool_value('size', 60, step=10, text='Set Size to 60 px.', help=helps.get('size'))
+    lesson.set_tool_value('strength', 1.0, step=0.1, text='Set Strength to 1.0.', help=helps.get('strength'))
+    lesson.set_direction('SUBTRACT', text='Switch to Subtract (−) to carve.', help=helps.get('subtract'))
+    yield from lesson.stroke(eye, seconds=1.4, text=texts['eye'], help=helps.get('eye'))
+    lesson.select_brush('Crease Sharp', text='Pick Crease Sharp for a thin, sharp line.', help=helps.get('crease'))
+    lesson.set_tool_value('strength', 1.0, step=0.1, text='Size is shared by all brushes and stays at 60 px; Strength is not: set it to 1.0.',
+                          help=helps.get('strength'))
+    yield from lesson.stroke(mouth, seconds=1.6, text=texts['mouth'], help=helps.get('mouth'))
+    lesson.finish(text=outro)
+
+
+def troll():
+    yield from head_project(
+        'troll-head', 'watch', 'Project: troll head',
+        'A whole head with everything from this level: Grab and Snake Hook for the shape, Mask to protect it, Inflate for volume, '
+        'and Multires for the face.',
+        base=[(0.0, -0.4), (0.0, -0.5), (0.0, -0.6)], base_camera=TALL,
+        ears=[(0.6, 0.08), (0.72, 0.14), (0.84, 0.22), (0.94, 0.3)],
+        mask=[(0.62, 0.1), (0.74, 0.16), (0.86, 0.24), (0.74, 0.16), (0.62, 0.1), (0.74, 0.16), (0.86, 0.24)],
+        inflate=loop((0.0, 0.0), 0.42, turns=2, points=40),
+        eye=loop((0.19, 0.12), 0.025, turns=2, points=24),
+        mouth=[(0.0, -0.26), (0.1, -0.25), (0.19, -0.2), (0.25, -0.12), (0.19, -0.2), (0.1, -0.25), (0.0, -0.26)],
+        outro='Troll head finished: big shapes first, Mask to keep them, Multires for the face. Now sculpt an imp yourself.',
+        helps={},
+        texts={'base': 'Pull the bottom down into a pointed chin.',
+               'ears': 'Drag from the side of the head outward: a pointed ear. The mirror pulls the other.',
+               'mask': 'Paint along the ear, out and back and out again. Symmetry masks both ears.',
+               'inflate': 'Circle wide around the face twice: the head swells, the masked ears stay thin.',
+               'eye': 'Circle twice for the right eye; the mirror carves the left.',
+               'mouth': 'Half a grin from the middle to the right and back; the mirror finishes it.'})
+
+
+def imp():
+    yield from head_project(
+        'imp-head', 'your-turn', 'Your turn: imp head',
+        'Shape an imp with horns, protect them with Mask, swell the head, then add Multires for the face.', variant_of='troll-head',
+        base=[(0.0, 0.42), (0.0, 0.56), (0.0, 0.7)],
+        ears=[(0.22, 0.34), (0.28, 0.5), (0.33, 0.64), (0.36, 0.76)],
+        mask=[(0.24, 0.42), (0.3, 0.56), (0.34, 0.68), (0.3, 0.56), (0.24, 0.42), (0.3, 0.56), (0.34, 0.68)],
+        inflate=loop((0.0, 0.0), 0.4, turns=2, points=40),
+        eye=loop((0.2, 0.1), 0.025, turns=2, points=24),
+        mouth=[(0.0, -0.2), (0.1, -0.24), (0.2, -0.22), (0.1, -0.24), (0.0, -0.2)],
+        outro='Imp head finished with the whole Level 4 kit: Grab, Snake Hook, Mask, Inflate, Multires, Draw and Crease.',
+        helps={'mode': 'The mode menu at the left of the 3D Viewport header.',
+               'grab': 'Grab is in the shelf under Transform. G selects it.',
+               'size': 'Size is in the header, right of the brush. F changes it in the viewport.',
+               'base': 'Start on the top of the head and drag straight up.',
+               'snake': 'Snake Hook is under Transform. K selects it.',
+               'symmetry': 'The X button with the butterfly, right side of the header.',
+               'ears': 'Start on the top, right of the middle, and drag up and a little outward.',
+               'mask': 'Mask is under Utilities. M selects it.',
+               'mask_stroke': 'Paint along the right horn, base to tip and back, twice.',
+               'inflate': 'Inflate/Deflate is under Add & Subtract. I selects it.',
+               'strength': 'Strength is right of Size. Shift F changes it.',
+               'inflate_stroke': 'Two wide circles around the face, passing near the horns.',
+               'object': 'The mode menu again: Object Mode. Tab also toggles it.',
+               'panel': 'The wrench tab in the Properties editor.',
+               'add': 'Add Modifier, then Generate, then Multiresolution.',
+               'subdivide': 'Subdivide is the first button under Subdivision in the Multires panel.',
+               'draw': 'Draw is in the shelf under Add & Subtract. V selects it.',
+               'subtract': 'The − button next to Strength. Holding Ctrl while sculpting does the same.',
+               'eye': 'Small circles right of the middle, at eye height.',
+               'crease': 'Crease Sharp is in the General tab, next to Crease Polish.',
+               'mouth': 'From the middle, a short line to the right and back, below the eyes.'},
+        texts={'base': 'Pull the top up into a little peak.',
+               'ears': 'Pull a horn up from the top, right of the middle. The mirror pulls the other.',
+               'mask': 'Paint along the horn, up and back and up again. Symmetry masks both.',
+               'inflate': 'Inflate the face: the head swells, the masked horns keep their shape.',
+               'eye': 'Circle twice for the right eye.',
+               'mouth': 'Half a smirk, out and back; the mirror finishes it.'})
+
+
 LESSONS = ('buddy', 'sleepy', 'horned', 'bug', 'rock', 'boulder', 'belted', 'seamed', 'leaning', 'peeking', 'bobble', 'antenna',
-           'wrinkled', 'scarred')
+           'wrinkled', 'scarred', 'troll', 'imp')
 
 
 def main():

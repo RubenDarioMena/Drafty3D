@@ -71,6 +71,15 @@ Mientras no existan los secretos, Actions genera un **APK de depuración**. Cada
 
 **Sculpting · Craggy rock / split boulder.** **Clay Strips** pone dos franjas de arcilla (estratos), **Scrape/Fill** con Strength 1.0 aplana una cara yendo y viniendo, y **Draw Sharp** talla una grieta en zigzag. Draw Sharp ya empieza en Subtract (−), así que no hay paso de + / −: lo dice el texto del pincel.
 
+**Modificadores · nivel 3.** **Mirror** (botones X Y Z y casillas) para hacer media mesa o media banca; **Array** apila un escalón; **Boolean** corta una puerta o una ventana con un objeto de ayuda (se elige en una lista desplegable); **Curve** dobla un camino sobre una guía; y en *Order in the stack* se usan el menú de la cabecera (**Move to First**, **Apply**) y el interruptor **Realtime**. El proyecto es una escalera de mano (y un librero) hecha con media pieza: Array, Mirror y Bevel.
+
+**Sculpting · nivel 4.**
+- **Belted pebble / seamed pebble.** **Mask** pinta una franja que se oscurece; luego Inflate (o Blob) hincha todo menos la franja.
+- **Leaning buddy / peeking buddy.** **Pose** inclina la cabeza en el cuello; **Elastic Grab** saca bracitos.
+- **Remesh an antenna / side antenna.** Snake Hook estira una antena larga y delgada, el botón **Remesh** del header (popover con **Voxel Size**) rehace la malla con vértices parejos, y Blob redondea la punta.
+- **Fine wrinkles / scarred pebble.** **Multiresolution** se agrega en Properties: la app muestra el editor Properties en los pasos de modificador y el header de escultura en los demás. Se usa **Subdivide** dos veces, luego **Crease Sharp** para arrugas o cicatrices, y **Levels Viewport** 0 → 2 para ver que la malla base sigue intacta.
+- **Project: troll head / imp head.** Todo el nivel junto: Grab para la barbilla (o un pico), Snake Hook para orejas (o cuernos), Mask sobre ellas, Inflate llena la cabeza sin engordarlas, Multires y al final ojos con Draw y boca con Crease Sharp.
+
 ## Decisiones que tomé por ti
 
 Tomadas con los principios del registro de decisiones. Para el modo práctica, la regla del candado la decidiste tú.
@@ -104,6 +113,11 @@ Tomadas con los principios del registro de decisiones. Para el modo práctica, l
 | Ángulos | Se muestran y se cambian en grados, como en Blender, y los límites también (±360°). Antes los límites venían en radianes (±6.28) y ◀ ▶ se habría detenido en 6°; la nueva prueba del cirio lo cubre. | 2 |
 | Pinceles de arrastre | Snake Hook (y Grab, Elastic, Thumb, Pose, Rotate, Boundary) se graban sobre el plano de profundidad inicial y se animan de forma uniforme; el timeline lo marca con `stroke.drag`. | 2 |
 | Trazos de ida y vuelta | Crease Polish, Scrape/Fill y Draw Sharp casi no cambiaban nada con una pasada y la fuerza por defecto; la prueba Blender vs three.js lo detectó ("must look different"). Ahora suben Strength a 1.0 y repasan la línea. | 2, 6 |
+| Máscara visible | La máscara de Blender viaja en cada malla (`_MASK`) y la app la oscurece solo en Sculpt Mode, como Blender. Un trazo de Mask no cambia la forma, así que no se le pide "verse distinto"; una prueba unitaria exige en cambio que su malla tenga más máscara que la anterior. Pinté la máscara antes de Multires: comprobé que Blender la pasa a los niveles subdivididos. | 2 |
+| Remesh y Multires en la app | Rehacen la malla entera, así que la app cambia de malla en vez de interpolar. La comprobación de topología compartida ahora solo mira los pares de trazo. Multires Subdivide sobre una superficie lisa casi no cambia lo que se ve: no se le pide "verse distinto", y una prueba unitaria exige que la malla gane el nivel nuevo de Blender. | 2 |
+| Un editor por paso | En Blender, el workspace Sculpting muestra Properties junto a la vista 3D. En un celular solo cabe un panel, así que una lección de escultura con Multires muestra Properties en los pasos de modificador y el header y la repisa en los demás. | 4 |
+| Triángulos fijos | El exportador de glTF corta cada cuadrado por su diagonal más corta; un trazo podía voltear algunas y romper la animación vértice a vértice. Ahora se triangula con diagonal fija antes de exportar y de renderizar la referencia. | 2 |
+| Textos que dicen lo que pasa | Cuando Blender no hizo lo que el texto prometía, cambié el texto: Blob solo forma una bolita en la antena; Subdivide acorta un poco las puntas delgadas (las orejas del troll, los cuernos del imp); el jalón de arriba del imp hace un pico, no una cabeza alta. | 6 |
 | Releases | Un release fijo `learn-preview` que se reemplaza en cada build. El `versionCode` es el número de ejecución del workflow, así cada APK es más nuevo que el anterior. | 5 |
 
 ## Cómo se verifica
@@ -142,7 +156,7 @@ learn/pipeline/get-blender.sh
 npm run learn:examples -- --only=sculpt
 ```
 
-`get-blender.sh` descarga Blender 5.3.0 de download.blender.org a `learn/pipeline/.blender/` (ignorado por git) y verifica su sha256. `--only=modifiers` o `--only=sculpt` graba un solo módulo; `--skip-blender` solo vuelve a empaquetar lo que ya está en `.out`. Con `LEARN_DEBUG=1` el grabador guarda una captura de la ventana de Blender después de cada trazo. Los scripts son `learn/pipeline/blender/sculpt.py` (grabador) y `build_sculpt.py` (lecciones). Cada nombre de la tupla `LESSONS` de `build_sculpt.py` se graba en su propio proceso de Blender; `LEARN_SCULPT_ONLY=rock` graba solo esa (pero `.out/sculpt` se limpia antes, así que para publicar graba todas).
+`get-blender.sh` descarga Blender 5.3.0 de download.blender.org a `learn/pipeline/.blender/` (ignorado por git) y verifica su sha256. `--only=modifiers` o `--only=sculpt` graba un solo módulo; `--skip-blender` solo vuelve a empaquetar lo que ya está en `.out`. Con `LEARN_DEBUG=1` el grabador guarda una captura de la ventana de Blender después de cada trazo. Los scripts son `learn/pipeline/blender/sculpt.py` (grabador) y `build_sculpt.py` (lecciones). Cada nombre de la tupla `LESSONS` de `build_sculpt.py` se graba en su propio proceso de Blender; `LEARN_SCULPT_ONLY=rock` graba solo esa y conserva las demás que ya están en `.out/sculpt`. No corras `--only=modifiers` al mismo tiempo que una grabación de escultura: los dos reescriben `learn/public/examples/`.
 
 ## Limitaciones conocidas
 
@@ -151,7 +165,8 @@ npm run learn:examples -- --only=sculpt
 - **Tamaño.** El build pesa unos 2.2 MB. Vite incluye las tres variantes del decodificador Draco que referencia three.js (~1 MB que no se usa).
 - **Android 7.x.** En esas versiones aún se ve el icono por defecto de Capacitor; desde Android 8 sale el icono propio.
 - **Escultura: posición del pincel.** El trazo se graba en una ventana de 1920×1080. Size está en píxeles de pantalla, como en Blender, así que el mismo número en otra pantalla daría otro radio en metros. La app muestra el radio grabado, no lo recalcula.
-- **Escultura: más pinceles.** Solo Grab, Draw y Smooth tienen lección. Los demás se pueden tocar en la repisa, pero no hacen nada fuera de la lección.
+- **Escultura: más pinceles.** Tienen lección Grab, Draw, Smooth, Snake Hook, Inflate/Deflate, Crease Polish, Crease Sharp, Clay Strips, Scrape/Fill, Draw Sharp, Mask, Blob, Pose y Elastic Grab. Los demás se pueden tocar en la repisa, pero no hacen nada fuera de la lección.
+- **Escultura: popover de Remesh y panel de Multires.** Solo los controles que usa la lección hacen algo; los demás (Fix Poles, Unsubdivide, Delete Higher…) se ven pero están desactivados.
 - **Escultura: la rejilla.** El guijarro está centrado en el origen, así que la rejilla del suelo lo corta por la mitad, igual que en Blender.
 - **Escritorio.** El diseño está pensado primero para celular. En PC funciona, pero está menos pulido.
 - **Builds de Vercel.** Las tres ramas `research/*` del mapa salieron de un commit sin `ignoreCommand` y gastaron tres builds de preview. Desde entonces, toda rama nueva lo incluye.

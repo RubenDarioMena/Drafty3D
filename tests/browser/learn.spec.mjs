@@ -276,7 +276,7 @@ test('home groups the lessons by module', async ({ page }) => {
   await expect(page.locator('.module[data-module="sculpt"] .lesson-card h3')).toHaveText(
     ['Pebble buddy', 'Your turn: sleepy buddy', 'Horned buddy', 'Your turn: antenna bug', 'Craggy rock', 'Your turn: split boulder',
       'Belted pebble', 'Your turn: seamed pebble', 'Leaning buddy', 'Your turn: peeking buddy', 'Remesh an antenna', 'Your turn: side antenna',
-      'Fine wrinkles', 'Your turn: scarred pebble']);
+      'Fine wrinkles', 'Your turn: scarred pebble', 'Project: troll head', 'Your turn: imp head']);
 });
 
 test('Sculpting Your turn with Multires: the Properties editor for the modifier, then the sculpt header', async ({ page }) => {
