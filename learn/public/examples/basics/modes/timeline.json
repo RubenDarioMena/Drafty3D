@@ -1,0 +1,1158 @@
+{
+  "blenderVersion": "5.3.0",
+  "module": "basics",
+  "example": "modes",
+  "mode": "watch",
+  "title": "Object, Edit and Sculpt Mode",
+  "initial": {
+    "camera": {
+      "position": [
+        3.6,
+        -5.4,
+        3.4
+      ],
+      "target": [
+        0,
+        0,
+        0.9
+      ],
+      "fov": 30
+    },
+    "scene": {
+      "objects": [
+        {
+          "name": "Block",
+          "collection": null,
+          "location": [
+            0,
+            0,
+            0.5
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "scale": [
+            1,
+            1,
+            1
+          ],
+          "hidden": false
+        }
+      ],
+      "collections": [],
+      "active": "Block",
+      "selected": [
+        "Block"
+      ]
+    },
+    "mode": "OBJECT",
+    "selectMode": [
+      "VERT"
+    ],
+    "proportional": false,
+    "redo": null,
+    "tool": null,
+    "selection": null,
+    "edit": null,
+    "mesh": "step-00.glb",
+    "text": "Object Mode moves whole objects. Edit Mode changes their shape, point by point. Sculpt Mode shapes them like clay. The mode menu at the left of the header switches between them."
+  },
+  "steps": [
+    {
+      "id": "object.mode.edit",
+      "action": "set_mode",
+      "value": "EDIT",
+      "shortcut": {
+        "keys": [
+          "Tab"
+        ],
+        "context": "3D Viewport"
+      },
+      "text": "Open the mode menu and pick Edit Mode. Now you see the points, edges and faces of the block.",
+      "help": null,
+      "duration": 1.6,
+      "autoAdvance": false,
+      "camera": {
+        "position": [
+          3.6,
+          -5.4,
+          3.4
+        ],
+        "target": [
+          0,
+          0,
+          0.9
+        ],
+        "fov": 30
+      },
+      "after": {
+        "scene": {
+          "objects": [
+            {
+              "name": "Block",
+              "collection": null,
+              "location": [
+                0,
+                0,
+                0.5
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "scale": [
+                1,
+                1,
+                1
+              ],
+              "hidden": false
+            }
+          ],
+          "collections": [],
+          "active": "Block",
+          "selected": [
+            "Block"
+          ]
+        },
+        "mode": "EDIT",
+        "selectMode": [
+          "VERT"
+        ],
+        "proportional": false,
+        "redo": null,
+        "tool": null,
+        "selection": {
+          "verts": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "edges": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11
+          ],
+          "faces": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5
+          ]
+        }
+      },
+      "edit": {
+        "object": "Block",
+        "verts": [
+          [
+            -0.5,
+            -0.5,
+            0
+          ],
+          [
+            -0.5,
+            -0.5,
+            1
+          ],
+          [
+            -0.5,
+            0.5,
+            0
+          ],
+          [
+            -0.5,
+            0.5,
+            1
+          ],
+          [
+            0.5,
+            -0.5,
+            0
+          ],
+          [
+            0.5,
+            -0.5,
+            1
+          ],
+          [
+            0.5,
+            0.5,
+            0
+          ],
+          [
+            0.5,
+            0.5,
+            1
+          ]
+        ],
+        "edges": [
+          [
+            2,
+            0
+          ],
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            3
+          ],
+          [
+            3,
+            2
+          ],
+          [
+            6,
+            2
+          ],
+          [
+            3,
+            7
+          ],
+          [
+            7,
+            6
+          ],
+          [
+            4,
+            6
+          ],
+          [
+            7,
+            5
+          ],
+          [
+            5,
+            4
+          ],
+          [
+            0,
+            4
+          ],
+          [
+            5,
+            1
+          ]
+        ],
+        "faces": [
+          [
+            0,
+            1,
+            3,
+            2
+          ],
+          [
+            2,
+            3,
+            7,
+            6
+          ],
+          [
+            6,
+            7,
+            5,
+            4
+          ],
+          [
+            4,
+            5,
+            1,
+            0
+          ],
+          [
+            2,
+            6,
+            4,
+            0
+          ],
+          [
+            7,
+            3,
+            1,
+            5
+          ]
+        ]
+      },
+      "mesh": null
+    },
+    {
+      "id": "mesh.select_mode.face",
+      "action": "select_mode",
+      "value": "FACE",
+      "shortcut": {
+        "keys": [
+          "3"
+        ],
+        "context": "3D Viewport · Edit Mode"
+      },
+      "text": "Click Face select in the header: clicks now pick whole faces.",
+      "help": null,
+      "duration": 1.6,
+      "autoAdvance": false,
+      "camera": {
+        "position": [
+          3.6,
+          -5.4,
+          3.4
+        ],
+        "target": [
+          0,
+          0,
+          0.9
+        ],
+        "fov": 30
+      },
+      "after": {
+        "scene": {
+          "objects": [
+            {
+              "name": "Block",
+              "collection": null,
+              "location": [
+                0,
+                0,
+                0.5
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "scale": [
+                1,
+                1,
+                1
+              ],
+              "hidden": false
+            }
+          ],
+          "collections": [],
+          "active": "Block",
+          "selected": [
+            "Block"
+          ]
+        },
+        "mode": "EDIT",
+        "selectMode": [
+          "FACE"
+        ],
+        "proportional": false,
+        "redo": null,
+        "tool": null,
+        "selection": {
+          "verts": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "edges": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11
+          ],
+          "faces": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5
+          ]
+        }
+      },
+      "mesh": null
+    },
+    {
+      "id": "view3d.select",
+      "action": "tap",
+      "value": [
+        0,
+        0,
+        1
+      ],
+      "toggle": false,
+      "text": "Click the top face. Only that face is selected.",
+      "help": null,
+      "duration": 1.8,
+      "shortcut": null,
+      "autoAdvance": false,
+      "camera": {
+        "position": [
+          3.6,
+          -5.4,
+          3.4
+        ],
+        "target": [
+          0,
+          0,
+          0.9
+        ],
+        "fov": 30
+      },
+      "after": {
+        "scene": {
+          "objects": [
+            {
+              "name": "Block",
+              "collection": null,
+              "location": [
+                0,
+                0,
+                0.5
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "scale": [
+                1,
+                1,
+                1
+              ],
+              "hidden": false
+            }
+          ],
+          "collections": [],
+          "active": "Block",
+          "selected": [
+            "Block"
+          ]
+        },
+        "mode": "EDIT",
+        "selectMode": [
+          "FACE"
+        ],
+        "proportional": false,
+        "redo": null,
+        "tool": null,
+        "selection": {
+          "verts": [
+            1,
+            3,
+            5,
+            7
+          ],
+          "edges": [
+            2,
+            5,
+            8,
+            11
+          ],
+          "faces": [
+            5
+          ]
+        }
+      },
+      "mesh": null
+    },
+    {
+      "id": "menu.transform.move",
+      "action": "menu",
+      "path": [
+        "menu.edit_mesh",
+        "menu.edit_mesh.transform",
+        "menu.transform.move"
+      ],
+      "operator": "transform.translate",
+      "shortcut": {
+        "keys": [
+          "G"
+        ],
+        "context": "3D Viewport · Edit Mode"
+      },
+      "text": "Mesh ▸ Transform ▸ Move, locked to Z. Only the top face moves, so the block stretches.",
+      "help": null,
+      "duration": 2.4,
+      "value": null,
+      "autoAdvance": false,
+      "camera": {
+        "position": [
+          3.6,
+          -5.4,
+          3.4
+        ],
+        "target": [
+          0,
+          0,
+          0.9
+        ],
+        "fov": 30
+      },
+      "after": {
+        "scene": {
+          "objects": [
+            {
+              "name": "Block",
+              "collection": null,
+              "location": [
+                0,
+                0,
+                0.5
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "scale": [
+                1,
+                1,
+                1
+              ],
+              "hidden": false
+            }
+          ],
+          "collections": [],
+          "active": "Block",
+          "selected": [
+            "Block"
+          ]
+        },
+        "mode": "EDIT",
+        "selectMode": [
+          "FACE"
+        ],
+        "proportional": false,
+        "redo": {
+          "operator": "transform.translate",
+          "values": {
+            "redo.transform.translate.value.x": 0,
+            "redo.transform.translate.value.y": 0,
+            "redo.transform.translate.value.z": 0.3,
+            "redo.transform.translate.orient_type": "GLOBAL",
+            "redo.transform.translate.mirror": false,
+            "redo.transform.translate.use_proportional_edit": false,
+            "redo.transform.translate.proportional_edit_falloff": "SMOOTH",
+            "redo.transform.translate.proportional_size": 1,
+            "redo.transform.translate.use_proportional_connected": false,
+            "redo.transform.translate.use_proportional_projected": false
+          }
+        },
+        "tool": null,
+        "selection": {
+          "verts": [
+            1,
+            3,
+            5,
+            7
+          ],
+          "edges": [
+            2,
+            5,
+            8,
+            11
+          ],
+          "faces": [
+            5
+          ]
+        }
+      },
+      "edit": {
+        "object": "Block",
+        "verts": [
+          [
+            -0.5,
+            -0.5,
+            0
+          ],
+          [
+            -0.5,
+            -0.5,
+            1.3
+          ],
+          [
+            -0.5,
+            0.5,
+            0
+          ],
+          [
+            -0.5,
+            0.5,
+            1.3
+          ],
+          [
+            0.5,
+            -0.5,
+            0
+          ],
+          [
+            0.5,
+            -0.5,
+            1.3
+          ],
+          [
+            0.5,
+            0.5,
+            0
+          ],
+          [
+            0.5,
+            0.5,
+            1.3
+          ]
+        ],
+        "edges": [
+          [
+            2,
+            0
+          ],
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            3
+          ],
+          [
+            3,
+            2
+          ],
+          [
+            6,
+            2
+          ],
+          [
+            3,
+            7
+          ],
+          [
+            7,
+            6
+          ],
+          [
+            4,
+            6
+          ],
+          [
+            7,
+            5
+          ],
+          [
+            5,
+            4
+          ],
+          [
+            0,
+            4
+          ],
+          [
+            5,
+            1
+          ]
+        ],
+        "faces": [
+          [
+            0,
+            1,
+            3,
+            2
+          ],
+          [
+            2,
+            3,
+            7,
+            6
+          ],
+          [
+            6,
+            7,
+            5,
+            4
+          ],
+          [
+            4,
+            5,
+            1,
+            0
+          ],
+          [
+            2,
+            6,
+            4,
+            0
+          ],
+          [
+            7,
+            3,
+            1,
+            5
+          ]
+        ]
+      },
+      "mesh": "step-04.glb"
+    },
+    {
+      "id": "redo.transform.translate.value.z",
+      "action": "redo_value",
+      "operator": "transform.translate",
+      "value": 1,
+      "text": "Set Move Z to 1 m. The block becomes a tall box.",
+      "help": null,
+      "step": 0.1,
+      "shortcut": null,
+      "duration": 2.2,
+      "autoAdvance": false,
+      "camera": {
+        "position": [
+          3.6,
+          -5.4,
+          3.4
+        ],
+        "target": [
+          0,
+          0,
+          0.9
+        ],
+        "fov": 30
+      },
+      "after": {
+        "scene": {
+          "objects": [
+            {
+              "name": "Block",
+              "collection": null,
+              "location": [
+                0,
+                0,
+                0.5
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "scale": [
+                1,
+                1,
+                1
+              ],
+              "hidden": false
+            }
+          ],
+          "collections": [],
+          "active": "Block",
+          "selected": [
+            "Block"
+          ]
+        },
+        "mode": "EDIT",
+        "selectMode": [
+          "FACE"
+        ],
+        "proportional": false,
+        "redo": {
+          "operator": "transform.translate",
+          "values": {
+            "redo.transform.translate.value.x": 0,
+            "redo.transform.translate.value.y": 0,
+            "redo.transform.translate.value.z": 1,
+            "redo.transform.translate.orient_type": "GLOBAL",
+            "redo.transform.translate.mirror": false,
+            "redo.transform.translate.use_proportional_edit": false,
+            "redo.transform.translate.proportional_edit_falloff": "SMOOTH",
+            "redo.transform.translate.proportional_size": 1,
+            "redo.transform.translate.use_proportional_connected": false,
+            "redo.transform.translate.use_proportional_projected": false
+          }
+        },
+        "tool": null,
+        "selection": {
+          "verts": [
+            1,
+            3,
+            5,
+            7
+          ],
+          "edges": [
+            2,
+            5,
+            8,
+            11
+          ],
+          "faces": [
+            5
+          ]
+        }
+      },
+      "edit": {
+        "object": "Block",
+        "verts": [
+          [
+            -0.5,
+            -0.5,
+            0
+          ],
+          [
+            -0.5,
+            -0.5,
+            2
+          ],
+          [
+            -0.5,
+            0.5,
+            0
+          ],
+          [
+            -0.5,
+            0.5,
+            2
+          ],
+          [
+            0.5,
+            -0.5,
+            0
+          ],
+          [
+            0.5,
+            -0.5,
+            2
+          ],
+          [
+            0.5,
+            0.5,
+            0
+          ],
+          [
+            0.5,
+            0.5,
+            2
+          ]
+        ],
+        "edges": [
+          [
+            2,
+            0
+          ],
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            3
+          ],
+          [
+            3,
+            2
+          ],
+          [
+            6,
+            2
+          ],
+          [
+            3,
+            7
+          ],
+          [
+            7,
+            6
+          ],
+          [
+            4,
+            6
+          ],
+          [
+            7,
+            5
+          ],
+          [
+            5,
+            4
+          ],
+          [
+            0,
+            4
+          ],
+          [
+            5,
+            1
+          ]
+        ],
+        "faces": [
+          [
+            0,
+            1,
+            3,
+            2
+          ],
+          [
+            2,
+            3,
+            7,
+            6
+          ],
+          [
+            6,
+            7,
+            5,
+            4
+          ],
+          [
+            4,
+            5,
+            1,
+            0
+          ],
+          [
+            2,
+            6,
+            4,
+            0
+          ],
+          [
+            7,
+            3,
+            1,
+            5
+          ]
+        ]
+      },
+      "mesh": "step-05.glb"
+    },
+    {
+      "id": "object.mode.object",
+      "action": "set_mode",
+      "value": "OBJECT",
+      "shortcut": {
+        "keys": [
+          "Ctrl",
+          "Tab"
+        ],
+        "context": "3D Viewport · mode pie"
+      },
+      "text": "Back to Object Mode: the shape stays changed, and you move the whole object again.",
+      "help": null,
+      "duration": 1.6,
+      "autoAdvance": false,
+      "camera": {
+        "position": [
+          3.6,
+          -5.4,
+          3.4
+        ],
+        "target": [
+          0,
+          0,
+          0.9
+        ],
+        "fov": 30
+      },
+      "after": {
+        "scene": {
+          "objects": [
+            {
+              "name": "Block",
+              "collection": null,
+              "location": [
+                0,
+                0,
+                0.5
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "scale": [
+                1,
+                1,
+                1
+              ],
+              "hidden": false
+            }
+          ],
+          "collections": [],
+          "active": "Block",
+          "selected": [
+            "Block"
+          ]
+        },
+        "mode": "OBJECT",
+        "selectMode": [
+          "FACE"
+        ],
+        "proportional": false,
+        "redo": null,
+        "tool": null,
+        "selection": null
+      },
+      "edit": null,
+      "mesh": null
+    },
+    {
+      "id": "object.mode.sculpt",
+      "action": "set_mode",
+      "value": "SCULPT",
+      "shortcut": {
+        "keys": [
+          "Ctrl",
+          "Tab"
+        ],
+        "context": "3D Viewport · mode pie"
+      },
+      "text": "Sculpt Mode shows brushes instead. The header changes with every mode.",
+      "help": null,
+      "duration": 1.6,
+      "autoAdvance": false,
+      "camera": {
+        "position": [
+          3.6,
+          -5.4,
+          3.4
+        ],
+        "target": [
+          0,
+          0,
+          0.9
+        ],
+        "fov": 30
+      },
+      "after": {
+        "scene": {
+          "objects": [
+            {
+              "name": "Block",
+              "collection": null,
+              "location": [
+                0,
+                0,
+                0.5
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "scale": [
+                1,
+                1,
+                1
+              ],
+              "hidden": false
+            }
+          ],
+          "collections": [],
+          "active": "Block",
+          "selected": [
+            "Block"
+          ]
+        },
+        "mode": "SCULPT",
+        "selectMode": [
+          "FACE"
+        ],
+        "proportional": false,
+        "redo": null,
+        "tool": null,
+        "selection": null
+      },
+      "mesh": null
+    },
+    {
+      "id": "object.mode.object",
+      "action": "set_mode",
+      "value": "OBJECT",
+      "shortcut": {
+        "keys": [
+          "Ctrl",
+          "Tab"
+        ],
+        "context": "3D Viewport · mode pie"
+      },
+      "text": "And back to Object Mode. Tab toggles Edit Mode; Ctrl Tab opens a pie with all modes.",
+      "help": null,
+      "duration": 1.6,
+      "autoAdvance": false,
+      "camera": {
+        "position": [
+          3.6,
+          -5.4,
+          3.4
+        ],
+        "target": [
+          0,
+          0,
+          0.9
+        ],
+        "fov": 30
+      },
+      "after": {
+        "scene": {
+          "objects": [
+            {
+              "name": "Block",
+              "collection": null,
+              "location": [
+                0,
+                0,
+                0.5
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "scale": [
+                1,
+                1,
+                1
+              ],
+              "hidden": false
+            }
+          ],
+          "collections": [],
+          "active": "Block",
+          "selected": [
+            "Block"
+          ]
+        },
+        "mode": "OBJECT",
+        "selectMode": [
+          "FACE"
+        ],
+        "proportional": false,
+        "redo": null,
+        "tool": null,
+        "selection": null
+      },
+      "mesh": null
+    }
+  ],
+  "outro": "Object Mode for whole objects, Edit Mode for their parts, Sculpt Mode for clay-like shaping.",
+  "object": null
+}

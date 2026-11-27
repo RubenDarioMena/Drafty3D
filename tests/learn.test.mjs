@@ -3,7 +3,11 @@ import assert from 'node:assert/strict';
 import { readFile, stat } from 'node:fs/promises';
 import { applyCamera, toThree, verticalFov } from '../learn/src/camera.js';
 import { formatValue, roundToStep } from '../learn/src/format.js';
-import { applyStep, initialState, interactiveFields, isSolved, stateAt, ticks, toolField } from '../learn/src/state.js';
+import { Vector3 } from 'three';
+import { editTarget, navigationDone } from '../learn/src/scene-view.js';
+import {
+  applyStep, initialState, interactiveFields, isSceneLesson, isSolved, lessonMenuItems, objectVisible, outlinerTree, stateAt, ticks, toolField,
+} from '../learn/src/state.js';
 import { resample, traceMatches } from '../learn/src/trace.js';
 import { NodeIO } from '@gltf-transform/core';
 import { ALL_EXTENSIONS } from '@gltf-transform/extensions';
@@ -31,7 +35,7 @@ test('every id in the timelines exists in the UI read from Blender (the pipeline
   const operatorIds = new Set(Object.values(ui.modifiers).flatMap(definition => definition.subpanels
     .flatMap(subpanel => (subpanel.operators ?? []).flat().filter(Boolean).map(operator => operator.id))));
   // Modifier lessons, and the modifier steps of sculpt lessons (Multires).
-  for (const timeline of Object.values(timelines)) {
+  for (const timeline of Object.values(timelines).filter(candidate => !isSceneLesson(candidate))) {
     assert.equal(timeline.blenderVersion, ui.blenderVersion);
     if (timeline.module === 'modifiers' || timeline.steps.some(step => step.modifier)) assert.ok(tabIds.has(timeline.initial.panel));
     for (const step of timeline.steps) {
@@ -54,6 +58,128 @@ test('every id in the timelines exists in the UI read from Blender (the pipeline
       }
     }
   }
+});
+
+test('scene lessons (Levels 1 and 2) only use Blender\'s 3D Viewport header, menus, Adjust Last Operation and Outliner', () => {
+  const { header, menus, operators, selectModes, proportional, navigation, select } = ui.view3d;
+  const items = new Map(Object.values(menus).flatMap(menu => menu.items.filter(item => !item.separator).map(item => [item.id, item])));
+  const fieldsOf = operator => operators[operator]?.sections.flatMap(section => section.fields) ?? [];
+  const scenes = Object.values(timelines).filter(isSceneLesson);
+  assert.ok(scenes.filter(timeline => timeline.module === 'basics').length >= 12);
+  assert.ok(scenes.filter(timeline => timeline.module === 'modeling').length >= 16);
+  for (const timeline of scenes) {
+    assert.equal(timeline.blenderVersion, ui.blenderVersion);
+    assert.ok(timeline.initial.text, `${timeline.example} has an intro`);
+    timeline.steps.forEach((step, index) => {
+      const before = stateAt(timeline, ui, index - 1);
+      const where = `${timeline.example} step ${index + 1} (${step.action} ${step.id})`;
+      assert.ok(step.after?.scene && step.camera, `${where} carries what Blender reported after it`);
+      if (step.action === 'menu') {
+        // The path is the one a learner taps: a header button of this mode, then each submenu in turn.
+        const [first, ...rest] = step.path;
+        assert.ok(header[before.mode].some(entry => entry.id === first), `${where}: ${first} is in the ${before.mode} header`);
+        let menu = menus[header[before.mode].find(entry => entry.id === first).menu];
+        for (const id of rest) {
+          const item = menu.items.find(candidate => candidate.id === id);
+          assert.ok(item, `${where}: ${id} is in ${menu.label}`);
+          if (id !== step.id) menu = menus[item.menu];
+        }
+        const item = items.get(step.id);
+        assert.equal(item.kind, 'operator', where);
+        assert.ok(item.enabled, `${where} is enabled in Blender`);
+        // A Python menu item (Extrude Faces) runs another operator; the panel then shows the one Blender ran.
+        assert.ok(item.operator === step.operator || step.after.redo?.operator === step.operator, `${where} runs ${step.operator}`);
+      } else if (step.action === 'redo_value') {
+        // The field is in the panel the step before left open, and ◀ ▶ reach the value.
+        assert.equal(before.redo?.operator, step.operator, `${where} edits the last operation`);
+        const field = fieldsOf(step.operator).find(candidate => candidate.id === step.id);
+        assert.ok(field, where);
+        assert.ok(step.id in before.redo.values, `${where} is a field Blender draws`);
+        assert.ok(step.step > 0);
+        assert.equal(roundToStep(step.value, step.step), step.value, `${where} sits on its fixed step`);
+        assert.ok(step.value >= field.softMin && step.value <= field.softMax, where);
+        assert.ok(Math.abs(step.after.redo.values[step.id] - step.value) < 1e-6, `${where}: Blender ran it again with the new value`);
+      } else if (step.action === 'select_mode') {
+        assert.ok(selectModes.some(item => item.id === step.id && item.value === step.value), where);
+        assert.equal(before.mode, 'EDIT');
+      } else if (step.action === 'proportional') {
+        assert.equal(step.id, proportional.id, where);
+      } else if (step.action === 'set_mode') {
+        assert.ok(ui.sculpt.modeMenu.items.some(item => item.id === step.id && item.value === step.value), where);
+        assert.equal(step.after.mode, step.value);
+      } else if (step.action === 'tap') {
+        assert.equal(step.id, select.id, where);
+        if (step.after.mode === 'EDIT') assert.ok(step.after.selection, `${where} selects something`);
+        else assert.ok(step.after.scene.selected.includes(step.after.scene.active), `${where} selects the object it clicks`);
+      } else if (['orbit', 'pan', 'zoom'].includes(step.action)) {
+        assert.equal(step.id, navigation[step.action].id, where);
+        assert.ok(step.verify, `${where} ships a render from its new view`);
+      } else if (step.action === 'knife' || step.action === 'loop_cut') {
+        // The tool was started from its menu item (the step before), and the click changed the mesh.
+        assert.equal(before.modal, step.action === 'knife' ? 'mesh.knife_tool' : 'mesh.loopcut_slide', where);
+        assert.ok(step.mesh && step.edit, `${where} changes the mesh`);
+        if (step.action === 'loop_cut') assert.ok(step.ring.every(edge => edge < before.edit.edges.length), where);
+      } else if (step.action === 'outliner_select' || step.action === 'outliner_hide' || step.action === 'rename') {
+        const name = step.action === 'rename' ? step.target : step.value;
+        const listed = before.scene.objects.some(object => object.name === name) || before.scene.collections.some(c => c.name === name);
+        assert.ok(listed, `${where}: ${name} is in the Outliner`);
+        if (step.action === 'rename') assert.ok(step.after.scene.objects.some(object => object.name === step.value), where);
+      } else {
+        assert.fail(`${where}: unknown scene action`);
+      }
+    });
+    // Menu items a learner can pick are exactly the ones the lesson uses.
+    assert.ok([...lessonMenuItems(timeline)].every(id => items.has(id)));
+  }
+});
+
+test('the Outliner lists collections, then their objects, and hides what a closed eye hides', () => {
+  const scene = {
+    objects: [{ name: 'Rail', collection: 'Fence', hidden: false }, { name: 'Post', collection: 'Fence', hidden: false }, { name: 'Ground', collection: null, hidden: true }],
+    collections: [{ name: 'Fence', parent: null, hidden: true }],
+    active: 'Post', selected: ['Post'],
+  };
+  const tree = outlinerTree(scene);
+  assert.deepEqual(tree.collections.map(c => [c.name, c.objects, c.hidden]), [['Fence', ['Post', 'Rail'], true]]);
+  assert.deepEqual(tree.objects, ['Ground']);
+  assert.equal(objectVisible(scene, 'Post'), false, 'a hidden collection hides its objects');
+  assert.equal(objectVisible(scene, 'Ground'), false);
+  assert.equal(objectVisible({ ...scene, collections: [{ name: 'Fence', parent: null, hidden: false }] }, 'Rail'), true);
+});
+
+test('a click in Edit Mode is judged on the element Blender selected; orbit, zoom and pan by how the view moved', () => {
+  const edit = {
+    verts: [[0, 0, 0], [1, 0, 0], [1, 1, 0], [0, 1, 0]],
+    edges: [[0, 1], [1, 2], [2, 3], [3, 0]],
+    faces: [[0, 1, 2, 3]],
+  };
+  assert.deepEqual(editTarget(edit, ['VERT'], [0.9, 0.1, 0]), { kind: 'vert', index: 1 });
+  assert.deepEqual(editTarget(edit, ['EDGE'], [0.5, 1, 0]), { kind: 'edge', index: 2 });
+  assert.deepEqual(editTarget(edit, ['FACE'], [0.5, 0.5, 0]), { kind: 'face', index: 0 });
+  const view = (target, offset) => ({ target: new Vector3(...target), offset: new Vector3(...offset), distance: new Vector3(...offset).length() });
+  const start = view([0, 0, 0], [0, 0, 10]);
+  assert.equal(navigationDone('orbit', start, view([0, 0, 0], [5, 0, 8.66]), {}), true);
+  assert.equal(navigationDone('orbit', start, view([0, 0, 0], [1, 0, 9.95]), {}), false);
+  assert.equal(navigationDone('zoom', start, view([0, 0, 0], [0, 0, 7]), { distance: 6 }), true);
+  assert.equal(navigationDone('zoom', start, view([0, 0, 0], [0, 0, 13]), { distance: 6 }), false, 'zooming the other way');
+  assert.equal(navigationDone('pan', start, view([2, 0, 0], [0, 0, 10]), {}), true);
+  assert.equal(navigationDone('pan', start, view([2, 0, 0], [5, 0, 8.66]), {}), false, 'a pan does not turn the view');
+});
+
+test('scene steps take the state Blender reported: mode, selection and the last operation', () => {
+  const timeline = timelines['extrude-arm'];
+  const state = stateAt(timeline, ui, timeline.steps.length - 1);
+  const last = timeline.steps.at(-1);
+  assert.equal(state.mode, last.after.mode);
+  assert.deepEqual(state.scene, last.after.scene);
+  assert.deepEqual(state.redo, last.after.redo);
+  assert.ok(state.edit, 'the Edit Mode mesh is carried from the last step that changed it');
+  const extrude = timeline.steps.findIndex(step => step.action === 'redo_value');
+  const before = stateAt(timeline, ui, extrude - 1);
+  const step = timeline.steps[extrude];
+  assert.equal(isSolved(before, step), false);
+  const live = { ...before, redo: { ...before.redo, values: { ...before.redo.values, [step.id]: step.value } } };
+  assert.equal(isSolved(live, step), true, 'setting the field in Adjust Last Operation solves the step');
 });
 
 test('sculpt timelines only name controls of Blender\'s Sculpt Mode header, mode menu and brush shelf', () => {

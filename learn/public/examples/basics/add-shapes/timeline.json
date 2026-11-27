@@ -1,0 +1,995 @@
+{
+  "blenderVersion": "5.3.0",
+  "module": "basics",
+  "example": "add-shapes",
+  "mode": "your-turn",
+  "title": "Your turn: add shapes",
+  "initial": {
+    "camera": {
+      "position": [
+        6.5,
+        -10,
+        5.5
+      ],
+      "target": [
+        0,
+        0,
+        0.2
+      ],
+      "fov": 30
+    },
+    "scene": {
+      "objects": [],
+      "collections": [],
+      "active": null,
+      "selected": []
+    },
+    "mode": "OBJECT",
+    "selectMode": [
+      "VERT"
+    ],
+    "proportional": false,
+    "redo": null,
+    "tool": null,
+    "selection": null,
+    "edit": null,
+    "mesh": "step-00.glb",
+    "text": "Add the same three shapes with other sizes."
+  },
+  "steps": [
+    {
+      "id": "menu.mesh_add.cube",
+      "action": "menu",
+      "path": [
+        "menu.add",
+        "menu.add.mesh",
+        "menu.mesh_add.cube"
+      ],
+      "operator": "mesh.primitive_cube_add",
+      "shortcut": null,
+      "text": "Add a cube.",
+      "help": "Add menu in the header, then Mesh, then Cube. Shift A opens the Add menu.",
+      "duration": 2.4,
+      "value": null,
+      "autoAdvance": false,
+      "camera": {
+        "position": [
+          6.5,
+          -10,
+          5.5
+        ],
+        "target": [
+          0,
+          0,
+          0.2
+        ],
+        "fov": 30
+      },
+      "after": {
+        "scene": {
+          "objects": [
+            {
+              "name": "Cube",
+              "collection": null,
+              "location": [
+                0,
+                0,
+                0
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "scale": [
+                1,
+                1,
+                1
+              ],
+              "hidden": false
+            }
+          ],
+          "collections": [],
+          "active": "Cube",
+          "selected": [
+            "Cube"
+          ]
+        },
+        "mode": "OBJECT",
+        "selectMode": [
+          "VERT"
+        ],
+        "proportional": false,
+        "redo": {
+          "operator": "mesh.primitive_cube_add",
+          "values": {
+            "redo.mesh.primitive_cube_add.size": 2,
+            "redo.mesh.primitive_cube_add.calc_uvs": true,
+            "redo.mesh.primitive_cube_add.align": "WORLD",
+            "redo.mesh.primitive_cube_add.location.x": 0,
+            "redo.mesh.primitive_cube_add.location.y": 0,
+            "redo.mesh.primitive_cube_add.location.z": 0,
+            "redo.mesh.primitive_cube_add.rotation.x": 0,
+            "redo.mesh.primitive_cube_add.rotation.y": 0,
+            "redo.mesh.primitive_cube_add.rotation.z": 0
+          }
+        },
+        "tool": null,
+        "selection": null
+      },
+      "mesh": "step-01.glb"
+    },
+    {
+      "id": "redo.mesh.primitive_cube_add.size",
+      "action": "redo_value",
+      "operator": "mesh.primitive_cube_add",
+      "value": 1.5,
+      "text": "Set its Size to 1.5 m.",
+      "help": "Size is the first field of the Adjust Last Operation panel.",
+      "step": 0.1,
+      "shortcut": null,
+      "duration": 2.2,
+      "autoAdvance": false,
+      "camera": {
+        "position": [
+          6.5,
+          -10,
+          5.5
+        ],
+        "target": [
+          0,
+          0,
+          0.2
+        ],
+        "fov": 30
+      },
+      "after": {
+        "scene": {
+          "objects": [
+            {
+              "name": "Cube",
+              "collection": null,
+              "location": [
+                0,
+                0,
+                0
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "scale": [
+                1,
+                1,
+                1
+              ],
+              "hidden": false
+            }
+          ],
+          "collections": [],
+          "active": "Cube",
+          "selected": [
+            "Cube"
+          ]
+        },
+        "mode": "OBJECT",
+        "selectMode": [
+          "VERT"
+        ],
+        "proportional": false,
+        "redo": {
+          "operator": "mesh.primitive_cube_add",
+          "values": {
+            "redo.mesh.primitive_cube_add.size": 1.5,
+            "redo.mesh.primitive_cube_add.calc_uvs": true,
+            "redo.mesh.primitive_cube_add.align": "WORLD",
+            "redo.mesh.primitive_cube_add.location.x": 0,
+            "redo.mesh.primitive_cube_add.location.y": 0,
+            "redo.mesh.primitive_cube_add.location.z": 0,
+            "redo.mesh.primitive_cube_add.rotation.x": 0,
+            "redo.mesh.primitive_cube_add.rotation.y": 0,
+            "redo.mesh.primitive_cube_add.rotation.z": 0
+          }
+        },
+        "tool": null,
+        "selection": null
+      },
+      "mesh": "step-02.glb"
+    },
+    {
+      "id": "menu.mesh_add.cylinder",
+      "action": "menu",
+      "path": [
+        "menu.add",
+        "menu.add.mesh",
+        "menu.mesh_add.cylinder"
+      ],
+      "operator": "mesh.primitive_cylinder_add",
+      "shortcut": null,
+      "text": "Add a cylinder.",
+      "help": "Add ▸ Mesh ▸ Cylinder.",
+      "duration": 2.4,
+      "value": null,
+      "autoAdvance": false,
+      "camera": {
+        "position": [
+          6.5,
+          -10,
+          5.5
+        ],
+        "target": [
+          0,
+          0,
+          0.2
+        ],
+        "fov": 30
+      },
+      "after": {
+        "scene": {
+          "objects": [
+            {
+              "name": "Cube",
+              "collection": null,
+              "location": [
+                0,
+                0,
+                0
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "scale": [
+                1,
+                1,
+                1
+              ],
+              "hidden": false
+            },
+            {
+              "name": "Cylinder",
+              "collection": null,
+              "location": [
+                0,
+                0,
+                0
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "scale": [
+                1,
+                1,
+                1
+              ],
+              "hidden": false
+            }
+          ],
+          "collections": [],
+          "active": "Cylinder",
+          "selected": [
+            "Cylinder"
+          ]
+        },
+        "mode": "OBJECT",
+        "selectMode": [
+          "VERT"
+        ],
+        "proportional": false,
+        "redo": {
+          "operator": "mesh.primitive_cylinder_add",
+          "values": {
+            "redo.mesh.primitive_cylinder_add.vertices": 32,
+            "redo.mesh.primitive_cylinder_add.radius": 1,
+            "redo.mesh.primitive_cylinder_add.depth": 2,
+            "redo.mesh.primitive_cylinder_add.end_fill_type": "NGON",
+            "redo.mesh.primitive_cylinder_add.calc_uvs": true,
+            "redo.mesh.primitive_cylinder_add.align": "WORLD",
+            "redo.mesh.primitive_cylinder_add.location.x": 0,
+            "redo.mesh.primitive_cylinder_add.location.y": 0,
+            "redo.mesh.primitive_cylinder_add.location.z": 0,
+            "redo.mesh.primitive_cylinder_add.rotation.x": 0,
+            "redo.mesh.primitive_cylinder_add.rotation.y": 0,
+            "redo.mesh.primitive_cylinder_add.rotation.z": 0
+          }
+        },
+        "tool": null,
+        "selection": null
+      },
+      "mesh": "step-03.glb"
+    },
+    {
+      "id": "redo.mesh.primitive_cylinder_add.vertices",
+      "action": "redo_value",
+      "operator": "mesh.primitive_cylinder_add",
+      "value": 6,
+      "text": "Give it 6 vertices.",
+      "help": "Vertices is at the top of the panel.",
+      "step": 1,
+      "shortcut": null,
+      "duration": 2.2,
+      "autoAdvance": false,
+      "camera": {
+        "position": [
+          6.5,
+          -10,
+          5.5
+        ],
+        "target": [
+          0,
+          0,
+          0.2
+        ],
+        "fov": 30
+      },
+      "after": {
+        "scene": {
+          "objects": [
+            {
+              "name": "Cube",
+              "collection": null,
+              "location": [
+                0,
+                0,
+                0
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "scale": [
+                1,
+                1,
+                1
+              ],
+              "hidden": false
+            },
+            {
+              "name": "Cylinder",
+              "collection": null,
+              "location": [
+                0,
+                0,
+                0
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "scale": [
+                1,
+                1,
+                1
+              ],
+              "hidden": false
+            }
+          ],
+          "collections": [],
+          "active": "Cylinder",
+          "selected": [
+            "Cylinder"
+          ]
+        },
+        "mode": "OBJECT",
+        "selectMode": [
+          "VERT"
+        ],
+        "proportional": false,
+        "redo": {
+          "operator": "mesh.primitive_cylinder_add",
+          "values": {
+            "redo.mesh.primitive_cylinder_add.vertices": 6,
+            "redo.mesh.primitive_cylinder_add.radius": 1,
+            "redo.mesh.primitive_cylinder_add.depth": 2,
+            "redo.mesh.primitive_cylinder_add.end_fill_type": "NGON",
+            "redo.mesh.primitive_cylinder_add.calc_uvs": true,
+            "redo.mesh.primitive_cylinder_add.align": "WORLD",
+            "redo.mesh.primitive_cylinder_add.location.x": 0,
+            "redo.mesh.primitive_cylinder_add.location.y": 0,
+            "redo.mesh.primitive_cylinder_add.location.z": 0,
+            "redo.mesh.primitive_cylinder_add.rotation.x": 0,
+            "redo.mesh.primitive_cylinder_add.rotation.y": 0,
+            "redo.mesh.primitive_cylinder_add.rotation.z": 0
+          }
+        },
+        "tool": null,
+        "selection": null
+      },
+      "mesh": "step-04.glb"
+    },
+    {
+      "id": "redo.mesh.primitive_cylinder_add.location.x",
+      "action": "redo_value",
+      "operator": "mesh.primitive_cylinder_add",
+      "value": -2.5,
+      "text": "Move it to X −2.5 m.",
+      "help": "Location X is under Align in the panel.",
+      "step": 0.1,
+      "shortcut": null,
+      "duration": 2.2,
+      "autoAdvance": false,
+      "camera": {
+        "position": [
+          6.5,
+          -10,
+          5.5
+        ],
+        "target": [
+          0,
+          0,
+          0.2
+        ],
+        "fov": 30
+      },
+      "after": {
+        "scene": {
+          "objects": [
+            {
+              "name": "Cube",
+              "collection": null,
+              "location": [
+                0,
+                0,
+                0
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "scale": [
+                1,
+                1,
+                1
+              ],
+              "hidden": false
+            },
+            {
+              "name": "Cylinder",
+              "collection": null,
+              "location": [
+                -2.5,
+                0,
+                0
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "scale": [
+                1,
+                1,
+                1
+              ],
+              "hidden": false
+            }
+          ],
+          "collections": [],
+          "active": "Cylinder",
+          "selected": [
+            "Cylinder"
+          ]
+        },
+        "mode": "OBJECT",
+        "selectMode": [
+          "VERT"
+        ],
+        "proportional": false,
+        "redo": {
+          "operator": "mesh.primitive_cylinder_add",
+          "values": {
+            "redo.mesh.primitive_cylinder_add.vertices": 6,
+            "redo.mesh.primitive_cylinder_add.radius": 1,
+            "redo.mesh.primitive_cylinder_add.depth": 2,
+            "redo.mesh.primitive_cylinder_add.end_fill_type": "NGON",
+            "redo.mesh.primitive_cylinder_add.calc_uvs": true,
+            "redo.mesh.primitive_cylinder_add.align": "WORLD",
+            "redo.mesh.primitive_cylinder_add.location.x": -2.5,
+            "redo.mesh.primitive_cylinder_add.location.y": 0,
+            "redo.mesh.primitive_cylinder_add.location.z": 0,
+            "redo.mesh.primitive_cylinder_add.rotation.x": 0,
+            "redo.mesh.primitive_cylinder_add.rotation.y": 0,
+            "redo.mesh.primitive_cylinder_add.rotation.z": 0
+          }
+        },
+        "tool": null,
+        "selection": null
+      },
+      "mesh": "step-05.glb"
+    },
+    {
+      "id": "menu.mesh_add.uv_sphere",
+      "action": "menu",
+      "path": [
+        "menu.add",
+        "menu.add.mesh",
+        "menu.mesh_add.uv_sphere"
+      ],
+      "operator": "mesh.primitive_uv_sphere_add",
+      "shortcut": null,
+      "text": "Add a UV sphere.",
+      "help": "Add ▸ Mesh ▸ UV Sphere.",
+      "duration": 2.4,
+      "value": null,
+      "autoAdvance": false,
+      "camera": {
+        "position": [
+          6.5,
+          -10,
+          5.5
+        ],
+        "target": [
+          0,
+          0,
+          0.2
+        ],
+        "fov": 30
+      },
+      "after": {
+        "scene": {
+          "objects": [
+            {
+              "name": "Cube",
+              "collection": null,
+              "location": [
+                0,
+                0,
+                0
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "scale": [
+                1,
+                1,
+                1
+              ],
+              "hidden": false
+            },
+            {
+              "name": "Cylinder",
+              "collection": null,
+              "location": [
+                -2.5,
+                0,
+                0
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "scale": [
+                1,
+                1,
+                1
+              ],
+              "hidden": false
+            },
+            {
+              "name": "Sphere",
+              "collection": null,
+              "location": [
+                0,
+                0,
+                0
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "scale": [
+                1,
+                1,
+                1
+              ],
+              "hidden": false
+            }
+          ],
+          "collections": [],
+          "active": "Sphere",
+          "selected": [
+            "Sphere"
+          ]
+        },
+        "mode": "OBJECT",
+        "selectMode": [
+          "VERT"
+        ],
+        "proportional": false,
+        "redo": {
+          "operator": "mesh.primitive_uv_sphere_add",
+          "values": {
+            "redo.mesh.primitive_uv_sphere_add.segments": 32,
+            "redo.mesh.primitive_uv_sphere_add.ring_count": 16,
+            "redo.mesh.primitive_uv_sphere_add.radius": 1,
+            "redo.mesh.primitive_uv_sphere_add.calc_uvs": true,
+            "redo.mesh.primitive_uv_sphere_add.align": "WORLD",
+            "redo.mesh.primitive_uv_sphere_add.location.x": 0,
+            "redo.mesh.primitive_uv_sphere_add.location.y": 0,
+            "redo.mesh.primitive_uv_sphere_add.location.z": 0,
+            "redo.mesh.primitive_uv_sphere_add.rotation.x": 0,
+            "redo.mesh.primitive_uv_sphere_add.rotation.y": 0,
+            "redo.mesh.primitive_uv_sphere_add.rotation.z": 0
+          }
+        },
+        "tool": null,
+        "selection": null
+      },
+      "mesh": "step-06.glb"
+    },
+    {
+      "id": "redo.mesh.primitive_uv_sphere_add.segments",
+      "action": "redo_value",
+      "operator": "mesh.primitive_uv_sphere_add",
+      "value": 16,
+      "text": "Set Segments to 16.",
+      "help": "Segments is the first field.",
+      "step": 1,
+      "shortcut": null,
+      "duration": 2.2,
+      "autoAdvance": false,
+      "camera": {
+        "position": [
+          6.5,
+          -10,
+          5.5
+        ],
+        "target": [
+          0,
+          0,
+          0.2
+        ],
+        "fov": 30
+      },
+      "after": {
+        "scene": {
+          "objects": [
+            {
+              "name": "Cube",
+              "collection": null,
+              "location": [
+                0,
+                0,
+                0
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "scale": [
+                1,
+                1,
+                1
+              ],
+              "hidden": false
+            },
+            {
+              "name": "Cylinder",
+              "collection": null,
+              "location": [
+                -2.5,
+                0,
+                0
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "scale": [
+                1,
+                1,
+                1
+              ],
+              "hidden": false
+            },
+            {
+              "name": "Sphere",
+              "collection": null,
+              "location": [
+                0,
+                0,
+                0
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "scale": [
+                1,
+                1,
+                1
+              ],
+              "hidden": false
+            }
+          ],
+          "collections": [],
+          "active": "Sphere",
+          "selected": [
+            "Sphere"
+          ]
+        },
+        "mode": "OBJECT",
+        "selectMode": [
+          "VERT"
+        ],
+        "proportional": false,
+        "redo": {
+          "operator": "mesh.primitive_uv_sphere_add",
+          "values": {
+            "redo.mesh.primitive_uv_sphere_add.segments": 16,
+            "redo.mesh.primitive_uv_sphere_add.ring_count": 16,
+            "redo.mesh.primitive_uv_sphere_add.radius": 1,
+            "redo.mesh.primitive_uv_sphere_add.calc_uvs": true,
+            "redo.mesh.primitive_uv_sphere_add.align": "WORLD",
+            "redo.mesh.primitive_uv_sphere_add.location.x": 0,
+            "redo.mesh.primitive_uv_sphere_add.location.y": 0,
+            "redo.mesh.primitive_uv_sphere_add.location.z": 0,
+            "redo.mesh.primitive_uv_sphere_add.rotation.x": 0,
+            "redo.mesh.primitive_uv_sphere_add.rotation.y": 0,
+            "redo.mesh.primitive_uv_sphere_add.rotation.z": 0
+          }
+        },
+        "tool": null,
+        "selection": null
+      },
+      "mesh": "step-07.glb"
+    },
+    {
+      "id": "redo.mesh.primitive_uv_sphere_add.ring_count",
+      "action": "redo_value",
+      "operator": "mesh.primitive_uv_sphere_add",
+      "value": 8,
+      "text": "Set Rings to 8.",
+      "help": "Rings is right under Segments.",
+      "step": 1,
+      "shortcut": null,
+      "duration": 2.2,
+      "autoAdvance": false,
+      "camera": {
+        "position": [
+          6.5,
+          -10,
+          5.5
+        ],
+        "target": [
+          0,
+          0,
+          0.2
+        ],
+        "fov": 30
+      },
+      "after": {
+        "scene": {
+          "objects": [
+            {
+              "name": "Cube",
+              "collection": null,
+              "location": [
+                0,
+                0,
+                0
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "scale": [
+                1,
+                1,
+                1
+              ],
+              "hidden": false
+            },
+            {
+              "name": "Cylinder",
+              "collection": null,
+              "location": [
+                -2.5,
+                0,
+                0
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "scale": [
+                1,
+                1,
+                1
+              ],
+              "hidden": false
+            },
+            {
+              "name": "Sphere",
+              "collection": null,
+              "location": [
+                0,
+                0,
+                0
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "scale": [
+                1,
+                1,
+                1
+              ],
+              "hidden": false
+            }
+          ],
+          "collections": [],
+          "active": "Sphere",
+          "selected": [
+            "Sphere"
+          ]
+        },
+        "mode": "OBJECT",
+        "selectMode": [
+          "VERT"
+        ],
+        "proportional": false,
+        "redo": {
+          "operator": "mesh.primitive_uv_sphere_add",
+          "values": {
+            "redo.mesh.primitive_uv_sphere_add.segments": 16,
+            "redo.mesh.primitive_uv_sphere_add.ring_count": 8,
+            "redo.mesh.primitive_uv_sphere_add.radius": 1,
+            "redo.mesh.primitive_uv_sphere_add.calc_uvs": true,
+            "redo.mesh.primitive_uv_sphere_add.align": "WORLD",
+            "redo.mesh.primitive_uv_sphere_add.location.x": 0,
+            "redo.mesh.primitive_uv_sphere_add.location.y": 0,
+            "redo.mesh.primitive_uv_sphere_add.location.z": 0,
+            "redo.mesh.primitive_uv_sphere_add.rotation.x": 0,
+            "redo.mesh.primitive_uv_sphere_add.rotation.y": 0,
+            "redo.mesh.primitive_uv_sphere_add.rotation.z": 0
+          }
+        },
+        "tool": null,
+        "selection": null
+      },
+      "mesh": "step-08.glb"
+    },
+    {
+      "id": "redo.mesh.primitive_uv_sphere_add.location.x",
+      "action": "redo_value",
+      "operator": "mesh.primitive_uv_sphere_add",
+      "value": 2.5,
+      "text": "Move it to X 2.5 m.",
+      "help": "Location X in the panel.",
+      "step": 0.1,
+      "shortcut": null,
+      "duration": 2.2,
+      "autoAdvance": false,
+      "camera": {
+        "position": [
+          6.5,
+          -10,
+          5.5
+        ],
+        "target": [
+          0,
+          0,
+          0.2
+        ],
+        "fov": 30
+      },
+      "after": {
+        "scene": {
+          "objects": [
+            {
+              "name": "Cube",
+              "collection": null,
+              "location": [
+                0,
+                0,
+                0
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "scale": [
+                1,
+                1,
+                1
+              ],
+              "hidden": false
+            },
+            {
+              "name": "Cylinder",
+              "collection": null,
+              "location": [
+                -2.5,
+                0,
+                0
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "scale": [
+                1,
+                1,
+                1
+              ],
+              "hidden": false
+            },
+            {
+              "name": "Sphere",
+              "collection": null,
+              "location": [
+                2.5,
+                0,
+                0
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "scale": [
+                1,
+                1,
+                1
+              ],
+              "hidden": false
+            }
+          ],
+          "collections": [],
+          "active": "Sphere",
+          "selected": [
+            "Sphere"
+          ]
+        },
+        "mode": "OBJECT",
+        "selectMode": [
+          "VERT"
+        ],
+        "proportional": false,
+        "redo": {
+          "operator": "mesh.primitive_uv_sphere_add",
+          "values": {
+            "redo.mesh.primitive_uv_sphere_add.segments": 16,
+            "redo.mesh.primitive_uv_sphere_add.ring_count": 8,
+            "redo.mesh.primitive_uv_sphere_add.radius": 1,
+            "redo.mesh.primitive_uv_sphere_add.calc_uvs": true,
+            "redo.mesh.primitive_uv_sphere_add.align": "WORLD",
+            "redo.mesh.primitive_uv_sphere_add.location.x": 2.5,
+            "redo.mesh.primitive_uv_sphere_add.location.y": 0,
+            "redo.mesh.primitive_uv_sphere_add.location.z": 0,
+            "redo.mesh.primitive_uv_sphere_add.rotation.x": 0,
+            "redo.mesh.primitive_uv_sphere_add.rotation.y": 0,
+            "redo.mesh.primitive_uv_sphere_add.rotation.z": 0
+          }
+        },
+        "tool": null,
+        "selection": null
+      },
+      "mesh": "step-09.glb"
+    }
+  ],
+  "variantOf": "add-objects",
+  "outro": "Three shapes, sized and placed by number.",
+  "object": null
+}

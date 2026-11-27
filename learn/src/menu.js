@@ -144,3 +144,112 @@ export class ModeMenu {
     this.layer.classList.remove('open');
   }
 }
+
+/**
+ * The 3D Viewport's header menus (View, Select, Add, Object, Mesh…), read from Blender 5.3 with
+ * their items, separators and shortcuts. A phone shows submenus as a drill-down with a way back.
+ * Only items the lesson uses can be picked; the rest are shown greyed out, as Blender lists them.
+ */
+export class HeaderMenu {
+  constructor(layer, ui) {
+    this.layer = layer;
+    this.ui = ui.view3d;
+    this.interactive = false;
+    this.enabledItems = new Set();
+    this.onPick = () => {};
+    this.trail = [];
+    layer.addEventListener('pointerdown', event => {
+      if (this.interactive && this.isOpen && event.target === layer) this.close();
+    });
+  }
+
+  /** The submenu key an item opens (null for items Blender fills at run time, like Local View). */
+  submenuOf(itemId) {
+    for (const menu of Object.values(this.ui.menus)) {
+      const item = menu.items.find(candidate => candidate.id === itemId);
+      if (item) return item.kind === 'menu' ? item.menu : null;
+    }
+    return null;
+  }
+
+  /** Opens a header button's menu (`menu.object` → the Object menu). */
+  open(anchor, headerId) {
+    this.anchor = anchor;
+    this.trail = [this.ui.menus[headerId.slice('menu.'.length)]];
+    this.show();
+  }
+
+  openSubmenu(itemId) {
+    const key = this.submenuOf(itemId);
+    if (!key) return;
+    this.trail.push(this.ui.menus[key]);
+    this.show();
+  }
+
+  back() {
+    if (this.trail.length > 1) this.trail.pop();
+    this.show();
+  }
+
+  show() {
+    this.isOpen = true;
+    const current = this.trail.at(-1);
+    const menu = document.createElement('div');
+    menu.className = 'menu header-menu';
+    menu.setAttribute('role', 'menu');
+    const title = document.createElement('h4');
+    title.textContent = this.trail.map(entry => entry.label).join(' › ');
+    menu.append(title);
+    if (this.trail.length > 1) {
+      const back = document.createElement('button');
+      back.type = 'button';
+      back.className = 'menu-back';
+      back.textContent = `‹ ${this.trail.at(-2).label}`;
+      back.disabled = !this.interactive;
+      back.addEventListener('click', () => this.back());
+      menu.append(back);
+    }
+    for (const item of current.items) {
+      if (item.separator) {
+        menu.append(Object.assign(document.createElement('div'), { className: 'menu-sep' }));
+        continue;
+      }
+      const button = document.createElement('button');
+      button.type = 'button';
+      button.dataset.control = item.id;
+      button.setAttribute('role', 'menuitem');
+      const label = document.createElement('span');
+      label.textContent = item.label;
+      const side = document.createElement('span');
+      side.className = 'item-shortcut';
+      if (item.kind === 'menu') {
+        side.textContent = '▸';
+        button.disabled = !this.interactive || !item.menu;
+        button.addEventListener('click', () => this.openSubmenu(item.id));
+      } else {
+        side.textContent = item.shortcut ? item.shortcut.keys.join(' ') : '';
+        button.disabled = !(this.interactive && item.kind === 'operator' && item.enabled && this.enabledItems.has(item.id));
+        button.addEventListener('click', () => {
+          this.close();
+          this.onPick(item.id);
+        });
+      }
+      button.append(label, side);
+      menu.append(button);
+    }
+    this.layer.replaceChildren(menu);
+    this.layer.classList.toggle('open', this.interactive);
+    placeMenu(menu, this.anchor);
+  }
+
+  element(id) {
+    return this.layer.querySelector(`[data-control="${id}"]`);
+  }
+
+  close() {
+    this.isOpen = false;
+    this.trail = [];
+    this.layer.replaceChildren();
+    this.layer.classList.remove('open');
+  }
+}

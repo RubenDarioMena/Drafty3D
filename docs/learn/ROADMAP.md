@@ -23,19 +23,19 @@ Eso es lo que llamamos **intermedio**. **Principiante completo** es llegar hasta
 
 | Nivel | Tema | Etapa | Lecciones | Hechas |
 | --- | --- | --- | --- | --- |
-| 1 | Moverse y crear | Principiante | 6 | 0 |
-| 2 | Dar forma (modelado) | Principiante | 8 | 0 |
+| 1 | Moverse y crear | Principiante | 6 | 6 |
+| 2 | Dar forma (modelado) | Principiante | 8 | 8 |
 | 3 | Modificadores | Principiante | 8 | 8 |
 | 4 | Escultura | Principiante | 8 | 8 |
 | 5 | Materiales, luz y render | Principiante | 8 | 0 |
-| | **Principiante completo** | | **38** | **16** |
+| | **Principiante completo** | | **38** | **30** |
 | 6 | Texturas | Intermedio | 6 | 0 |
 | 7 | Animación | Intermedio | 5 | 0 |
 | 8 | Curvas, texto y nodos | Intermedio | 5 | 0 |
 | 9 | Articular objetos (rigging básico) | Intermedio | 4 | 0 |
-| | **Intermedio (horizonte)** | | **58** | **16 (≈ 28 %)** |
+| | **Intermedio (horizonte)** | | **58** | **30 (≈ 52 %)** |
 
-Los niveles 3 y 4 ya están completos: eran los que la app podía enseñar con lo que ya sabía hacer, más la máscara, Remesh y Multiresolution. El orden de **aprendizaje** empieza en el nivel 1; el orden en que conviene **construir** está en "Qué sigue" al final.
+Los niveles 1 a 4 ya están completos. Para los niveles 1 y 2 la app aprendió a mostrar escenas con varios objetos, el header del 3D Viewport con sus menús, el panel **Adjust Last Operation**, el **Outliner** y Edit Mode (puntos, aristas y caras sobre la malla, Knife y Loop Cut). El orden de **aprendizaje** empieza en el nivel 1; el orden en que conviene **construir** está en "Qué sigue" al final.
 
 ---
 
@@ -47,12 +47,12 @@ Los niveles 3 y 4 ya están completos: eran los que la app podía enseñar con l
 
 | | Lección | Qué aprendes |
 | --- | --- | --- |
-| 🟡 | 1.1 Mirar la escena | Girar, acercar y mover la vista; ver de frente, de arriba y de lado. La app ya deja girar la vista con el dedo, pero no hay lección. |
-| ⬜ | 1.2 Crear objetos | **Add → Mesh**: crear un cubo, una esfera o un cilindro y ajustar su tamaño y número de lados justo después de crearlo. |
-| ⬜ | 1.3 Mover, girar y escalar | **Move / Rotate / Scale** (G, R, S), en un solo eje y con números exactos. Es lo que más se usa en Blender. |
-| ⬜ | 1.4 Duplicar y ordenar | **Duplicate**, la lista de objetos (**Outliner**) y agrupar en **Collections**. |
-| 🟡 | 1.5 Los modos de Blender | **Object Mode** (mover objetos completos), **Edit Mode** (cambiar su forma) y **Sculpt Mode** (esculpir). El cambio a Sculpt Mode ya se enseña dentro de las lecciones de escultura. |
-| ⬜ | **Proyecto 1: una mesa con sillas hecha de bloques** | Todo junto: crear cajas y cilindros, medirlos, duplicarlos y acomodarlos. |
+| ✅ | 1.1 Mirar la escena | Girar, acercar y mover la vista; ver de frente, de arriba y de lado (**View ▸ Viewpoint**) y **Frame All**. *Look around* → *Your turn: tower tour*. En Your turn giras, haces zoom y mueves la vista tú mismo. |
+| ✅ | 1.2 Crear objetos | **Add → Mesh**: crear un cubo, una esfera o un cilindro y ajustar su tamaño, número de lados y posición en **Adjust Last Operation**. *Add objects* → *Your turn: add shapes*. |
+| ✅ | 1.3 Mover, girar y escalar | **Move / Rotate / Scale** (G, R, S) desde **Object ▸ Transform**, en un solo eje y con números exactos. *Move, rotate and scale* → *Your turn: arrange blocks*. |
+| ✅ | 1.4 Duplicar y ordenar | **Duplicate**, el **Outliner** (seleccionar, renombrar y ocultar con el ojo) y una **Collection** que se oculta completa. *Duplicate and organize* → *Your turn: pillars*. Crear collections nuevas (**Move to Collection**) queda para después. |
+| ✅ | 1.5 Los modos de Blender | **Object Mode** (mover objetos completos), **Edit Mode** (cambiar su forma) y **Sculpt Mode** (esculpir). *Object, Edit and Sculpt Mode* → *Your turn: modes*. |
+| ✅ | **Proyecto 1: una mesa y un banco hechos de bloques** | Todo junto: crear cajas y cilindros, medirlos, duplicarlos y acomodarlos. *Project: table and stool* → *Your turn: desk and stool*. |
 
 ### Nivel 2 · Dar forma (modelado)
 
@@ -60,14 +60,14 @@ Los niveles 3 y 4 ya están completos: eran los que la app podía enseñar con l
 
 | | Lección | Qué aprendes |
 | --- | --- | --- |
-| ⬜ | 2.1 Puntos, líneas y caras | Seleccionar vértices, aristas y caras, y anillos completos de ellas. |
-| ⬜ | 2.2 Sacar volumen | **Extrude**: jalar una cara hacia afuera para que salga una pieza nueva (patas, brazos, asas). |
-| ⬜ | 2.3 Huecos y marcos | **Inset** + **Extrude** hacia adentro: hacer una caja, una ventana o un cajón. |
-| ⬜ | 2.4 Más detalle donde hace falta | **Loop Cut**: agregar cortes para poder doblar o dar forma a una zona. |
-| ⬜ | 2.5 Bordes redondeados | **Bevel** de aristas, el mismo efecto que el modificador pero solo donde lo eliges. |
-| ⬜ | 2.6 Cortar y unir | **Knife** para cortar a mano, **Merge** para juntar puntos y **Fill** para tapar huecos. |
-| ⬜ | 2.7 Mover suave | **Proportional Editing**: mover un punto y que los vecinos lo sigan, como tela. |
-| ⬜ | **Proyecto 2: una taza con asa** | Cilindro → hueco con Inset y Extrude → asa con Extrude → bordes con Bevel. |
+| ✅ | 2.1 Puntos, líneas y caras | Seleccionar vértices, aristas y caras (con Shift para sumar), y anillos completos (**Select ▸ Select Loops ▸ Edge Loops**). *Points, lines and faces* → *Your turn: select parts*. |
+| ✅ | 2.2 Sacar volumen | **Extrude**: jalar una cara hacia afuera para que salga una pieza nueva (brazos, una grúa). *Extrude* → *Your turn: extrude a crane*. |
+| ✅ | 2.3 Huecos y marcos | **Inset** + **Extrude** hacia adentro: una maceta o un nicho. *Inset and extrude inward* → *Your turn: a niche*. |
+| ✅ | 2.4 Más detalle donde hace falta | **Loop Cut**: tocar una arista para cortar el anillo que la cruza, subir **Number of Cuts** y escalar el corte. *Loop cut* → *Your turn: a vase*. |
+| ✅ | 2.5 Bordes redondeados | **Bevel** de aristas, el mismo efecto que el modificador pero solo donde lo eliges. *Bevel edges* → *Your turn: round a corner*. |
+| ✅ | 2.6 Cortar y unir | **Knife** para cortar a mano (puntos numerados y ⏎ Enter), **Merge** para juntar puntos y **Fill** (New Edge/Face, F) para tapar huecos. *Cut and join* → *Your turn: cut and patch*. |
+| ✅ | 2.7 Mover suave | **Proportional Editing**: mover un punto y que los vecinos lo sigan, como tela, con su **Proportional Size**. *Proportional editing* → *Your turn: a dent*. |
+| ✅ | **Proyecto 2: una taza con asa** | Cilindro → hueco con Inset y Extrude → Loop Cut → asa con Extrude y **Bridge Edge Loops** → bordes con Bevel. *Project: a mug* → *Your turn: a jug*. |
 
 ### Nivel 3 · Modificadores
 
@@ -182,9 +182,9 @@ Algunos niveles se pueden hacer solo grabando lecciones nuevas; otros piden cons
 | --- | --- | --- |
 | 3 Modificadores | Casi nada: Mirror y Array piden botones X Y Z y subpaneles abiertos; Boolean y Curve piden escenas con dos objetos. | Chico |
 | 4 Escultura | ✅ Hecho: la máscara se ve sobre la malla, Remesh y Multiresolution cambian de una malla a otra, y una lección de escultura puede usar también el panel de modificadores. | — |
-| 1 Moverse y crear | Seleccionar objetos tocándolos, flechas para moverlos (gizmo), panel de medidas, Outliner y varios objetos en escena. | Mediano |
+| 1 Moverse y crear | ✅ Hecho: varios objetos en escena con contorno de selección, el header del 3D Viewport con sus menús, Adjust Last Operation, Outliner y navegación con el dedo. Las flechas para arrastrar (gizmo) no se hicieron: Move, Rotate y Scale se enseñan con el menú y números exactos. | — |
 | 5 Materiales, luz y render | Colores y luces en la vista; la verificación contra Blender hoy compara formas, no colores. Mostrar el render de Blender como imagen. | Mediano |
-| 2 Modelado | Tocar puntos, líneas y caras sobre la malla y reproducir operaciones que agregan geometría. Es la pieza más grande y la más importante. | Grande |
+| 2 Modelado | ✅ Hecho: Edit Mode con puntos, aristas y caras sobre la malla, tocarlos para seleccionar, Knife con puntos numerados, Loop Cut con el anillo resaltado y Proportional Editing. Cada operación muestra la malla que calculó Blender. | — |
 | 6 a 9 Intermedio | Editor de UV, editor de nodos, línea de tiempo y huesos. | Grande |
 
 Pendiente aparte: el modificador **Wireframe** se probó y se quitó, porque con alambres tan delgados la verificación contra Blender no distingue un error real del suavizado de bordes. Hace falta otra forma de verificar piezas delgadas.
@@ -195,7 +195,7 @@ Propuesta de orden de construcción (no es el orden de aprendizaje):
 
 1. ✅ **Terminar el nivel 3** (Mirror, Array, Boolean, Curve, Apply y su proyecto). Lattice quedó para después del nivel 2.
 2. ✅ **Terminar el nivel 4** (Mask, Pose, Remesh, Multiresolution y su proyecto).
-3. **Nivel 1** completo: es la puerta de entrada de la ruta, y su selección y gizmo se reutilizan en el nivel 2.
-4. **Nivel 2** (modelado): la pieza grande.
+3. ✅ **Nivel 1** completo: la puerta de entrada de la ruta.
+4. ✅ **Nivel 2** (modelado). Ya se puede retomar **Lattice** (nivel 3), que necesitaba editar puntos.
 5. **Nivel 5**: con esto queda la **etapa principiante completa**.
 6. Etapa intermedia, del nivel 6 al 9.

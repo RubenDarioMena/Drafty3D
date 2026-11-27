@@ -1,11 +1,14 @@
 import { Cursor } from './cursor.js';
 import { DualEditor } from './dual-editor.js';
 import { LessonBar } from './lesson-bar.js';
-import { AddModifierMenu, ModeMenu } from './menu.js';
+import { AddModifierMenu, HeaderMenu, ModeMenu } from './menu.js';
 import { PropertiesEditor } from './panel.js';
 import { lessonProgress } from './progress.js';
+import { SceneEditor } from './scene-editor.js';
+import { Keys } from './scene-view.js';
 import { SculptEditor } from './sculpt-editor.js';
-import { Viewer, createLoader, loadGeometries } from './viewer.js';
+import { isSceneLesson } from './state.js';
+import { Viewer, createLoader, loadGeometries, loadSceneGeometries } from './viewer.js';
 import { WatchMode } from './watch.js';
 import { YourTurnMode } from './yourturn.js';
 
@@ -24,10 +27,16 @@ const editors = {
   modifiers: new PropertiesEditor(document.getElementById('tabs'), document.getElementById('panel'), ui),
   sculpt: new SculptEditor(document.getElementById('sculpt-tools'), ui),
 };
+// Levels 1 and 2 share one editor: the 3D Viewport header, Adjust Last Operation and the Outliner.
+editors.basics = editors.modeling = new SceneEditor(document.getElementById('scene-tools'), ui);
 const dualEditor = new DualEditor(editors.modifiers, editors.sculpt, lessonView);
-const MODULE_TITLES = { modifiers: 'Modifiers', sculpt: 'Sculpting' };
+const MODULE_TITLES = {
+  basics: 'Getting around & adding things', modeling: 'Modeling in Edit Mode', modifiers: 'Modifiers', sculpt: 'Sculpting',
+};
 const menu = new AddModifierMenu(document.getElementById('menu-layer'), ui);
 const modeMenu = new ModeMenu(document.getElementById('menu-layer'), ui);
+const headerMenu = new HeaderMenu(document.getElementById('menu-layer'), ui);
+const keys = new Keys();
 const cursor = new Cursor(document.getElementById('cursor'));
 const bar = new LessonBar();
 const loader = createLoader();
@@ -114,11 +123,11 @@ async function openLesson(key) {
   const timeline = await fetchJson(lesson.timeline);
   const folder = new URL(lesson.timeline.replace(/[^/]+$/, ''), examples);
   const names = [timeline.initial.mesh, ...timeline.steps.map(step => step.mesh).filter(Boolean)];
-  const geometries = await loadGeometries(loader, folder, names);
+  const geometries = await (isSceneLesson(timeline) ? loadSceneGeometries : loadGeometries)(loader, folder, names);
   home.hidden = true;
   lessonView.hidden = false;
   title.textContent = lesson.title;
-  document.getElementById('object-name').textContent = timeline.object;
+  document.getElementById('object-name').textContent = timeline.object ?? timeline.initial.scene?.active ?? '';
   document.getElementById('viewport-mode').textContent = 'Object Mode';
   // Sculpt lessons swap the Properties editor for the 3D Viewport's tool header and brush shelf.
   lessonView.dataset.module = timeline.module;
@@ -130,7 +139,8 @@ async function openLesson(key) {
   // The objects an Object field may point at: the lesson's helpers, as Blender would list them.
   editor.objects = (timeline.helpers ?? []).map(helper => helper.name);
   editor.openList = null;
-  const context = { timeline, ui, viewer, editor, menu, modeMenu, cursor, bar, geometries, key, toast };
+  editor.renaming = null;
+  const context = { timeline, ui, viewer, editor, menu, modeMenu, headerMenu, keys, cursor, bar, geometries, key, toast };
   mode = timeline.mode === 'watch' ? new WatchMode(context) : new YourTurnMode(context);
   mode.start();
 }

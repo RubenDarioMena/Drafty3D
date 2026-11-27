@@ -1,4 +1,7 @@
+import { readFile } from 'node:fs/promises';
 import { test as base, expect, devices } from '@playwright/test';
+import * as THREE from 'three';
+import { applyCamera, toThree } from '../../learn/src/camera.js';
 
 const test = base.extend({
   // Offline-first: the app may only ever fetch its own /learn/ files.
@@ -20,7 +23,7 @@ test.use({ ...devices['Pixel 7'] });
 
 test('Watch plays the cup step by step: cursor, highlighted control, shortcut, and progress saved on the device', async ({ page }) => {
   await page.goto('/learn/');
-  await page.getByRole('button', { name: 'Watch' }).first().click();
+  await page.locator('.module[data-module="modifiers"]').getByRole('button', { name: 'Watch' }).first().click();
   await expect(page.locator('#step-text')).toContainText('open cylinder becomes a cup');
   await expect(page.locator('#orbit-hint')).toBeVisible();
 
@@ -45,7 +48,7 @@ test('Watch plays the cup step by step: cursor, highlighted control, shortcut, a
   await expect(page.locator('[data-control="panel.properties.object"]')).toHaveAttribute('aria-pressed', 'true');
 
   await page.goto('/learn/#/');
-  await expect(page.locator('.lesson-card').first()).toContainText('Watched ✓');
+  await expect(page.locator('.module[data-module="modifiers"] .lesson-card').first()).toContainText('Watched ✓');
 });
 
 test('Your turn works like a combination lock, with "Show me" always available, and remembers progress', async ({ page }) => {
@@ -105,7 +108,7 @@ test('Your turn works like a combination lock, with "Show me" always available, 
   await expect(page.locator('#help')).toBeHidden();
 
   await page.goto('/learn/#/');
-  await expect(page.locator('.lesson-card').nth(1)).toContainText('Done ✓ · 1 with help');
+  await expect(page.locator('.module[data-module="modifiers"] .lesson-card').nth(1)).toContainText('Done ✓ · 1 with help');
 });
 
 test('Your turn with Blender\'s option buttons: Simple Deform\'s Axis row and an angle stepped in degrees', async ({ page }) => {
@@ -258,7 +261,7 @@ test('fine stepping stops on every action, including the open Add Modifier menu,
 });
 
 test('the layout fits a phone screen without horizontal scrolling', async ({ page }) => {
-  for (const lesson of ['modifiers/cup', 'sculpt/sleepy-buddy']) {
+  for (const lesson of ['modifiers/cup', 'sculpt/sleepy-buddy', 'basics/project-table', 'modeling/cut-and-join']) {
     await page.goto(`/learn/#/lesson/${lesson}`);
     await expect(page.locator('#step-count')).toBeVisible();
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
@@ -267,7 +270,15 @@ test('the layout fits a phone screen without horizontal scrolling', async ({ pag
 
 test('home groups the lessons by module', async ({ page }) => {
   await page.goto('/learn/');
-  await expect(page.locator('.module h2')).toHaveText(['Modifiers', 'Sculpting']);
+  await expect(page.locator('.module h2')).toHaveText(['Getting around & adding things', 'Modeling in Edit Mode', 'Modifiers', 'Sculpting']);
+  await expect(page.locator('.module[data-module="basics"] .lesson-card h3')).toHaveText(
+    ['Look around', 'Your turn: tower tour', 'Add objects', 'Your turn: add shapes', 'Move, rotate and scale', 'Your turn: arrange blocks',
+      'Duplicate and organize', 'Your turn: pillars', 'Object, Edit and Sculpt Mode', 'Your turn: modes', 'Project: table and stool',
+      'Your turn: desk and stool']);
+  await expect(page.locator('.module[data-module="modeling"] .lesson-card h3')).toHaveText(
+    ['Points, lines and faces', 'Your turn: select parts', 'Extrude', 'Your turn: extrude a crane', 'Inset and extrude inward',
+      'Your turn: a niche', 'Loop cut', 'Your turn: a vase', 'Bevel edges', 'Your turn: round a corner', 'Cut and join',
+      'Your turn: cut and patch', 'Proportional editing', 'Your turn: a dent', 'Project: a mug', 'Your turn: a jug']);
   await expect(page.locator('.module[data-module="modifiers"] .lesson-card h3')).toHaveText(
     ['Low-poly cup', 'Your turn: bowl', 'Twisted column', 'Your turn: twisted candle',
       'Table from one corner', 'Your turn: bench', 'Staircase from one step', 'Your turn: floating steps',
@@ -446,4 +457,181 @@ test('Sculpting Your turn: pick mode, brush and settings, then trace each stroke
 
   await page.goto('/learn/#/');
   await expect(page.locator('.module[data-module="sculpt"] .lesson-card').nth(1)).toContainText('Done ✓ · 7 with help');
+});
+
+// ---------------------------------------------------------------- Levels 1 and 2: whole scenes
+
+const timelineOf = async lesson => JSON.parse(await readFile(new URL(`../../learn/public/examples/${lesson}/timeline.json`, import.meta.url), 'utf8'));
+
+/** Where a point Blender recorded shows on screen, through the app's own camera code. */
+async function screenPoint(page, camera, point) {
+  const box = await page.locator('#viewport-canvas').boundingBox();
+  const aspect = box.width / box.height;
+  const view = camera.ortho ? new THREE.OrthographicCamera(-1, 1, 1, -1, -100, 100) : new THREE.PerspectiveCamera(30, aspect, 0.01, 100);
+  applyCamera(view, camera, aspect);
+  view.updateMatrixWorld();
+  const projected = new THREE.Vector3(...toThree(point)).project(view);
+  return { x: box.x + (projected.x + 1) / 2 * box.width, y: box.y + (1 - projected.y) / 2 * box.height };
+}
+
+async function tapAt(page, camera, point) {
+  // Let the camera settle on Blender's view of the previous step first.
+  await page.waitForTimeout(900);
+  const { x, y } = await screenPoint(page, camera, point);
+  await page.mouse.click(x, y);
+}
+
+async function pickMenu(page, path) {
+  for (const id of path) await page.locator(`[data-control="${id}"]`).click();
+}
+
+async function typeValue(page, id, value) {
+  await page.locator(`[data-control="${id}"] .value`).click();
+  await page.locator(`[data-control="${id}"] input`).fill(String(value));
+  await page.keyboard.press('Enter');
+}
+
+test('Level 1 Your turn: click an object, Duplicate from the Object menu, set Move X in Adjust Last Operation, then rename and hide in the Outliner', async ({ page }) => {
+  const timeline = await timelineOf('basics/pillars');
+  const steps = timeline.steps;
+  await page.goto('/learn/#/lesson/basics/pillars');
+  await expect(page.locator('#step-count')).toHaveText('Step 1 of 10');
+  await expect(page.locator('#viewport-mode')).toHaveText('Object Mode');
+
+  // A click on empty floor selects nothing and counts no error.
+  const canvas = await page.locator('#viewport-canvas').boundingBox();
+  await page.waitForTimeout(900);
+  await page.mouse.click(canvas.x + 40, canvas.y + 60);
+  await expect(page.locator('#toast')).toHaveText('Not this one yet');
+  await tapAt(page, steps[0].camera, steps[0].value);
+  await expect(page.locator('#clue')).toHaveText('✓ Pillar selected.');
+  await expect(page.locator('[data-control="outliner.row.Pillar"]').locator('..')).toHaveClass(/active/);
+
+  // Menu items the lesson uses later open no lock yet; the others stay greyed out.
+  await page.locator('[data-control="menu.select_object"]').click();
+  await page.locator('[data-control="menu.select_object.all"]').click();
+  await expect(page.locator('#toast')).toHaveText('Not this one yet');
+  await page.locator('[data-control="menu.object"]').click();
+  await expect(page.locator('.menu.header-menu button[disabled]').first()).toBeVisible();
+  await page.locator('[data-control="menu.object.duplicate_objects"]').click();
+  await expect(page.locator('#clue')).toHaveText('✓ Object ▸ Duplicate Objects.');
+  await expect(page.locator('[data-control="hud"]')).toContainText('Duplicate Objects');
+
+  await typeValue(page, steps[2].id, 0.5);
+  await expect(page.locator('#step-count')).toHaveText('Step 3 of 10');
+  await typeValue(page, steps[2].id, steps[2].value);
+  await expect(page.locator('#clue')).toHaveText('✓ Move X: 0.9 m.');
+  await pickMenu(page, steps[3].path);
+  await typeValue(page, steps[4].id, steps[4].value);
+  await expect(page.locator('.outliner-row.object')).toHaveCount(3);
+
+  await page.locator('[data-control="outliner.row.Pillar.001"]').click();
+  await expect(page.locator('#clue')).toHaveText('✓ Pillar.001 selected.');
+  await page.locator('[data-control="outliner.row.Pillar.001"]').click();
+  await page.locator('input.outliner-rename').fill('Middle');
+  await page.keyboard.press('Enter');
+  await expect(page.locator('#toast')).toHaveText('Type the name exactly: Middle Pillar');
+  await page.locator('[data-control="outliner.row.Pillar.001"]').click();
+  await page.locator('input.outliner-rename').fill('Middle Pillar');
+  await page.keyboard.press('Enter');
+  await expect(page.locator('#clue')).toHaveText('✓ Renamed to Middle Pillar.');
+  await expect(page.locator('[data-control="outliner.row.Middle Pillar"]')).toBeVisible();
+
+  await page.locator('[data-control="outliner.hide.Colonnade"]').click();
+  await expect(page.locator('#clue')).toHaveText('✓ Colonnade hidden.');
+  await page.locator('[data-control="outliner.hide.Colonnade"]').click();
+  await pickMenu(page, steps[9].path);
+  await expect(page.locator('#step-count')).toHaveText('Finished');
+});
+
+test('Level 1 Your turn: orbit, zoom and pan with the mouse, then Blender\'s View ▸ Viewpoint menu', async ({ page }) => {
+  await page.goto('/learn/#/lesson/basics/tower-tour');
+  await expect(page.locator('#step-count')).toHaveText('Step 1 of 8');
+  const canvas = await page.locator('#viewport-canvas').boundingBox();
+  const middle = { x: canvas.x + canvas.width / 2, y: canvas.y + canvas.height / 2 };
+  await page.mouse.move(middle.x, middle.y);
+  await page.mouse.down();
+  await page.mouse.move(middle.x + canvas.width * 0.35, middle.y, { steps: 10 });
+  await page.mouse.up();
+  await expect(page.locator('#clue')).toHaveText('✓ You turned the view.');
+  await page.waitForTimeout(800);
+  // A phone's wheel ticks are small (Pixel 7 scales them by its pixel ratio): scroll on until the view is clearly closer.
+  for (let i = 0; i < 16; i += 1) await page.mouse.wheel(0, -120);
+  await expect(page.locator('#clue')).toHaveText('✓ You zoomed the view.');
+  await page.waitForTimeout(800);
+  await page.mouse.move(middle.x, middle.y);
+  await page.mouse.down({ button: 'right' });
+  await page.mouse.move(middle.x + canvas.width * 0.4, middle.y + 20, { steps: 10 });
+  await page.mouse.up({ button: 'right' });
+  await expect(page.locator('#clue')).toHaveText('✓ You slid the view.');
+  await page.locator('[data-control="menu.view"]').click();
+  await page.locator('[data-control="menu.view.viewpoint"]').click();
+  await expect(page.locator('.menu.header-menu h4')).toHaveText('View › Viewpoint');
+  await page.locator('[data-control="menu.view_viewpoint.front"]').click();
+  await expect(page.locator('#clue')).toHaveText('✓ View ▸ Viewpoint ▸ Front.');
+});
+
+test('Level 2 Your turn: Edit Mode, Face select, a face click, Merge, then the Knife: tap its points and press Enter', async ({ page }) => {
+  const steps = (await timelineOf('modeling/cut-and-patch')).steps;
+  await page.goto('/learn/#/lesson/modeling/cut-and-patch');
+  await page.locator('[data-control="object.mode"]').click();
+  await page.locator('[data-control="object.mode.edit"]').click();
+  await expect(page.locator('#clue')).toHaveText('✓ Edit Mode.');
+  await page.locator('[data-control="mesh.select_mode.face"]').click();
+  await expect(page.locator('#clue')).toHaveText('✓ Face select.');
+  await tapAt(page, steps[2].camera, steps[2].value);
+  await expect(page.locator('#clue')).toHaveText('✓ Selected.');
+  await pickMenu(page, steps[3].path);
+  await expect(page.locator('#clue')).toHaveText('✓ Mesh ▸ Merge ▸ At Center.');
+  await pickMenu(page, steps[4].path);
+  await expect(page.locator('#key-enter')).toBeVisible();
+  await expect(page.locator('.knife-mark')).toHaveCount(2);
+  await page.locator('#key-enter').click();
+  await expect(page.locator('#toast')).toHaveText('Tap all 2 dots first');
+  for (const point of steps[5].knife.points) await tapAt(page, steps[5].camera, point);
+  await expect(page.locator('.knife-mark.done')).toHaveCount(2);
+  await page.locator('#key-enter').click();
+  await expect(page.locator('#clue')).toHaveText('✓ Cut. This is the cut Blender made.');
+  await expect(page.locator('#key-enter')).toBeHidden();
+  await tapAt(page, steps[6].camera, steps[6].value);
+  await expect(page.locator('#step-count')).toHaveText('Step 8 of 11');
+});
+
+test('Level 2 Your turn: Loop Cut and Slide clicks any edge of the ring, then Number of Cuts and Scale in Adjust Last Operation', async ({ page }) => {
+  const steps = (await timelineOf('modeling/loop-cut-vase')).steps;
+  await page.goto('/learn/#/lesson/modeling/loop-cut-vase');
+  await page.locator('#help').click();
+  await expect(page.locator('#step-count')).toHaveText('Step 2 of 8', { timeout: 15000 });
+  await page.locator('[data-control="mesh.select_mode.edge"]').click();
+  await pickMenu(page, steps[2].path);
+  // A click away from the vase cuts nothing.
+  const canvas = await page.locator('#viewport-canvas').boundingBox();
+  await page.waitForTimeout(900);
+  await page.mouse.click(canvas.x + 24, canvas.y + 48);
+  await expect(page.locator('#toast')).toContainText('Not this edge');
+  await tapAt(page, steps[3].camera, steps[3].value);
+  await expect(page.locator('#clue')).toHaveText('✓ Loop cut. This is the loop Blender added.');
+  await page.locator(`[data-control="${steps[4].id}"] button[aria-label^="Increase"]`).click();
+  await page.locator(`[data-control="${steps[4].id}"] button[aria-label^="Increase"]`).click();
+  await expect(page.locator('#clue')).toHaveText(`✓ Number of Cuts: ${steps[4].value}.`);
+  await pickMenu(page, steps[5].path);
+  await typeValue(page, steps[6].id, steps[6].value);
+  await typeValue(page, steps[7].id, steps[7].value);
+  await expect(page.locator('#step-count')).toHaveText('Finished · 1 with help');
+});
+
+test('Level 2 Watch: the Knife\'s numbered points, the cut, and Enter, as Blender recorded them', async ({ page }) => {
+  await page.goto('/learn/#/lesson/modeling/cut-and-join');
+  await page.locator('#scrubber').fill('4');
+  await expect(page.locator('#step-count')).toHaveText('Step 5 of 11');
+  await page.locator('#fine-next').click();
+  await expect(page.locator('.knife-mark.next')).toHaveCount(1);
+  await page.locator('#fine-next').click();
+  await expect(page.locator('.knife-mark.done')).toHaveCount(1);
+  await page.locator('#fine-next').click();
+  await expect(page.locator('#key-enter')).toBeVisible();
+  await page.locator('#next').click();
+  await expect(page.locator('#step-count')).toHaveText('Step 6 of 11', { timeout: 15000 });
+  await expect(page.locator('.knife-mark')).toHaveCount(0);
+  await expect(page.locator('#key-enter')).toBeHidden();
 });

@@ -1,0 +1,1393 @@
+{
+  "blenderVersion": "5.3.0",
+  "module": "basics",
+  "example": "look-around",
+  "mode": "watch",
+  "title": "Look around",
+  "initial": {
+    "camera": {
+      "position": [
+        9.5,
+        -12,
+        7
+      ],
+      "target": [
+        0,
+        0,
+        0.8
+      ],
+      "fov": 30
+    },
+    "scene": {
+      "objects": [
+        {
+          "name": "Ground",
+          "collection": null,
+          "location": [
+            0,
+            0,
+            0
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "scale": [
+            1,
+            1,
+            1
+          ],
+          "hidden": false
+        },
+        {
+          "name": "House",
+          "collection": null,
+          "location": [
+            0,
+            0,
+            1
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "scale": [
+            1,
+            1,
+            1
+          ],
+          "hidden": false
+        },
+        {
+          "name": "Roof",
+          "collection": null,
+          "location": [
+            0,
+            0,
+            2.6
+          ],
+          "rotation": [
+            0,
+            0,
+            45
+          ],
+          "scale": [
+            1,
+            1,
+            1
+          ],
+          "hidden": false
+        },
+        {
+          "name": "Tree",
+          "collection": null,
+          "location": [
+            3,
+            2,
+            1.4
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "scale": [
+            1,
+            1,
+            1
+          ],
+          "hidden": false
+        },
+        {
+          "name": "Trunk",
+          "collection": null,
+          "location": [
+            3,
+            2,
+            0.3
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "scale": [
+            1,
+            1,
+            1
+          ],
+          "hidden": false
+        }
+      ],
+      "collections": [],
+      "active": null,
+      "selected": []
+    },
+    "mode": "OBJECT",
+    "selectMode": [
+      "VERT"
+    ],
+    "proportional": false,
+    "redo": null,
+    "tool": null,
+    "selection": null,
+    "edit": null,
+    "mesh": "step-00.glb",
+    "text": "Before building anything, learn to move your view. The scene never changes here: only your point of view does."
+  },
+  "steps": [
+    {
+      "id": "view3d.rotate",
+      "action": "orbit",
+      "value": [
+        0.18,
+        0
+      ],
+      "shortcut": {
+        "keys": [
+          "Middle Mouse"
+        ],
+        "context": "3D Viewport"
+      },
+      "text": "Orbit: drag with the middle mouse button to circle around the scene.",
+      "help": null,
+      "duration": 2.2,
+      "autoAdvance": false,
+      "camera": {
+        "position": [
+          -7.0189,
+          -13.6009,
+          7
+        ],
+        "target": [
+          0,
+          0,
+          0.8
+        ],
+        "up": [
+          0.1722,
+          0.3336,
+          0.9268
+        ],
+        "fov": 30.001
+      },
+      "after": {
+        "scene": {
+          "objects": [
+            {
+              "name": "Ground",
+              "collection": null,
+              "location": [
+                0,
+                0,
+                0
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "scale": [
+                1,
+                1,
+                1
+              ],
+              "hidden": false
+            },
+            {
+              "name": "House",
+              "collection": null,
+              "location": [
+                0,
+                0,
+                1
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "scale": [
+                1,
+                1,
+                1
+              ],
+              "hidden": false
+            },
+            {
+              "name": "Roof",
+              "collection": null,
+              "location": [
+                0,
+                0,
+                2.6
+              ],
+              "rotation": [
+                0,
+                0,
+                45
+              ],
+              "scale": [
+                1,
+                1,
+                1
+              ],
+              "hidden": false
+            },
+            {
+              "name": "Tree",
+              "collection": null,
+              "location": [
+                3,
+                2,
+                1.4
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "scale": [
+                1,
+                1,
+                1
+              ],
+              "hidden": false
+            },
+            {
+              "name": "Trunk",
+              "collection": null,
+              "location": [
+                3,
+                2,
+                0.3
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "scale": [
+                1,
+                1,
+                1
+              ],
+              "hidden": false
+            }
+          ],
+          "collections": [],
+          "active": null,
+          "selected": []
+        },
+        "mode": "OBJECT",
+        "selectMode": [
+          "VERT"
+        ],
+        "proportional": false,
+        "redo": null,
+        "tool": null,
+        "selection": null
+      },
+      "mesh": null,
+      "verify": "view-01.png"
+    },
+    {
+      "id": "view3d.zoom",
+      "action": "zoom",
+      "value": 3,
+      "shortcut": {
+        "keys": [
+          "Wheel In"
+        ],
+        "context": "3D Viewport"
+      },
+      "text": "Zoom in with the mouse wheel. Each click brings the view closer.",
+      "help": null,
+      "duration": 2.2,
+      "autoAdvance": false,
+      "camera": {
+        "position": [
+          -4.0619,
+          -7.8709,
+          4.388
+        ],
+        "target": [
+          0,
+          0,
+          0.8
+        ],
+        "up": [
+          0.1722,
+          0.3336,
+          0.9268
+        ],
+        "fov": 29.997
+      },
+      "after": {
+        "scene": {
+          "objects": [
+            {
+              "name": "Ground",
+              "collection": null,
+              "location": [
+                0,
+                0,
+                0
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "scale": [
+                1,
+                1,
+                1
+              ],
+              "hidden": false
+            },
+            {
+              "name": "House",
+              "collection": null,
+              "location": [
+                0,
+                0,
+                1
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "scale": [
+                1,
+                1,
+                1
+              ],
+              "hidden": false
+            },
+            {
+              "name": "Roof",
+              "collection": null,
+              "location": [
+                0,
+                0,
+                2.6
+              ],
+              "rotation": [
+                0,
+                0,
+                45
+              ],
+              "scale": [
+                1,
+                1,
+                1
+              ],
+              "hidden": false
+            },
+            {
+              "name": "Tree",
+              "collection": null,
+              "location": [
+                3,
+                2,
+                1.4
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "scale": [
+                1,
+                1,
+                1
+              ],
+              "hidden": false
+            },
+            {
+              "name": "Trunk",
+              "collection": null,
+              "location": [
+                3,
+                2,
+                0.3
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "scale": [
+                1,
+                1,
+                1
+              ],
+              "hidden": false
+            }
+          ],
+          "collections": [],
+          "active": null,
+          "selected": []
+        },
+        "mode": "OBJECT",
+        "selectMode": [
+          "VERT"
+        ],
+        "proportional": false,
+        "redo": null,
+        "tool": null,
+        "selection": null
+      },
+      "mesh": null,
+      "verify": "view-02.png"
+    },
+    {
+      "id": "view3d.move",
+      "action": "pan",
+      "value": [
+        -0.12,
+        -0.06
+      ],
+      "shortcut": {
+        "keys": [
+          "Shift",
+          "Middle Mouse"
+        ],
+        "context": "3D Viewport"
+      },
+      "text": "Pan: hold Shift and drag with the middle mouse button to slide the view.",
+      "help": null,
+      "duration": 2.2,
+      "autoAdvance": false,
+      "camera": {
+        "position": [
+          -3.5642,
+          -8.0209,
+          4.6223
+        ],
+        "target": [
+          0.4977,
+          -0.15,
+          1.0343
+        ],
+        "up": [
+          0.1722,
+          0.3336,
+          0.9268
+        ],
+        "fov": 29.993
+      },
+      "after": {
+        "scene": {
+          "objects": [
+            {
+              "name": "Ground",
+              "collection": null,
+              "location": [
+                0,
+                0,
+                0
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "scale": [
+                1,
+                1,
+                1
+              ],
+              "hidden": false
+            },
+            {
+              "name": "House",
+              "collection": null,
+              "location": [
+                0,
+                0,
+                1
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "scale": [
+                1,
+                1,
+                1
+              ],
+              "hidden": false
+            },
+            {
+              "name": "Roof",
+              "collection": null,
+              "location": [
+                0,
+                0,
+                2.6
+              ],
+              "rotation": [
+                0,
+                0,
+                45
+              ],
+              "scale": [
+                1,
+                1,
+                1
+              ],
+              "hidden": false
+            },
+            {
+              "name": "Tree",
+              "collection": null,
+              "location": [
+                3,
+                2,
+                1.4
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "scale": [
+                1,
+                1,
+                1
+              ],
+              "hidden": false
+            },
+            {
+              "name": "Trunk",
+              "collection": null,
+              "location": [
+                3,
+                2,
+                0.3
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "scale": [
+                1,
+                1,
+                1
+              ],
+              "hidden": false
+            }
+          ],
+          "collections": [],
+          "active": null,
+          "selected": []
+        },
+        "mode": "OBJECT",
+        "selectMode": [
+          "VERT"
+        ],
+        "proportional": false,
+        "redo": null,
+        "tool": null,
+        "selection": null
+      },
+      "mesh": null,
+      "verify": "view-03.png"
+    },
+    {
+      "id": "menu.view_viewpoint.front",
+      "action": "menu",
+      "path": [
+        "menu.view",
+        "menu.view.viewpoint",
+        "menu.view_viewpoint.front"
+      ],
+      "operator": "view3d.view_axis",
+      "shortcut": {
+        "keys": [
+          "Numpad 1"
+        ],
+        "context": "3D Viewport · Object Mode"
+      },
+      "text": "View ▸ Viewpoint ▸ Front looks straight at the front. Flat views like this are orthographic: no perspective.",
+      "help": null,
+      "duration": 2.4,
+      "value": null,
+      "autoAdvance": false,
+      "camera": {
+        "position": [
+          0.4977,
+          -9.7063,
+          1.0343
+        ],
+        "target": [
+          0.4977,
+          -0.15,
+          1.0343
+        ],
+        "up": [
+          0,
+          0,
+          1
+        ],
+        "ortho": 2.5607
+      },
+      "after": {
+        "scene": {
+          "objects": [
+            {
+              "name": "Ground",
+              "collection": null,
+              "location": [
+                0,
+                0,
+                0
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "scale": [
+                1,
+                1,
+                1
+              ],
+              "hidden": false
+            },
+            {
+              "name": "House",
+              "collection": null,
+              "location": [
+                0,
+                0,
+                1
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "scale": [
+                1,
+                1,
+                1
+              ],
+              "hidden": false
+            },
+            {
+              "name": "Roof",
+              "collection": null,
+              "location": [
+                0,
+                0,
+                2.6
+              ],
+              "rotation": [
+                0,
+                0,
+                45
+              ],
+              "scale": [
+                1,
+                1,
+                1
+              ],
+              "hidden": false
+            },
+            {
+              "name": "Tree",
+              "collection": null,
+              "location": [
+                3,
+                2,
+                1.4
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "scale": [
+                1,
+                1,
+                1
+              ],
+              "hidden": false
+            },
+            {
+              "name": "Trunk",
+              "collection": null,
+              "location": [
+                3,
+                2,
+                0.3
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "scale": [
+                1,
+                1,
+                1
+              ],
+              "hidden": false
+            }
+          ],
+          "collections": [],
+          "active": null,
+          "selected": []
+        },
+        "mode": "OBJECT",
+        "selectMode": [
+          "VERT"
+        ],
+        "proportional": false,
+        "redo": null,
+        "tool": null,
+        "selection": null
+      },
+      "mesh": null,
+      "verify": "view-04.png"
+    },
+    {
+      "id": "menu.view_viewpoint.right",
+      "action": "menu",
+      "path": [
+        "menu.view",
+        "menu.view.viewpoint",
+        "menu.view_viewpoint.right"
+      ],
+      "operator": "view3d.view_axis",
+      "shortcut": {
+        "keys": [
+          "Numpad 3"
+        ],
+        "context": "3D Viewport · Object Mode"
+      },
+      "text": "Viewpoint ▸ Right shows the right side.",
+      "help": null,
+      "duration": 2.4,
+      "value": null,
+      "autoAdvance": false,
+      "camera": {
+        "position": [
+          10.054,
+          -0.15,
+          1.0343
+        ],
+        "target": [
+          0.4977,
+          -0.15,
+          1.0343
+        ],
+        "up": [
+          0,
+          0,
+          1
+        ],
+        "ortho": 2.5606
+      },
+      "after": {
+        "scene": {
+          "objects": [
+            {
+              "name": "Ground",
+              "collection": null,
+              "location": [
+                0,
+                0,
+                0
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "scale": [
+                1,
+                1,
+                1
+              ],
+              "hidden": false
+            },
+            {
+              "name": "House",
+              "collection": null,
+              "location": [
+                0,
+                0,
+                1
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "scale": [
+                1,
+                1,
+                1
+              ],
+              "hidden": false
+            },
+            {
+              "name": "Roof",
+              "collection": null,
+              "location": [
+                0,
+                0,
+                2.6
+              ],
+              "rotation": [
+                0,
+                0,
+                45
+              ],
+              "scale": [
+                1,
+                1,
+                1
+              ],
+              "hidden": false
+            },
+            {
+              "name": "Tree",
+              "collection": null,
+              "location": [
+                3,
+                2,
+                1.4
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "scale": [
+                1,
+                1,
+                1
+              ],
+              "hidden": false
+            },
+            {
+              "name": "Trunk",
+              "collection": null,
+              "location": [
+                3,
+                2,
+                0.3
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "scale": [
+                1,
+                1,
+                1
+              ],
+              "hidden": false
+            }
+          ],
+          "collections": [],
+          "active": null,
+          "selected": []
+        },
+        "mode": "OBJECT",
+        "selectMode": [
+          "VERT"
+        ],
+        "proportional": false,
+        "redo": null,
+        "tool": null,
+        "selection": null
+      },
+      "mesh": null,
+      "verify": "view-05.png"
+    },
+    {
+      "id": "menu.view_viewpoint.top",
+      "action": "menu",
+      "path": [
+        "menu.view",
+        "menu.view.viewpoint",
+        "menu.view_viewpoint.top"
+      ],
+      "operator": "view3d.view_axis",
+      "shortcut": {
+        "keys": [
+          "Numpad 7"
+        ],
+        "context": "3D Viewport · Object Mode"
+      },
+      "text": "Viewpoint ▸ Top looks down from above, like a map.",
+      "help": null,
+      "duration": 2.4,
+      "value": null,
+      "autoAdvance": false,
+      "camera": {
+        "position": [
+          0.4977,
+          -0.15,
+          10.5907
+        ],
+        "target": [
+          0.4977,
+          -0.15,
+          1.0343
+        ],
+        "up": [
+          0,
+          1,
+          0
+        ],
+        "ortho": 2.5606
+      },
+      "after": {
+        "scene": {
+          "objects": [
+            {
+              "name": "Ground",
+              "collection": null,
+              "location": [
+                0,
+                0,
+                0
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "scale": [
+                1,
+                1,
+                1
+              ],
+              "hidden": false
+            },
+            {
+              "name": "House",
+              "collection": null,
+              "location": [
+                0,
+                0,
+                1
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "scale": [
+                1,
+                1,
+                1
+              ],
+              "hidden": false
+            },
+            {
+              "name": "Roof",
+              "collection": null,
+              "location": [
+                0,
+                0,
+                2.6
+              ],
+              "rotation": [
+                0,
+                0,
+                45
+              ],
+              "scale": [
+                1,
+                1,
+                1
+              ],
+              "hidden": false
+            },
+            {
+              "name": "Tree",
+              "collection": null,
+              "location": [
+                3,
+                2,
+                1.4
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "scale": [
+                1,
+                1,
+                1
+              ],
+              "hidden": false
+            },
+            {
+              "name": "Trunk",
+              "collection": null,
+              "location": [
+                3,
+                2,
+                0.3
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "scale": [
+                1,
+                1,
+                1
+              ],
+              "hidden": false
+            }
+          ],
+          "collections": [],
+          "active": null,
+          "selected": []
+        },
+        "mode": "OBJECT",
+        "selectMode": [
+          "VERT"
+        ],
+        "proportional": false,
+        "redo": null,
+        "tool": null,
+        "selection": null
+      },
+      "mesh": null,
+      "verify": "view-06.png"
+    },
+    {
+      "id": "view3d.rotate",
+      "action": "orbit",
+      "value": [
+        0.05,
+        0.12
+      ],
+      "shortcut": {
+        "keys": [
+          "Middle Mouse"
+        ],
+        "context": "3D Viewport"
+      },
+      "text": "Orbit again: Blender switches back to perspective on its own.",
+      "help": null,
+      "duration": 2.2,
+      "autoAdvance": false,
+      "camera": {
+        "position": [
+          -1.2852,
+          -6.0197,
+          8.3618
+        ],
+        "target": [
+          0.4977,
+          -0.15,
+          1.0343
+        ],
+        "up": [
+          0.2228,
+          0.7337,
+          0.6419
+        ],
+        "fov": 29.987
+      },
+      "after": {
+        "scene": {
+          "objects": [
+            {
+              "name": "Ground",
+              "collection": null,
+              "location": [
+                0,
+                0,
+                0
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "scale": [
+                1,
+                1,
+                1
+              ],
+              "hidden": false
+            },
+            {
+              "name": "House",
+              "collection": null,
+              "location": [
+                0,
+                0,
+                1
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "scale": [
+                1,
+                1,
+                1
+              ],
+              "hidden": false
+            },
+            {
+              "name": "Roof",
+              "collection": null,
+              "location": [
+                0,
+                0,
+                2.6
+              ],
+              "rotation": [
+                0,
+                0,
+                45
+              ],
+              "scale": [
+                1,
+                1,
+                1
+              ],
+              "hidden": false
+            },
+            {
+              "name": "Tree",
+              "collection": null,
+              "location": [
+                3,
+                2,
+                1.4
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "scale": [
+                1,
+                1,
+                1
+              ],
+              "hidden": false
+            },
+            {
+              "name": "Trunk",
+              "collection": null,
+              "location": [
+                3,
+                2,
+                0.3
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "scale": [
+                1,
+                1,
+                1
+              ],
+              "hidden": false
+            }
+          ],
+          "collections": [],
+          "active": null,
+          "selected": []
+        },
+        "mode": "OBJECT",
+        "selectMode": [
+          "VERT"
+        ],
+        "proportional": false,
+        "redo": null,
+        "tool": null,
+        "selection": null
+      },
+      "mesh": null,
+      "verify": "view-07.png"
+    },
+    {
+      "id": "menu.view.frame_all",
+      "action": "menu",
+      "path": [
+        "menu.view",
+        "menu.view.frame_all"
+      ],
+      "operator": "view3d.view_all",
+      "shortcut": {
+        "keys": [
+          "Home"
+        ],
+        "context": "3D Viewport · Object Mode"
+      },
+      "text": "View ▸ Frame All fits everything in the view. Use it whenever you get lost.",
+      "help": null,
+      "duration": 2.4,
+      "value": null,
+      "autoAdvance": false,
+      "camera": {
+        "position": [
+          -4.874,
+          -16.0462,
+          21.6312
+        ],
+        "target": [
+          0,
+          0,
+          1.6
+        ],
+        "up": [
+          0.2228,
+          0.7337,
+          0.6419
+        ],
+        "fov": 29.995
+      },
+      "after": {
+        "scene": {
+          "objects": [
+            {
+              "name": "Ground",
+              "collection": null,
+              "location": [
+                0,
+                0,
+                0
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "scale": [
+                1,
+                1,
+                1
+              ],
+              "hidden": false
+            },
+            {
+              "name": "House",
+              "collection": null,
+              "location": [
+                0,
+                0,
+                1
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "scale": [
+                1,
+                1,
+                1
+              ],
+              "hidden": false
+            },
+            {
+              "name": "Roof",
+              "collection": null,
+              "location": [
+                0,
+                0,
+                2.6
+              ],
+              "rotation": [
+                0,
+                0,
+                45
+              ],
+              "scale": [
+                1,
+                1,
+                1
+              ],
+              "hidden": false
+            },
+            {
+              "name": "Tree",
+              "collection": null,
+              "location": [
+                3,
+                2,
+                1.4
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "scale": [
+                1,
+                1,
+                1
+              ],
+              "hidden": false
+            },
+            {
+              "name": "Trunk",
+              "collection": null,
+              "location": [
+                3,
+                2,
+                0.3
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "scale": [
+                1,
+                1,
+                1
+              ],
+              "hidden": false
+            }
+          ],
+          "collections": [],
+          "active": null,
+          "selected": []
+        },
+        "mode": "OBJECT",
+        "selectMode": [
+          "VERT"
+        ],
+        "proportional": false,
+        "redo": null,
+        "tool": null,
+        "selection": null
+      },
+      "mesh": null,
+      "verify": "view-08.png"
+    }
+  ],
+  "outro": "Orbit, zoom and pan, plus the front, side and top views: that is all you need to look at any model.",
+  "object": null
+}

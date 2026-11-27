@@ -10,7 +10,20 @@ export function newModifier(ui, type) {
   };
 }
 
+/** What Blender reported after a scene step (Levels 1 and 2): objects, mode, selection, the last operator. */
+const SCENE_KEYS = ['scene', 'mode', 'selectMode', 'proportional', 'redo', 'selection'];
+
+function sceneState(record) {
+  // `tool` is the modal tool waiting for clicks (the Knife, Loop Cut); sculpt lessons use `tool` for brushes.
+  return { ...Object.fromEntries(SCENE_KEYS.map(key => [key, record[key] ?? null])), modal: record.tool ?? null, edit: record.edit ?? null };
+}
+
+export const isSceneLesson = timeline => Boolean(timeline.initial.scene);
+
 export function initialState(timeline) {
+  if (isSceneLesson(timeline)) {
+    return { ...sceneState(timeline.initial), mesh: timeline.initial.mesh, camera: timeline.initial.camera, panel: null, modifiers: [], tool: null };
+  }
   return {
     panel: timeline.initial.panel ?? null,
     modifiers: [],
@@ -23,6 +36,11 @@ export function initialState(timeline) {
 }
 
 export function applyStep(state, step, ui) {
+  if (step.after) {
+    const next = { ...state, ...sceneState(step.after), edit: 'edit' in step ? step.edit : state.edit, camera: step.camera };
+    if (step.mesh) next.mesh = step.mesh;
+    return next;
+  }
   const next = { ...state, modifiers: state.modifiers.map(mod => ({ ...mod, values: { ...mod.values } })) };
   if (step.action === 'select_panel') next.panel = step.id;
   if (step.action === 'add_modifier') next.modifiers.push(newModifier(ui, step.modifier));
@@ -72,6 +90,12 @@ export function isSolved(live, step) {
   }
   if (step.action === 'apply_modifier') return !live.modifiers.some(mod => mod.type === step.modifier);
   if (step.action === 'set_mode') return live.mode === step.value;
+  if (step.action === 'select_mode') return live.selectMode?.length === 1 && live.selectMode[0] === step.value;
+  if (step.action === 'proportional') return live.proportional === step.value;
+  if (step.action === 'redo_value') {
+    const value = live.redo?.operator === step.operator ? live.redo.values[step.id] : undefined;
+    return typeof value === 'number' && ticks(value, step.step) === ticks(step.value, step.step);
+  }
   if (step.action === 'select_brush') return live.tool?.brush === step.value;
   if (step.action === 'set_direction') return live.tool?.direction === step.value;
   if (step.action === 'set_symmetry') return (live.tool?.symmetry ?? []).includes(step.id.split('.').pop().toUpperCase()) === step.value;
@@ -104,7 +128,33 @@ export function interactiveFields(timeline, solvedCount) {
 
 /** Step size of each lesson field, from the timeline (the only source of slider granularity). */
 export function fieldSteps(timeline) {
-  return Object.fromEntries(timeline.steps.filter(step => step.action === 'set_value' && step.step).map(step => [step.id, step.step]));
+  return Object.fromEntries(timeline.steps.filter(step => (step.action === 'set_value' || step.action === 'redo_value') && step.step)
+    .map(step => [step.id, step.step]));
+}
+
+/** Menu items a scene lesson uses anywhere: the only ones a learner can pick (others stay greyed out). */
+export function lessonMenuItems(timeline) {
+  return new Set(timeline.steps.filter(step => step.action === 'menu').map(step => step.id));
+}
+
+/** Objects in a recorded scene, grouped the way the Outliner lists them: collections, then their objects. */
+export function outlinerTree(scene) {
+  const node = name => ({
+    name,
+    collections: scene.collections.filter(collection => collection.parent === name).map(collection => ({ ...node(collection.name), hidden: collection.hidden })),
+    objects: scene.objects.filter(object => object.collection === name).map(object => object.name).sort(),
+  });
+  return node(null);
+}
+
+/** Whether an object is drawn: its own eye and every collection above it. */
+export function objectVisible(scene, name) {
+  const object = scene.objects.find(candidate => candidate.name === name);
+  if (!object || object.hidden) return false;
+  for (let parent = object.collection; parent; parent = scene.collections.find(c => c.name === parent)?.parent ?? null) {
+    if (scene.collections.find(c => c.name === parent)?.hidden) return false;
+  }
+  return true;
 }
 
 export function lessonModifierTypes(timeline) {

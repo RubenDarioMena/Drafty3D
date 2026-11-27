@@ -1,6 +1,6 @@
 # Drafty3D Learn: guía de prueba y decisiones
 
-Prototipo con dos módulos y cinco parejas de lecciones (una para ver y su práctica). **Modificadores**: *Low-poly cup* → *Your turn: bowl*, y *Twisted column* → *Your turn: twisted candle*. **Sculpting**: *Pebble buddy* → *Your turn: sleepy buddy*, *Horned buddy* → *Your turn: antenna bug*, y *Craggy rock* → *Your turn: split boulder*. Todo funciona sin conexión: en el navegador y en el APK.
+Cuatro módulos, uno por nivel de la ruta, con 60 lecciones en parejas (una para ver y su práctica): **Getting around & adding things** (nivel 1, 12), **Modeling in Edit Mode** (nivel 2, 16), **Modifiers** (nivel 3, 16) y **Sculpting** (nivel 4, 16). Todo funciona sin conexión: en el navegador y en el APK.
 
 La ruta de aprendizaje (de principiante a intermedio, con lo que ya está y lo que falta) está en [ROADMAP.md](ROADMAP.md).
 
@@ -56,6 +56,21 @@ Mientras no existan los secretos, Actions genera un **APK de depuración**. Cada
 4. Vuelve a ejecutar el workflow (Actions → "Drafty3D Learn · APK + preview" → Re-run) o espera al siguiente push. Desinstala el APK de depuración una última vez; desde ahí, cada versión se instala encima.
 
 ## Qué probar
+
+**Nivel 1 · Getting around & adding things.** Las lecciones muestran la escena completa: varios objetos, el header del 3D Viewport (modo y menús View, Select, Add, Object), el panel **Adjust Last Operation** (abajo a la izquierda en Blender; aquí, debajo del header) y el **Outliner**. El objeto activo tiene contorno naranja claro y los demás seleccionados naranja oscuro, como en Blender.
+- **Look around / tower tour.** En Ver, el cursor gira, acerca y mueve la vista, y luego usa **View ▸ Viewpoint** (Front, Right, Top) y **Frame All**. En Your turn lo haces tú: un dedo gira, pellizcar hace zoom y dos dedos mueven (en PC: arrastrar, rueda y botón derecho). Cuenta cuando giraste al menos 20°, el zoom cambió un cuarto de la distancia o la vista se deslizó sin girar.
+- **Add objects / add shapes.** **Add ▸ Mesh** (Cube, Cylinder, UV Sphere) y después Size, Vertices, Segments o Location X en Adjust Last Operation, igual que justo después de crear algo en Blender.
+- **Move, rotate and scale / arrange blocks.** Tocar un objeto lo selecciona. **Object ▸ Transform ▸ Move / Rotate / Scale** y luego el número exacto en Adjust Last Operation. El atajo (G, R, S) se muestra como teclas.
+- **Duplicate and organize / pillars.** **Object ▸ Duplicate Objects** y su Move X; en el Outliner tocas una fila para seleccionarla, la vuelves a tocar (o doble clic) para renombrarla, y el ojo oculta un objeto o una collection completa.
+- **Object, Edit and Sculpt Mode / modes.** El menú de modo cambia el header: en Edit Mode aparecen los botones de punto, arista y cara y los puntos de la malla.
+- **Project: table and stool / desk and stool.** Todo el nivel junto: crear, medir, duplicar y acomodar.
+
+**Nivel 2 · Modeling in Edit Mode.** En Edit Mode se ven los puntos y aristas de la malla; lo seleccionado sale en naranja. Tocar un punto, una arista o una cara la selecciona (con **⇧ Shift**, el botón que aparece sobre la vista, se suma a la selección). Las operaciones se hacen desde los menús de Blender (**Mesh**, **Vertex**, **Edge**, **Face**, **Select**) y sus números en Adjust Last Operation; después de cada una se ve la malla que calculó Blender.
+- **Points, lines and faces.** Seleccionar uno, sumar con Shift, cambiar a aristas o caras y **Select ▸ Select Loops ▸ Edge Loops**.
+- **Extrude, Inset, Bevel, Proportional editing.** Cada uno con su valor en Adjust Last Operation (Move Z, Thickness, Width y Segments, Proportional Size).
+- **Loop cut / vase.** **Edge ▸ Loop Cut and Slide** y luego tocas una arista: el anillo que la cruza se ilumina en amarillo (en PC, al pasar el ratón) y el corte sale ahí. Tocar fuera muestra un aviso y no corta nada.
+- **Cut and join / cut and patch.** **Merge ▸ At Center**, luego la **Knife**: aparecen puntos numerados sobre la malla; tócalos en orden y pulsa **⏎ Enter** (el botón naranja sobre la vista). Al final, **New Edge/Face from Vertices** (F) tapa un hueco.
+- **Project: a mug / a jug.** Cilindro → Inset y Extrude hacia adentro → Loop Cut → dos caras extruidas unidas con **Bridge Edge Loops** para el asa → Bevel del borde.
 
 **Ver (Low-poly cup).** Pulsa **Start**. Cada paso mueve el cursor al control real, lo resalta y muestra el atajo de Blender como teclas. Un paso solo de navegación (abrir la pestaña de la llave) avanza solo; los demás esperan **Next**. **Autoplay** encadena los pasos. El deslizador permite parar en cualquier paso, también en los de navegación. Los botones **‹ ›** avanzan o retroceden una sola acción dentro del paso (por ejemplo, con el menú Add Modifier abierto) y se quedan quietos ahí. Con la reproducción detenida puedes girar la vista: un dedo gira, dos dedos mueven, pellizcar hace zoom. Al continuar, la cámara vuelve a la de Blender.
 
@@ -119,6 +134,15 @@ Tomadas con los principios del registro de decisiones. Para el modo práctica, l
 | Triángulos fijos | El exportador de glTF corta cada cuadrado por su diagonal más corta; un trazo podía voltear algunas y romper la animación vértice a vértice. Ahora se triangula con diagonal fija antes de exportar y de renderizar la referencia. | 2 |
 | Textos que dicen lo que pasa | Cuando Blender no hizo lo que el texto prometía, cambié el texto: Blob solo forma una bolita en la antena; Subdivide acorta un poco las puntas delgadas (las orejas del troll, los cuernos del imp); el jalón de arriba del imp hace un pico, no una cabeza alta. | 6 |
 | Releases | Un release fijo `learn-preview` que se reemplaza en cada build. El `versionCode` es el número de ejecución del workflow, así cada APK es más nuevo que el anterior. | 5 |
+| Niveles 1 y 2: escena completa | Cada paso guarda el estado que Blender reporta después: objetos, collections, activo y seleccionados, modo, modo de selección, Proportional Editing, el panel Adjust Last Operation y, en Edit Mode, los puntos, aristas, caras y la selección. La app dibuja eso; las mallas son las que Blender exportó en ese paso. | 2 |
+| Menús del 3D Viewport | Se leen de Blender 5.3 con sus etiquetas, submenús y atajos (`view3d` en `blender-ui.json`). Los elementos que la lección no usa se ven deshabilitados; uno que la lección usa más adelante responde "Not this one yet". | 2, 4 |
+| Move, Rotate y Scale | Sin flechas de arrastre (gizmo): se enseñan con el menú y el número exacto en Adjust Last Operation. En un celular, arrastrar con precisión de 0.1 m no es realista; el número sí. | 3, 4 |
+| Clics en la vista 3D | Cuentan si caen sobre el objeto, la cara, o cerca (26–32 px, pensado para el dedo) del punto o la arista que Blender seleccionó. Un toque corto (menos de 8 px y medio segundo) selecciona; uno largo gira la vista. | 3, 4 |
+| Loop Cut | Cualquier arista del anillo hace el mismo corte en Blender, así que cualquiera vale. | 2 |
+| Knife | Blender recibe los puntos del corte; la app los muestra numerados y pide tocarlos en orden y confirmar con ⏎ Enter, como en Blender. | 2, 4 |
+| Teclas en pantalla | ⇧ Shift y ⏎ Enter solo aparecen en las lecciones que los usan. | 4 |
+| Valores exactos | Cada número de Adjust Last Operation cae en el paso más grueso posible (0.1, 0.05, 0.01…) para que ◀ ▶ llegue a él; el grabador falla si un valor no cae en su paso. | 2 |
+| Objetos ocultos | El render de Blender ignora el ojo del Outliner; el grabador quita del render lo que la vista oculta, igual que del glb. La prueba Blender vs three.js lo encontró. | 2 |
 
 ## Cómo se verifica
 
@@ -126,7 +150,9 @@ Tomadas con los principios del registro de decisiones. Para el modo práctica, l
 - `npm run test:browser` (después de `npm run build`):
   - **Blender vs three.js por paso** (`tests/browser/learn-verify.spec.mjs`). Blender renderiza las normales del objeto como colores; three.js dibuja lo mismo con el cargador y la cámara de la app. Umbrales: IoU ≥ 0.99, diferencia media ≤ 0.006, píxeles malos ≤ 1 %. Los pasos correctos dan ≤ 0.004 y la malla del paso anterior da ≥ 0.009, así que la prueba sí puede fallar. Esta prueba encontró dos errores reales que ya están corregidos: los niveles Render vs Viewport de Subdivision y el Amount del bowl que no cambiaba nada.
     La prueba recorre todas las lecciones de `index.json`. Las de escultura pasan con los mismos umbrales en todos sus pasos, incluida la condición de que cada trazo cambie lo que se ve.
-  - Recorridos completos de Ver y Your turn en tamaño celular, sin peticiones fuera de `/learn/` y sin errores de página. En escultura, la prueba dibuja cada trazo con el ratón sobre la guía proyectada, incluidos un trazo fuera de la línea y uno al revés.
+    En los niveles 1 y 2 la escena completa se compara igual. Los pasos que solo mueven la vista (girar, View ▸ Viewpoint) llevan un render de Blender desde la cámara nueva, que comprueba la cámara de la app. Los que cambian algo que la imagen no muestra (un nombre, ocultar y mostrar, un Inset sobre una cara plana, los cortes de Loop Cut o Knife) deben cambiar la lista de objetos, sus vértices o dónde están.
+    Las piezas delgadas (patas, tablas) son casi puro borde, y mover la cámara medio píxel ya bajaba el IoU de 0.994 a 0.98. Por eso la comparación perdona un píxel de suavizado en el contorno y en la línea entre dos caras cuando las dos imágenes la tienen. Con eso, los pasos correctos usan como máximo el 70 % de un umbral y la malla del paso anterior pasa al menos uno (la más cercana, la grieta del boulder, por 1 %).
+  - Recorridos completos de Ver y Your turn en tamaño celular, sin peticiones fuera de `/learn/` y sin errores de página. En escultura, la prueba dibuja cada trazo con el ratón sobre la guía proyectada, incluidos un trazo fuera de la línea y uno al revés. En los niveles 1 y 2 toca objetos, caras, el anillo de Loop Cut y los puntos de la Knife donde la cámara de la app los proyecta, gira y hace zoom con el ratón, usa los menús, escribe valores y renombra en el Outliner.
 
 ## Regenerar los ejemplos
 
@@ -156,12 +182,15 @@ learn/pipeline/get-blender.sh
 npm run learn:examples -- --only=sculpt
 ```
 
-`get-blender.sh` descarga Blender 5.3.0 de download.blender.org a `learn/pipeline/.blender/` (ignorado por git) y verifica su sha256. `--only=modifiers` o `--only=sculpt` graba un solo módulo; `--skip-blender` solo vuelve a empaquetar lo que ya está en `.out`. Con `LEARN_DEBUG=1` el grabador guarda una captura de la ventana de Blender después de cada trazo. Los scripts son `learn/pipeline/blender/sculpt.py` (grabador) y `build_sculpt.py` (lecciones). Cada nombre de la tupla `LESSONS` de `build_sculpt.py` se graba en su propio proceso de Blender; `LEARN_SCULPT_ONLY=rock` graba solo esa y conserva las demás que ya están en `.out/sculpt`. No corras `--only=modifiers` al mismo tiempo que una grabación de escultura: los dos reescriben `learn/public/examples/`.
+Los niveles 1 y 2 también se graban en la app completa de Blender (`--only=scene`): girar, hacer zoom, la Knife y los clics de selección pasan por el ratón real (xdotool), con la selección del propio Blender en el píxel que la app muestra después, y el panel Adjust Last Operation se lee de la ventana. Los scripts son `learn/pipeline/blender/scene.py` (grabador) y `build_scene.py` (lecciones); `LEARN_SCENE_ONLY=fence` graba solo esa lección.
+
+`get-blender.sh` descarga Blender 5.3.0 de download.blender.org a `learn/pipeline/.blender/` (ignorado por git) y verifica su sha256. `--only=modifiers`, `--only=sculpt` o `--only=scene` graba un solo módulo; `--skip-blender` solo vuelve a empaquetar lo que ya está en `.out`. Con `LEARN_DEBUG=1` el grabador guarda una captura de la ventana de Blender después de cada trazo. Los scripts son `learn/pipeline/blender/sculpt.py` (grabador) y `build_sculpt.py` (lecciones). Cada nombre de la tupla `LESSONS` de `build_sculpt.py` se graba en su propio proceso de Blender; `LEARN_SCULPT_ONLY=rock` graba solo esa y conserva las demás que ya están en `.out/sculpt`. No corras `--only=modifiers` al mismo tiempo que una grabación de escultura: los dos reescriben `learn/public/examples/`.
 
 ## Limitaciones conocidas
 
 - **Orden de los campos en los paneles de modificadores.** Blender los dibuja en C y ese código no viene en `bpy`. El orden y unos pocos textos ("Amount", "Levels Viewport", "Render", "Rim / Fill") salen de ese código fuente, no de una extracción automática. Lo mismo pasa con el orden de las pestañas de Properties; omití la pestaña nueva "Compositor & Effects" porque no pude confirmar su posición. Vale la pena compararlos con Blender 5.3 real.
-- **Vista 3D.** No hay contorno naranja de selección ni wireframe: es sombreado tipo *Solid*.
+- **Vista 3D.** Sombreado tipo *Solid* con contorno de selección y, en Edit Mode, puntos y aristas encima. No hay wireframe completo ni la rejilla de colores de los ejes.
+- **Niveles 1 y 2.** No hay flechas para arrastrar (gizmo) ni atajos de teclado reales (G, R, S, Tab solo se muestran). Crear collections nuevas (**Move to Collection**) y **Lattice** quedan para después. Los menús muestran todo lo de Blender, pero solo responde lo que usan las lecciones.
 - **Tamaño.** El build pesa unos 2.2 MB. Vite incluye las tres variantes del decodificador Draco que referencia three.js (~1 MB que no se usa).
 - **Android 7.x.** En esas versiones aún se ve el icono por defecto de Capacitor; desde Android 8 sale el icono propio.
 - **Escultura: posición del pincel.** El trazo se graba en una ventana de 1920×1080. Size está en píxeles de pantalla, como en Blender, así que el mismo número en otra pantalla daría otro radio en metros. La app muestra el radio grabado, no lo recalcula.

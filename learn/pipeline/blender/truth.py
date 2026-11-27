@@ -166,7 +166,15 @@ TAB_ORDER = ['TOOL', None, 'RENDER', 'OUTPUT', 'VIEW_LAYER', 'SCENE', 'WORLD', '
              'OBJECT', 'MODIFIER', 'PARTICLES', 'PHYSICS', 'CONSTRAINT', 'DATA', 'MATERIAL', None, 'TEXTURE']
 
 KEY_NAMES = {'ZERO': '0', 'ONE': '1', 'TWO': '2', 'THREE': '3', 'FOUR': '4', 'FIVE': '5',
-             'TAB': 'Tab', 'DEL': 'Delete', 'LEFTMOUSE': 'Drag', 'WHEELUPMOUSE': 'Wheel Up', 'WHEELDOWNMOUSE': 'Wheel Down'}
+             'TAB': 'Tab', 'DEL': 'Delete', 'LEFTMOUSE': 'Drag', 'WHEELUPMOUSE': 'Wheel Up', 'WHEELDOWNMOUSE': 'Wheel Down',
+             'MIDDLEMOUSE': 'Middle Mouse', 'WHEELINMOUSE': 'Wheel In', 'WHEELOUTMOUSE': 'Wheel Out', 'RET': 'Enter',
+             'HOME': 'Home', 'ACCENT_GRAVE': '`'}
+
+
+def key_names(event):
+    """Blender's keycap text for a keymap event: modifiers first, then the key (NUMPAD_1 → Numpad 1)."""
+    keys = [mod.capitalize() for mod in ('ctrl', 'alt', 'shift') if event.get(mod)]
+    return keys + [KEY_NAMES.get(event['type'], event['type'].replace('_', ' ').title())]
 
 
 def _keymaps():
@@ -178,6 +186,16 @@ def _keymaps():
 
 
 _KEYMAPS = None
+
+
+def keymap_items(keymap):
+    """(operator, event, properties) of one default keymap, as blender_default.py defines it."""
+    global _KEYMAPS
+    _KEYMAPS = _KEYMAPS or _keymaps()
+    for name, _args, content in _KEYMAPS:
+        if name == keymap:
+            for item in content.get('items', []):
+                yield item[0], item[1], dict((item[2] or {}).get('properties', []) if len(item) > 2 else [])
 
 
 def shortcut(keymap, operator, context, **props):
@@ -193,10 +211,7 @@ def shortcut(keymap, operator, context, **props):
             item_props = dict((item[2] or {}).get('properties', []) if len(item) > 2 else [])
             if any(item_props.get(key) != value for key, value in props.items()):
                 continue
-            event = item[1]
-            keys = [mod for mod in ('ctrl', 'alt', 'shift') if event.get(mod)]
-            keys = [mod.capitalize() for mod in keys] + [KEY_NAMES.get(event['type'], event['type'].title())]
-            return {'keys': keys, 'context': context}
+            return {'keys': key_names(item[1]), 'context': context}
     raise LookupError(f'No default shortcut for {operator} {props} in {keymap}')
 
 

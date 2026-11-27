@@ -17,7 +17,8 @@ const fixtures = resolve(root, 'tests/fixtures/learn');
 const python = resolve(pipeline, '.venv/bin/python');
 const blenderApp = process.env.BLENDER_APP ?? resolve(pipeline, '.blender/blender-5.3.0-linux-x64/blender');
 
-// --skip-blender reuses everything in .out; --only=modifiers|sculpt records one module again.
+// --skip-blender reuses everything in .out; --only=modifiers|sculpt|scene records one module again
+// (scene = Levels 1 and 2: the basics and modeling modules).
 const only = process.argv.find(arg => arg.startsWith('--only='))?.slice('--only='.length);
 const record = module => !process.argv.includes('--skip-blender') && (!only || only === module);
 const exists = path => stat(path).then(() => true, () => false);
@@ -30,28 +31,38 @@ if (record('modifiers')) {
   execFileSync(python, [resolve(pipeline, 'blender/build.py'), '--', out], { stdio: 'inherit' });
 }
 
-if (record('sculpt')) {
-  // Strokes need Blender's windowed event loop: the full app on a virtual display, driven by xdotool.
+/**
+ * Records lessons in the full Blender app on a virtual display (xdotool drives strokes and clicks).
+ * A fixed 1920×1080 screen keeps brush sizes and click points in pixels, and therefore the
+ * recordings, reproducible. One Blender process per lesson, so each starts from factory settings.
+ * `<VAR>=<lesson>` records that lesson again and keeps the others.
+ */
+async function recordWindowed({ script, variable, folders, first = [] }) {
   if (!(await exists(blenderApp))) throw new Error('Falta Blender 5.3 (app completa). Descargar con: learn/pipeline/get-blender.sh');
   for (const tool of ['xvfb-run', 'xdotool']) {
     try { execFileSync('which', [tool]); } catch { throw new Error(`Falta ${tool}: apt-get install -y xvfb xdotool`); }
   }
-  // LEARN_SCULPT_ONLY=<lesson> records that lesson again and keeps the others.
-  if (!process.env.LEARN_SCULPT_ONLY) await rm(join(out, 'sculpt'), { recursive: true, force: true });
+  if (!process.env[variable]) for (const folder of folders) await rm(join(out, folder), { recursive: true, force: true });
   await mkdir(out, { recursive: true });
   const start = join(out, 'start.blend');
   execFileSync(blenderApp, ['-b', '--factory-startup', '--python-expr',
     `import bpy; bpy.ops.wm.read_factory_settings(use_empty=True); bpy.ops.wm.save_as_mainfile(filepath=${JSON.stringify(start)})`],
   { stdio: 'ignore' });
-  // A fixed 1920×1080 screen keeps brush sizes in pixels, and therefore the strokes, reproducible.
-  // One Blender process per lesson: brush settings live in the session, so each lesson starts from factory brushes.
-  const script = await readFile(resolve(pipeline, 'blender/build_sculpt.py'), 'utf8');
-  const names = (process.env.LEARN_SCULPT_ONLY ?? script.match(/^LESSONS = \(([^)]*)\)/m)[1]).match(/\w+/g);
+  const source = await readFile(resolve(pipeline, 'blender', script), 'utf8');
+  const names = [...first, ...(process.env[variable] ?? source.match(/^LESSONS = \(([^)]*)\)/m)[1]).match(/\w+/g)];
   for (const lesson of names) {
     execFileSync('xvfb-run', ['-a', '-s', '-screen 0 1920x1080x24', blenderApp, '--factory-startup', '--gpu-backend', 'opengl',
-      start, '--python', resolve(pipeline, 'blender/build_sculpt.py'), '--', out],
-    { stdio: 'inherit', env: { ...process.env, LEARN_SCULPT_ONLY: lesson } });
+      start, '--python', resolve(pipeline, 'blender', script), '--', out],
+    { stdio: 'inherit', env: { ...process.env, [variable]: lesson } });
   }
+}
+
+if (record('sculpt')) await recordWindowed({ script: 'build_sculpt.py', variable: 'LEARN_SCULPT_ONLY', folders: ['sculpt'] });
+
+// Levels 1 and 2 click menus, the Outliner and the 3D Viewport; `ui` first reads the 3D Viewport's
+// header menus, operators and Outliner from Blender (scene-ui.json).
+if (record('scene')) {
+  await recordWindowed({ script: 'build_scene.py', variable: 'LEARN_SCENE_ONLY', folders: ['basics', 'modeling'], first: ['ui'] });
 }
 
 const io = new NodeIO().registerExtensions(ALL_EXTENSIONS).registerDependencies({
@@ -64,6 +75,7 @@ await rm(fixtures, { recursive: true, force: true });
 await mkdir(examples, { recursive: true });
 const ui = JSON.parse(await readFile(join(out, 'blender-ui.json'), 'utf8'));
 ui.sculpt = JSON.parse(await readFile(join(out, 'sculpt-ui.json'), 'utf8'));
+ui.view3d = JSON.parse(await readFile(join(out, 'scene-ui.json'), 'utf8'));
 await writeFile(join(examples, 'blender-ui.json'), JSON.stringify(ui, null, 2) + '\n');
 
 const lessons = [];
@@ -76,14 +88,22 @@ for (const module of await readdir(join(out), { withFileTypes: true })) {
     await mkdir(target, { recursive: true });
     await mkdir(fixtureDir, { recursive: true });
     const timeline = JSON.parse(await readFile(join(source, 'timeline.json'), 'utf8'));
+    if (timeline.initial.scene) {
+      // Scene lessons have no single object; their intro sits with the starting state, as in the other modules.
+      timeline.initial.text ??= timeline.text;
+      delete timeline.text;
+      timeline.object ??= null;
+    }
     let raw = 0;
     let packed = 0;
     for (const file of await readdir(join(source, 'raw'))) {
       const document = await io.read(join(source, 'raw', file));
-      await document.transform(draco({ method: 'edgebreaker' }));
+      // An empty scene (before the first Add) has nothing to compress.
+      const meshes = document.getRoot().listMeshes().length > 0;
+      if (meshes) await document.transform(draco({ method: 'edgebreaker' }));
       const bytes = await io.writeBinary(document);
       // bpy's own exporter reports success while skipping Draco; never trust a flag, check the file.
-      if (!(await io.readBinary(bytes)).getRoot().listExtensionsUsed().some(ext => ext.extensionName === 'KHR_draco_mesh_compression')) {
+      if (meshes && !(await io.readBinary(bytes)).getRoot().listExtensionsUsed().some(ext => ext.extensionName === 'KHR_draco_mesh_compression')) {
         throw new Error(`Draco no se aplicó a ${module.name}/${example}/${file}`);
       }
       await writeFile(join(target, file), bytes);
@@ -103,8 +123,10 @@ for (const module of await readdir(join(out), { withFileTypes: true })) {
   }
 }
 // Home lists modules in this order, then each Watch lesson (easiest first) followed by its Your turn variant.
-const MODULE_ORDER = ['modifiers', 'sculpt'];
-const WATCH_ORDER = ['cup', 'twisted-column', 'mirror-table', 'array-stairs', 'boolean-birdhouse', 'curve-garden-path', 'stack-block', 'project-ladder', 'pebble-buddy', 'horned-buddy', 'rock', 'belted-pebble', 'leaning-buddy', 'bobble-pebble', 'wrinkled-pebble', 'troll-head'];
+const MODULE_ORDER = ['basics', 'modeling', 'modifiers', 'sculpt'];
+const WATCH_ORDER = ['look-around', 'add-objects', 'move-rotate-scale', 'fence', 'modes', 'project-table',
+  'select-parts', 'extrude-arm', 'inset-planter', 'loop-cut-barrel', 'bevel-edges', 'cut-and-join', 'proportional-hill', 'project-mug',
+  'cup', 'twisted-column', 'mirror-table', 'array-stairs', 'boolean-birdhouse', 'curve-garden-path', 'stack-block', 'project-ladder', 'pebble-buddy', 'horned-buddy', 'rock', 'belted-pebble', 'leaning-buddy', 'bobble-pebble', 'wrinkled-pebble', 'troll-head'];
 const rank = (list, item) => (list.indexOf(item) + list.length + 1) % (list.length + 1);
 lessons.sort((a, b) => (rank(MODULE_ORDER, a.module) - rank(MODULE_ORDER, b.module))
   || (rank(WATCH_ORDER, a.variantOf ?? a.example) - rank(WATCH_ORDER, b.variantOf ?? b.example))

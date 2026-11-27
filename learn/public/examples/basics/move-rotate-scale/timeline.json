@@ -1,0 +1,1086 @@
+{
+  "blenderVersion": "5.3.0",
+  "module": "basics",
+  "example": "move-rotate-scale",
+  "mode": "watch",
+  "title": "Move, rotate and scale",
+  "initial": {
+    "camera": {
+      "position": [
+        4.6,
+        -7.2,
+        4.4
+      ],
+      "target": [
+        0,
+        0,
+        0.9
+      ],
+      "fov": 30
+    },
+    "scene": {
+      "objects": [
+        {
+          "name": "Ball",
+          "collection": null,
+          "location": [
+            1.5,
+            0,
+            0.5
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "scale": [
+            1,
+            1,
+            1
+          ],
+          "hidden": false
+        },
+        {
+          "name": "Box",
+          "collection": null,
+          "location": [
+            -1.5,
+            0,
+            0.5
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "scale": [
+            1,
+            1,
+            1
+          ],
+          "hidden": false
+        }
+      ],
+      "collections": [],
+      "active": null,
+      "selected": []
+    },
+    "mode": "OBJECT",
+    "selectMode": [
+      "VERT"
+    ],
+    "proportional": false,
+    "redo": null,
+    "tool": null,
+    "selection": null,
+    "edit": null,
+    "mesh": "step-00.glb",
+    "text": "Move, Rotate and Scale are the moves you will use most. Each one works on the selected object, and Adjust Last Operation turns a rough drag into an exact number."
+  },
+  "steps": [
+    {
+      "id": "view3d.select",
+      "action": "tap",
+      "value": [
+        -1.5,
+        0,
+        1
+      ],
+      "toggle": false,
+      "text": "Click the box to select it. Selected objects get an orange outline.",
+      "help": null,
+      "duration": 1.8,
+      "shortcut": null,
+      "autoAdvance": false,
+      "camera": {
+        "position": [
+          4.6,
+          -7.2,
+          4.4
+        ],
+        "target": [
+          0,
+          0,
+          0.9
+        ],
+        "fov": 30
+      },
+      "after": {
+        "scene": {
+          "objects": [
+            {
+              "name": "Ball",
+              "collection": null,
+              "location": [
+                1.5,
+                0,
+                0.5
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "scale": [
+                1,
+                1,
+                1
+              ],
+              "hidden": false
+            },
+            {
+              "name": "Box",
+              "collection": null,
+              "location": [
+                -1.5,
+                0,
+                0.5
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "scale": [
+                1,
+                1,
+                1
+              ],
+              "hidden": false
+            }
+          ],
+          "collections": [],
+          "active": "Box",
+          "selected": [
+            "Box"
+          ]
+        },
+        "mode": "OBJECT",
+        "selectMode": [
+          "VERT"
+        ],
+        "proportional": false,
+        "redo": null,
+        "tool": null,
+        "selection": null
+      },
+      "mesh": null
+    },
+    {
+      "id": "menu.transform_object.move",
+      "action": "menu",
+      "path": [
+        "menu.object",
+        "menu.object.transform",
+        "menu.transform_object.move"
+      ],
+      "operator": "transform.translate",
+      "shortcut": {
+        "keys": [
+          "G"
+        ],
+        "context": "3D Viewport · Object Mode"
+      },
+      "text": "Object ▸ Transform ▸ Move, then drag. Pressing Z while moving locks it to the Z axis: straight up.",
+      "help": null,
+      "duration": 2.4,
+      "value": null,
+      "autoAdvance": false,
+      "camera": {
+        "position": [
+          4.6,
+          -7.2,
+          4.4
+        ],
+        "target": [
+          0,
+          0,
+          0.9
+        ],
+        "fov": 30
+      },
+      "after": {
+        "scene": {
+          "objects": [
+            {
+              "name": "Ball",
+              "collection": null,
+              "location": [
+                1.5,
+                0,
+                0.5
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "scale": [
+                1,
+                1,
+                1
+              ],
+              "hidden": false
+            },
+            {
+              "name": "Box",
+              "collection": null,
+              "location": [
+                -1.5,
+                0,
+                0.8
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "scale": [
+                1,
+                1,
+                1
+              ],
+              "hidden": false
+            }
+          ],
+          "collections": [],
+          "active": "Box",
+          "selected": [
+            "Box"
+          ]
+        },
+        "mode": "OBJECT",
+        "selectMode": [
+          "VERT"
+        ],
+        "proportional": false,
+        "redo": {
+          "operator": "transform.translate",
+          "values": {
+            "redo.transform.translate.value.x": 0,
+            "redo.transform.translate.value.y": 0,
+            "redo.transform.translate.value.z": 0.3,
+            "redo.transform.translate.orient_type": "GLOBAL",
+            "redo.transform.translate.mirror": false,
+            "redo.transform.translate.use_proportional_edit": false,
+            "redo.transform.translate.proportional_edit_falloff": "SMOOTH",
+            "redo.transform.translate.proportional_size": 1,
+            "redo.transform.translate.use_proportional_connected": false,
+            "redo.transform.translate.use_proportional_projected": false
+          }
+        },
+        "tool": null,
+        "selection": null
+      },
+      "mesh": "step-02.glb"
+    },
+    {
+      "id": "redo.transform.translate.value.z",
+      "action": "redo_value",
+      "operator": "transform.translate",
+      "value": 1,
+      "text": "The drag stopped at 0.3 m. In the panel, type Move Z 1 m for an exact lift.",
+      "help": null,
+      "step": 0.1,
+      "shortcut": null,
+      "duration": 2.2,
+      "autoAdvance": false,
+      "camera": {
+        "position": [
+          4.6,
+          -7.2,
+          4.4
+        ],
+        "target": [
+          0,
+          0,
+          0.9
+        ],
+        "fov": 30
+      },
+      "after": {
+        "scene": {
+          "objects": [
+            {
+              "name": "Ball",
+              "collection": null,
+              "location": [
+                1.5,
+                0,
+                0.5
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "scale": [
+                1,
+                1,
+                1
+              ],
+              "hidden": false
+            },
+            {
+              "name": "Box",
+              "collection": null,
+              "location": [
+                -1.5,
+                0,
+                1.5
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "scale": [
+                1,
+                1,
+                1
+              ],
+              "hidden": false
+            }
+          ],
+          "collections": [],
+          "active": "Box",
+          "selected": [
+            "Box"
+          ]
+        },
+        "mode": "OBJECT",
+        "selectMode": [
+          "VERT"
+        ],
+        "proportional": false,
+        "redo": {
+          "operator": "transform.translate",
+          "values": {
+            "redo.transform.translate.value.x": 0,
+            "redo.transform.translate.value.y": 0,
+            "redo.transform.translate.value.z": 1,
+            "redo.transform.translate.orient_type": "GLOBAL",
+            "redo.transform.translate.mirror": false,
+            "redo.transform.translate.use_proportional_edit": false,
+            "redo.transform.translate.proportional_edit_falloff": "SMOOTH",
+            "redo.transform.translate.proportional_size": 1,
+            "redo.transform.translate.use_proportional_connected": false,
+            "redo.transform.translate.use_proportional_projected": false
+          }
+        },
+        "tool": null,
+        "selection": null
+      },
+      "mesh": "step-03.glb"
+    },
+    {
+      "id": "menu.transform_object.rotate",
+      "action": "menu",
+      "path": [
+        "menu.object",
+        "menu.object.transform",
+        "menu.transform_object.rotate"
+      ],
+      "operator": "transform.rotate",
+      "shortcut": {
+        "keys": [
+          "R"
+        ],
+        "context": "3D Viewport · Object Mode"
+      },
+      "text": "Object ▸ Transform ▸ Rotate turns it. Pressing Z first spins it around the up axis.",
+      "help": null,
+      "duration": 2.4,
+      "value": null,
+      "autoAdvance": false,
+      "camera": {
+        "position": [
+          4.6,
+          -7.2,
+          4.4
+        ],
+        "target": [
+          0,
+          0,
+          0.9
+        ],
+        "fov": 30
+      },
+      "after": {
+        "scene": {
+          "objects": [
+            {
+              "name": "Ball",
+              "collection": null,
+              "location": [
+                1.5,
+                0,
+                0.5
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "scale": [
+                1,
+                1,
+                1
+              ],
+              "hidden": false
+            },
+            {
+              "name": "Box",
+              "collection": null,
+              "location": [
+                -1.5,
+                0,
+                1.5
+              ],
+              "rotation": [
+                0,
+                0,
+                20
+              ],
+              "scale": [
+                1,
+                1,
+                1
+              ],
+              "hidden": false
+            }
+          ],
+          "collections": [],
+          "active": "Box",
+          "selected": [
+            "Box"
+          ]
+        },
+        "mode": "OBJECT",
+        "selectMode": [
+          "VERT"
+        ],
+        "proportional": false,
+        "redo": {
+          "operator": "transform.rotate",
+          "values": {
+            "redo.transform.rotate.value": 20,
+            "redo.transform.rotate.orient_axis": "Z",
+            "redo.transform.rotate.orient_type": "GLOBAL",
+            "redo.transform.rotate.mirror": false,
+            "redo.transform.rotate.use_proportional_edit": false,
+            "redo.transform.rotate.proportional_edit_falloff": "SMOOTH",
+            "redo.transform.rotate.proportional_size": 1,
+            "redo.transform.rotate.use_proportional_connected": false,
+            "redo.transform.rotate.use_proportional_projected": false
+          }
+        },
+        "tool": null,
+        "selection": null
+      },
+      "mesh": "step-04.glb"
+    },
+    {
+      "id": "redo.transform.rotate.value",
+      "action": "redo_value",
+      "operator": "transform.rotate",
+      "value": 45,
+      "text": "Set Angle to 45° to turn it exactly half of a right angle.",
+      "help": null,
+      "step": 1,
+      "shortcut": null,
+      "duration": 2.2,
+      "autoAdvance": false,
+      "camera": {
+        "position": [
+          4.6,
+          -7.2,
+          4.4
+        ],
+        "target": [
+          0,
+          0,
+          0.9
+        ],
+        "fov": 30
+      },
+      "after": {
+        "scene": {
+          "objects": [
+            {
+              "name": "Ball",
+              "collection": null,
+              "location": [
+                1.5,
+                0,
+                0.5
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "scale": [
+                1,
+                1,
+                1
+              ],
+              "hidden": false
+            },
+            {
+              "name": "Box",
+              "collection": null,
+              "location": [
+                -1.5,
+                0,
+                1.5
+              ],
+              "rotation": [
+                0,
+                0,
+                45
+              ],
+              "scale": [
+                1,
+                1,
+                1
+              ],
+              "hidden": false
+            }
+          ],
+          "collections": [],
+          "active": "Box",
+          "selected": [
+            "Box"
+          ]
+        },
+        "mode": "OBJECT",
+        "selectMode": [
+          "VERT"
+        ],
+        "proportional": false,
+        "redo": {
+          "operator": "transform.rotate",
+          "values": {
+            "redo.transform.rotate.value": 45,
+            "redo.transform.rotate.orient_axis": "Z",
+            "redo.transform.rotate.orient_type": "GLOBAL",
+            "redo.transform.rotate.mirror": false,
+            "redo.transform.rotate.use_proportional_edit": false,
+            "redo.transform.rotate.proportional_edit_falloff": "SMOOTH",
+            "redo.transform.rotate.proportional_size": 1,
+            "redo.transform.rotate.use_proportional_connected": false,
+            "redo.transform.rotate.use_proportional_projected": false
+          }
+        },
+        "tool": null,
+        "selection": null
+      },
+      "mesh": "step-05.glb"
+    },
+    {
+      "id": "menu.transform_object.scale",
+      "action": "menu",
+      "path": [
+        "menu.object",
+        "menu.object.transform",
+        "menu.transform_object.scale"
+      ],
+      "operator": "transform.resize",
+      "shortcut": {
+        "keys": [
+          "S"
+        ],
+        "context": "3D Viewport · Object Mode"
+      },
+      "text": "Object ▸ Transform ▸ Scale, locked to Z: the box grows taller only.",
+      "help": null,
+      "duration": 2.4,
+      "value": null,
+      "autoAdvance": false,
+      "camera": {
+        "position": [
+          4.6,
+          -7.2,
+          4.4
+        ],
+        "target": [
+          0,
+          0,
+          0.9
+        ],
+        "fov": 30
+      },
+      "after": {
+        "scene": {
+          "objects": [
+            {
+              "name": "Ball",
+              "collection": null,
+              "location": [
+                1.5,
+                0,
+                0.5
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "scale": [
+                1,
+                1,
+                1
+              ],
+              "hidden": false
+            },
+            {
+              "name": "Box",
+              "collection": null,
+              "location": [
+                -1.5,
+                0,
+                1.5
+              ],
+              "rotation": [
+                0,
+                0,
+                45
+              ],
+              "scale": [
+                1,
+                1,
+                1.3
+              ],
+              "hidden": false
+            }
+          ],
+          "collections": [],
+          "active": "Box",
+          "selected": [
+            "Box"
+          ]
+        },
+        "mode": "OBJECT",
+        "selectMode": [
+          "VERT"
+        ],
+        "proportional": false,
+        "redo": {
+          "operator": "transform.resize",
+          "values": {
+            "redo.transform.resize.value.x": 1,
+            "redo.transform.resize.value.y": 1,
+            "redo.transform.resize.value.z": 1.3,
+            "redo.transform.resize.orient_type": "GLOBAL",
+            "redo.transform.resize.mirror": false,
+            "redo.transform.resize.use_proportional_edit": false,
+            "redo.transform.resize.proportional_edit_falloff": "SMOOTH",
+            "redo.transform.resize.proportional_size": 1,
+            "redo.transform.resize.use_proportional_connected": false,
+            "redo.transform.resize.use_proportional_projected": false
+          }
+        },
+        "tool": null,
+        "selection": null
+      },
+      "mesh": "step-06.glb"
+    },
+    {
+      "id": "redo.transform.resize.value.z",
+      "action": "redo_value",
+      "operator": "transform.resize",
+      "value": 2,
+      "text": "Set Scale Z to 2: twice as tall.",
+      "help": null,
+      "step": 0.1,
+      "shortcut": null,
+      "duration": 2.2,
+      "autoAdvance": false,
+      "camera": {
+        "position": [
+          4.6,
+          -7.2,
+          4.4
+        ],
+        "target": [
+          0,
+          0,
+          0.9
+        ],
+        "fov": 30
+      },
+      "after": {
+        "scene": {
+          "objects": [
+            {
+              "name": "Ball",
+              "collection": null,
+              "location": [
+                1.5,
+                0,
+                0.5
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "scale": [
+                1,
+                1,
+                1
+              ],
+              "hidden": false
+            },
+            {
+              "name": "Box",
+              "collection": null,
+              "location": [
+                -1.5,
+                0,
+                1.5
+              ],
+              "rotation": [
+                0,
+                0,
+                45
+              ],
+              "scale": [
+                1,
+                1,
+                2
+              ],
+              "hidden": false
+            }
+          ],
+          "collections": [],
+          "active": "Box",
+          "selected": [
+            "Box"
+          ]
+        },
+        "mode": "OBJECT",
+        "selectMode": [
+          "VERT"
+        ],
+        "proportional": false,
+        "redo": {
+          "operator": "transform.resize",
+          "values": {
+            "redo.transform.resize.value.x": 1,
+            "redo.transform.resize.value.y": 1,
+            "redo.transform.resize.value.z": 2,
+            "redo.transform.resize.orient_type": "GLOBAL",
+            "redo.transform.resize.mirror": false,
+            "redo.transform.resize.use_proportional_edit": false,
+            "redo.transform.resize.proportional_edit_falloff": "SMOOTH",
+            "redo.transform.resize.proportional_size": 1,
+            "redo.transform.resize.use_proportional_connected": false,
+            "redo.transform.resize.use_proportional_projected": false
+          }
+        },
+        "tool": null,
+        "selection": null
+      },
+      "mesh": "step-07.glb"
+    },
+    {
+      "id": "view3d.select",
+      "action": "tap",
+      "value": [
+        1.5112,
+        0.0848,
+        0.9886
+      ],
+      "toggle": false,
+      "text": "Click the ball. The box is no longer selected.",
+      "help": null,
+      "duration": 1.8,
+      "shortcut": null,
+      "autoAdvance": false,
+      "camera": {
+        "position": [
+          4.6,
+          -7.2,
+          4.4
+        ],
+        "target": [
+          0,
+          0,
+          0.9
+        ],
+        "fov": 30
+      },
+      "after": {
+        "scene": {
+          "objects": [
+            {
+              "name": "Ball",
+              "collection": null,
+              "location": [
+                1.5,
+                0,
+                0.5
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "scale": [
+                1,
+                1,
+                1
+              ],
+              "hidden": false
+            },
+            {
+              "name": "Box",
+              "collection": null,
+              "location": [
+                -1.5,
+                0,
+                1.5
+              ],
+              "rotation": [
+                0,
+                0,
+                45
+              ],
+              "scale": [
+                1,
+                1,
+                2
+              ],
+              "hidden": false
+            }
+          ],
+          "collections": [],
+          "active": "Ball",
+          "selected": [
+            "Ball"
+          ]
+        },
+        "mode": "OBJECT",
+        "selectMode": [
+          "VERT"
+        ],
+        "proportional": false,
+        "redo": null,
+        "tool": null,
+        "selection": null
+      },
+      "mesh": null
+    },
+    {
+      "id": "menu.transform_object.move",
+      "action": "menu",
+      "path": [
+        "menu.object",
+        "menu.object.transform",
+        "menu.transform_object.move"
+      ],
+      "operator": "transform.translate",
+      "shortcut": {
+        "keys": [
+          "G"
+        ],
+        "context": "3D Viewport · Object Mode"
+      },
+      "text": "Move it again, this time locked to X: left and right.",
+      "help": null,
+      "duration": 2.4,
+      "value": null,
+      "autoAdvance": false,
+      "camera": {
+        "position": [
+          4.6,
+          -7.2,
+          4.4
+        ],
+        "target": [
+          0,
+          0,
+          0.9
+        ],
+        "fov": 30
+      },
+      "after": {
+        "scene": {
+          "objects": [
+            {
+              "name": "Ball",
+              "collection": null,
+              "location": [
+                1.9,
+                0,
+                0.5
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "scale": [
+                1,
+                1,
+                1
+              ],
+              "hidden": false
+            },
+            {
+              "name": "Box",
+              "collection": null,
+              "location": [
+                -1.5,
+                0,
+                1.5
+              ],
+              "rotation": [
+                0,
+                0,
+                45
+              ],
+              "scale": [
+                1,
+                1,
+                2
+              ],
+              "hidden": false
+            }
+          ],
+          "collections": [],
+          "active": "Ball",
+          "selected": [
+            "Ball"
+          ]
+        },
+        "mode": "OBJECT",
+        "selectMode": [
+          "VERT"
+        ],
+        "proportional": false,
+        "redo": {
+          "operator": "transform.translate",
+          "values": {
+            "redo.transform.translate.value.x": 0.4,
+            "redo.transform.translate.value.y": 0,
+            "redo.transform.translate.value.z": 0,
+            "redo.transform.translate.orient_type": "GLOBAL",
+            "redo.transform.translate.mirror": false,
+            "redo.transform.translate.use_proportional_edit": false,
+            "redo.transform.translate.proportional_edit_falloff": "SMOOTH",
+            "redo.transform.translate.proportional_size": 1,
+            "redo.transform.translate.use_proportional_connected": false,
+            "redo.transform.translate.use_proportional_projected": false
+          }
+        },
+        "tool": null,
+        "selection": null
+      },
+      "mesh": "step-09.glb"
+    },
+    {
+      "id": "redo.transform.translate.value.x",
+      "action": "redo_value",
+      "operator": "transform.translate",
+      "value": 1,
+      "text": "Set Move X to 1 m.",
+      "help": null,
+      "step": 0.1,
+      "shortcut": null,
+      "duration": 2.2,
+      "autoAdvance": false,
+      "camera": {
+        "position": [
+          4.6,
+          -7.2,
+          4.4
+        ],
+        "target": [
+          0,
+          0,
+          0.9
+        ],
+        "fov": 30
+      },
+      "after": {
+        "scene": {
+          "objects": [
+            {
+              "name": "Ball",
+              "collection": null,
+              "location": [
+                2.5,
+                0,
+                0.5
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "scale": [
+                1,
+                1,
+                1
+              ],
+              "hidden": false
+            },
+            {
+              "name": "Box",
+              "collection": null,
+              "location": [
+                -1.5,
+                0,
+                1.5
+              ],
+              "rotation": [
+                0,
+                0,
+                45
+              ],
+              "scale": [
+                1,
+                1,
+                2
+              ],
+              "hidden": false
+            }
+          ],
+          "collections": [],
+          "active": "Ball",
+          "selected": [
+            "Ball"
+          ]
+        },
+        "mode": "OBJECT",
+        "selectMode": [
+          "VERT"
+        ],
+        "proportional": false,
+        "redo": {
+          "operator": "transform.translate",
+          "values": {
+            "redo.transform.translate.value.x": 1,
+            "redo.transform.translate.value.y": 0,
+            "redo.transform.translate.value.z": 0,
+            "redo.transform.translate.orient_type": "GLOBAL",
+            "redo.transform.translate.mirror": false,
+            "redo.transform.translate.use_proportional_edit": false,
+            "redo.transform.translate.proportional_edit_falloff": "SMOOTH",
+            "redo.transform.translate.proportional_size": 1,
+            "redo.transform.translate.use_proportional_connected": false,
+            "redo.transform.translate.use_proportional_projected": false
+          }
+        },
+        "tool": null,
+        "selection": null
+      },
+      "mesh": "step-10.glb"
+    }
+  ],
+  "outro": "Move (G), Rotate (R) and Scale (S), each locked to one axis and finished with exact numbers.",
+  "object": null
+}

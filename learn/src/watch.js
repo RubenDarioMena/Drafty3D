@@ -1,7 +1,8 @@
 import { animateStep } from './animate.js';
 import { wait } from './cursor.js';
 import { lessonProgress, saveLessonProgress } from './progress.js';
-import { fieldSteps, stateAt } from './state.js';
+import { NAVIGATION, VIEWPORT_ACTIONS, controlOf, showState, usesShift } from './scene-view.js';
+import { fieldSteps, isSceneLesson, stateAt } from './state.js';
 
 const TABS = new Set(['panel.properties.object', 'panel.properties.modifier']);
 
@@ -16,6 +17,7 @@ export class WatchMode {
     this.steps = fieldSteps(this.timeline);
     this.last = this.timeline.steps.length - 1;
     this.sculpt = this.timeline.module === 'sculpt';
+    this.scene = isSceneLesson(this.timeline);
     this.listeners = new AbortController();
     this.dom = {
       controls: document.getElementById('watch-controls'),
@@ -55,10 +57,17 @@ export class WatchMode {
     this.token += 1;
     this.listeners.abort();
     this.dom.controls.hidden = true;
-    this.menu.close();
-    this.modeMenu.close();
+    this.closeMenus();
     this.viewer.clearOverlay();
     this.cursor.hide(0);
+    this.keys.show(false, false);
+    this.keys.setShift(false);
+  }
+
+  closeMenus() {
+    this.menu.close();
+    this.modeMenu.close();
+    this.headerMenu.close();
   }
 
   render(state) {
@@ -66,11 +75,13 @@ export class WatchMode {
       objectName: this.timeline.object, enabledTabs: TABS, interactive: new Set(), steps: this.steps, showAllEnabled: true,
       enabled: new Set(),
     });
-    this.viewer.setGeometry(this.geometries.get(state.mesh));
+    showState(this.viewer, this.geometries, state);
+    this.keys.show(usesShift(this.timeline), state.modal === 'mesh.knife_tool');
   }
 
   /** Semantic id a step points at: the modifier card, the mode dropdown, or the control itself. Strokes point at the 3D Viewport. */
   targetOf(step) {
+    if (step.after) return controlOf(step, this.ui);
     if (step.action === 'add_modifier') return `modifier.${step.id.split('.')[1]}`;
     if (step.action === 'set_mode') return this.ui.sculpt.modeMenu.id;
     if (step.action === 'stroke') return null;
@@ -80,8 +91,7 @@ export class WatchMode {
   jump(index, cameraDuration = 0.35) {
     this.index = index;
     this.stage = null;
-    this.menu.close();
-    this.modeMenu.close();
+    this.closeMenus();
     this.viewer.clearOverlay();
     // A value just set inside a popover (Voxel Size) stays in view; anything else closes it.
     const done = this.timeline.steps[index];
@@ -124,8 +134,7 @@ export class WatchMode {
   async next() {
     if (this.busy || this.index >= this.last) return;
     this.stage = null;
-    this.menu.close();
-    this.modeMenu.close();
+    this.closeMenus();
     this.viewer.clearOverlay();
     const token = ++this.token;
     const index = this.index + 1;
@@ -137,11 +146,11 @@ export class WatchMode {
     this.bar.show({ count: `Step ${index + 1} of ${this.timeline.steps.length}`, text: step.text, shortcut: step.shortcut });
     this.bar.showClue('');
     this.editor.focus?.(step);
-    // A stroke moves the camera itself before the brush starts.
-    const camera = step.action === 'stroke' ? null : this.viewer.showCamera(step.camera, 0.8);
+    // A stroke moves the camera itself before the brush starts; scene steps move it after the click.
+    const camera = step.action === 'stroke' || step.after ? null : this.viewer.showCamera(step.camera, 0.8);
     await animateStep({
-      step, to, from, editor: this.editor, menu: this.menu, modeMenu: this.modeMenu, cursor: this.cursor,
-      viewer: this.viewer, geometries: this.geometries, render: state => this.render(state),
+      step, to, from, editor: this.editor, menu: this.menu, modeMenu: this.modeMenu, headerMenu: this.headerMenu,
+      keys: this.keys, cursor: this.cursor, viewer: this.viewer, geometries: this.geometries, render: state => this.render(state),
     });
     await camera;
     if (token !== this.token) return;
@@ -160,6 +169,9 @@ export class WatchMode {
 
   /** Actions inside a step, so the learner can stop on each one (e.g. the open menu). */
   stagesOf(step) {
+    if (step.action === 'menu') return step.path;
+    if (step.action === 'knife') return [...step.knife.points.map((_, i) => `point ${i + 1}`), 'enter'];
+    if (step.after && step.action !== 'set_mode') return ['target'];
     if (step.action === 'add_modifier') return ['menu', 'submenu'];
     if (step.action === 'set_mode') return ['menu', 'item'];
     if (this.editor.popoverOf?.(step.id)) return ['popover', 'target'];
@@ -201,17 +213,22 @@ export class WatchMode {
     this.editor.focus?.(step);
     const popover = this.editor.popoverOf?.(step.id);
     if (popover) this.editor.openList = stage === 'target' ? popover : null;
-    this.render(stateAt(this.timeline, this.ui, this.index));
-    this.menu.close();
-    this.modeMenu.close();
+    const before = stateAt(this.timeline, this.ui, this.index);
+    this.render(before);
+    this.closeMenus();
     this.viewer.clearOverlay();
-    const camera = this.viewer.showCamera(step.camera, 0.35);
+    // A scene step's camera is the view after it; before the click the view is the previous one.
+    const camera = this.viewer.showCamera(step.after ? before.camera : step.camera, 0.35);
     const token = this.token;
     const total = this.timeline.steps.length;
     const count = this.stagesOf(step).length;
     this.bar.show({ count: `Step ${index + 1} of ${total} · action ${this.stage + 1} of ${count + 1}`, text: step.text, shortcut: step.shortcut });
     this.bar.showClue('');
     let target;
+    if (step.after && step.action !== 'set_mode') {
+      this.showSceneStage(step, before, camera, token);
+      return;
+    }
     if (step.action === 'stroke') {
       // Paused before a stroke: the dotted path it will follow, with the cursor on its start.
       this.viewer.showGuide(step.stroke.points, step.stroke.radius);
@@ -250,12 +267,48 @@ export class WatchMode {
     this.updateControls();
   }
 
+  /** Paused inside a scene step: the open menus down to the next item, or the point the click lands on. */
+  showSceneStage(step, before, camera, token) {
+    let target = null;
+    const pointAt = point => camera.then(() => {
+      if (token !== this.token || this.stage === null) return;
+      const rect = this.viewer.canvas.getBoundingClientRect();
+      const pixel = this.viewer.project(point);
+      this.cursor.moveToPoint(rect.left + pixel.x, rect.top + pixel.y, 0.3);
+    });
+    if (step.action === 'menu') {
+      const button = this.editor.element(step.path[0]);
+      target = button;
+      if (this.stage > 0) {
+        this.headerMenu.open(button, step.path[0]);
+        for (const id of step.path.slice(1, this.stage)) this.headerMenu.openSubmenu(id);
+        target = this.headerMenu.element(step.path[this.stage]);
+      }
+      target?.classList.add(this.stage ? 'active' : 'is-target');
+    } else if (step.action === 'knife') {
+      const points = step.knife.points;
+      this.viewer.showKnife(points, this.stage);
+      if (this.stage < points.length) pointAt(points[this.stage]);
+      else target = this.keys.enterButton;
+    } else if (step.action === 'tap' || step.action === 'loop_cut') {
+      if (step.action === 'loop_cut') showState(this.viewer, this.geometries, before, step.ring);
+      if (step.toggle) this.keys.setShift(true);
+      pointAt(step.value);
+    } else if (NAVIGATION.has(step.action)) {
+      pointAt(before.camera.target);
+    } else if (!VIEWPORT_ACTIONS.has(step.action)) {
+      target = this.editor.element(controlOf(step, this.ui));
+      target?.classList.add('is-target');
+    }
+    if (target) this.cursor.moveTo(target, 0.3);
+    this.updateControls();
+  }
+
   seek(index) {
     this.token += 1;
     this.busy = false;
     this.autoplay = this.dom.autoplay.checked = false;
-    this.menu.close();
-    this.modeMenu.close();
+    this.closeMenus();
     this.cursor.hide(0);
     this.jump(Math.max(-1, Math.min(this.last, index)));
   }

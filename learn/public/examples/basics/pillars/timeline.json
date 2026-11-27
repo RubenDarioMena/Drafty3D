@@ -1,0 +1,1192 @@
+{
+  "blenderVersion": "5.3.0",
+  "module": "basics",
+  "example": "pillars",
+  "mode": "your-turn",
+  "title": "Your turn: pillars",
+  "initial": {
+    "camera": {
+      "position": [
+        3.2,
+        -5.2,
+        2.6
+      ],
+      "target": [
+        0.3,
+        0,
+        0.6
+      ],
+      "fov": 30
+    },
+    "scene": {
+      "objects": [
+        {
+          "name": "Pillar",
+          "collection": "Colonnade",
+          "location": [
+            -0.6,
+            0,
+            0.6
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "scale": [
+            0.15,
+            0.15,
+            0.6
+          ],
+          "hidden": false
+        }
+      ],
+      "collections": [
+        {
+          "name": "Colonnade",
+          "parent": null,
+          "hidden": false
+        }
+      ],
+      "active": null,
+      "selected": []
+    },
+    "mode": "OBJECT",
+    "selectMode": [
+      "VERT"
+    ],
+    "proportional": false,
+    "redo": null,
+    "tool": null,
+    "selection": null,
+    "edit": null,
+    "mesh": "step-00.glb",
+    "text": "Make a row of pillars and tidy it up in the Outliner."
+  },
+  "steps": [
+    {
+      "id": "view3d.select",
+      "action": "tap",
+      "value": [
+        -0.6,
+        -0.15,
+        0.6
+      ],
+      "toggle": false,
+      "text": "Select the pillar.",
+      "help": "Tap the pillar.",
+      "duration": 1.8,
+      "shortcut": null,
+      "autoAdvance": false,
+      "camera": {
+        "position": [
+          3.2,
+          -5.2,
+          2.6
+        ],
+        "target": [
+          0.3,
+          0,
+          0.6
+        ],
+        "fov": 30
+      },
+      "after": {
+        "scene": {
+          "objects": [
+            {
+              "name": "Pillar",
+              "collection": "Colonnade",
+              "location": [
+                -0.6,
+                0,
+                0.6
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "scale": [
+                0.15,
+                0.15,
+                0.6
+              ],
+              "hidden": false
+            }
+          ],
+          "collections": [
+            {
+              "name": "Colonnade",
+              "parent": null,
+              "hidden": false
+            }
+          ],
+          "active": "Pillar",
+          "selected": [
+            "Pillar"
+          ]
+        },
+        "mode": "OBJECT",
+        "selectMode": [
+          "VERT"
+        ],
+        "proportional": false,
+        "redo": null,
+        "tool": null,
+        "selection": null
+      },
+      "mesh": null
+    },
+    {
+      "id": "menu.object.duplicate_objects",
+      "action": "menu",
+      "path": [
+        "menu.object",
+        "menu.object.duplicate_objects"
+      ],
+      "operator": "object.duplicate_move",
+      "shortcut": {
+        "keys": [
+          "Shift",
+          "D"
+        ],
+        "context": "3D Viewport · Object Mode"
+      },
+      "text": "Duplicate it along X.",
+      "help": "Object ▸ Duplicate Objects. Shift D is the shortcut, then X.",
+      "duration": 2.4,
+      "value": null,
+      "autoAdvance": false,
+      "camera": {
+        "position": [
+          3.2,
+          -5.2,
+          2.6
+        ],
+        "target": [
+          0.3,
+          0,
+          0.6
+        ],
+        "fov": 30
+      },
+      "after": {
+        "scene": {
+          "objects": [
+            {
+              "name": "Pillar",
+              "collection": "Colonnade",
+              "location": [
+                -0.6,
+                0,
+                0.6
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "scale": [
+                0.15,
+                0.15,
+                0.6
+              ],
+              "hidden": false
+            },
+            {
+              "name": "Pillar.001",
+              "collection": "Colonnade",
+              "location": [
+                -0.2,
+                0,
+                0.6
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "scale": [
+                0.15,
+                0.15,
+                0.6
+              ],
+              "hidden": false
+            }
+          ],
+          "collections": [
+            {
+              "name": "Colonnade",
+              "parent": null,
+              "hidden": false
+            }
+          ],
+          "active": "Pillar.001",
+          "selected": [
+            "Pillar.001"
+          ]
+        },
+        "mode": "OBJECT",
+        "selectMode": [
+          "VERT"
+        ],
+        "proportional": false,
+        "redo": {
+          "operator": "object.duplicate_move",
+          "values": {
+            "redo.object.duplicate_move.OBJECT_OT_duplicate.linked": false,
+            "redo.object.duplicate_move.TRANSFORM_OT_translate.value.x": 0.4,
+            "redo.object.duplicate_move.TRANSFORM_OT_translate.value.y": 0,
+            "redo.object.duplicate_move.TRANSFORM_OT_translate.value.z": 0,
+            "redo.object.duplicate_move.TRANSFORM_OT_translate.orient_type": "GLOBAL",
+            "redo.object.duplicate_move.TRANSFORM_OT_translate.mirror": false,
+            "redo.object.duplicate_move.TRANSFORM_OT_translate.use_proportional_edit": false,
+            "redo.object.duplicate_move.TRANSFORM_OT_translate.proportional_edit_falloff": "SMOOTH",
+            "redo.object.duplicate_move.TRANSFORM_OT_translate.proportional_size": 1,
+            "redo.object.duplicate_move.TRANSFORM_OT_translate.use_proportional_connected": false,
+            "redo.object.duplicate_move.TRANSFORM_OT_translate.use_proportional_projected": false
+          }
+        },
+        "tool": null,
+        "selection": null
+      },
+      "mesh": "step-02.glb"
+    },
+    {
+      "id": "redo.object.duplicate_move.TRANSFORM_OT_translate.value.x",
+      "action": "redo_value",
+      "operator": "object.duplicate_move",
+      "value": 0.9,
+      "text": "Space it 0.9 m away.",
+      "help": "Move X in the Adjust Last Operation panel.",
+      "step": 0.1,
+      "shortcut": null,
+      "duration": 2.2,
+      "autoAdvance": false,
+      "camera": {
+        "position": [
+          3.2,
+          -5.2,
+          2.6
+        ],
+        "target": [
+          0.3,
+          0,
+          0.6
+        ],
+        "fov": 30
+      },
+      "after": {
+        "scene": {
+          "objects": [
+            {
+              "name": "Pillar",
+              "collection": "Colonnade",
+              "location": [
+                -0.6,
+                0,
+                0.6
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "scale": [
+                0.15,
+                0.15,
+                0.6
+              ],
+              "hidden": false
+            },
+            {
+              "name": "Pillar.001",
+              "collection": "Colonnade",
+              "location": [
+                0.3,
+                0,
+                0.6
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "scale": [
+                0.15,
+                0.15,
+                0.6
+              ],
+              "hidden": false
+            }
+          ],
+          "collections": [
+            {
+              "name": "Colonnade",
+              "parent": null,
+              "hidden": false
+            }
+          ],
+          "active": "Pillar.001",
+          "selected": [
+            "Pillar.001"
+          ]
+        },
+        "mode": "OBJECT",
+        "selectMode": [
+          "VERT"
+        ],
+        "proportional": false,
+        "redo": {
+          "operator": "object.duplicate_move",
+          "values": {
+            "redo.object.duplicate_move.OBJECT_OT_duplicate.linked": false,
+            "redo.object.duplicate_move.TRANSFORM_OT_translate.value.x": 0.9,
+            "redo.object.duplicate_move.TRANSFORM_OT_translate.value.y": 0,
+            "redo.object.duplicate_move.TRANSFORM_OT_translate.value.z": 0,
+            "redo.object.duplicate_move.TRANSFORM_OT_translate.orient_type": "GLOBAL",
+            "redo.object.duplicate_move.TRANSFORM_OT_translate.mirror": false,
+            "redo.object.duplicate_move.TRANSFORM_OT_translate.use_proportional_edit": false,
+            "redo.object.duplicate_move.TRANSFORM_OT_translate.proportional_edit_falloff": "SMOOTH",
+            "redo.object.duplicate_move.TRANSFORM_OT_translate.proportional_size": 1,
+            "redo.object.duplicate_move.TRANSFORM_OT_translate.use_proportional_connected": false,
+            "redo.object.duplicate_move.TRANSFORM_OT_translate.use_proportional_projected": false
+          }
+        },
+        "tool": null,
+        "selection": null
+      },
+      "mesh": "step-03.glb"
+    },
+    {
+      "id": "menu.object.duplicate_objects",
+      "action": "menu",
+      "path": [
+        "menu.object",
+        "menu.object.duplicate_objects"
+      ],
+      "operator": "object.duplicate_move",
+      "shortcut": {
+        "keys": [
+          "Shift",
+          "D"
+        ],
+        "context": "3D Viewport · Object Mode"
+      },
+      "text": "Duplicate the new one.",
+      "help": "Object ▸ Duplicate Objects again.",
+      "duration": 2.4,
+      "value": null,
+      "autoAdvance": false,
+      "camera": {
+        "position": [
+          3.2,
+          -5.2,
+          2.6
+        ],
+        "target": [
+          0.3,
+          0,
+          0.6
+        ],
+        "fov": 30
+      },
+      "after": {
+        "scene": {
+          "objects": [
+            {
+              "name": "Pillar",
+              "collection": "Colonnade",
+              "location": [
+                -0.6,
+                0,
+                0.6
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "scale": [
+                0.15,
+                0.15,
+                0.6
+              ],
+              "hidden": false
+            },
+            {
+              "name": "Pillar.001",
+              "collection": "Colonnade",
+              "location": [
+                0.3,
+                0,
+                0.6
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "scale": [
+                0.15,
+                0.15,
+                0.6
+              ],
+              "hidden": false
+            },
+            {
+              "name": "Pillar.002",
+              "collection": "Colonnade",
+              "location": [
+                0.7,
+                0,
+                0.6
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "scale": [
+                0.15,
+                0.15,
+                0.6
+              ],
+              "hidden": false
+            }
+          ],
+          "collections": [
+            {
+              "name": "Colonnade",
+              "parent": null,
+              "hidden": false
+            }
+          ],
+          "active": "Pillar.002",
+          "selected": [
+            "Pillar.002"
+          ]
+        },
+        "mode": "OBJECT",
+        "selectMode": [
+          "VERT"
+        ],
+        "proportional": false,
+        "redo": {
+          "operator": "object.duplicate_move",
+          "values": {
+            "redo.object.duplicate_move.OBJECT_OT_duplicate.linked": false,
+            "redo.object.duplicate_move.TRANSFORM_OT_translate.value.x": 0.4,
+            "redo.object.duplicate_move.TRANSFORM_OT_translate.value.y": 0,
+            "redo.object.duplicate_move.TRANSFORM_OT_translate.value.z": 0,
+            "redo.object.duplicate_move.TRANSFORM_OT_translate.orient_type": "GLOBAL",
+            "redo.object.duplicate_move.TRANSFORM_OT_translate.mirror": false,
+            "redo.object.duplicate_move.TRANSFORM_OT_translate.use_proportional_edit": false,
+            "redo.object.duplicate_move.TRANSFORM_OT_translate.proportional_edit_falloff": "SMOOTH",
+            "redo.object.duplicate_move.TRANSFORM_OT_translate.proportional_size": 1,
+            "redo.object.duplicate_move.TRANSFORM_OT_translate.use_proportional_connected": false,
+            "redo.object.duplicate_move.TRANSFORM_OT_translate.use_proportional_projected": false
+          }
+        },
+        "tool": null,
+        "selection": null
+      },
+      "mesh": "step-04.glb"
+    },
+    {
+      "id": "redo.object.duplicate_move.TRANSFORM_OT_translate.value.x",
+      "action": "redo_value",
+      "operator": "object.duplicate_move",
+      "value": 0.9,
+      "text": "Also 0.9 m.",
+      "help": "Move X in the panel.",
+      "step": 0.1,
+      "shortcut": null,
+      "duration": 2.2,
+      "autoAdvance": false,
+      "camera": {
+        "position": [
+          3.2,
+          -5.2,
+          2.6
+        ],
+        "target": [
+          0.3,
+          0,
+          0.6
+        ],
+        "fov": 30
+      },
+      "after": {
+        "scene": {
+          "objects": [
+            {
+              "name": "Pillar",
+              "collection": "Colonnade",
+              "location": [
+                -0.6,
+                0,
+                0.6
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "scale": [
+                0.15,
+                0.15,
+                0.6
+              ],
+              "hidden": false
+            },
+            {
+              "name": "Pillar.001",
+              "collection": "Colonnade",
+              "location": [
+                0.3,
+                0,
+                0.6
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "scale": [
+                0.15,
+                0.15,
+                0.6
+              ],
+              "hidden": false
+            },
+            {
+              "name": "Pillar.002",
+              "collection": "Colonnade",
+              "location": [
+                1.2,
+                0,
+                0.6
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "scale": [
+                0.15,
+                0.15,
+                0.6
+              ],
+              "hidden": false
+            }
+          ],
+          "collections": [
+            {
+              "name": "Colonnade",
+              "parent": null,
+              "hidden": false
+            }
+          ],
+          "active": "Pillar.002",
+          "selected": [
+            "Pillar.002"
+          ]
+        },
+        "mode": "OBJECT",
+        "selectMode": [
+          "VERT"
+        ],
+        "proportional": false,
+        "redo": {
+          "operator": "object.duplicate_move",
+          "values": {
+            "redo.object.duplicate_move.OBJECT_OT_duplicate.linked": false,
+            "redo.object.duplicate_move.TRANSFORM_OT_translate.value.x": 0.9,
+            "redo.object.duplicate_move.TRANSFORM_OT_translate.value.y": 0,
+            "redo.object.duplicate_move.TRANSFORM_OT_translate.value.z": 0,
+            "redo.object.duplicate_move.TRANSFORM_OT_translate.orient_type": "GLOBAL",
+            "redo.object.duplicate_move.TRANSFORM_OT_translate.mirror": false,
+            "redo.object.duplicate_move.TRANSFORM_OT_translate.use_proportional_edit": false,
+            "redo.object.duplicate_move.TRANSFORM_OT_translate.proportional_edit_falloff": "SMOOTH",
+            "redo.object.duplicate_move.TRANSFORM_OT_translate.proportional_size": 1,
+            "redo.object.duplicate_move.TRANSFORM_OT_translate.use_proportional_connected": false,
+            "redo.object.duplicate_move.TRANSFORM_OT_translate.use_proportional_projected": false
+          }
+        },
+        "tool": null,
+        "selection": null
+      },
+      "mesh": "step-05.glb"
+    },
+    {
+      "id": "outliner.select",
+      "action": "outliner_select",
+      "value": "Pillar.001",
+      "text": "In the Outliner, select the middle pillar, Pillar.001.",
+      "help": "Tap its row in the Outliner.",
+      "duration": 1.6,
+      "shortcut": null,
+      "autoAdvance": false,
+      "camera": {
+        "position": [
+          3.2,
+          -5.2,
+          2.6
+        ],
+        "target": [
+          0.3,
+          0,
+          0.6
+        ],
+        "fov": 30
+      },
+      "after": {
+        "scene": {
+          "objects": [
+            {
+              "name": "Pillar",
+              "collection": "Colonnade",
+              "location": [
+                -0.6,
+                0,
+                0.6
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "scale": [
+                0.15,
+                0.15,
+                0.6
+              ],
+              "hidden": false
+            },
+            {
+              "name": "Pillar.001",
+              "collection": "Colonnade",
+              "location": [
+                0.3,
+                0,
+                0.6
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "scale": [
+                0.15,
+                0.15,
+                0.6
+              ],
+              "hidden": false
+            },
+            {
+              "name": "Pillar.002",
+              "collection": "Colonnade",
+              "location": [
+                1.2,
+                0,
+                0.6
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "scale": [
+                0.15,
+                0.15,
+                0.6
+              ],
+              "hidden": false
+            }
+          ],
+          "collections": [
+            {
+              "name": "Colonnade",
+              "parent": null,
+              "hidden": false
+            }
+          ],
+          "active": "Pillar.001",
+          "selected": [
+            "Pillar.001"
+          ]
+        },
+        "mode": "OBJECT",
+        "selectMode": [
+          "VERT"
+        ],
+        "proportional": false,
+        "redo": null,
+        "tool": null,
+        "selection": null
+      },
+      "mesh": null
+    },
+    {
+      "id": "outliner.rename",
+      "action": "rename",
+      "value": "Middle Pillar",
+      "target": "Pillar.001",
+      "shortcut": {
+        "keys": [
+          "F2"
+        ],
+        "context": "3D Viewport"
+      },
+      "text": "Rename it Middle Pillar.",
+      "help": "Double-tap the name in the Outliner, then type.",
+      "duration": 2.4,
+      "autoAdvance": false,
+      "camera": {
+        "position": [
+          3.2,
+          -5.2,
+          2.6
+        ],
+        "target": [
+          0.3,
+          0,
+          0.6
+        ],
+        "fov": 30
+      },
+      "after": {
+        "scene": {
+          "objects": [
+            {
+              "name": "Middle Pillar",
+              "collection": "Colonnade",
+              "location": [
+                0.3,
+                0,
+                0.6
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "scale": [
+                0.15,
+                0.15,
+                0.6
+              ],
+              "hidden": false
+            },
+            {
+              "name": "Pillar",
+              "collection": "Colonnade",
+              "location": [
+                -0.6,
+                0,
+                0.6
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "scale": [
+                0.15,
+                0.15,
+                0.6
+              ],
+              "hidden": false
+            },
+            {
+              "name": "Pillar.002",
+              "collection": "Colonnade",
+              "location": [
+                1.2,
+                0,
+                0.6
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "scale": [
+                0.15,
+                0.15,
+                0.6
+              ],
+              "hidden": false
+            }
+          ],
+          "collections": [
+            {
+              "name": "Colonnade",
+              "parent": null,
+              "hidden": false
+            }
+          ],
+          "active": "Middle Pillar",
+          "selected": [
+            "Middle Pillar"
+          ]
+        },
+        "mode": "OBJECT",
+        "selectMode": [
+          "VERT"
+        ],
+        "proportional": false,
+        "redo": null,
+        "tool": null,
+        "selection": null
+      },
+      "mesh": "step-07.glb"
+    },
+    {
+      "id": "outliner.hide",
+      "action": "outliner_hide",
+      "value": "Colonnade",
+      "hidden": true,
+      "text": "Hide the whole Colonnade collection.",
+      "help": "The eye at the right of the collection row.",
+      "duration": 1.6,
+      "shortcut": null,
+      "autoAdvance": false,
+      "camera": {
+        "position": [
+          3.2,
+          -5.2,
+          2.6
+        ],
+        "target": [
+          0.3,
+          0,
+          0.6
+        ],
+        "fov": 30
+      },
+      "after": {
+        "scene": {
+          "objects": [
+            {
+              "name": "Middle Pillar",
+              "collection": "Colonnade",
+              "location": [
+                0.3,
+                0,
+                0.6
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "scale": [
+                0.15,
+                0.15,
+                0.6
+              ],
+              "hidden": false
+            },
+            {
+              "name": "Pillar",
+              "collection": "Colonnade",
+              "location": [
+                -0.6,
+                0,
+                0.6
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "scale": [
+                0.15,
+                0.15,
+                0.6
+              ],
+              "hidden": false
+            },
+            {
+              "name": "Pillar.002",
+              "collection": "Colonnade",
+              "location": [
+                1.2,
+                0,
+                0.6
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "scale": [
+                0.15,
+                0.15,
+                0.6
+              ],
+              "hidden": false
+            }
+          ],
+          "collections": [
+            {
+              "name": "Colonnade",
+              "parent": null,
+              "hidden": true
+            }
+          ],
+          "active": "Middle Pillar",
+          "selected": [
+            "Middle Pillar"
+          ]
+        },
+        "mode": "OBJECT",
+        "selectMode": [
+          "VERT"
+        ],
+        "proportional": false,
+        "redo": null,
+        "tool": null,
+        "selection": null
+      },
+      "mesh": "step-08.glb"
+    },
+    {
+      "id": "outliner.hide",
+      "action": "outliner_hide",
+      "value": "Colonnade",
+      "hidden": false,
+      "text": "Show it again.",
+      "help": "Tap the same eye.",
+      "duration": 1.6,
+      "shortcut": null,
+      "autoAdvance": false,
+      "camera": {
+        "position": [
+          3.2,
+          -5.2,
+          2.6
+        ],
+        "target": [
+          0.3,
+          0,
+          0.6
+        ],
+        "fov": 30
+      },
+      "after": {
+        "scene": {
+          "objects": [
+            {
+              "name": "Middle Pillar",
+              "collection": "Colonnade",
+              "location": [
+                0.3,
+                0,
+                0.6
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "scale": [
+                0.15,
+                0.15,
+                0.6
+              ],
+              "hidden": false
+            },
+            {
+              "name": "Pillar",
+              "collection": "Colonnade",
+              "location": [
+                -0.6,
+                0,
+                0.6
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "scale": [
+                0.15,
+                0.15,
+                0.6
+              ],
+              "hidden": false
+            },
+            {
+              "name": "Pillar.002",
+              "collection": "Colonnade",
+              "location": [
+                1.2,
+                0,
+                0.6
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "scale": [
+                0.15,
+                0.15,
+                0.6
+              ],
+              "hidden": false
+            }
+          ],
+          "collections": [
+            {
+              "name": "Colonnade",
+              "parent": null,
+              "hidden": false
+            }
+          ],
+          "active": "Middle Pillar",
+          "selected": [
+            "Middle Pillar"
+          ]
+        },
+        "mode": "OBJECT",
+        "selectMode": [
+          "VERT"
+        ],
+        "proportional": false,
+        "redo": null,
+        "tool": null,
+        "selection": null
+      },
+      "mesh": "step-09.glb"
+    },
+    {
+      "id": "menu.select_object.all",
+      "action": "menu",
+      "path": [
+        "menu.select_object",
+        "menu.select_object.all"
+      ],
+      "operator": "object.select_all",
+      "shortcut": {
+        "keys": [
+          "A"
+        ],
+        "context": "3D Viewport · Object Mode"
+      },
+      "text": "Select everything.",
+      "help": "Select ▸ All. A is the shortcut.",
+      "duration": 2.4,
+      "value": null,
+      "autoAdvance": false,
+      "camera": {
+        "position": [
+          3.2,
+          -5.2,
+          2.6
+        ],
+        "target": [
+          0.3,
+          0,
+          0.6
+        ],
+        "fov": 30
+      },
+      "after": {
+        "scene": {
+          "objects": [
+            {
+              "name": "Middle Pillar",
+              "collection": "Colonnade",
+              "location": [
+                0.3,
+                0,
+                0.6
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "scale": [
+                0.15,
+                0.15,
+                0.6
+              ],
+              "hidden": false
+            },
+            {
+              "name": "Pillar",
+              "collection": "Colonnade",
+              "location": [
+                -0.6,
+                0,
+                0.6
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "scale": [
+                0.15,
+                0.15,
+                0.6
+              ],
+              "hidden": false
+            },
+            {
+              "name": "Pillar.002",
+              "collection": "Colonnade",
+              "location": [
+                1.2,
+                0,
+                0.6
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "scale": [
+                0.15,
+                0.15,
+                0.6
+              ],
+              "hidden": false
+            }
+          ],
+          "collections": [
+            {
+              "name": "Colonnade",
+              "parent": null,
+              "hidden": false
+            }
+          ],
+          "active": "Middle Pillar",
+          "selected": [
+            "Middle Pillar",
+            "Pillar",
+            "Pillar.002"
+          ]
+        },
+        "mode": "OBJECT",
+        "selectMode": [
+          "VERT"
+        ],
+        "proportional": false,
+        "redo": null,
+        "tool": null,
+        "selection": null
+      },
+      "mesh": null
+    }
+  ],
+  "variantOf": "fence",
+  "outro": "A tidy, named colonnade.",
+  "object": null
+}
