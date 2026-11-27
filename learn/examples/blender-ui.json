@@ -1462,6 +1462,72 @@
           "context": "hold while sculpting"
         }
       },
+      "remesh": {
+        "id": "sculpt.remesh",
+        "label": "Remesh",
+        "fields": [
+          {
+            "id": "sculpt.voxel_size",
+            "rna": "remesh_voxel_size",
+            "label": "Voxel Size",
+            "description": "Size of the voxel in object space used for volume evaluation. Lower values preserve finer details.",
+            "kind": "float",
+            "default": 0.10000000149011612,
+            "unit": "m",
+            "precision": 4,
+            "softMin": 0.00009999999747378752,
+            "softMax": 3.4028234663852886e+38
+          },
+          {
+            "id": "sculpt.voxel_adaptivity",
+            "rna": "remesh_voxel_adaptivity",
+            "label": "Adaptivity",
+            "description": "Reduces the final face count by simplifying geometry where detail is not needed, generating triangles. A value greater than 0 disables Fix Poles.",
+            "kind": "float",
+            "default": 0,
+            "unit": "",
+            "precision": 4,
+            "softMin": 0,
+            "softMax": 1
+          },
+          {
+            "id": "sculpt.fix_poles",
+            "rna": "use_remesh_fix_poles",
+            "label": "Fix Poles",
+            "description": "Produces fewer poles and a better topology flow",
+            "kind": "bool",
+            "default": false
+          },
+          {
+            "id": "sculpt.preserve_volume",
+            "rna": "use_remesh_preserve_volume",
+            "label": "Volume",
+            "description": "Projects the mesh to preserve the volume and details of the original mesh",
+            "kind": "bool",
+            "default": false,
+            "heading": "Preserve"
+          },
+          {
+            "id": "sculpt.preserve_attributes",
+            "rna": "use_remesh_preserve_attributes",
+            "label": "Attributes",
+            "description": "Transfer all attributes to the new mesh",
+            "kind": "bool",
+            "default": false
+          }
+        ],
+        "button": {
+          "id": "sculpt.remesh.apply",
+          "label": "Remesh",
+          "shortcut": {
+            "keys": [
+              "Ctrl",
+              "R"
+            ],
+            "context": "3D Viewport · Sculpt Mode"
+          }
+        }
+      },
       "symmetry": {
         "id": "sculpt.symmetry",
         "items": [

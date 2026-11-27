@@ -1,4 +1,4 @@
-import{a as e,c as t,i as n,l as r,n as i,o as a,r as o,s}from"./viewer-DyofC1fp.js";var c=384,l=i(),u=new URL(`./examples/`,document.baseURI),d=new r({side:2,vertexShader:`
+import{a as e,c as t,i as n,l as r,n as i,o as a,r as o,s}from"./viewer-DsnbE-1t.js";var c=384,l=i(),u=new URL(`./examples/`,document.baseURI),d=new r({side:2,vertexShader:`
     varying vec3 vNormal;
     void main() {
       vNormal = normalize(mat3(modelMatrix) * normal);

@@ -1,0 +1,651 @@
+{
+  "blenderVersion": "5.3.0",
+  "module": "sculpt",
+  "example": "belted-pebble",
+  "mode": "watch",
+  "title": "Belted pebble",
+  "object": "Pebble",
+  "initial": {
+    "camera": {
+      "position": [
+        0,
+        -2.6,
+        0.62
+      ],
+      "target": [
+        0,
+        0,
+        0.04
+      ],
+      "fov": 30
+    },
+    "text": "Mask protects part of the surface: masked areas turn dark, and no brush can change them until the mask is removed.",
+    "mesh": "step-00.glb",
+    "mode": "OBJECT",
+    "tool": null
+  },
+  "steps": [
+    {
+      "id": "object.mode.sculpt",
+      "action": "set_mode",
+      "value": "SCULPT",
+      "value_type": "enum",
+      "shortcut": {
+        "keys": [
+          "Ctrl",
+          "Tab"
+        ],
+        "context": "3D Viewport · mode pie"
+      },
+      "duration": 1.6,
+      "autoAdvance": true,
+      "text": "Switch to Sculpt Mode.",
+      "help": null,
+      "tool": {
+        "brush": "Draw",
+        "size": 100,
+        "strength": 0.5,
+        "direction": "ADD",
+        "symmetry": []
+      },
+      "camera": {
+        "position": [
+          0,
+          -2.6,
+          0.62
+        ],
+        "target": [
+          0,
+          0,
+          0.04
+        ],
+        "fov": 30
+      },
+      "mesh": null
+    },
+    {
+      "id": "sculpt.brush.mask",
+      "action": "select_brush",
+      "value": "Mask",
+      "value_type": "string",
+      "shortcut": {
+        "keys": [
+          "M"
+        ],
+        "context": "3D Viewport · Sculpt Mode"
+      },
+      "duration": 2,
+      "autoAdvance": false,
+      "text": "Pick the Mask brush. It does not move the surface; it paints where brushes may not work.",
+      "help": null,
+      "tool": {
+        "brush": "Mask",
+        "size": 100,
+        "strength": 1,
+        "direction": "ADD",
+        "symmetry": []
+      },
+      "camera": {
+        "position": [
+          0,
+          -2.6,
+          0.62
+        ],
+        "target": [
+          0,
+          0,
+          0.04
+        ],
+        "fov": 30
+      },
+      "mesh": null
+    },
+    {
+      "id": "sculpt.size",
+      "action": "set_value",
+      "value": 110,
+      "value_type": "number",
+      "step": 10,
+      "shortcut": {
+        "keys": [
+          "F"
+        ],
+        "context": "3D Viewport · Sculpt Mode"
+      },
+      "duration": 2,
+      "autoAdvance": false,
+      "text": "Set Size to 110 px: the width of the belt.",
+      "help": null,
+      "tool": {
+        "brush": "Mask",
+        "size": 110,
+        "strength": 1,
+        "direction": "ADD",
+        "symmetry": []
+      },
+      "camera": {
+        "position": [
+          0,
+          -2.6,
+          0.62
+        ],
+        "target": [
+          0,
+          0,
+          0.04
+        ],
+        "fov": 30
+      },
+      "mesh": null
+    },
+    {
+      "id": "sculpt.stroke",
+      "action": "stroke",
+      "value": null,
+      "value_type": null,
+      "duration": 2.4,
+      "autoAdvance": false,
+      "text": "Paint a band across the middle. It turns dark: that part is masked.",
+      "help": null,
+      "stroke": {
+        "brush": "Mask",
+        "brushType": "MASK",
+        "drag": false,
+        "path": [
+          [
+            -0.55,
+            0.02
+          ],
+          [
+            -0.2,
+            0
+          ],
+          [
+            0.2,
+            0
+          ],
+          [
+            0.55,
+            0.02
+          ]
+        ],
+        "points": [
+          [
+            -0.3472,
+            -0.2981,
+            0.1194
+          ],
+          [
+            -0.3156,
+            -0.3236,
+            0.1234
+          ],
+          [
+            -0.2851,
+            -0.3445,
+            0.1263
+          ],
+          [
+            -0.2556,
+            -0.3619,
+            0.1285
+          ],
+          [
+            -0.2268,
+            -0.3765,
+            0.1301
+          ],
+          [
+            -0.1986,
+            -0.3888,
+            0.1313
+          ],
+          [
+            -0.1708,
+            -0.3991,
+            0.132
+          ],
+          [
+            -0.1433,
+            -0.4076,
+            0.1323
+          ],
+          [
+            -0.1162,
+            -0.4146,
+            0.1325
+          ],
+          [
+            -0.0893,
+            -0.4195,
+            0.1336
+          ],
+          [
+            -0.0626,
+            -0.4231,
+            0.1344
+          ],
+          [
+            -0.036,
+            -0.4254,
+            0.1349
+          ],
+          [
+            -0.0095,
+            -0.4265,
+            0.1351
+          ],
+          [
+            0.0171,
+            -0.4263,
+            0.1351
+          ],
+          [
+            0.0436,
+            -0.4249,
+            0.1348
+          ],
+          [
+            0.0702,
+            -0.4222,
+            0.1342
+          ],
+          [
+            0.097,
+            -0.4182,
+            0.1333
+          ],
+          [
+            0.1239,
+            -0.4128,
+            0.1323
+          ],
+          [
+            0.1511,
+            -0.4054,
+            0.1322
+          ],
+          [
+            0.1787,
+            -0.3964,
+            0.1318
+          ],
+          [
+            0.2066,
+            -0.3855,
+            0.131
+          ],
+          [
+            0.235,
+            -0.3726,
+            0.1297
+          ],
+          [
+            0.264,
+            -0.3573,
+            0.1279
+          ],
+          [
+            0.2937,
+            -0.3389,
+            0.1255
+          ],
+          [
+            0.3245,
+            -0.3168,
+            0.1223
+          ],
+          [
+            0.3472,
+            -0.298,
+            0.1194
+          ]
+        ],
+        "radius": 0.0729,
+        "maskedVertices": 483
+      },
+      "shortcut": null,
+      "tool": {
+        "brush": "Mask",
+        "size": 110,
+        "strength": 1,
+        "direction": "ADD",
+        "symmetry": []
+      },
+      "camera": {
+        "position": [
+          0,
+          -2.6,
+          0.62
+        ],
+        "target": [
+          0,
+          0,
+          0.04
+        ],
+        "fov": 30
+      },
+      "mesh": "step-04.glb"
+    },
+    {
+      "id": "sculpt.brush.inflate_deflate",
+      "action": "select_brush",
+      "value": "Inflate/Deflate",
+      "value_type": "string",
+      "shortcut": {
+        "keys": [
+          "I"
+        ],
+        "context": "3D Viewport · Sculpt Mode"
+      },
+      "duration": 2,
+      "autoAdvance": false,
+      "text": "Pick Inflate/Deflate. It swells the surface outward.",
+      "help": null,
+      "tool": {
+        "brush": "Inflate/Deflate",
+        "size": 110,
+        "strength": 0.5,
+        "direction": "INFLATE",
+        "symmetry": []
+      },
+      "camera": {
+        "position": [
+          0,
+          -2.6,
+          0.62
+        ],
+        "target": [
+          0,
+          0,
+          0.04
+        ],
+        "fov": 30
+      },
+      "mesh": null
+    },
+    {
+      "id": "sculpt.size",
+      "action": "set_value",
+      "value": 300,
+      "value_type": "number",
+      "step": 10,
+      "shortcut": {
+        "keys": [
+          "F"
+        ],
+        "context": "3D Viewport · Sculpt Mode"
+      },
+      "duration": 2,
+      "autoAdvance": false,
+      "text": "Set Size to 300 px to swell the whole pebble.",
+      "help": null,
+      "tool": {
+        "brush": "Inflate/Deflate",
+        "size": 300,
+        "strength": 0.5,
+        "direction": "INFLATE",
+        "symmetry": []
+      },
+      "camera": {
+        "position": [
+          0,
+          -2.6,
+          0.62
+        ],
+        "target": [
+          0,
+          0,
+          0.04
+        ],
+        "fov": 30
+      },
+      "mesh": null
+    },
+    {
+      "id": "sculpt.strength",
+      "action": "set_value",
+      "value": 1,
+      "value_type": "number",
+      "step": 0.1,
+      "shortcut": {
+        "keys": [
+          "Shift",
+          "F"
+        ],
+        "context": "3D Viewport · Sculpt Mode"
+      },
+      "duration": 2,
+      "autoAdvance": false,
+      "text": "Set Strength to 1.0.",
+      "help": null,
+      "tool": {
+        "brush": "Inflate/Deflate",
+        "size": 300,
+        "strength": 1,
+        "direction": "INFLATE",
+        "symmetry": []
+      },
+      "camera": {
+        "position": [
+          0,
+          -2.6,
+          0.62
+        ],
+        "target": [
+          0,
+          0,
+          0.04
+        ],
+        "fov": 30
+      },
+      "mesh": null
+    },
+    {
+      "id": "sculpt.stroke",
+      "action": "stroke",
+      "value": null,
+      "value_type": null,
+      "duration": 3.4,
+      "autoAdvance": false,
+      "text": "Inflate over the whole front. Everything swells except the masked belt, which stays put as a groove.",
+      "help": null,
+      "stroke": {
+        "brush": "Inflate/Deflate",
+        "brushType": "INFLATE",
+        "drag": false,
+        "path": [
+          [
+            -0.3,
+            0.34
+          ],
+          [
+            0.3,
+            0.34
+          ],
+          [
+            0.3,
+            0.12
+          ],
+          [
+            -0.3,
+            0.12
+          ],
+          [
+            -0.3,
+            -0.14
+          ],
+          [
+            0.3,
+            -0.14
+          ],
+          [
+            0.3,
+            -0.34
+          ],
+          [
+            -0.3,
+            -0.34
+          ]
+        ],
+        "points": [
+          [
+            -0.1899,
+            -0.2479,
+            0.3158
+          ],
+          [
+            -0.1084,
+            -0.2796,
+            0.3199
+          ],
+          [
+            -0.0294,
+            -0.2929,
+            0.3216
+          ],
+          [
+            0.049,
+            -0.291,
+            0.3214
+          ],
+          [
+            0.1285,
+            -0.2737,
+            0.3191
+          ],
+          [
+            0.1883,
+            -0.2717,
+            0.2985
+          ],
+          [
+            0.1841,
+            -0.3415,
+            0.2282
+          ],
+          [
+            0.1397,
+            -0.3774,
+            0.1987
+          ],
+          [
+            0.0627,
+            -0.3921,
+            0.2015
+          ],
+          [
+            -0.0133,
+            -0.3956,
+            0.2021
+          ],
+          [
+            -0.0895,
+            -0.3883,
+            0.2007
+          ],
+          [
+            -0.1671,
+            -0.3691,
+            0.1971
+          ],
+          [
+            -0.1816,
+            -0.3924,
+            0.139
+          ],
+          [
+            -0.1813,
+            -0.4135,
+            0.0652
+          ],
+          [
+            -0.1232,
+            -0.4327,
+            0.0505
+          ],
+          [
+            -0.0471,
+            -0.4443,
+            0.0535
+          ],
+          [
+            0.0283,
+            -0.4456,
+            0.0538
+          ],
+          [
+            0.104,
+            -0.4367,
+            0.0515
+          ],
+          [
+            0.1814,
+            -0.4164,
+            0.0462
+          ],
+          [
+            0.1827,
+            -0.4171,
+            -0.0349
+          ],
+          [
+            0.1484,
+            -0.4214,
+            -0.0787
+          ],
+          [
+            0.0708,
+            -0.4386,
+            -0.0732
+          ],
+          [
+            -0.0057,
+            -0.4434,
+            -0.0716
+          ],
+          [
+            -0.0823,
+            -0.4369,
+            -0.0737
+          ],
+          [
+            -0.1603,
+            -0.4177,
+            -0.0799
+          ],
+          [
+            -0.1842,
+            -0.409,
+            -0.0826
+          ]
+        ],
+        "radius": 0.1994,
+        "movedVertices": 2165
+      },
+      "shortcut": null,
+      "tool": {
+        "brush": "Inflate/Deflate",
+        "size": 300,
+        "strength": 1,
+        "direction": "INFLATE",
+        "symmetry": []
+      },
+      "camera": {
+        "position": [
+          0,
+          -2.6,
+          0.62
+        ],
+        "target": [
+          0,
+          0,
+          0.04
+        ],
+        "fov": 30
+      },
+      "mesh": "step-08.glb"
+    }
+  ],
+  "outro": "Done: paint a Mask over what must not change, then sculpt freely around it. Now make a seam yourself."
+}
