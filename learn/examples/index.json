@@ -239,6 +239,22 @@
       "title": "Your turn: scarred pebble",
       "variantOf": "wrinkled-pebble",
       "timeline": "sculpt/scarred-pebble/timeline.json"
+    },
+    {
+      "module": "sculpt",
+      "example": "troll-head",
+      "mode": "watch",
+      "title": "Project: troll head",
+      "variantOf": null,
+      "timeline": "sculpt/troll-head/timeline.json"
+    },
+    {
+      "module": "sculpt",
+      "example": "imp-head",
+      "mode": "your-turn",
+      "title": "Your turn: imp head",
+      "variantOf": "troll-head",
+      "timeline": "sculpt/imp-head/timeline.json"
     }
   ]
 }
