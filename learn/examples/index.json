@@ -1,6 +1,230 @@
 {
   "lessons": [
     {
+      "module": "basics",
+      "example": "look-around",
+      "mode": "watch",
+      "title": "Look around",
+      "variantOf": null,
+      "timeline": "basics/look-around/timeline.json"
+    },
+    {
+      "module": "basics",
+      "example": "tower-tour",
+      "mode": "your-turn",
+      "title": "Your turn: tower tour",
+      "variantOf": "look-around",
+      "timeline": "basics/tower-tour/timeline.json"
+    },
+    {
+      "module": "basics",
+      "example": "add-objects",
+      "mode": "watch",
+      "title": "Add objects",
+      "variantOf": null,
+      "timeline": "basics/add-objects/timeline.json"
+    },
+    {
+      "module": "basics",
+      "example": "add-shapes",
+      "mode": "your-turn",
+      "title": "Your turn: add shapes",
+      "variantOf": "add-objects",
+      "timeline": "basics/add-shapes/timeline.json"
+    },
+    {
+      "module": "basics",
+      "example": "move-rotate-scale",
+      "mode": "watch",
+      "title": "Move, rotate and scale",
+      "variantOf": null,
+      "timeline": "basics/move-rotate-scale/timeline.json"
+    },
+    {
+      "module": "basics",
+      "example": "arrange-blocks",
+      "mode": "your-turn",
+      "title": "Your turn: arrange blocks",
+      "variantOf": "move-rotate-scale",
+      "timeline": "basics/arrange-blocks/timeline.json"
+    },
+    {
+      "module": "basics",
+      "example": "fence",
+      "mode": "watch",
+      "title": "Duplicate and organize",
+      "variantOf": null,
+      "timeline": "basics/fence/timeline.json"
+    },
+    {
+      "module": "basics",
+      "example": "pillars",
+      "mode": "your-turn",
+      "title": "Your turn: pillars",
+      "variantOf": "fence",
+      "timeline": "basics/pillars/timeline.json"
+    },
+    {
+      "module": "basics",
+      "example": "modes",
+      "mode": "watch",
+      "title": "Object, Edit and Sculpt Mode",
+      "variantOf": null,
+      "timeline": "basics/modes/timeline.json"
+    },
+    {
+      "module": "basics",
+      "example": "modes-tower",
+      "mode": "your-turn",
+      "title": "Your turn: modes",
+      "variantOf": "modes",
+      "timeline": "basics/modes-tower/timeline.json"
+    },
+    {
+      "module": "basics",
+      "example": "project-table",
+      "mode": "watch",
+      "title": "Project: table and stool",
+      "variantOf": null,
+      "timeline": "basics/project-table/timeline.json"
+    },
+    {
+      "module": "basics",
+      "example": "project-desk",
+      "mode": "your-turn",
+      "title": "Your turn: desk and stool",
+      "variantOf": "project-table",
+      "timeline": "basics/project-desk/timeline.json"
+    },
+    {
+      "module": "modeling",
+      "example": "select-parts",
+      "mode": "watch",
+      "title": "Points, lines and faces",
+      "variantOf": null,
+      "timeline": "modeling/select-parts/timeline.json"
+    },
+    {
+      "module": "modeling",
+      "example": "select-parts-prism",
+      "mode": "your-turn",
+      "title": "Your turn: select parts",
+      "variantOf": "select-parts",
+      "timeline": "modeling/select-parts-prism/timeline.json"
+    },
+    {
+      "module": "modeling",
+      "example": "extrude-arm",
+      "mode": "watch",
+      "title": "Extrude",
+      "variantOf": null,
+      "timeline": "modeling/extrude-arm/timeline.json"
+    },
+    {
+      "module": "modeling",
+      "example": "extrude-crane",
+      "mode": "your-turn",
+      "title": "Your turn: extrude a crane",
+      "variantOf": "extrude-arm",
+      "timeline": "modeling/extrude-crane/timeline.json"
+    },
+    {
+      "module": "modeling",
+      "example": "inset-planter",
+      "mode": "watch",
+      "title": "Inset and extrude inward",
+      "variantOf": null,
+      "timeline": "modeling/inset-planter/timeline.json"
+    },
+    {
+      "module": "modeling",
+      "example": "inset-drawer",
+      "mode": "your-turn",
+      "title": "Your turn: a niche",
+      "variantOf": "inset-planter",
+      "timeline": "modeling/inset-drawer/timeline.json"
+    },
+    {
+      "module": "modeling",
+      "example": "loop-cut-barrel",
+      "mode": "watch",
+      "title": "Loop cut",
+      "variantOf": null,
+      "timeline": "modeling/loop-cut-barrel/timeline.json"
+    },
+    {
+      "module": "modeling",
+      "example": "loop-cut-vase",
+      "mode": "your-turn",
+      "title": "Your turn: a vase",
+      "variantOf": "loop-cut-barrel",
+      "timeline": "modeling/loop-cut-vase/timeline.json"
+    },
+    {
+      "module": "modeling",
+      "example": "bevel-edges",
+      "mode": "watch",
+      "title": "Bevel edges",
+      "variantOf": null,
+      "timeline": "modeling/bevel-edges/timeline.json"
+    },
+    {
+      "module": "modeling",
+      "example": "bevel-corner",
+      "mode": "your-turn",
+      "title": "Your turn: round a corner",
+      "variantOf": "bevel-edges",
+      "timeline": "modeling/bevel-corner/timeline.json"
+    },
+    {
+      "module": "modeling",
+      "example": "cut-and-join",
+      "mode": "watch",
+      "title": "Cut and join",
+      "variantOf": null,
+      "timeline": "modeling/cut-and-join/timeline.json"
+    },
+    {
+      "module": "modeling",
+      "example": "cut-and-patch",
+      "mode": "your-turn",
+      "title": "Your turn: cut and patch",
+      "variantOf": "cut-and-join",
+      "timeline": "modeling/cut-and-patch/timeline.json"
+    },
+    {
+      "module": "modeling",
+      "example": "proportional-hill",
+      "mode": "watch",
+      "title": "Proportional editing",
+      "variantOf": null,
+      "timeline": "modeling/proportional-hill/timeline.json"
+    },
+    {
+      "module": "modeling",
+      "example": "proportional-dent",
+      "mode": "your-turn",
+      "title": "Your turn: a dent",
+      "variantOf": "proportional-hill",
+      "timeline": "modeling/proportional-dent/timeline.json"
+    },
+    {
+      "module": "modeling",
+      "example": "project-mug",
+      "mode": "watch",
+      "title": "Project: a mug",
+      "variantOf": null,
+      "timeline": "modeling/project-mug/timeline.json"
+    },
+    {
+      "module": "modeling",
+      "example": "project-jug",
+      "mode": "your-turn",
+      "title": "Your turn: a jug",
+      "variantOf": "project-mug",
+      "timeline": "modeling/project-jug/timeline.json"
+    },
+    {
       "module": "modifiers",
       "example": "cup",
       "mode": "watch",

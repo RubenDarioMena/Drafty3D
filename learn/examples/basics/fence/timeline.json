@@ -1,0 +1,1191 @@
+{
+  "blenderVersion": "5.3.0",
+  "module": "basics",
+  "example": "fence",
+  "mode": "watch",
+  "title": "Duplicate and organize",
+  "initial": {
+    "camera": {
+      "position": [
+        2.6,
+        -4.3,
+        2.1
+      ],
+      "target": [
+        0,
+        0,
+        0.5
+      ],
+      "fov": 30
+    },
+    "scene": {
+      "objects": [
+        {
+          "name": "Post",
+          "collection": "Fence",
+          "location": [
+            -0.6,
+            0,
+            0.5
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "scale": [
+            0.1,
+            0.1,
+            0.5
+          ],
+          "hidden": false
+        }
+      ],
+      "collections": [
+        {
+          "name": "Fence",
+          "parent": null,
+          "hidden": false
+        }
+      ],
+      "active": null,
+      "selected": []
+    },
+    "mode": "OBJECT",
+    "selectMode": [
+      "VERT"
+    ],
+    "proportional": false,
+    "redo": null,
+    "tool": null,
+    "selection": null,
+    "edit": null,
+    "mesh": "step-00.glb",
+    "text": "Many models repeat the same piece. Duplicate copies it, and the Outliner, the list on the right, keeps the copies named and grouped in a collection."
+  },
+  "steps": [
+    {
+      "id": "view3d.select",
+      "action": "tap",
+      "value": [
+        -0.6,
+        -0.1,
+        0.5
+      ],
+      "toggle": false,
+      "text": "Click the post to select it.",
+      "help": null,
+      "duration": 1.8,
+      "shortcut": null,
+      "autoAdvance": false,
+      "camera": {
+        "position": [
+          2.6,
+          -4.3,
+          2.1
+        ],
+        "target": [
+          0,
+          0,
+          0.5
+        ],
+        "fov": 30
+      },
+      "after": {
+        "scene": {
+          "objects": [
+            {
+              "name": "Post",
+              "collection": "Fence",
+              "location": [
+                -0.6,
+                0,
+                0.5
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "scale": [
+                0.1,
+                0.1,
+                0.5
+              ],
+              "hidden": false
+            }
+          ],
+          "collections": [
+            {
+              "name": "Fence",
+              "parent": null,
+              "hidden": false
+            }
+          ],
+          "active": "Post",
+          "selected": [
+            "Post"
+          ]
+        },
+        "mode": "OBJECT",
+        "selectMode": [
+          "VERT"
+        ],
+        "proportional": false,
+        "redo": null,
+        "tool": null,
+        "selection": null
+      },
+      "mesh": null
+    },
+    {
+      "id": "menu.object.duplicate_objects",
+      "action": "menu",
+      "path": [
+        "menu.object",
+        "menu.object.duplicate_objects"
+      ],
+      "operator": "object.duplicate_move",
+      "shortcut": {
+        "keys": [
+          "Shift",
+          "D"
+        ],
+        "context": "3D Viewport · Object Mode"
+      },
+      "text": "Object ▸ Duplicate Objects makes a copy and starts moving it. Pressing X keeps it on the X axis.",
+      "help": null,
+      "duration": 2.4,
+      "value": null,
+      "autoAdvance": false,
+      "camera": {
+        "position": [
+          2.6,
+          -4.3,
+          2.1
+        ],
+        "target": [
+          0,
+          0,
+          0.5
+        ],
+        "fov": 30
+      },
+      "after": {
+        "scene": {
+          "objects": [
+            {
+              "name": "Post",
+              "collection": "Fence",
+              "location": [
+                -0.6,
+                0,
+                0.5
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "scale": [
+                0.1,
+                0.1,
+                0.5
+              ],
+              "hidden": false
+            },
+            {
+              "name": "Post.001",
+              "collection": "Fence",
+              "location": [
+                -0.3,
+                0,
+                0.5
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "scale": [
+                0.1,
+                0.1,
+                0.5
+              ],
+              "hidden": false
+            }
+          ],
+          "collections": [
+            {
+              "name": "Fence",
+              "parent": null,
+              "hidden": false
+            }
+          ],
+          "active": "Post.001",
+          "selected": [
+            "Post.001"
+          ]
+        },
+        "mode": "OBJECT",
+        "selectMode": [
+          "VERT"
+        ],
+        "proportional": false,
+        "redo": {
+          "operator": "object.duplicate_move",
+          "values": {
+            "redo.object.duplicate_move.OBJECT_OT_duplicate.linked": false,
+            "redo.object.duplicate_move.TRANSFORM_OT_translate.value.x": 0.3,
+            "redo.object.duplicate_move.TRANSFORM_OT_translate.value.y": 0,
+            "redo.object.duplicate_move.TRANSFORM_OT_translate.value.z": 0,
+            "redo.object.duplicate_move.TRANSFORM_OT_translate.orient_type": "GLOBAL",
+            "redo.object.duplicate_move.TRANSFORM_OT_translate.mirror": false,
+            "redo.object.duplicate_move.TRANSFORM_OT_translate.use_proportional_edit": false,
+            "redo.object.duplicate_move.TRANSFORM_OT_translate.proportional_edit_falloff": "SMOOTH",
+            "redo.object.duplicate_move.TRANSFORM_OT_translate.proportional_size": 1,
+            "redo.object.duplicate_move.TRANSFORM_OT_translate.use_proportional_connected": false,
+            "redo.object.duplicate_move.TRANSFORM_OT_translate.use_proportional_projected": false
+          }
+        },
+        "tool": null,
+        "selection": null
+      },
+      "mesh": "step-02.glb"
+    },
+    {
+      "id": "redo.object.duplicate_move.TRANSFORM_OT_translate.value.x",
+      "action": "redo_value",
+      "operator": "object.duplicate_move",
+      "value": 0.6,
+      "text": "Set Move X to 0.6 m: one post every 60 cm.",
+      "help": null,
+      "step": 0.1,
+      "shortcut": null,
+      "duration": 2.2,
+      "autoAdvance": false,
+      "camera": {
+        "position": [
+          2.6,
+          -4.3,
+          2.1
+        ],
+        "target": [
+          0,
+          0,
+          0.5
+        ],
+        "fov": 30
+      },
+      "after": {
+        "scene": {
+          "objects": [
+            {
+              "name": "Post",
+              "collection": "Fence",
+              "location": [
+                -0.6,
+                0,
+                0.5
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "scale": [
+                0.1,
+                0.1,
+                0.5
+              ],
+              "hidden": false
+            },
+            {
+              "name": "Post.001",
+              "collection": "Fence",
+              "location": [
+                0,
+                0,
+                0.5
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "scale": [
+                0.1,
+                0.1,
+                0.5
+              ],
+              "hidden": false
+            }
+          ],
+          "collections": [
+            {
+              "name": "Fence",
+              "parent": null,
+              "hidden": false
+            }
+          ],
+          "active": "Post.001",
+          "selected": [
+            "Post.001"
+          ]
+        },
+        "mode": "OBJECT",
+        "selectMode": [
+          "VERT"
+        ],
+        "proportional": false,
+        "redo": {
+          "operator": "object.duplicate_move",
+          "values": {
+            "redo.object.duplicate_move.OBJECT_OT_duplicate.linked": false,
+            "redo.object.duplicate_move.TRANSFORM_OT_translate.value.x": 0.6,
+            "redo.object.duplicate_move.TRANSFORM_OT_translate.value.y": 0,
+            "redo.object.duplicate_move.TRANSFORM_OT_translate.value.z": 0,
+            "redo.object.duplicate_move.TRANSFORM_OT_translate.orient_type": "GLOBAL",
+            "redo.object.duplicate_move.TRANSFORM_OT_translate.mirror": false,
+            "redo.object.duplicate_move.TRANSFORM_OT_translate.use_proportional_edit": false,
+            "redo.object.duplicate_move.TRANSFORM_OT_translate.proportional_edit_falloff": "SMOOTH",
+            "redo.object.duplicate_move.TRANSFORM_OT_translate.proportional_size": 1,
+            "redo.object.duplicate_move.TRANSFORM_OT_translate.use_proportional_connected": false,
+            "redo.object.duplicate_move.TRANSFORM_OT_translate.use_proportional_projected": false
+          }
+        },
+        "tool": null,
+        "selection": null
+      },
+      "mesh": "step-03.glb"
+    },
+    {
+      "id": "menu.object.duplicate_objects",
+      "action": "menu",
+      "path": [
+        "menu.object",
+        "menu.object.duplicate_objects"
+      ],
+      "operator": "object.duplicate_move",
+      "shortcut": {
+        "keys": [
+          "Shift",
+          "D"
+        ],
+        "context": "3D Viewport · Object Mode"
+      },
+      "text": "Duplicate the new post the same way.",
+      "help": null,
+      "duration": 2.4,
+      "value": null,
+      "autoAdvance": false,
+      "camera": {
+        "position": [
+          2.6,
+          -4.3,
+          2.1
+        ],
+        "target": [
+          0,
+          0,
+          0.5
+        ],
+        "fov": 30
+      },
+      "after": {
+        "scene": {
+          "objects": [
+            {
+              "name": "Post",
+              "collection": "Fence",
+              "location": [
+                -0.6,
+                0,
+                0.5
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "scale": [
+                0.1,
+                0.1,
+                0.5
+              ],
+              "hidden": false
+            },
+            {
+              "name": "Post.001",
+              "collection": "Fence",
+              "location": [
+                0,
+                0,
+                0.5
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "scale": [
+                0.1,
+                0.1,
+                0.5
+              ],
+              "hidden": false
+            },
+            {
+              "name": "Post.002",
+              "collection": "Fence",
+              "location": [
+                0.3,
+                0,
+                0.5
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "scale": [
+                0.1,
+                0.1,
+                0.5
+              ],
+              "hidden": false
+            }
+          ],
+          "collections": [
+            {
+              "name": "Fence",
+              "parent": null,
+              "hidden": false
+            }
+          ],
+          "active": "Post.002",
+          "selected": [
+            "Post.002"
+          ]
+        },
+        "mode": "OBJECT",
+        "selectMode": [
+          "VERT"
+        ],
+        "proportional": false,
+        "redo": {
+          "operator": "object.duplicate_move",
+          "values": {
+            "redo.object.duplicate_move.OBJECT_OT_duplicate.linked": false,
+            "redo.object.duplicate_move.TRANSFORM_OT_translate.value.x": 0.3,
+            "redo.object.duplicate_move.TRANSFORM_OT_translate.value.y": 0,
+            "redo.object.duplicate_move.TRANSFORM_OT_translate.value.z": 0,
+            "redo.object.duplicate_move.TRANSFORM_OT_translate.orient_type": "GLOBAL",
+            "redo.object.duplicate_move.TRANSFORM_OT_translate.mirror": false,
+            "redo.object.duplicate_move.TRANSFORM_OT_translate.use_proportional_edit": false,
+            "redo.object.duplicate_move.TRANSFORM_OT_translate.proportional_edit_falloff": "SMOOTH",
+            "redo.object.duplicate_move.TRANSFORM_OT_translate.proportional_size": 1,
+            "redo.object.duplicate_move.TRANSFORM_OT_translate.use_proportional_connected": false,
+            "redo.object.duplicate_move.TRANSFORM_OT_translate.use_proportional_projected": false
+          }
+        },
+        "tool": null,
+        "selection": null
+      },
+      "mesh": "step-04.glb"
+    },
+    {
+      "id": "redo.object.duplicate_move.TRANSFORM_OT_translate.value.x",
+      "action": "redo_value",
+      "operator": "object.duplicate_move",
+      "value": 0.6,
+      "text": "Again Move X 0.6 m. Three posts, evenly spaced.",
+      "help": null,
+      "step": 0.1,
+      "shortcut": null,
+      "duration": 2.2,
+      "autoAdvance": false,
+      "camera": {
+        "position": [
+          2.6,
+          -4.3,
+          2.1
+        ],
+        "target": [
+          0,
+          0,
+          0.5
+        ],
+        "fov": 30
+      },
+      "after": {
+        "scene": {
+          "objects": [
+            {
+              "name": "Post",
+              "collection": "Fence",
+              "location": [
+                -0.6,
+                0,
+                0.5
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "scale": [
+                0.1,
+                0.1,
+                0.5
+              ],
+              "hidden": false
+            },
+            {
+              "name": "Post.001",
+              "collection": "Fence",
+              "location": [
+                0,
+                0,
+                0.5
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "scale": [
+                0.1,
+                0.1,
+                0.5
+              ],
+              "hidden": false
+            },
+            {
+              "name": "Post.002",
+              "collection": "Fence",
+              "location": [
+                0.6,
+                0,
+                0.5
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "scale": [
+                0.1,
+                0.1,
+                0.5
+              ],
+              "hidden": false
+            }
+          ],
+          "collections": [
+            {
+              "name": "Fence",
+              "parent": null,
+              "hidden": false
+            }
+          ],
+          "active": "Post.002",
+          "selected": [
+            "Post.002"
+          ]
+        },
+        "mode": "OBJECT",
+        "selectMode": [
+          "VERT"
+        ],
+        "proportional": false,
+        "redo": {
+          "operator": "object.duplicate_move",
+          "values": {
+            "redo.object.duplicate_move.OBJECT_OT_duplicate.linked": false,
+            "redo.object.duplicate_move.TRANSFORM_OT_translate.value.x": 0.6,
+            "redo.object.duplicate_move.TRANSFORM_OT_translate.value.y": 0,
+            "redo.object.duplicate_move.TRANSFORM_OT_translate.value.z": 0,
+            "redo.object.duplicate_move.TRANSFORM_OT_translate.orient_type": "GLOBAL",
+            "redo.object.duplicate_move.TRANSFORM_OT_translate.mirror": false,
+            "redo.object.duplicate_move.TRANSFORM_OT_translate.use_proportional_edit": false,
+            "redo.object.duplicate_move.TRANSFORM_OT_translate.proportional_edit_falloff": "SMOOTH",
+            "redo.object.duplicate_move.TRANSFORM_OT_translate.proportional_size": 1,
+            "redo.object.duplicate_move.TRANSFORM_OT_translate.use_proportional_connected": false,
+            "redo.object.duplicate_move.TRANSFORM_OT_translate.use_proportional_projected": false
+          }
+        },
+        "tool": null,
+        "selection": null
+      },
+      "mesh": "step-05.glb"
+    },
+    {
+      "id": "outliner.select",
+      "action": "outliner_select",
+      "value": "Post",
+      "text": "In the Outliner, click Post, the first one. The list shows every object in the Fence collection.",
+      "help": null,
+      "duration": 1.6,
+      "shortcut": null,
+      "autoAdvance": false,
+      "camera": {
+        "position": [
+          2.6,
+          -4.3,
+          2.1
+        ],
+        "target": [
+          0,
+          0,
+          0.5
+        ],
+        "fov": 30
+      },
+      "after": {
+        "scene": {
+          "objects": [
+            {
+              "name": "Post",
+              "collection": "Fence",
+              "location": [
+                -0.6,
+                0,
+                0.5
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "scale": [
+                0.1,
+                0.1,
+                0.5
+              ],
+              "hidden": false
+            },
+            {
+              "name": "Post.001",
+              "collection": "Fence",
+              "location": [
+                0,
+                0,
+                0.5
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "scale": [
+                0.1,
+                0.1,
+                0.5
+              ],
+              "hidden": false
+            },
+            {
+              "name": "Post.002",
+              "collection": "Fence",
+              "location": [
+                0.6,
+                0,
+                0.5
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "scale": [
+                0.1,
+                0.1,
+                0.5
+              ],
+              "hidden": false
+            }
+          ],
+          "collections": [
+            {
+              "name": "Fence",
+              "parent": null,
+              "hidden": false
+            }
+          ],
+          "active": "Post",
+          "selected": [
+            "Post"
+          ]
+        },
+        "mode": "OBJECT",
+        "selectMode": [
+          "VERT"
+        ],
+        "proportional": false,
+        "redo": null,
+        "tool": null,
+        "selection": null
+      },
+      "mesh": null
+    },
+    {
+      "id": "outliner.rename",
+      "action": "rename",
+      "value": "Corner Post",
+      "target": "Post",
+      "shortcut": {
+        "keys": [
+          "F2"
+        ],
+        "context": "3D Viewport"
+      },
+      "text": "Double-click its name and type Corner Post. Good names save time later.",
+      "help": null,
+      "duration": 2.4,
+      "autoAdvance": false,
+      "camera": {
+        "position": [
+          2.6,
+          -4.3,
+          2.1
+        ],
+        "target": [
+          0,
+          0,
+          0.5
+        ],
+        "fov": 30
+      },
+      "after": {
+        "scene": {
+          "objects": [
+            {
+              "name": "Corner Post",
+              "collection": "Fence",
+              "location": [
+                -0.6,
+                0,
+                0.5
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "scale": [
+                0.1,
+                0.1,
+                0.5
+              ],
+              "hidden": false
+            },
+            {
+              "name": "Post.001",
+              "collection": "Fence",
+              "location": [
+                0,
+                0,
+                0.5
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "scale": [
+                0.1,
+                0.1,
+                0.5
+              ],
+              "hidden": false
+            },
+            {
+              "name": "Post.002",
+              "collection": "Fence",
+              "location": [
+                0.6,
+                0,
+                0.5
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "scale": [
+                0.1,
+                0.1,
+                0.5
+              ],
+              "hidden": false
+            }
+          ],
+          "collections": [
+            {
+              "name": "Fence",
+              "parent": null,
+              "hidden": false
+            }
+          ],
+          "active": "Corner Post",
+          "selected": [
+            "Corner Post"
+          ]
+        },
+        "mode": "OBJECT",
+        "selectMode": [
+          "VERT"
+        ],
+        "proportional": false,
+        "redo": null,
+        "tool": null,
+        "selection": null
+      },
+      "mesh": "step-07.glb"
+    },
+    {
+      "id": "outliner.hide",
+      "action": "outliner_hide",
+      "value": "Fence",
+      "hidden": true,
+      "text": "Click the eye of the Fence collection: everything in it hides at once.",
+      "help": null,
+      "duration": 1.6,
+      "shortcut": null,
+      "autoAdvance": false,
+      "camera": {
+        "position": [
+          2.6,
+          -4.3,
+          2.1
+        ],
+        "target": [
+          0,
+          0,
+          0.5
+        ],
+        "fov": 30
+      },
+      "after": {
+        "scene": {
+          "objects": [
+            {
+              "name": "Corner Post",
+              "collection": "Fence",
+              "location": [
+                -0.6,
+                0,
+                0.5
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "scale": [
+                0.1,
+                0.1,
+                0.5
+              ],
+              "hidden": false
+            },
+            {
+              "name": "Post.001",
+              "collection": "Fence",
+              "location": [
+                0,
+                0,
+                0.5
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "scale": [
+                0.1,
+                0.1,
+                0.5
+              ],
+              "hidden": false
+            },
+            {
+              "name": "Post.002",
+              "collection": "Fence",
+              "location": [
+                0.6,
+                0,
+                0.5
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "scale": [
+                0.1,
+                0.1,
+                0.5
+              ],
+              "hidden": false
+            }
+          ],
+          "collections": [
+            {
+              "name": "Fence",
+              "parent": null,
+              "hidden": true
+            }
+          ],
+          "active": "Corner Post",
+          "selected": [
+            "Corner Post"
+          ]
+        },
+        "mode": "OBJECT",
+        "selectMode": [
+          "VERT"
+        ],
+        "proportional": false,
+        "redo": null,
+        "tool": null,
+        "selection": null
+      },
+      "mesh": "step-08.glb"
+    },
+    {
+      "id": "outliner.hide",
+      "action": "outliner_hide",
+      "value": "Fence",
+      "hidden": false,
+      "text": "Click the eye again to bring the fence back.",
+      "help": null,
+      "duration": 1.6,
+      "shortcut": null,
+      "autoAdvance": false,
+      "camera": {
+        "position": [
+          2.6,
+          -4.3,
+          2.1
+        ],
+        "target": [
+          0,
+          0,
+          0.5
+        ],
+        "fov": 30
+      },
+      "after": {
+        "scene": {
+          "objects": [
+            {
+              "name": "Corner Post",
+              "collection": "Fence",
+              "location": [
+                -0.6,
+                0,
+                0.5
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "scale": [
+                0.1,
+                0.1,
+                0.5
+              ],
+              "hidden": false
+            },
+            {
+              "name": "Post.001",
+              "collection": "Fence",
+              "location": [
+                0,
+                0,
+                0.5
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "scale": [
+                0.1,
+                0.1,
+                0.5
+              ],
+              "hidden": false
+            },
+            {
+              "name": "Post.002",
+              "collection": "Fence",
+              "location": [
+                0.6,
+                0,
+                0.5
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "scale": [
+                0.1,
+                0.1,
+                0.5
+              ],
+              "hidden": false
+            }
+          ],
+          "collections": [
+            {
+              "name": "Fence",
+              "parent": null,
+              "hidden": false
+            }
+          ],
+          "active": "Corner Post",
+          "selected": [
+            "Corner Post"
+          ]
+        },
+        "mode": "OBJECT",
+        "selectMode": [
+          "VERT"
+        ],
+        "proportional": false,
+        "redo": null,
+        "tool": null,
+        "selection": null
+      },
+      "mesh": "step-09.glb"
+    },
+    {
+      "id": "menu.select_object.all",
+      "action": "menu",
+      "path": [
+        "menu.select_object",
+        "menu.select_object.all"
+      ],
+      "operator": "object.select_all",
+      "shortcut": {
+        "keys": [
+          "A"
+        ],
+        "context": "3D Viewport · Object Mode"
+      },
+      "text": "Select ▸ All selects every object in the scene.",
+      "help": null,
+      "duration": 2.4,
+      "value": null,
+      "autoAdvance": false,
+      "camera": {
+        "position": [
+          2.6,
+          -4.3,
+          2.1
+        ],
+        "target": [
+          0,
+          0,
+          0.5
+        ],
+        "fov": 30
+      },
+      "after": {
+        "scene": {
+          "objects": [
+            {
+              "name": "Corner Post",
+              "collection": "Fence",
+              "location": [
+                -0.6,
+                0,
+                0.5
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "scale": [
+                0.1,
+                0.1,
+                0.5
+              ],
+              "hidden": false
+            },
+            {
+              "name": "Post.001",
+              "collection": "Fence",
+              "location": [
+                0,
+                0,
+                0.5
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "scale": [
+                0.1,
+                0.1,
+                0.5
+              ],
+              "hidden": false
+            },
+            {
+              "name": "Post.002",
+              "collection": "Fence",
+              "location": [
+                0.6,
+                0,
+                0.5
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "scale": [
+                0.1,
+                0.1,
+                0.5
+              ],
+              "hidden": false
+            }
+          ],
+          "collections": [
+            {
+              "name": "Fence",
+              "parent": null,
+              "hidden": false
+            }
+          ],
+          "active": "Corner Post",
+          "selected": [
+            "Corner Post",
+            "Post.001",
+            "Post.002"
+          ]
+        },
+        "mode": "OBJECT",
+        "selectMode": [
+          "VERT"
+        ],
+        "proportional": false,
+        "redo": null,
+        "tool": null,
+        "selection": null
+      },
+      "mesh": null
+    }
+  ],
+  "outro": "Duplicate repeats a piece; the Outliner names, groups and hides them.",
+  "object": null
+}

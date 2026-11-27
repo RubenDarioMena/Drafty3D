@@ -1,0 +1,1214 @@
+{
+  "blenderVersion": "5.3.0",
+  "module": "basics",
+  "example": "tower-tour",
+  "mode": "your-turn",
+  "title": "Your turn: tower tour",
+  "initial": {
+    "camera": {
+      "position": [
+        10,
+        -11,
+        6.5
+      ],
+      "target": [
+        0.8,
+        0,
+        1.6
+      ],
+      "fov": 30
+    },
+    "scene": {
+      "objects": [
+        {
+          "name": "Ground",
+          "collection": null,
+          "location": [
+            0,
+            0,
+            0
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "scale": [
+            1,
+            1,
+            1
+          ],
+          "hidden": false
+        },
+        {
+          "name": "Spire",
+          "collection": null,
+          "location": [
+            0,
+            0,
+            4.75
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "scale": [
+            1,
+            1,
+            1
+          ],
+          "hidden": false
+        },
+        {
+          "name": "Tower",
+          "collection": null,
+          "location": [
+            0,
+            0,
+            2
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "scale": [
+            1,
+            1,
+            1
+          ],
+          "hidden": false
+        },
+        {
+          "name": "Wall",
+          "collection": null,
+          "location": [
+            2.6,
+            0,
+            0.6
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "scale": [
+            1.6,
+            0.25,
+            0.6
+          ],
+          "hidden": false
+        }
+      ],
+      "collections": [],
+      "active": null,
+      "selected": []
+    },
+    "mode": "OBJECT",
+    "selectMode": [
+      "VERT"
+    ],
+    "proportional": false,
+    "redo": null,
+    "tool": null,
+    "selection": null,
+    "edit": null,
+    "mesh": "step-00.glb",
+    "text": "Same moves, new scene. Look at the tower from every side."
+  },
+  "steps": [
+    {
+      "id": "view3d.rotate",
+      "action": "orbit",
+      "value": [
+        -0.2,
+        0.04
+      ],
+      "shortcut": {
+        "keys": [
+          "Middle Mouse"
+        ],
+        "context": "3D Viewport"
+      },
+      "text": "Orbit to the other side of the tower.",
+      "help": "Drag with one finger (or the middle mouse button) across the view.",
+      "duration": 2.2,
+      "autoAdvance": false,
+      "camera": {
+        "position": [
+          14.7243,
+          5.8727,
+          2.7292
+        ],
+        "target": [
+          0.8,
+          0,
+          1.6
+        ],
+        "up": [
+          -0.0687,
+          -0.029,
+          0.9972
+        ],
+        "fov": 30.006
+      },
+      "after": {
+        "scene": {
+          "objects": [
+            {
+              "name": "Ground",
+              "collection": null,
+              "location": [
+                0,
+                0,
+                0
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "scale": [
+                1,
+                1,
+                1
+              ],
+              "hidden": false
+            },
+            {
+              "name": "Spire",
+              "collection": null,
+              "location": [
+                0,
+                0,
+                4.75
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "scale": [
+                1,
+                1,
+                1
+              ],
+              "hidden": false
+            },
+            {
+              "name": "Tower",
+              "collection": null,
+              "location": [
+                0,
+                0,
+                2
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "scale": [
+                1,
+                1,
+                1
+              ],
+              "hidden": false
+            },
+            {
+              "name": "Wall",
+              "collection": null,
+              "location": [
+                2.6,
+                0,
+                0.6
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "scale": [
+                1.6,
+                0.25,
+                0.6
+              ],
+              "hidden": false
+            }
+          ],
+          "collections": [],
+          "active": null,
+          "selected": []
+        },
+        "mode": "OBJECT",
+        "selectMode": [
+          "VERT"
+        ],
+        "proportional": false,
+        "redo": null,
+        "tool": null,
+        "selection": null
+      },
+      "mesh": null,
+      "verify": "view-01.png"
+    },
+    {
+      "id": "view3d.zoom",
+      "action": "zoom",
+      "value": 2,
+      "shortcut": {
+        "keys": [
+          "Wheel In"
+        ],
+        "context": "3D Viewport"
+      },
+      "text": "Zoom in a little.",
+      "help": "Pinch outward with two fingers, or roll the mouse wheel.",
+      "duration": 2.2,
+      "autoAdvance": false,
+      "camera": {
+        "position": [
+          10.4697,
+          4.0782,
+          2.3841
+        ],
+        "target": [
+          0.8,
+          0,
+          1.6
+        ],
+        "up": [
+          -0.0687,
+          -0.029,
+          0.9972
+        ],
+        "fov": 30.002
+      },
+      "after": {
+        "scene": {
+          "objects": [
+            {
+              "name": "Ground",
+              "collection": null,
+              "location": [
+                0,
+                0,
+                0
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "scale": [
+                1,
+                1,
+                1
+              ],
+              "hidden": false
+            },
+            {
+              "name": "Spire",
+              "collection": null,
+              "location": [
+                0,
+                0,
+                4.75
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "scale": [
+                1,
+                1,
+                1
+              ],
+              "hidden": false
+            },
+            {
+              "name": "Tower",
+              "collection": null,
+              "location": [
+                0,
+                0,
+                2
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "scale": [
+                1,
+                1,
+                1
+              ],
+              "hidden": false
+            },
+            {
+              "name": "Wall",
+              "collection": null,
+              "location": [
+                2.6,
+                0,
+                0.6
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "scale": [
+                1.6,
+                0.25,
+                0.6
+              ],
+              "hidden": false
+            }
+          ],
+          "collections": [],
+          "active": null,
+          "selected": []
+        },
+        "mode": "OBJECT",
+        "selectMode": [
+          "VERT"
+        ],
+        "proportional": false,
+        "redo": null,
+        "tool": null,
+        "selection": null
+      },
+      "mesh": null,
+      "verify": "view-02.png"
+    },
+    {
+      "id": "view3d.move",
+      "action": "pan",
+      "value": [
+        0.1,
+        -0.08
+      ],
+      "shortcut": {
+        "keys": [
+          "Shift",
+          "Middle Mouse"
+        ],
+        "context": "3D Viewport"
+      },
+      "text": "Pan the view.",
+      "help": "Drag with two fingers, or Shift and the middle mouse button.",
+      "duration": 2.2,
+      "autoAdvance": false,
+      "camera": {
+        "position": [
+          10.6259,
+          3.6362,
+          2.7563
+        ],
+        "target": [
+          0.9562,
+          -0.442,
+          1.9722
+        ],
+        "up": [
+          -0.0687,
+          -0.029,
+          0.9972
+        ],
+        "fov": 29.999
+      },
+      "after": {
+        "scene": {
+          "objects": [
+            {
+              "name": "Ground",
+              "collection": null,
+              "location": [
+                0,
+                0,
+                0
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "scale": [
+                1,
+                1,
+                1
+              ],
+              "hidden": false
+            },
+            {
+              "name": "Spire",
+              "collection": null,
+              "location": [
+                0,
+                0,
+                4.75
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "scale": [
+                1,
+                1,
+                1
+              ],
+              "hidden": false
+            },
+            {
+              "name": "Tower",
+              "collection": null,
+              "location": [
+                0,
+                0,
+                2
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "scale": [
+                1,
+                1,
+                1
+              ],
+              "hidden": false
+            },
+            {
+              "name": "Wall",
+              "collection": null,
+              "location": [
+                2.6,
+                0,
+                0.6
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "scale": [
+                1.6,
+                0.25,
+                0.6
+              ],
+              "hidden": false
+            }
+          ],
+          "collections": [],
+          "active": null,
+          "selected": []
+        },
+        "mode": "OBJECT",
+        "selectMode": [
+          "VERT"
+        ],
+        "proportional": false,
+        "redo": null,
+        "tool": null,
+        "selection": null
+      },
+      "mesh": null,
+      "verify": "view-03.png"
+    },
+    {
+      "id": "menu.view_viewpoint.front",
+      "action": "menu",
+      "path": [
+        "menu.view",
+        "menu.view.viewpoint",
+        "menu.view_viewpoint.front"
+      ],
+      "operator": "view3d.view_axis",
+      "shortcut": {
+        "keys": [
+          "Numpad 1"
+        ],
+        "context": "3D Viewport · Object Mode"
+      },
+      "text": "Look from the front.",
+      "help": "View menu in the header, then Viewpoint, then Front. Numpad 1 does it too.",
+      "duration": 2.4,
+      "value": null,
+      "autoAdvance": false,
+      "camera": {
+        "position": [
+          0.9562,
+          -10.9658,
+          1.9722
+        ],
+        "target": [
+          0.9562,
+          -0.442,
+          1.9722
+        ],
+        "up": [
+          0,
+          0,
+          1
+        ],
+        "ortho": 2.8198
+      },
+      "after": {
+        "scene": {
+          "objects": [
+            {
+              "name": "Ground",
+              "collection": null,
+              "location": [
+                0,
+                0,
+                0
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "scale": [
+                1,
+                1,
+                1
+              ],
+              "hidden": false
+            },
+            {
+              "name": "Spire",
+              "collection": null,
+              "location": [
+                0,
+                0,
+                4.75
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "scale": [
+                1,
+                1,
+                1
+              ],
+              "hidden": false
+            },
+            {
+              "name": "Tower",
+              "collection": null,
+              "location": [
+                0,
+                0,
+                2
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "scale": [
+                1,
+                1,
+                1
+              ],
+              "hidden": false
+            },
+            {
+              "name": "Wall",
+              "collection": null,
+              "location": [
+                2.6,
+                0,
+                0.6
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "scale": [
+                1.6,
+                0.25,
+                0.6
+              ],
+              "hidden": false
+            }
+          ],
+          "collections": [],
+          "active": null,
+          "selected": []
+        },
+        "mode": "OBJECT",
+        "selectMode": [
+          "VERT"
+        ],
+        "proportional": false,
+        "redo": null,
+        "tool": null,
+        "selection": null
+      },
+      "mesh": null,
+      "verify": "view-04.png"
+    },
+    {
+      "id": "menu.view_viewpoint.right",
+      "action": "menu",
+      "path": [
+        "menu.view",
+        "menu.view.viewpoint",
+        "menu.view_viewpoint.right"
+      ],
+      "operator": "view3d.view_axis",
+      "shortcut": {
+        "keys": [
+          "Numpad 3"
+        ],
+        "context": "3D Viewport · Object Mode"
+      },
+      "text": "Now from the right.",
+      "help": "View ▸ Viewpoint ▸ Right. Numpad 3 does it too.",
+      "duration": 2.4,
+      "value": null,
+      "autoAdvance": false,
+      "camera": {
+        "position": [
+          11.48,
+          -0.442,
+          1.9722
+        ],
+        "target": [
+          0.9562,
+          -0.442,
+          1.9722
+        ],
+        "up": [
+          0,
+          0,
+          1
+        ],
+        "ortho": 2.8198
+      },
+      "after": {
+        "scene": {
+          "objects": [
+            {
+              "name": "Ground",
+              "collection": null,
+              "location": [
+                0,
+                0,
+                0
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "scale": [
+                1,
+                1,
+                1
+              ],
+              "hidden": false
+            },
+            {
+              "name": "Spire",
+              "collection": null,
+              "location": [
+                0,
+                0,
+                4.75
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "scale": [
+                1,
+                1,
+                1
+              ],
+              "hidden": false
+            },
+            {
+              "name": "Tower",
+              "collection": null,
+              "location": [
+                0,
+                0,
+                2
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "scale": [
+                1,
+                1,
+                1
+              ],
+              "hidden": false
+            },
+            {
+              "name": "Wall",
+              "collection": null,
+              "location": [
+                2.6,
+                0,
+                0.6
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "scale": [
+                1.6,
+                0.25,
+                0.6
+              ],
+              "hidden": false
+            }
+          ],
+          "collections": [],
+          "active": null,
+          "selected": []
+        },
+        "mode": "OBJECT",
+        "selectMode": [
+          "VERT"
+        ],
+        "proportional": false,
+        "redo": null,
+        "tool": null,
+        "selection": null
+      },
+      "mesh": null,
+      "verify": "view-05.png"
+    },
+    {
+      "id": "menu.view_viewpoint.top",
+      "action": "menu",
+      "path": [
+        "menu.view",
+        "menu.view.viewpoint",
+        "menu.view_viewpoint.top"
+      ],
+      "operator": "view3d.view_axis",
+      "shortcut": {
+        "keys": [
+          "Numpad 7"
+        ],
+        "context": "3D Viewport · Object Mode"
+      },
+      "text": "Now from the top.",
+      "help": "View ▸ Viewpoint ▸ Top. Numpad 7 does it too.",
+      "duration": 2.4,
+      "value": null,
+      "autoAdvance": false,
+      "camera": {
+        "position": [
+          0.9562,
+          -0.442,
+          12.4959
+        ],
+        "target": [
+          0.9562,
+          -0.442,
+          1.9722
+        ],
+        "up": [
+          0,
+          1,
+          0
+        ],
+        "ortho": 2.8198
+      },
+      "after": {
+        "scene": {
+          "objects": [
+            {
+              "name": "Ground",
+              "collection": null,
+              "location": [
+                0,
+                0,
+                0
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "scale": [
+                1,
+                1,
+                1
+              ],
+              "hidden": false
+            },
+            {
+              "name": "Spire",
+              "collection": null,
+              "location": [
+                0,
+                0,
+                4.75
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "scale": [
+                1,
+                1,
+                1
+              ],
+              "hidden": false
+            },
+            {
+              "name": "Tower",
+              "collection": null,
+              "location": [
+                0,
+                0,
+                2
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "scale": [
+                1,
+                1,
+                1
+              ],
+              "hidden": false
+            },
+            {
+              "name": "Wall",
+              "collection": null,
+              "location": [
+                2.6,
+                0,
+                0.6
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "scale": [
+                1.6,
+                0.25,
+                0.6
+              ],
+              "hidden": false
+            }
+          ],
+          "collections": [],
+          "active": null,
+          "selected": []
+        },
+        "mode": "OBJECT",
+        "selectMode": [
+          "VERT"
+        ],
+        "proportional": false,
+        "redo": null,
+        "tool": null,
+        "selection": null
+      },
+      "mesh": null,
+      "verify": "view-06.png"
+    },
+    {
+      "id": "view3d.rotate",
+      "action": "orbit",
+      "value": [
+        -0.08,
+        0.1
+      ],
+      "shortcut": {
+        "keys": [
+          "Middle Mouse"
+        ],
+        "context": "3D Viewport"
+      },
+      "text": "Orbit out of the top view.",
+      "help": "Any drag in the view orbits; perspective comes back.",
+      "duration": 2.2,
+      "autoAdvance": false,
+      "camera": {
+        "position": [
+          4.0072,
+          -5.9046,
+          10.434
+        ],
+        "target": [
+          0.9562,
+          -0.442,
+          1.9722
+        ],
+        "up": [
+          -0.3921,
+          0.702,
+          0.5945
+        ],
+        "fov": 30.003
+      },
+      "after": {
+        "scene": {
+          "objects": [
+            {
+              "name": "Ground",
+              "collection": null,
+              "location": [
+                0,
+                0,
+                0
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "scale": [
+                1,
+                1,
+                1
+              ],
+              "hidden": false
+            },
+            {
+              "name": "Spire",
+              "collection": null,
+              "location": [
+                0,
+                0,
+                4.75
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "scale": [
+                1,
+                1,
+                1
+              ],
+              "hidden": false
+            },
+            {
+              "name": "Tower",
+              "collection": null,
+              "location": [
+                0,
+                0,
+                2
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "scale": [
+                1,
+                1,
+                1
+              ],
+              "hidden": false
+            },
+            {
+              "name": "Wall",
+              "collection": null,
+              "location": [
+                2.6,
+                0,
+                0.6
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "scale": [
+                1.6,
+                0.25,
+                0.6
+              ],
+              "hidden": false
+            }
+          ],
+          "collections": [],
+          "active": null,
+          "selected": []
+        },
+        "mode": "OBJECT",
+        "selectMode": [
+          "VERT"
+        ],
+        "proportional": false,
+        "redo": null,
+        "tool": null,
+        "selection": null
+      },
+      "mesh": null,
+      "verify": "view-07.png"
+    },
+    {
+      "id": "menu.view.frame_all",
+      "action": "menu",
+      "path": [
+        "menu.view",
+        "menu.view.frame_all"
+      ],
+      "operator": "view3d.view_all",
+      "shortcut": {
+        "keys": [
+          "Home"
+        ],
+        "context": "3D Viewport · Object Mode"
+      },
+      "text": "Fit everything in the view.",
+      "help": "View ▸ Frame All. The Home key does it too.",
+      "duration": 2.4,
+      "value": null,
+      "autoAdvance": false,
+      "camera": {
+        "position": [
+          7.5737,
+          -13.5604,
+          23.7557
+        ],
+        "target": [
+          0,
+          0,
+          2.75
+        ],
+        "up": [
+          -0.3921,
+          0.702,
+          0.5945
+        ],
+        "fov": 30
+      },
+      "after": {
+        "scene": {
+          "objects": [
+            {
+              "name": "Ground",
+              "collection": null,
+              "location": [
+                0,
+                0,
+                0
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "scale": [
+                1,
+                1,
+                1
+              ],
+              "hidden": false
+            },
+            {
+              "name": "Spire",
+              "collection": null,
+              "location": [
+                0,
+                0,
+                4.75
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "scale": [
+                1,
+                1,
+                1
+              ],
+              "hidden": false
+            },
+            {
+              "name": "Tower",
+              "collection": null,
+              "location": [
+                0,
+                0,
+                2
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "scale": [
+                1,
+                1,
+                1
+              ],
+              "hidden": false
+            },
+            {
+              "name": "Wall",
+              "collection": null,
+              "location": [
+                2.6,
+                0,
+                0.6
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "scale": [
+                1.6,
+                0.25,
+                0.6
+              ],
+              "hidden": false
+            }
+          ],
+          "collections": [],
+          "active": null,
+          "selected": []
+        },
+        "mode": "OBJECT",
+        "selectMode": [
+          "VERT"
+        ],
+        "proportional": false,
+        "redo": null,
+        "tool": null,
+        "selection": null
+      },
+      "mesh": null,
+      "verify": "view-08.png"
+    }
+  ],
+  "variantOf": "look-around",
+  "outro": "You can look at a model from anywhere now.",
+  "object": null
+}

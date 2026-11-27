@@ -1,0 +1,11 @@
+import{a as e,c as t,d as n,f as r,i,l as a,n as o,o as s,s as c,u as l}from"./viewer-H5G464qC.js";var u=384,d=o(),f=new URL(`./examples/`,document.baseURI),p=new n({side:2,vertexShader:`
+    varying vec3 vNormal;
+    void main() {
+      vNormal = normalize(mat3(modelMatrix) * normal);
+      gl_Position = projectionMatrix * viewMatrix * modelMatrix * vec4(position, 1.0);
+    }`,fragmentShader:`
+    varying vec3 vNormal;
+    void main() {
+      vec3 n = normalize(vNormal) * (gl_FrontFacing ? 1.0 : -1.0);
+      gl_FragColor = vec4(vec3(n.x, -n.z, n.y) * 0.5 + 0.5, 1.0);
+    }`});async function m(e){let t=document.createElement(`canvas`);t.width=t.height=u;let n=t.getContext(`2d`,{willReadFrequently:!0});return n.drawImage(e,0,0,u,u),n.getImageData(0,0,u,u).data}function h(e,t){let n=(e,t)=>e[t*4+3]>127,r=(e,t,n)=>Math.max(...[0,1,2].map(r=>Math.abs(e[t*4+r]-e[n*4+r])))/255,i=[1,-1,u,-384,385,383,-383,-385],a=(e,t)=>i.some(r=>n(e,t+r)),o=(e,t)=>[1,-1,u,-384].some(n=>r(e,t,t+n)>.1),s=0,c=0,l=0,d=0,f=0,p=[-2,2,-2*u,2*u];for(let r=0;r<u*u;r+=1){let i=n(e,r),u=n(t,r);if((i||u)&&(s+=1),i!==u&&a(i?t:e,r)&&(c+=1),!(i&&u)||(c+=1,p.some(i=>!n(e,r+i)||!n(t,r+i)))||o(e,r)&&o(t,r))continue;l+=1;let m=Math.max(...[0,1,2].map(n=>Math.abs(e[r*4+n]-t[r*4+n])))/255;d+=m,m>.1&&(f+=1)}return{iou:s?c/s:1,meanDiff:l?d/l:0,badFraction:l?f/l:0,coverage:s/(u*u)}}window.verifyStep=async({timeline:n,mesh:r,camera:o,reference:g,debug:_=!1})=>{let v=new s({antialias:!0,alpha:!0,preserveDrawingBuffer:!0});v.setPixelRatio(1),v.setSize(u,u,!1),v.setClearColor(0,0);let y=new URL(n.replace(/[^/]+$/,``),f),b=new l;for(let e of(await i(d,y,[r])).get(r).values())b.add(new c(e,p));let x=o.ortho?new t(-1,1,1,-1,-100,100):new a(30,1,.01,100);e(x,o,1),v.render(b,x);let S=new Image;S.src=g,await S.decode();let C=h(await m(S),await m(v.domElement));return _&&(C.image=v.domElement.toDataURL()),v.dispose(),C},window.sceneStructure=async({timeline:e,mesh:t})=>{let n=new URL(e.replace(/[^/]+$/,``),f);return[...(await i(d,n,[t])).get(t)].map(([e,t])=>{let n=t.getAttribute(`position`),i=0;t.computeBoundingBox();let a=t.boundingBox.getCenter(new r),o=new r;for(let e=0;e<n.count;e+=1)i+=o.fromBufferAttribute(n,e).distanceToSquared(a);return[e,n.count,Math.round(i*1e3)]}).sort()},document.documentElement.dataset.ready=`true`;

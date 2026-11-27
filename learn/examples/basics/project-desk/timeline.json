@@ -1,0 +1,2936 @@
+{
+  "blenderVersion": "5.3.0",
+  "module": "basics",
+  "example": "project-desk",
+  "mode": "your-turn",
+  "title": "Your turn: desk and stool",
+  "initial": {
+    "camera": {
+      "position": [
+        3.4,
+        -4.4,
+        2.7
+      ],
+      "target": [
+        0.5,
+        0,
+        0.4
+      ],
+      "fov": 30
+    },
+    "scene": {
+      "objects": [],
+      "collections": [],
+      "active": null,
+      "selected": []
+    },
+    "mode": "OBJECT",
+    "selectMode": [
+      "VERT"
+    ],
+    "proportional": false,
+    "redo": null,
+    "tool": null,
+    "selection": null,
+    "edit": null,
+    "mesh": "step-00.glb",
+    "text": "Build a long, low desk and a taller stool with the same steps."
+  },
+  "steps": [
+    {
+      "id": "menu.mesh_add.cube",
+      "action": "menu",
+      "path": [
+        "menu.add",
+        "menu.add.mesh",
+        "menu.mesh_add.cube"
+      ],
+      "operator": "mesh.primitive_cube_add",
+      "shortcut": null,
+      "text": "Add a cube for the desktop.",
+      "help": "Add ▸ Mesh ▸ Cube. Shift A opens the Add menu.",
+      "duration": 2.4,
+      "value": null,
+      "autoAdvance": false,
+      "camera": {
+        "position": [
+          3.4,
+          -4.4,
+          2.7
+        ],
+        "target": [
+          0.5,
+          0,
+          0.4
+        ],
+        "fov": 30
+      },
+      "after": {
+        "scene": {
+          "objects": [
+            {
+              "name": "Cube",
+              "collection": null,
+              "location": [
+                0,
+                0,
+                0
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "scale": [
+                1,
+                1,
+                1
+              ],
+              "hidden": false
+            }
+          ],
+          "collections": [],
+          "active": "Cube",
+          "selected": [
+            "Cube"
+          ]
+        },
+        "mode": "OBJECT",
+        "selectMode": [
+          "VERT"
+        ],
+        "proportional": false,
+        "redo": {
+          "operator": "mesh.primitive_cube_add",
+          "values": {
+            "redo.mesh.primitive_cube_add.size": 2,
+            "redo.mesh.primitive_cube_add.calc_uvs": true,
+            "redo.mesh.primitive_cube_add.align": "WORLD",
+            "redo.mesh.primitive_cube_add.location.x": 0,
+            "redo.mesh.primitive_cube_add.location.y": 0,
+            "redo.mesh.primitive_cube_add.location.z": 0,
+            "redo.mesh.primitive_cube_add.rotation.x": 0,
+            "redo.mesh.primitive_cube_add.rotation.y": 0,
+            "redo.mesh.primitive_cube_add.rotation.z": 0
+          }
+        },
+        "tool": null,
+        "selection": null
+      },
+      "mesh": "step-01.glb"
+    },
+    {
+      "id": "redo.mesh.primitive_cube_add.location.z",
+      "action": "redo_value",
+      "operator": "mesh.primitive_cube_add",
+      "value": 0.7,
+      "text": "Set Location Z to 0.7 m: the height of the top.",
+      "help": "Location is in the Adjust Last Operation panel.",
+      "step": 0.1,
+      "shortcut": null,
+      "duration": 2.2,
+      "autoAdvance": false,
+      "camera": {
+        "position": [
+          3.4,
+          -4.4,
+          2.7
+        ],
+        "target": [
+          0.5,
+          0,
+          0.4
+        ],
+        "fov": 30
+      },
+      "after": {
+        "scene": {
+          "objects": [
+            {
+              "name": "Cube",
+              "collection": null,
+              "location": [
+                0,
+                0,
+                0.7
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "scale": [
+                1,
+                1,
+                1
+              ],
+              "hidden": false
+            }
+          ],
+          "collections": [],
+          "active": "Cube",
+          "selected": [
+            "Cube"
+          ]
+        },
+        "mode": "OBJECT",
+        "selectMode": [
+          "VERT"
+        ],
+        "proportional": false,
+        "redo": {
+          "operator": "mesh.primitive_cube_add",
+          "values": {
+            "redo.mesh.primitive_cube_add.size": 2,
+            "redo.mesh.primitive_cube_add.calc_uvs": true,
+            "redo.mesh.primitive_cube_add.align": "WORLD",
+            "redo.mesh.primitive_cube_add.location.x": 0,
+            "redo.mesh.primitive_cube_add.location.y": 0,
+            "redo.mesh.primitive_cube_add.location.z": 0.7,
+            "redo.mesh.primitive_cube_add.rotation.x": 0,
+            "redo.mesh.primitive_cube_add.rotation.y": 0,
+            "redo.mesh.primitive_cube_add.rotation.z": 0
+          }
+        },
+        "tool": null,
+        "selection": null
+      },
+      "mesh": "step-02.glb"
+    },
+    {
+      "id": "menu.transform_object.scale",
+      "action": "menu",
+      "path": [
+        "menu.object",
+        "menu.object.transform",
+        "menu.transform_object.scale"
+      ],
+      "operator": "transform.resize",
+      "shortcut": {
+        "keys": [
+          "S"
+        ],
+        "context": "3D Viewport · Object Mode"
+      },
+      "text": "Object ▸ Transform ▸ Scale. The drag scales all three axes; the panel sets each one.",
+      "help": "Object ▸ Transform ▸ Scale. S is the shortcut.",
+      "duration": 2.4,
+      "value": null,
+      "autoAdvance": false,
+      "camera": {
+        "position": [
+          3.4,
+          -4.4,
+          2.7
+        ],
+        "target": [
+          0.5,
+          0,
+          0.4
+        ],
+        "fov": 30
+      },
+      "after": {
+        "scene": {
+          "objects": [
+            {
+              "name": "Cube",
+              "collection": null,
+              "location": [
+                0,
+                0,
+                0.7
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "scale": [
+                1.2,
+                1.2,
+                1.2
+              ],
+              "hidden": false
+            }
+          ],
+          "collections": [],
+          "active": "Cube",
+          "selected": [
+            "Cube"
+          ]
+        },
+        "mode": "OBJECT",
+        "selectMode": [
+          "VERT"
+        ],
+        "proportional": false,
+        "redo": {
+          "operator": "transform.resize",
+          "values": {
+            "redo.transform.resize.value.x": 1.2,
+            "redo.transform.resize.value.y": 1.2,
+            "redo.transform.resize.value.z": 1.2,
+            "redo.transform.resize.orient_type": "GLOBAL",
+            "redo.transform.resize.mirror": false,
+            "redo.transform.resize.use_proportional_edit": false,
+            "redo.transform.resize.proportional_edit_falloff": "SMOOTH",
+            "redo.transform.resize.proportional_size": 1,
+            "redo.transform.resize.use_proportional_connected": false,
+            "redo.transform.resize.use_proportional_projected": false
+          }
+        },
+        "tool": null,
+        "selection": null
+      },
+      "mesh": "step-03.glb"
+    },
+    {
+      "id": "redo.transform.resize.value.x",
+      "action": "redo_value",
+      "operator": "transform.resize",
+      "value": 1,
+      "text": "Scale X 1.0: the length.",
+      "help": "Scale X in the panel.",
+      "step": 0.1,
+      "shortcut": null,
+      "duration": 2.2,
+      "autoAdvance": false,
+      "camera": {
+        "position": [
+          3.4,
+          -4.4,
+          2.7
+        ],
+        "target": [
+          0.5,
+          0,
+          0.4
+        ],
+        "fov": 30
+      },
+      "after": {
+        "scene": {
+          "objects": [
+            {
+              "name": "Cube",
+              "collection": null,
+              "location": [
+                0,
+                0,
+                0.7
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "scale": [
+                1,
+                1.2,
+                1.2
+              ],
+              "hidden": false
+            }
+          ],
+          "collections": [],
+          "active": "Cube",
+          "selected": [
+            "Cube"
+          ]
+        },
+        "mode": "OBJECT",
+        "selectMode": [
+          "VERT"
+        ],
+        "proportional": false,
+        "redo": {
+          "operator": "transform.resize",
+          "values": {
+            "redo.transform.resize.value.x": 1,
+            "redo.transform.resize.value.y": 1.2,
+            "redo.transform.resize.value.z": 1.2,
+            "redo.transform.resize.orient_type": "GLOBAL",
+            "redo.transform.resize.mirror": false,
+            "redo.transform.resize.use_proportional_edit": false,
+            "redo.transform.resize.proportional_edit_falloff": "SMOOTH",
+            "redo.transform.resize.proportional_size": 1,
+            "redo.transform.resize.use_proportional_connected": false,
+            "redo.transform.resize.use_proportional_projected": false
+          }
+        },
+        "tool": null,
+        "selection": null
+      },
+      "mesh": "step-04.glb"
+    },
+    {
+      "id": "redo.transform.resize.value.y",
+      "action": "redo_value",
+      "operator": "transform.resize",
+      "value": 0.45,
+      "text": "Scale Y 0.45: the width.",
+      "help": "Scale Y in the panel.",
+      "step": 0.05,
+      "shortcut": null,
+      "duration": 2.2,
+      "autoAdvance": false,
+      "camera": {
+        "position": [
+          3.4,
+          -4.4,
+          2.7
+        ],
+        "target": [
+          0.5,
+          0,
+          0.4
+        ],
+        "fov": 30
+      },
+      "after": {
+        "scene": {
+          "objects": [
+            {
+              "name": "Cube",
+              "collection": null,
+              "location": [
+                0,
+                0,
+                0.7
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "scale": [
+                1,
+                0.45,
+                1.2
+              ],
+              "hidden": false
+            }
+          ],
+          "collections": [],
+          "active": "Cube",
+          "selected": [
+            "Cube"
+          ]
+        },
+        "mode": "OBJECT",
+        "selectMode": [
+          "VERT"
+        ],
+        "proportional": false,
+        "redo": {
+          "operator": "transform.resize",
+          "values": {
+            "redo.transform.resize.value.x": 1,
+            "redo.transform.resize.value.y": 0.45,
+            "redo.transform.resize.value.z": 1.2,
+            "redo.transform.resize.orient_type": "GLOBAL",
+            "redo.transform.resize.mirror": false,
+            "redo.transform.resize.use_proportional_edit": false,
+            "redo.transform.resize.proportional_edit_falloff": "SMOOTH",
+            "redo.transform.resize.proportional_size": 1,
+            "redo.transform.resize.use_proportional_connected": false,
+            "redo.transform.resize.use_proportional_projected": false
+          }
+        },
+        "tool": null,
+        "selection": null
+      },
+      "mesh": "step-05.glb"
+    },
+    {
+      "id": "redo.transform.resize.value.z",
+      "action": "redo_value",
+      "operator": "transform.resize",
+      "value": 0.04,
+      "text": "Scale Z 0.04: a thin board.",
+      "help": "Scale Z in the panel.",
+      "step": 0.01,
+      "shortcut": null,
+      "duration": 2.2,
+      "autoAdvance": false,
+      "camera": {
+        "position": [
+          3.4,
+          -4.4,
+          2.7
+        ],
+        "target": [
+          0.5,
+          0,
+          0.4
+        ],
+        "fov": 30
+      },
+      "after": {
+        "scene": {
+          "objects": [
+            {
+              "name": "Cube",
+              "collection": null,
+              "location": [
+                0,
+                0,
+                0.7
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "scale": [
+                1,
+                0.45,
+                0.04
+              ],
+              "hidden": false
+            }
+          ],
+          "collections": [],
+          "active": "Cube",
+          "selected": [
+            "Cube"
+          ]
+        },
+        "mode": "OBJECT",
+        "selectMode": [
+          "VERT"
+        ],
+        "proportional": false,
+        "redo": {
+          "operator": "transform.resize",
+          "values": {
+            "redo.transform.resize.value.x": 1,
+            "redo.transform.resize.value.y": 0.45,
+            "redo.transform.resize.value.z": 0.04,
+            "redo.transform.resize.orient_type": "GLOBAL",
+            "redo.transform.resize.mirror": false,
+            "redo.transform.resize.use_proportional_edit": false,
+            "redo.transform.resize.proportional_edit_falloff": "SMOOTH",
+            "redo.transform.resize.proportional_size": 1,
+            "redo.transform.resize.use_proportional_connected": false,
+            "redo.transform.resize.use_proportional_projected": false
+          }
+        },
+        "tool": null,
+        "selection": null
+      },
+      "mesh": "step-06.glb"
+    },
+    {
+      "id": "menu.mesh_add.cube",
+      "action": "menu",
+      "path": [
+        "menu.add",
+        "menu.add.mesh",
+        "menu.mesh_add.cube"
+      ],
+      "operator": "mesh.primitive_cube_add",
+      "shortcut": null,
+      "text": "Add a cube for a leg.",
+      "help": "Add ▸ Mesh ▸ Cube. Shift A opens the Add menu.",
+      "duration": 2.4,
+      "value": null,
+      "autoAdvance": false,
+      "camera": {
+        "position": [
+          3.4,
+          -4.4,
+          2.7
+        ],
+        "target": [
+          0.5,
+          0,
+          0.4
+        ],
+        "fov": 30
+      },
+      "after": {
+        "scene": {
+          "objects": [
+            {
+              "name": "Cube",
+              "collection": null,
+              "location": [
+                0,
+                0,
+                0.7
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "scale": [
+                1,
+                0.45,
+                0.04
+              ],
+              "hidden": false
+            },
+            {
+              "name": "Cube.001",
+              "collection": null,
+              "location": [
+                0,
+                0,
+                0
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "scale": [
+                1,
+                1,
+                1
+              ],
+              "hidden": false
+            }
+          ],
+          "collections": [],
+          "active": "Cube.001",
+          "selected": [
+            "Cube.001"
+          ]
+        },
+        "mode": "OBJECT",
+        "selectMode": [
+          "VERT"
+        ],
+        "proportional": false,
+        "redo": {
+          "operator": "mesh.primitive_cube_add",
+          "values": {
+            "redo.mesh.primitive_cube_add.size": 2,
+            "redo.mesh.primitive_cube_add.calc_uvs": true,
+            "redo.mesh.primitive_cube_add.align": "WORLD",
+            "redo.mesh.primitive_cube_add.location.x": 0,
+            "redo.mesh.primitive_cube_add.location.y": 0,
+            "redo.mesh.primitive_cube_add.location.z": 0,
+            "redo.mesh.primitive_cube_add.rotation.x": 0,
+            "redo.mesh.primitive_cube_add.rotation.y": 0,
+            "redo.mesh.primitive_cube_add.rotation.z": 0
+          }
+        },
+        "tool": null,
+        "selection": null
+      },
+      "mesh": "step-07.glb"
+    },
+    {
+      "id": "redo.mesh.primitive_cube_add.size",
+      "action": "redo_value",
+      "operator": "mesh.primitive_cube_add",
+      "value": 0.08,
+      "text": "Size 0.08 m: as thick as a leg.",
+      "help": "Size is the first field of the panel.",
+      "step": 0.01,
+      "shortcut": null,
+      "duration": 2.2,
+      "autoAdvance": false,
+      "camera": {
+        "position": [
+          3.4,
+          -4.4,
+          2.7
+        ],
+        "target": [
+          0.5,
+          0,
+          0.4
+        ],
+        "fov": 30
+      },
+      "after": {
+        "scene": {
+          "objects": [
+            {
+              "name": "Cube",
+              "collection": null,
+              "location": [
+                0,
+                0,
+                0.7
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "scale": [
+                1,
+                0.45,
+                0.04
+              ],
+              "hidden": false
+            },
+            {
+              "name": "Cube.001",
+              "collection": null,
+              "location": [
+                0,
+                0,
+                0
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "scale": [
+                1,
+                1,
+                1
+              ],
+              "hidden": false
+            }
+          ],
+          "collections": [],
+          "active": "Cube.001",
+          "selected": [
+            "Cube.001"
+          ]
+        },
+        "mode": "OBJECT",
+        "selectMode": [
+          "VERT"
+        ],
+        "proportional": false,
+        "redo": {
+          "operator": "mesh.primitive_cube_add",
+          "values": {
+            "redo.mesh.primitive_cube_add.size": 0.08,
+            "redo.mesh.primitive_cube_add.calc_uvs": true,
+            "redo.mesh.primitive_cube_add.align": "WORLD",
+            "redo.mesh.primitive_cube_add.location.x": 0,
+            "redo.mesh.primitive_cube_add.location.y": 0,
+            "redo.mesh.primitive_cube_add.location.z": 0,
+            "redo.mesh.primitive_cube_add.rotation.x": 0,
+            "redo.mesh.primitive_cube_add.rotation.y": 0,
+            "redo.mesh.primitive_cube_add.rotation.z": 0
+          }
+        },
+        "tool": null,
+        "selection": null
+      },
+      "mesh": "step-08.glb"
+    },
+    {
+      "id": "redo.mesh.primitive_cube_add.location.x",
+      "action": "redo_value",
+      "operator": "mesh.primitive_cube_add",
+      "value": 0.9,
+      "text": "Location X 0.9 m, under a corner.",
+      "help": "Location is in the Adjust Last Operation panel.",
+      "step": 0.1,
+      "shortcut": null,
+      "duration": 2.2,
+      "autoAdvance": false,
+      "camera": {
+        "position": [
+          3.4,
+          -4.4,
+          2.7
+        ],
+        "target": [
+          0.5,
+          0,
+          0.4
+        ],
+        "fov": 30
+      },
+      "after": {
+        "scene": {
+          "objects": [
+            {
+              "name": "Cube",
+              "collection": null,
+              "location": [
+                0,
+                0,
+                0.7
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "scale": [
+                1,
+                0.45,
+                0.04
+              ],
+              "hidden": false
+            },
+            {
+              "name": "Cube.001",
+              "collection": null,
+              "location": [
+                0.9,
+                0,
+                0
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "scale": [
+                1,
+                1,
+                1
+              ],
+              "hidden": false
+            }
+          ],
+          "collections": [],
+          "active": "Cube.001",
+          "selected": [
+            "Cube.001"
+          ]
+        },
+        "mode": "OBJECT",
+        "selectMode": [
+          "VERT"
+        ],
+        "proportional": false,
+        "redo": {
+          "operator": "mesh.primitive_cube_add",
+          "values": {
+            "redo.mesh.primitive_cube_add.size": 0.08,
+            "redo.mesh.primitive_cube_add.calc_uvs": true,
+            "redo.mesh.primitive_cube_add.align": "WORLD",
+            "redo.mesh.primitive_cube_add.location.x": 0.9,
+            "redo.mesh.primitive_cube_add.location.y": 0,
+            "redo.mesh.primitive_cube_add.location.z": 0,
+            "redo.mesh.primitive_cube_add.rotation.x": 0,
+            "redo.mesh.primitive_cube_add.rotation.y": 0,
+            "redo.mesh.primitive_cube_add.rotation.z": 0
+          }
+        },
+        "tool": null,
+        "selection": null
+      },
+      "mesh": "step-09.glb"
+    },
+    {
+      "id": "redo.mesh.primitive_cube_add.location.y",
+      "action": "redo_value",
+      "operator": "mesh.primitive_cube_add",
+      "value": -0.35,
+      "text": "Location Y -0.35 m.",
+      "help": "Location is in the Adjust Last Operation panel.",
+      "step": 0.05,
+      "shortcut": null,
+      "duration": 2.2,
+      "autoAdvance": false,
+      "camera": {
+        "position": [
+          3.4,
+          -4.4,
+          2.7
+        ],
+        "target": [
+          0.5,
+          0,
+          0.4
+        ],
+        "fov": 30
+      },
+      "after": {
+        "scene": {
+          "objects": [
+            {
+              "name": "Cube",
+              "collection": null,
+              "location": [
+                0,
+                0,
+                0.7
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "scale": [
+                1,
+                0.45,
+                0.04
+              ],
+              "hidden": false
+            },
+            {
+              "name": "Cube.001",
+              "collection": null,
+              "location": [
+                0.9,
+                -0.35,
+                0
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "scale": [
+                1,
+                1,
+                1
+              ],
+              "hidden": false
+            }
+          ],
+          "collections": [],
+          "active": "Cube.001",
+          "selected": [
+            "Cube.001"
+          ]
+        },
+        "mode": "OBJECT",
+        "selectMode": [
+          "VERT"
+        ],
+        "proportional": false,
+        "redo": {
+          "operator": "mesh.primitive_cube_add",
+          "values": {
+            "redo.mesh.primitive_cube_add.size": 0.08,
+            "redo.mesh.primitive_cube_add.calc_uvs": true,
+            "redo.mesh.primitive_cube_add.align": "WORLD",
+            "redo.mesh.primitive_cube_add.location.x": 0.9,
+            "redo.mesh.primitive_cube_add.location.y": -0.35,
+            "redo.mesh.primitive_cube_add.location.z": 0,
+            "redo.mesh.primitive_cube_add.rotation.x": 0,
+            "redo.mesh.primitive_cube_add.rotation.y": 0,
+            "redo.mesh.primitive_cube_add.rotation.z": 0
+          }
+        },
+        "tool": null,
+        "selection": null
+      },
+      "mesh": "step-10.glb"
+    },
+    {
+      "id": "redo.mesh.primitive_cube_add.location.z",
+      "action": "redo_value",
+      "operator": "mesh.primitive_cube_add",
+      "value": 0.33,
+      "text": "Location Z 0.33 m: halfway up.",
+      "help": "Location is in the Adjust Last Operation panel.",
+      "step": 0.01,
+      "shortcut": null,
+      "duration": 2.2,
+      "autoAdvance": false,
+      "camera": {
+        "position": [
+          3.4,
+          -4.4,
+          2.7
+        ],
+        "target": [
+          0.5,
+          0,
+          0.4
+        ],
+        "fov": 30
+      },
+      "after": {
+        "scene": {
+          "objects": [
+            {
+              "name": "Cube",
+              "collection": null,
+              "location": [
+                0,
+                0,
+                0.7
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "scale": [
+                1,
+                0.45,
+                0.04
+              ],
+              "hidden": false
+            },
+            {
+              "name": "Cube.001",
+              "collection": null,
+              "location": [
+                0.9,
+                -0.35,
+                0.33
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "scale": [
+                1,
+                1,
+                1
+              ],
+              "hidden": false
+            }
+          ],
+          "collections": [],
+          "active": "Cube.001",
+          "selected": [
+            "Cube.001"
+          ]
+        },
+        "mode": "OBJECT",
+        "selectMode": [
+          "VERT"
+        ],
+        "proportional": false,
+        "redo": {
+          "operator": "mesh.primitive_cube_add",
+          "values": {
+            "redo.mesh.primitive_cube_add.size": 0.08,
+            "redo.mesh.primitive_cube_add.calc_uvs": true,
+            "redo.mesh.primitive_cube_add.align": "WORLD",
+            "redo.mesh.primitive_cube_add.location.x": 0.9,
+            "redo.mesh.primitive_cube_add.location.y": -0.35,
+            "redo.mesh.primitive_cube_add.location.z": 0.33,
+            "redo.mesh.primitive_cube_add.rotation.x": 0,
+            "redo.mesh.primitive_cube_add.rotation.y": 0,
+            "redo.mesh.primitive_cube_add.rotation.z": 0
+          }
+        },
+        "tool": null,
+        "selection": null
+      },
+      "mesh": "step-11.glb"
+    },
+    {
+      "id": "menu.transform_object.scale",
+      "action": "menu",
+      "path": [
+        "menu.object",
+        "menu.object.transform",
+        "menu.transform_object.scale"
+      ],
+      "operator": "transform.resize",
+      "shortcut": {
+        "keys": [
+          "S"
+        ],
+        "context": "3D Viewport · Object Mode"
+      },
+      "text": "Scale it on Z only, to stretch it into a leg.",
+      "help": "Object ▸ Transform ▸ Scale. S is the shortcut.",
+      "duration": 2.4,
+      "value": null,
+      "autoAdvance": false,
+      "camera": {
+        "position": [
+          3.4,
+          -4.4,
+          2.7
+        ],
+        "target": [
+          0.5,
+          0,
+          0.4
+        ],
+        "fov": 30
+      },
+      "after": {
+        "scene": {
+          "objects": [
+            {
+              "name": "Cube",
+              "collection": null,
+              "location": [
+                0,
+                0,
+                0.7
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "scale": [
+                1,
+                0.45,
+                0.04
+              ],
+              "hidden": false
+            },
+            {
+              "name": "Cube.001",
+              "collection": null,
+              "location": [
+                0.9,
+                -0.35,
+                0.33
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "scale": [
+                1,
+                1,
+                2
+              ],
+              "hidden": false
+            }
+          ],
+          "collections": [],
+          "active": "Cube.001",
+          "selected": [
+            "Cube.001"
+          ]
+        },
+        "mode": "OBJECT",
+        "selectMode": [
+          "VERT"
+        ],
+        "proportional": false,
+        "redo": {
+          "operator": "transform.resize",
+          "values": {
+            "redo.transform.resize.value.x": 1,
+            "redo.transform.resize.value.y": 1,
+            "redo.transform.resize.value.z": 2,
+            "redo.transform.resize.orient_type": "GLOBAL",
+            "redo.transform.resize.mirror": false,
+            "redo.transform.resize.use_proportional_edit": false,
+            "redo.transform.resize.proportional_edit_falloff": "SMOOTH",
+            "redo.transform.resize.proportional_size": 1,
+            "redo.transform.resize.use_proportional_connected": false,
+            "redo.transform.resize.use_proportional_projected": false
+          }
+        },
+        "tool": null,
+        "selection": null
+      },
+      "mesh": "step-12.glb"
+    },
+    {
+      "id": "redo.transform.resize.value.z",
+      "action": "redo_value",
+      "operator": "transform.resize",
+      "value": 8.25,
+      "text": "Scale Z 8.25: it now reaches the top.",
+      "help": "Scale Z in the panel.",
+      "step": 0.05,
+      "shortcut": null,
+      "duration": 2.2,
+      "autoAdvance": false,
+      "camera": {
+        "position": [
+          3.4,
+          -4.4,
+          2.7
+        ],
+        "target": [
+          0.5,
+          0,
+          0.4
+        ],
+        "fov": 30
+      },
+      "after": {
+        "scene": {
+          "objects": [
+            {
+              "name": "Cube",
+              "collection": null,
+              "location": [
+                0,
+                0,
+                0.7
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "scale": [
+                1,
+                0.45,
+                0.04
+              ],
+              "hidden": false
+            },
+            {
+              "name": "Cube.001",
+              "collection": null,
+              "location": [
+                0.9,
+                -0.35,
+                0.33
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "scale": [
+                1,
+                1,
+                8.25
+              ],
+              "hidden": false
+            }
+          ],
+          "collections": [],
+          "active": "Cube.001",
+          "selected": [
+            "Cube.001"
+          ]
+        },
+        "mode": "OBJECT",
+        "selectMode": [
+          "VERT"
+        ],
+        "proportional": false,
+        "redo": {
+          "operator": "transform.resize",
+          "values": {
+            "redo.transform.resize.value.x": 1,
+            "redo.transform.resize.value.y": 1,
+            "redo.transform.resize.value.z": 8.25,
+            "redo.transform.resize.orient_type": "GLOBAL",
+            "redo.transform.resize.mirror": false,
+            "redo.transform.resize.use_proportional_edit": false,
+            "redo.transform.resize.proportional_edit_falloff": "SMOOTH",
+            "redo.transform.resize.proportional_size": 1,
+            "redo.transform.resize.use_proportional_connected": false,
+            "redo.transform.resize.use_proportional_projected": false
+          }
+        },
+        "tool": null,
+        "selection": null
+      },
+      "mesh": "step-13.glb"
+    },
+    {
+      "id": "menu.object.duplicate_objects",
+      "action": "menu",
+      "path": [
+        "menu.object",
+        "menu.object.duplicate_objects"
+      ],
+      "operator": "object.duplicate_move",
+      "shortcut": {
+        "keys": [
+          "Shift",
+          "D"
+        ],
+        "context": "3D Viewport · Object Mode"
+      },
+      "text": "Duplicate the leg along X.",
+      "help": "Object ▸ Duplicate Objects. Shift D is the shortcut.",
+      "duration": 2.4,
+      "value": null,
+      "autoAdvance": false,
+      "camera": {
+        "position": [
+          3.4,
+          -4.4,
+          2.7
+        ],
+        "target": [
+          0.5,
+          0,
+          0.4
+        ],
+        "fov": 30
+      },
+      "after": {
+        "scene": {
+          "objects": [
+            {
+              "name": "Cube",
+              "collection": null,
+              "location": [
+                0,
+                0,
+                0.7
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "scale": [
+                1,
+                0.45,
+                0.04
+              ],
+              "hidden": false
+            },
+            {
+              "name": "Cube.001",
+              "collection": null,
+              "location": [
+                0.9,
+                -0.35,
+                0.33
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "scale": [
+                1,
+                1,
+                8.25
+              ],
+              "hidden": false
+            },
+            {
+              "name": "Cube.002",
+              "collection": null,
+              "location": [
+                0.6,
+                -0.35,
+                0.33
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "scale": [
+                1,
+                1,
+                8.25
+              ],
+              "hidden": false
+            }
+          ],
+          "collections": [],
+          "active": "Cube.002",
+          "selected": [
+            "Cube.002"
+          ]
+        },
+        "mode": "OBJECT",
+        "selectMode": [
+          "VERT"
+        ],
+        "proportional": false,
+        "redo": {
+          "operator": "object.duplicate_move",
+          "values": {
+            "redo.object.duplicate_move.OBJECT_OT_duplicate.linked": false,
+            "redo.object.duplicate_move.TRANSFORM_OT_translate.value.x": -0.3,
+            "redo.object.duplicate_move.TRANSFORM_OT_translate.value.y": 0,
+            "redo.object.duplicate_move.TRANSFORM_OT_translate.value.z": 0,
+            "redo.object.duplicate_move.TRANSFORM_OT_translate.orient_type": "GLOBAL",
+            "redo.object.duplicate_move.TRANSFORM_OT_translate.mirror": false,
+            "redo.object.duplicate_move.TRANSFORM_OT_translate.use_proportional_edit": false,
+            "redo.object.duplicate_move.TRANSFORM_OT_translate.proportional_edit_falloff": "SMOOTH",
+            "redo.object.duplicate_move.TRANSFORM_OT_translate.proportional_size": 1,
+            "redo.object.duplicate_move.TRANSFORM_OT_translate.use_proportional_connected": false,
+            "redo.object.duplicate_move.TRANSFORM_OT_translate.use_proportional_projected": false
+          }
+        },
+        "tool": null,
+        "selection": null
+      },
+      "mesh": "step-14.glb"
+    },
+    {
+      "id": "redo.object.duplicate_move.TRANSFORM_OT_translate.value.x",
+      "action": "redo_value",
+      "operator": "object.duplicate_move",
+      "value": -1.8,
+      "text": "Move X -1.8 m, to the other front corner.",
+      "help": "Move X in the panel.",
+      "step": 0.1,
+      "shortcut": null,
+      "duration": 2.2,
+      "autoAdvance": false,
+      "camera": {
+        "position": [
+          3.4,
+          -4.4,
+          2.7
+        ],
+        "target": [
+          0.5,
+          0,
+          0.4
+        ],
+        "fov": 30
+      },
+      "after": {
+        "scene": {
+          "objects": [
+            {
+              "name": "Cube",
+              "collection": null,
+              "location": [
+                0,
+                0,
+                0.7
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "scale": [
+                1,
+                0.45,
+                0.04
+              ],
+              "hidden": false
+            },
+            {
+              "name": "Cube.001",
+              "collection": null,
+              "location": [
+                0.9,
+                -0.35,
+                0.33
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "scale": [
+                1,
+                1,
+                8.25
+              ],
+              "hidden": false
+            },
+            {
+              "name": "Cube.002",
+              "collection": null,
+              "location": [
+                -0.9,
+                -0.35,
+                0.33
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "scale": [
+                1,
+                1,
+                8.25
+              ],
+              "hidden": false
+            }
+          ],
+          "collections": [],
+          "active": "Cube.002",
+          "selected": [
+            "Cube.002"
+          ]
+        },
+        "mode": "OBJECT",
+        "selectMode": [
+          "VERT"
+        ],
+        "proportional": false,
+        "redo": {
+          "operator": "object.duplicate_move",
+          "values": {
+            "redo.object.duplicate_move.OBJECT_OT_duplicate.linked": false,
+            "redo.object.duplicate_move.TRANSFORM_OT_translate.value.x": -1.8,
+            "redo.object.duplicate_move.TRANSFORM_OT_translate.value.y": 0,
+            "redo.object.duplicate_move.TRANSFORM_OT_translate.value.z": 0,
+            "redo.object.duplicate_move.TRANSFORM_OT_translate.orient_type": "GLOBAL",
+            "redo.object.duplicate_move.TRANSFORM_OT_translate.mirror": false,
+            "redo.object.duplicate_move.TRANSFORM_OT_translate.use_proportional_edit": false,
+            "redo.object.duplicate_move.TRANSFORM_OT_translate.proportional_edit_falloff": "SMOOTH",
+            "redo.object.duplicate_move.TRANSFORM_OT_translate.proportional_size": 1,
+            "redo.object.duplicate_move.TRANSFORM_OT_translate.use_proportional_connected": false,
+            "redo.object.duplicate_move.TRANSFORM_OT_translate.use_proportional_projected": false
+          }
+        },
+        "tool": null,
+        "selection": null
+      },
+      "mesh": "step-15.glb"
+    },
+    {
+      "id": "view3d.select",
+      "action": "tap",
+      "value": [
+        0.9,
+        -0.39,
+        0.15
+      ],
+      "toggle": false,
+      "text": "Click the first leg.",
+      "help": "Tap the first leg you made.",
+      "duration": 1.8,
+      "shortcut": null,
+      "autoAdvance": false,
+      "camera": {
+        "position": [
+          3.4,
+          -4.4,
+          2.7
+        ],
+        "target": [
+          0.5,
+          0,
+          0.4
+        ],
+        "fov": 30
+      },
+      "after": {
+        "scene": {
+          "objects": [
+            {
+              "name": "Cube",
+              "collection": null,
+              "location": [
+                0,
+                0,
+                0.7
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "scale": [
+                1,
+                0.45,
+                0.04
+              ],
+              "hidden": false
+            },
+            {
+              "name": "Cube.001",
+              "collection": null,
+              "location": [
+                0.9,
+                -0.35,
+                0.33
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "scale": [
+                1,
+                1,
+                8.25
+              ],
+              "hidden": false
+            },
+            {
+              "name": "Cube.002",
+              "collection": null,
+              "location": [
+                -0.9,
+                -0.35,
+                0.33
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "scale": [
+                1,
+                1,
+                8.25
+              ],
+              "hidden": false
+            }
+          ],
+          "collections": [],
+          "active": "Cube.001",
+          "selected": [
+            "Cube.001"
+          ]
+        },
+        "mode": "OBJECT",
+        "selectMode": [
+          "VERT"
+        ],
+        "proportional": false,
+        "redo": null,
+        "tool": null,
+        "selection": null
+      },
+      "mesh": null
+    },
+    {
+      "id": "view3d.select",
+      "action": "tap",
+      "value": [
+        -0.9,
+        -0.39,
+        0.15
+      ],
+      "toggle": true,
+      "text": "Shift-click the copy: now both legs are selected.",
+      "help": "Turn on the ⇧ Shift key, then tap the copy.",
+      "duration": 1.8,
+      "shortcut": null,
+      "autoAdvance": false,
+      "camera": {
+        "position": [
+          3.4,
+          -4.4,
+          2.7
+        ],
+        "target": [
+          0.5,
+          0,
+          0.4
+        ],
+        "fov": 30
+      },
+      "after": {
+        "scene": {
+          "objects": [
+            {
+              "name": "Cube",
+              "collection": null,
+              "location": [
+                0,
+                0,
+                0.7
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "scale": [
+                1,
+                0.45,
+                0.04
+              ],
+              "hidden": false
+            },
+            {
+              "name": "Cube.001",
+              "collection": null,
+              "location": [
+                0.9,
+                -0.35,
+                0.33
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "scale": [
+                1,
+                1,
+                8.25
+              ],
+              "hidden": false
+            },
+            {
+              "name": "Cube.002",
+              "collection": null,
+              "location": [
+                -0.9,
+                -0.35,
+                0.33
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "scale": [
+                1,
+                1,
+                8.25
+              ],
+              "hidden": false
+            }
+          ],
+          "collections": [],
+          "active": "Cube.002",
+          "selected": [
+            "Cube.001",
+            "Cube.002"
+          ]
+        },
+        "mode": "OBJECT",
+        "selectMode": [
+          "VERT"
+        ],
+        "proportional": false,
+        "redo": null,
+        "tool": null,
+        "selection": null
+      },
+      "mesh": null
+    },
+    {
+      "id": "menu.object.duplicate_objects",
+      "action": "menu",
+      "path": [
+        "menu.object",
+        "menu.object.duplicate_objects"
+      ],
+      "operator": "object.duplicate_move",
+      "shortcut": {
+        "keys": [
+          "Shift",
+          "D"
+        ],
+        "context": "3D Viewport · Object Mode"
+      },
+      "text": "Duplicate both at once, along Y, toward the back.",
+      "help": "Object ▸ Duplicate Objects. Shift D is the shortcut.",
+      "duration": 2.4,
+      "value": null,
+      "autoAdvance": false,
+      "camera": {
+        "position": [
+          3.4,
+          -4.4,
+          2.7
+        ],
+        "target": [
+          0.5,
+          0,
+          0.4
+        ],
+        "fov": 30
+      },
+      "after": {
+        "scene": {
+          "objects": [
+            {
+              "name": "Cube",
+              "collection": null,
+              "location": [
+                0,
+                0,
+                0.7
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "scale": [
+                1,
+                0.45,
+                0.04
+              ],
+              "hidden": false
+            },
+            {
+              "name": "Cube.001",
+              "collection": null,
+              "location": [
+                0.9,
+                -0.35,
+                0.33
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "scale": [
+                1,
+                1,
+                8.25
+              ],
+              "hidden": false
+            },
+            {
+              "name": "Cube.002",
+              "collection": null,
+              "location": [
+                -0.9,
+                -0.35,
+                0.33
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "scale": [
+                1,
+                1,
+                8.25
+              ],
+              "hidden": false
+            },
+            {
+              "name": "Cube.003",
+              "collection": null,
+              "location": [
+                0.9,
+                -0.05,
+                0.33
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "scale": [
+                1,
+                1,
+                8.25
+              ],
+              "hidden": false
+            },
+            {
+              "name": "Cube.004",
+              "collection": null,
+              "location": [
+                -0.9,
+                -0.05,
+                0.33
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "scale": [
+                1,
+                1,
+                8.25
+              ],
+              "hidden": false
+            }
+          ],
+          "collections": [],
+          "active": "Cube.004",
+          "selected": [
+            "Cube.003",
+            "Cube.004"
+          ]
+        },
+        "mode": "OBJECT",
+        "selectMode": [
+          "VERT"
+        ],
+        "proportional": false,
+        "redo": {
+          "operator": "object.duplicate_move",
+          "values": {
+            "redo.object.duplicate_move.OBJECT_OT_duplicate.linked": false,
+            "redo.object.duplicate_move.TRANSFORM_OT_translate.value.x": 0,
+            "redo.object.duplicate_move.TRANSFORM_OT_translate.value.y": 0.3,
+            "redo.object.duplicate_move.TRANSFORM_OT_translate.value.z": 0,
+            "redo.object.duplicate_move.TRANSFORM_OT_translate.orient_type": "GLOBAL",
+            "redo.object.duplicate_move.TRANSFORM_OT_translate.mirror": false,
+            "redo.object.duplicate_move.TRANSFORM_OT_translate.use_proportional_edit": false,
+            "redo.object.duplicate_move.TRANSFORM_OT_translate.proportional_edit_falloff": "SMOOTH",
+            "redo.object.duplicate_move.TRANSFORM_OT_translate.proportional_size": 1,
+            "redo.object.duplicate_move.TRANSFORM_OT_translate.use_proportional_connected": false,
+            "redo.object.duplicate_move.TRANSFORM_OT_translate.use_proportional_projected": false
+          }
+        },
+        "tool": null,
+        "selection": null
+      },
+      "mesh": "step-18.glb"
+    },
+    {
+      "id": "redo.object.duplicate_move.TRANSFORM_OT_translate.value.y",
+      "action": "redo_value",
+      "operator": "object.duplicate_move",
+      "value": 0.7,
+      "text": "Move Y 0.7 m: four legs.",
+      "help": "Move Y in the panel.",
+      "step": 0.1,
+      "shortcut": null,
+      "duration": 2.2,
+      "autoAdvance": false,
+      "camera": {
+        "position": [
+          3.4,
+          -4.4,
+          2.7
+        ],
+        "target": [
+          0.5,
+          0,
+          0.4
+        ],
+        "fov": 30
+      },
+      "after": {
+        "scene": {
+          "objects": [
+            {
+              "name": "Cube",
+              "collection": null,
+              "location": [
+                0,
+                0,
+                0.7
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "scale": [
+                1,
+                0.45,
+                0.04
+              ],
+              "hidden": false
+            },
+            {
+              "name": "Cube.001",
+              "collection": null,
+              "location": [
+                0.9,
+                -0.35,
+                0.33
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "scale": [
+                1,
+                1,
+                8.25
+              ],
+              "hidden": false
+            },
+            {
+              "name": "Cube.002",
+              "collection": null,
+              "location": [
+                -0.9,
+                -0.35,
+                0.33
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "scale": [
+                1,
+                1,
+                8.25
+              ],
+              "hidden": false
+            },
+            {
+              "name": "Cube.003",
+              "collection": null,
+              "location": [
+                0.9,
+                0.35,
+                0.33
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "scale": [
+                1,
+                1,
+                8.25
+              ],
+              "hidden": false
+            },
+            {
+              "name": "Cube.004",
+              "collection": null,
+              "location": [
+                -0.9,
+                0.35,
+                0.33
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "scale": [
+                1,
+                1,
+                8.25
+              ],
+              "hidden": false
+            }
+          ],
+          "collections": [],
+          "active": "Cube.004",
+          "selected": [
+            "Cube.003",
+            "Cube.004"
+          ]
+        },
+        "mode": "OBJECT",
+        "selectMode": [
+          "VERT"
+        ],
+        "proportional": false,
+        "redo": {
+          "operator": "object.duplicate_move",
+          "values": {
+            "redo.object.duplicate_move.OBJECT_OT_duplicate.linked": false,
+            "redo.object.duplicate_move.TRANSFORM_OT_translate.value.x": 0,
+            "redo.object.duplicate_move.TRANSFORM_OT_translate.value.y": 0.7,
+            "redo.object.duplicate_move.TRANSFORM_OT_translate.value.z": 0,
+            "redo.object.duplicate_move.TRANSFORM_OT_translate.orient_type": "GLOBAL",
+            "redo.object.duplicate_move.TRANSFORM_OT_translate.mirror": false,
+            "redo.object.duplicate_move.TRANSFORM_OT_translate.use_proportional_edit": false,
+            "redo.object.duplicate_move.TRANSFORM_OT_translate.proportional_edit_falloff": "SMOOTH",
+            "redo.object.duplicate_move.TRANSFORM_OT_translate.proportional_size": 1,
+            "redo.object.duplicate_move.TRANSFORM_OT_translate.use_proportional_connected": false,
+            "redo.object.duplicate_move.TRANSFORM_OT_translate.use_proportional_projected": false
+          }
+        },
+        "tool": null,
+        "selection": null
+      },
+      "mesh": "step-19.glb"
+    },
+    {
+      "id": "menu.mesh_add.cylinder",
+      "action": "menu",
+      "path": [
+        "menu.add",
+        "menu.add.mesh",
+        "menu.mesh_add.cylinder"
+      ],
+      "operator": "mesh.primitive_cylinder_add",
+      "shortcut": null,
+      "text": "Add a cylinder for the stool.",
+      "help": "Add ▸ Mesh ▸ Cylinder.",
+      "duration": 2.4,
+      "value": null,
+      "autoAdvance": false,
+      "camera": {
+        "position": [
+          3.4,
+          -4.4,
+          2.7
+        ],
+        "target": [
+          0.5,
+          0,
+          0.4
+        ],
+        "fov": 30
+      },
+      "after": {
+        "scene": {
+          "objects": [
+            {
+              "name": "Cube",
+              "collection": null,
+              "location": [
+                0,
+                0,
+                0.7
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "scale": [
+                1,
+                0.45,
+                0.04
+              ],
+              "hidden": false
+            },
+            {
+              "name": "Cube.001",
+              "collection": null,
+              "location": [
+                0.9,
+                -0.35,
+                0.33
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "scale": [
+                1,
+                1,
+                8.25
+              ],
+              "hidden": false
+            },
+            {
+              "name": "Cube.002",
+              "collection": null,
+              "location": [
+                -0.9,
+                -0.35,
+                0.33
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "scale": [
+                1,
+                1,
+                8.25
+              ],
+              "hidden": false
+            },
+            {
+              "name": "Cube.003",
+              "collection": null,
+              "location": [
+                0.9,
+                0.35,
+                0.33
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "scale": [
+                1,
+                1,
+                8.25
+              ],
+              "hidden": false
+            },
+            {
+              "name": "Cube.004",
+              "collection": null,
+              "location": [
+                -0.9,
+                0.35,
+                0.33
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "scale": [
+                1,
+                1,
+                8.25
+              ],
+              "hidden": false
+            },
+            {
+              "name": "Cylinder",
+              "collection": null,
+              "location": [
+                0,
+                0,
+                0
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "scale": [
+                1,
+                1,
+                1
+              ],
+              "hidden": false
+            }
+          ],
+          "collections": [],
+          "active": "Cylinder",
+          "selected": [
+            "Cylinder"
+          ]
+        },
+        "mode": "OBJECT",
+        "selectMode": [
+          "VERT"
+        ],
+        "proportional": false,
+        "redo": {
+          "operator": "mesh.primitive_cylinder_add",
+          "values": {
+            "redo.mesh.primitive_cylinder_add.vertices": 32,
+            "redo.mesh.primitive_cylinder_add.radius": 1,
+            "redo.mesh.primitive_cylinder_add.depth": 2,
+            "redo.mesh.primitive_cylinder_add.end_fill_type": "NGON",
+            "redo.mesh.primitive_cylinder_add.calc_uvs": true,
+            "redo.mesh.primitive_cylinder_add.align": "WORLD",
+            "redo.mesh.primitive_cylinder_add.location.x": 0,
+            "redo.mesh.primitive_cylinder_add.location.y": 0,
+            "redo.mesh.primitive_cylinder_add.location.z": 0,
+            "redo.mesh.primitive_cylinder_add.rotation.x": 0,
+            "redo.mesh.primitive_cylinder_add.rotation.y": 0,
+            "redo.mesh.primitive_cylinder_add.rotation.z": 0
+          }
+        },
+        "tool": null,
+        "selection": null
+      },
+      "mesh": "step-20.glb"
+    },
+    {
+      "id": "redo.mesh.primitive_cylinder_add.radius",
+      "action": "redo_value",
+      "operator": "mesh.primitive_cylinder_add",
+      "value": 0.25,
+      "text": "Radius 0.25 m.",
+      "help": "Radius is under Vertices.",
+      "step": 0.05,
+      "shortcut": null,
+      "duration": 2.2,
+      "autoAdvance": false,
+      "camera": {
+        "position": [
+          3.4,
+          -4.4,
+          2.7
+        ],
+        "target": [
+          0.5,
+          0,
+          0.4
+        ],
+        "fov": 30
+      },
+      "after": {
+        "scene": {
+          "objects": [
+            {
+              "name": "Cube",
+              "collection": null,
+              "location": [
+                0,
+                0,
+                0.7
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "scale": [
+                1,
+                0.45,
+                0.04
+              ],
+              "hidden": false
+            },
+            {
+              "name": "Cube.001",
+              "collection": null,
+              "location": [
+                0.9,
+                -0.35,
+                0.33
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "scale": [
+                1,
+                1,
+                8.25
+              ],
+              "hidden": false
+            },
+            {
+              "name": "Cube.002",
+              "collection": null,
+              "location": [
+                -0.9,
+                -0.35,
+                0.33
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "scale": [
+                1,
+                1,
+                8.25
+              ],
+              "hidden": false
+            },
+            {
+              "name": "Cube.003",
+              "collection": null,
+              "location": [
+                0.9,
+                0.35,
+                0.33
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "scale": [
+                1,
+                1,
+                8.25
+              ],
+              "hidden": false
+            },
+            {
+              "name": "Cube.004",
+              "collection": null,
+              "location": [
+                -0.9,
+                0.35,
+                0.33
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "scale": [
+                1,
+                1,
+                8.25
+              ],
+              "hidden": false
+            },
+            {
+              "name": "Cylinder",
+              "collection": null,
+              "location": [
+                0,
+                0,
+                0
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "scale": [
+                1,
+                1,
+                1
+              ],
+              "hidden": false
+            }
+          ],
+          "collections": [],
+          "active": "Cylinder",
+          "selected": [
+            "Cylinder"
+          ]
+        },
+        "mode": "OBJECT",
+        "selectMode": [
+          "VERT"
+        ],
+        "proportional": false,
+        "redo": {
+          "operator": "mesh.primitive_cylinder_add",
+          "values": {
+            "redo.mesh.primitive_cylinder_add.vertices": 32,
+            "redo.mesh.primitive_cylinder_add.radius": 0.25,
+            "redo.mesh.primitive_cylinder_add.depth": 2,
+            "redo.mesh.primitive_cylinder_add.end_fill_type": "NGON",
+            "redo.mesh.primitive_cylinder_add.calc_uvs": true,
+            "redo.mesh.primitive_cylinder_add.align": "WORLD",
+            "redo.mesh.primitive_cylinder_add.location.x": 0,
+            "redo.mesh.primitive_cylinder_add.location.y": 0,
+            "redo.mesh.primitive_cylinder_add.location.z": 0,
+            "redo.mesh.primitive_cylinder_add.rotation.x": 0,
+            "redo.mesh.primitive_cylinder_add.rotation.y": 0,
+            "redo.mesh.primitive_cylinder_add.rotation.z": 0
+          }
+        },
+        "tool": null,
+        "selection": null
+      },
+      "mesh": "step-21.glb"
+    },
+    {
+      "id": "redo.mesh.primitive_cylinder_add.depth",
+      "action": "redo_value",
+      "operator": "mesh.primitive_cylinder_add",
+      "value": 0.55,
+      "text": "Depth 0.55 m: its height.",
+      "help": "Depth is under Radius.",
+      "step": 0.05,
+      "shortcut": null,
+      "duration": 2.2,
+      "autoAdvance": false,
+      "camera": {
+        "position": [
+          3.4,
+          -4.4,
+          2.7
+        ],
+        "target": [
+          0.5,
+          0,
+          0.4
+        ],
+        "fov": 30
+      },
+      "after": {
+        "scene": {
+          "objects": [
+            {
+              "name": "Cube",
+              "collection": null,
+              "location": [
+                0,
+                0,
+                0.7
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "scale": [
+                1,
+                0.45,
+                0.04
+              ],
+              "hidden": false
+            },
+            {
+              "name": "Cube.001",
+              "collection": null,
+              "location": [
+                0.9,
+                -0.35,
+                0.33
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "scale": [
+                1,
+                1,
+                8.25
+              ],
+              "hidden": false
+            },
+            {
+              "name": "Cube.002",
+              "collection": null,
+              "location": [
+                -0.9,
+                -0.35,
+                0.33
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "scale": [
+                1,
+                1,
+                8.25
+              ],
+              "hidden": false
+            },
+            {
+              "name": "Cube.003",
+              "collection": null,
+              "location": [
+                0.9,
+                0.35,
+                0.33
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "scale": [
+                1,
+                1,
+                8.25
+              ],
+              "hidden": false
+            },
+            {
+              "name": "Cube.004",
+              "collection": null,
+              "location": [
+                -0.9,
+                0.35,
+                0.33
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "scale": [
+                1,
+                1,
+                8.25
+              ],
+              "hidden": false
+            },
+            {
+              "name": "Cylinder",
+              "collection": null,
+              "location": [
+                0,
+                0,
+                0
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "scale": [
+                1,
+                1,
+                1
+              ],
+              "hidden": false
+            }
+          ],
+          "collections": [],
+          "active": "Cylinder",
+          "selected": [
+            "Cylinder"
+          ]
+        },
+        "mode": "OBJECT",
+        "selectMode": [
+          "VERT"
+        ],
+        "proportional": false,
+        "redo": {
+          "operator": "mesh.primitive_cylinder_add",
+          "values": {
+            "redo.mesh.primitive_cylinder_add.vertices": 32,
+            "redo.mesh.primitive_cylinder_add.radius": 0.25,
+            "redo.mesh.primitive_cylinder_add.depth": 0.55,
+            "redo.mesh.primitive_cylinder_add.end_fill_type": "NGON",
+            "redo.mesh.primitive_cylinder_add.calc_uvs": true,
+            "redo.mesh.primitive_cylinder_add.align": "WORLD",
+            "redo.mesh.primitive_cylinder_add.location.x": 0,
+            "redo.mesh.primitive_cylinder_add.location.y": 0,
+            "redo.mesh.primitive_cylinder_add.location.z": 0,
+            "redo.mesh.primitive_cylinder_add.rotation.x": 0,
+            "redo.mesh.primitive_cylinder_add.rotation.y": 0,
+            "redo.mesh.primitive_cylinder_add.rotation.z": 0
+          }
+        },
+        "tool": null,
+        "selection": null
+      },
+      "mesh": "step-22.glb"
+    },
+    {
+      "id": "redo.mesh.primitive_cylinder_add.location.x",
+      "action": "redo_value",
+      "operator": "mesh.primitive_cylinder_add",
+      "value": 1.8,
+      "text": "Location X 1.8 m, beside the table.",
+      "help": "Location is in the Adjust Last Operation panel.",
+      "step": 0.1,
+      "shortcut": null,
+      "duration": 2.2,
+      "autoAdvance": false,
+      "camera": {
+        "position": [
+          3.4,
+          -4.4,
+          2.7
+        ],
+        "target": [
+          0.5,
+          0,
+          0.4
+        ],
+        "fov": 30
+      },
+      "after": {
+        "scene": {
+          "objects": [
+            {
+              "name": "Cube",
+              "collection": null,
+              "location": [
+                0,
+                0,
+                0.7
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "scale": [
+                1,
+                0.45,
+                0.04
+              ],
+              "hidden": false
+            },
+            {
+              "name": "Cube.001",
+              "collection": null,
+              "location": [
+                0.9,
+                -0.35,
+                0.33
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "scale": [
+                1,
+                1,
+                8.25
+              ],
+              "hidden": false
+            },
+            {
+              "name": "Cube.002",
+              "collection": null,
+              "location": [
+                -0.9,
+                -0.35,
+                0.33
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "scale": [
+                1,
+                1,
+                8.25
+              ],
+              "hidden": false
+            },
+            {
+              "name": "Cube.003",
+              "collection": null,
+              "location": [
+                0.9,
+                0.35,
+                0.33
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "scale": [
+                1,
+                1,
+                8.25
+              ],
+              "hidden": false
+            },
+            {
+              "name": "Cube.004",
+              "collection": null,
+              "location": [
+                -0.9,
+                0.35,
+                0.33
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "scale": [
+                1,
+                1,
+                8.25
+              ],
+              "hidden": false
+            },
+            {
+              "name": "Cylinder",
+              "collection": null,
+              "location": [
+                1.8,
+                0,
+                0
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "scale": [
+                1,
+                1,
+                1
+              ],
+              "hidden": false
+            }
+          ],
+          "collections": [],
+          "active": "Cylinder",
+          "selected": [
+            "Cylinder"
+          ]
+        },
+        "mode": "OBJECT",
+        "selectMode": [
+          "VERT"
+        ],
+        "proportional": false,
+        "redo": {
+          "operator": "mesh.primitive_cylinder_add",
+          "values": {
+            "redo.mesh.primitive_cylinder_add.vertices": 32,
+            "redo.mesh.primitive_cylinder_add.radius": 0.25,
+            "redo.mesh.primitive_cylinder_add.depth": 0.55,
+            "redo.mesh.primitive_cylinder_add.end_fill_type": "NGON",
+            "redo.mesh.primitive_cylinder_add.calc_uvs": true,
+            "redo.mesh.primitive_cylinder_add.align": "WORLD",
+            "redo.mesh.primitive_cylinder_add.location.x": 1.8,
+            "redo.mesh.primitive_cylinder_add.location.y": 0,
+            "redo.mesh.primitive_cylinder_add.location.z": 0,
+            "redo.mesh.primitive_cylinder_add.rotation.x": 0,
+            "redo.mesh.primitive_cylinder_add.rotation.y": 0,
+            "redo.mesh.primitive_cylinder_add.rotation.z": 0
+          }
+        },
+        "tool": null,
+        "selection": null
+      },
+      "mesh": "step-23.glb"
+    },
+    {
+      "id": "redo.mesh.primitive_cylinder_add.location.z",
+      "action": "redo_value",
+      "operator": "mesh.primitive_cylinder_add",
+      "value": 0.275,
+      "text": "Location Z 0.275 m: half its height, so it stands on the floor.",
+      "help": "Location is in the Adjust Last Operation panel.",
+      "step": 0.005,
+      "shortcut": null,
+      "duration": 2.2,
+      "autoAdvance": false,
+      "camera": {
+        "position": [
+          3.4,
+          -4.4,
+          2.7
+        ],
+        "target": [
+          0.5,
+          0,
+          0.4
+        ],
+        "fov": 30
+      },
+      "after": {
+        "scene": {
+          "objects": [
+            {
+              "name": "Cube",
+              "collection": null,
+              "location": [
+                0,
+                0,
+                0.7
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "scale": [
+                1,
+                0.45,
+                0.04
+              ],
+              "hidden": false
+            },
+            {
+              "name": "Cube.001",
+              "collection": null,
+              "location": [
+                0.9,
+                -0.35,
+                0.33
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "scale": [
+                1,
+                1,
+                8.25
+              ],
+              "hidden": false
+            },
+            {
+              "name": "Cube.002",
+              "collection": null,
+              "location": [
+                -0.9,
+                -0.35,
+                0.33
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "scale": [
+                1,
+                1,
+                8.25
+              ],
+              "hidden": false
+            },
+            {
+              "name": "Cube.003",
+              "collection": null,
+              "location": [
+                0.9,
+                0.35,
+                0.33
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "scale": [
+                1,
+                1,
+                8.25
+              ],
+              "hidden": false
+            },
+            {
+              "name": "Cube.004",
+              "collection": null,
+              "location": [
+                -0.9,
+                0.35,
+                0.33
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "scale": [
+                1,
+                1,
+                8.25
+              ],
+              "hidden": false
+            },
+            {
+              "name": "Cylinder",
+              "collection": null,
+              "location": [
+                1.8,
+                0,
+                0.275
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ],
+              "scale": [
+                1,
+                1,
+                1
+              ],
+              "hidden": false
+            }
+          ],
+          "collections": [],
+          "active": "Cylinder",
+          "selected": [
+            "Cylinder"
+          ]
+        },
+        "mode": "OBJECT",
+        "selectMode": [
+          "VERT"
+        ],
+        "proportional": false,
+        "redo": {
+          "operator": "mesh.primitive_cylinder_add",
+          "values": {
+            "redo.mesh.primitive_cylinder_add.vertices": 32,
+            "redo.mesh.primitive_cylinder_add.radius": 0.25,
+            "redo.mesh.primitive_cylinder_add.depth": 0.55,
+            "redo.mesh.primitive_cylinder_add.end_fill_type": "NGON",
+            "redo.mesh.primitive_cylinder_add.calc_uvs": true,
+            "redo.mesh.primitive_cylinder_add.align": "WORLD",
+            "redo.mesh.primitive_cylinder_add.location.x": 1.8,
+            "redo.mesh.primitive_cylinder_add.location.y": 0,
+            "redo.mesh.primitive_cylinder_add.location.z": 0.275,
+            "redo.mesh.primitive_cylinder_add.rotation.x": 0,
+            "redo.mesh.primitive_cylinder_add.rotation.y": 0,
+            "redo.mesh.primitive_cylinder_add.rotation.z": 0
+          }
+        },
+        "tool": null,
+        "selection": null
+      },
+      "mesh": "step-24.glb"
+    }
+  ],
+  "variantOf": "project-table",
+  "outro": "Your own desk and stool. Level 1 done.",
+  "object": null
+}

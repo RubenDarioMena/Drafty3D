@@ -7,9 +7,9 @@
   <meta name="description" content="Learn Blender's interface in short, offline sessions. Unofficial, not affiliated with the Blender Foundation.">
   <link rel="icon" href="data:,">
   <title>Drafty3D Learn – for Blender users</title>
-  <script type="module" crossorigin src="./assets/index-HvS9Pe1J.js"></script>
-  <link rel="modulepreload" crossorigin href="./assets/viewer-DsnbE-1t.js">
-  <link rel="stylesheet" crossorigin href="./assets/index-DUCKmGDW.css">
+  <script type="module" crossorigin src="./assets/index-DbZ91APj.js"></script>
+  <link rel="modulepreload" crossorigin href="./assets/viewer-H5G464qC.js">
+  <link rel="stylesheet" crossorigin href="./assets/index-BH-flkg8.css">
 </head>
 <body>
   <div id="app">
@@ -37,6 +37,10 @@
         <canvas id="viewport-canvas"></canvas>
         <div class="viewport-header" aria-hidden="true"><span id="viewport-mode">Object Mode</span><span id="object-name"></span></div>
         <p class="orbit-hint" id="orbit-hint" hidden>Drag to orbit · two fingers to pan · pinch to zoom</p>
+        <div class="viewport-keys" id="viewport-keys" hidden>
+          <button type="button" id="key-shift" data-control="key.shift" aria-pressed="false"><span aria-hidden="true">⇧</span> Shift</button>
+          <button type="button" id="key-enter" data-control="key.enter" hidden><span aria-hidden="true">⏎</span> Enter</button>
+        </div>
       </section>
 
       <section class="properties" aria-label="Properties">
@@ -45,6 +49,8 @@
       </section>
 
       <section class="sculpt-tools" id="sculpt-tools" aria-label="3D Viewport tool settings"></section>
+
+      <section class="scene-tools" id="scene-tools" aria-label="3D Viewport header, Adjust Last Operation and Outliner"></section>
 
       <section class="lesson-bar" id="lesson-bar" aria-live="polite">
         <div class="step-copy">
