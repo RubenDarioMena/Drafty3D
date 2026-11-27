@@ -274,7 +274,35 @@ test('home groups the lessons by module', async ({ page }) => {
       'Birdhouse door', 'Your turn: lantern window', 'Garden path', 'Your turn: ring track',
       'Order in the stack', 'Your turn: cushion', 'Project: wooden ladder', 'Your turn: bookshelf']);
   await expect(page.locator('.module[data-module="sculpt"] .lesson-card h3')).toHaveText(
-    ['Pebble buddy', 'Your turn: sleepy buddy', 'Horned buddy', 'Your turn: antenna bug', 'Craggy rock', 'Your turn: split boulder']);
+    ['Pebble buddy', 'Your turn: sleepy buddy', 'Horned buddy', 'Your turn: antenna bug', 'Craggy rock', 'Your turn: split boulder',
+      'Belted pebble', 'Your turn: seamed pebble', 'Leaning buddy', 'Your turn: peeking buddy', 'Remesh an antenna', 'Your turn: side antenna']);
+});
+
+test('Sculpting Your turn with Remesh: Voxel Size in the header popover, then the Remesh button rebuilds the mesh', async ({ page }) => {
+  await page.goto('/learn/#/lesson/sculpt/side-antenna');
+  await expect(page.locator('#step-count')).toHaveText('Step 1 of 10');
+  for (let i = 0; i < 4; i += 1) {
+    await page.locator('#help').click();
+    await expect(page.locator('#step-count')).toHaveText(`Step ${i + 2} of 10`, { timeout: 15000 });
+  }
+  // Remesh is a popover in the tool header: only the current step's controls are live in it.
+  const toggle = page.locator('[data-control="sculpt.remesh"]');
+  await expect(toggle).toBeEnabled();
+  await toggle.click();
+  await expect(page.locator('.remesh-popover')).toBeVisible();
+  await expect(page.locator('.remesh-popover [data-control="sculpt.voxel_size"]')).toContainText('0.1 m');
+  await expect(page.locator('[data-control="sculpt.remesh.apply"]')).toBeDisabled();
+  await page.locator('[data-control="sculpt.voxel_size"] .value').click();
+  await page.getByLabel('Voxel Size', { exact: true }).fill('0.02');
+  await page.keyboard.press('Enter');
+  await expect(page.locator('#clue')).toHaveText('✓ Voxel Size: 0.02 m.');
+  await expect(page.locator('#step-count')).toHaveText('Step 6 of 10');
+
+  await page.locator('[data-control="sculpt.remesh.apply"]').click();
+  await expect(page.locator('#clue')).toHaveText(/^✓ Remeshed: 642 → [\d,]+ vertices, all about 0.02 m apart\.$/);
+  await expect(page.locator('.remesh-popover')).toHaveCount(0);
+  await expect(page.locator('#step-count')).toHaveText('Step 7 of 10');
+  await expect(toggle).toBeDisabled();
 });
 
 /** Canvas pixels of the dotted guide, as page coordinates. */

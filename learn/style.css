@@ -158,6 +158,14 @@ button.check .box { background: var(--field-hover); outline: 1px solid var(--blu
 .segmented button:disabled { cursor: default; color: #b5b5b5; }
 .segmented button.on:disabled { color: #fff; }
 .mirror-icon { padding: 0 6px 0 8px; color: var(--muted); }
+.tool-header { position: relative; }
+.remesh-toggle { gap: 6px; height: 30px; border: 0; }
+.remesh-toggle:disabled { cursor: default; color: var(--text); }
+.remesh-popover { position: absolute; top: 100%; right: 8px; z-index: 20; width: min(300px, calc(100% - 16px)); display: grid; gap: 6px; padding: 10px; background: #1d1d1d; border: 1px solid #444; border-radius: var(--radius); box-shadow: 0 6px 18px rgb(0 0 0 / 45%); }
+.remesh-popover .number { height: 28px; }
+.remesh-apply { min-height: 32px; border: 0; border-radius: var(--radius); background: #545454; font-weight: 600; }
+.remesh-apply:not(:disabled) { background: var(--blue); color: #fff; }
+.remesh-apply:disabled { cursor: default; color: #d0d0d0; }
 .shelf { flex: 1; min-height: 0; display: flex; flex-direction: column; }
 .shelf.empty { justify-content: center; }
 .shelf-note { color: var(--muted); font-size: 13px; text-align: center; margin: 12px; }

@@ -2,6 +2,7 @@
 import json
 import math
 import os
+import shutil
 
 import bmesh
 import bpy
@@ -178,10 +179,15 @@ def _setup_render(scene):
 
 
 class Lesson:
+    # glTF exports mesh attributes whose names start with '_' (the sculpt mask) only when asked.
+    export_attributes = False
+
     def __init__(self, *, module, example, mode, title, out_dir, obj, panel, camera, text, variant_of=None, helpers=()):
         self.out_dir = out_dir
         self.obj = obj
         self.scene = bpy.context.scene
+        # A recording starts from an empty folder: a step file left from an older take must never ship.
+        shutil.rmtree(out_dir, ignore_errors=True)
         os.makedirs(os.path.join(out_dir, 'raw'), exist_ok=True)
         os.makedirs(os.path.join(out_dir, 'renders'), exist_ok=True)
         _setup_render(self.scene)
@@ -228,7 +234,7 @@ class Lesson:
             export_format='GLB', use_selection=True, export_apply=True, export_yup=True,
             export_materials='NONE', export_texcoords=False, export_normals=True,
             export_cameras=False, export_lights=False, export_animations=False,
-            export_draco_mesh_compression_enable=False,
+            export_draco_mesh_compression_enable=False, export_attributes=self.export_attributes,
         )
         self._place_camera(camera)
         self.scene.render.filepath = os.path.join(self.out_dir, 'renders', f'{name}.png')

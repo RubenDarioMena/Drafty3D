@@ -17,6 +17,11 @@ from sculpt import SculptLesson, clear_scene, pebble, run, sculpt_ui  # noqa: E4
 OUT = sys.argv[sys.argv.index('--') + 1]
 
 FRONT = {'position': [0, -2.6, 0.62], 'target': [0, 0, 0.04], 'fov': 30}
+HORN = {'position': [0, -1.3, 0.62], 'target': [0, 0, 0.45], 'fov': 30}
+ANTENNA = {'position': [0.25, -1.3, 0.62], 'target': [0.25, 0, 0.42], 'fov': 30}
+BOBBLE_TIP = (0.125, 0.08)
+ANTENNA_TIP = (0.13, 0.1)
+TALL = {'position': [0, -3.2, 0.12], 'target': [0, 0, 0.02], 'fov': 30}
 
 
 def loop(center, radius, turns=1.0, points=14):
@@ -212,7 +217,154 @@ def boulder():
     lesson.finish(text='Split boulder finished with the same three brushes as the rock.')
 
 
-LESSONS = ('buddy', 'sleepy', 'horned', 'bug', 'rock', 'boulder')
+def belted():
+    clear_scene()
+    obj = pebble('Pebble')
+    lesson = SculptLesson(
+        module='sculpt', example='belted-pebble', mode='watch', title='Belted pebble', mask=True,
+        out_dir=os.path.join(OUT, 'sculpt', 'belted-pebble'), obj=obj, camera=FRONT,
+        text='Mask protects part of the surface: masked areas turn dark, and no brush can change them until the mask is removed.',
+    )
+    lesson.set_mode('SCULPT', text='Switch to Sculpt Mode.')
+    lesson.select_brush('Mask', text='Pick the Mask brush. It does not move the surface; it paints where brushes may not work.')
+    lesson.set_tool_value('size', 110, step=10, text='Set Size to 110 px: the width of the belt.')
+    yield from lesson.stroke([(-0.55, 0.02), (-0.2, 0.0), (0.2, 0.0), (0.55, 0.02)], seconds=1.6,
+                             text='Paint a band across the middle. It turns dark: that part is masked.')
+    lesson.select_brush('Inflate/Deflate', text='Pick Inflate/Deflate. It swells the surface outward.')
+    lesson.set_tool_value('size', 300, step=10, text='Set Size to 300 px to swell the whole pebble.')
+    lesson.set_tool_value('strength', 1.0, step=0.1, text='Set Strength to 1.0.')
+    yield from lesson.stroke([(-0.3, 0.34), (0.3, 0.34), (0.3, 0.12), (-0.3, 0.12), (-0.3, -0.14), (0.3, -0.14), (0.3, -0.34),
+                              (-0.3, -0.34)], seconds=2.6,
+                             text='Inflate over the whole front. Everything swells except the masked belt, which stays put as a groove.')
+    lesson.finish(text='Done: paint a Mask over what must not change, then sculpt freely around it. Now make a seam yourself.')
+
+
+def seamed():
+    clear_scene()
+    obj = pebble('Pebble')
+    lesson = SculptLesson(
+        module='sculpt', example='seamed-pebble', mode='your-turn', title='Your turn: seamed pebble', variant_of='belted-pebble',
+        mask=True, out_dir=os.path.join(OUT, 'sculpt', 'seamed-pebble'), obj=obj, camera=FRONT,
+        text='Mask a seam from top to bottom, then swell everything around it.',
+    )
+    lesson.set_mode('SCULPT', text='Switch to Sculpt Mode.', help='The mode menu at the left of the 3D Viewport header.')
+    lesson.select_brush('Mask', text='Pick the Mask brush.', help='Mask is under Utilities. M selects it.')
+    lesson.set_tool_value('size', 90, step=10, text='Set Size to 90 px.', help='Size is in the header, right of the brush.')
+    yield from lesson.stroke([(0.02, 0.44), (0.0, 0.15), (0.0, -0.15), (0.02, -0.44)], seconds=1.6,
+                             text='Paint a seam from the top down through the middle.', help='Start at the top center and drag straight down.')
+    lesson.select_brush('Blob', text='Pick the Blob brush.', help='Blob is under Add & Subtract.')
+    lesson.set_tool_value('size', 300, step=10, text='Set Size to 300 px.', help='The Size field again.')
+    lesson.set_tool_value('strength', 1.0, step=0.1, text='Set Strength to 1.0.', help='Strength is right of Size. Shift F changes it.')
+    yield from lesson.stroke([(-0.36, 0.3), (-0.36, -0.3), (-0.14, -0.3), (-0.14, 0.3), (0.14, 0.3), (0.14, -0.3), (0.36, -0.3),
+                              (0.36, 0.3)], seconds=2.6,
+                             text='Inflate over the whole front, up and down.', help='Zigzag up and down across the front, left to right.')
+    lesson.finish(text='Seamed pebble finished: Mask first, then Inflate around it.')
+
+
+def bobble():
+    clear_scene()
+    obj = pebble('Pebble', subdivisions=4)
+    lesson = SculptLesson(
+        module='sculpt', example='bobble-pebble', mode='watch', title='Remesh an antenna',
+        out_dir=os.path.join(OUT, 'sculpt', 'bobble-pebble'), obj=obj, camera=FRONT,
+        text='Pulling a long antenna stretches a few faces thin, and stretched faces cannot hold a new shape. Remesh rebuilds the surface evenly.',
+    )
+    lesson.set_mode('SCULPT', text='Switch to Sculpt Mode.')
+    lesson.select_brush('Snake Hook', text='Pick Snake Hook to pull an antenna.')
+    lesson.set_tool_value('size', 200, step=10, text='Set Size to 200 px: a thick base.')
+    yield from lesson.stroke([(0.0, 0.34), (0.01, 0.48), (0.02, 0.6), (0.03, 0.72)], seconds=1.6,
+                             text='Drag from the top straight up. The antenna is the same few faces, stretched long: see the facets.')
+    lesson.set_voxel_size(0.02, step=0.01,
+                          text='Open Remesh in the header and set Voxel Size to 0.02 m: the size of the new faces. Smaller keeps more detail.')
+    lesson.remesh(text='Press Remesh. Blender rebuilds the whole surface with even faces that size: 642 vertices become about 10,000.')
+    lesson.select_brush('Blob', text='Pick Blob. It builds up round shapes, and the remeshed tip has even faces to take one.')
+    lesson.set_tool_value('size', 80, step=10, camera=HORN, text='Set Size to 80 px.')
+    lesson.set_tool_value('strength', 1.0, step=0.1, text='Set Strength to 1.0.')
+    yield from lesson.stroke([BOBBLE_TIP, *loop(BOBBLE_TIP, 0.015, turns=8, points=80)], seconds=3.2, camera=HORN,
+                             text='Circle near the tip a few times: Blob rounds it into a small knob.')
+    lesson.finish(text='Done: after a big stretch, Remesh first, then shape the detail. Now make a side antenna yourself.')
+
+
+def antenna():
+    clear_scene()
+    obj = pebble('Pebble', subdivisions=4)
+    lesson = SculptLesson(
+        module='sculpt', example='side-antenna', mode='your-turn', title='Your turn: side antenna', variant_of='bobble-pebble',
+        out_dir=os.path.join(OUT, 'sculpt', 'side-antenna'), obj=obj, camera=FRONT,
+        text='Pull an antenna to the upper right, remesh, then round its tip with Blob.',
+    )
+    lesson.set_mode('SCULPT', text='Switch to Sculpt Mode.', help='The mode menu at the left of the 3D Viewport header.')
+    lesson.select_brush('Snake Hook', text='Pick the Snake Hook brush.', help='Snake Hook is under Transform. K selects it.')
+    lesson.set_tool_value('size', 180, step=10, text='Set Size to 180 px.', help='Size is in the header, right of the brush.')
+    yield from lesson.stroke([(0.2, 0.34), (0.3, 0.48), (0.42, 0.6), (0.54, 0.7)], seconds=1.6,
+                             text='Pull an antenna up and to the right.', help='Start on the upper right of the head and drag up and out.')
+    lesson.set_voxel_size(0.02, step=0.01, text='Set the Remesh Voxel Size to 0.02 m.',
+                          help='Remesh is a popover at the right of the header; Voxel Size is its first field.')
+    lesson.remesh(text='Remesh the pebble.', help='The Remesh button at the bottom of the Remesh popover. Ctrl R does it too.')
+    lesson.select_brush('Blob', text='Pick the Blob brush.', help='Blob is under Add & Subtract.')
+    lesson.set_tool_value('size', 110, step=10, camera=ANTENNA, text='Set Size to 110 px.', help='The Size field again.')
+    lesson.set_tool_value('strength', 1.0, step=0.1, text='Set Strength to 1.0.', help='Strength is right of Size. Shift F changes it.')
+    yield from lesson.stroke([ANTENNA_TIP, *loop(ANTENNA_TIP, 0.02, turns=8, points=80)], seconds=3.2, camera=ANTENNA,
+                             text='Circle near the tip to round it into a knob.', help='Small circles just below the tip.')
+    lesson.finish(text='Side antenna finished: Snake Hook, Remesh, then Blob.')
+
+
+def snowman(name):
+    """A tall pebble pinched into a head and a body, so Pose has a neck to bend at."""
+    obj = pebble(name, scale=(0.75, 0.7, 1.1))
+    for vertex in obj.data.vertices:
+        pinch = 1 - 0.3 * math.exp(-((vertex.co.z - 0.2) / 0.09) ** 2)
+        vertex.co.x *= pinch
+        vertex.co.y *= pinch
+    obj.data.update()
+    return obj
+
+
+def leaning():
+    clear_scene()
+    obj = snowman('Body')
+    lesson = SculptLesson(
+        module='sculpt', example='leaning-buddy', mode='watch', title='Leaning buddy',
+        out_dir=os.path.join(OUT, 'sculpt', 'leaning-buddy'), obj=obj, camera=TALL,
+        text='Big moves without wrecking the shape: Pose bends a whole part like a joint, Elastic Grab pulls a limb out with soft edges.',
+    )
+    lesson.set_mode('SCULPT', text='Switch to Sculpt Mode.')
+    lesson.select_brush('Pose', text='Pick Pose. It finds a joint below the stroke and turns everything above it as one piece.')
+    lesson.set_tool_value('size', 400, step=10, text='Set Size to 400 px. The size decides how far down the joint is: here, the neck.')
+    yield from lesson.stroke([(0.0, 0.58), (0.12, 0.57), (0.24, 0.53)], seconds=1.5,
+                             text='Drag the top to the right. The head tilts at the neck and keeps its round shape.')
+    lesson.select_brush('Elastic Grab', text='Pick Elastic Grab. Like Grab, but the pull fades out smoothly, like stretching rubber.')
+    lesson.set_tool_value('size', 160, step=10, text='Set Size to 160 px: a limb, not the whole side.')
+    yield from lesson.stroke([(-0.4, -0.1), (-0.6, -0.04), (-0.82, 0.06)], seconds=1.4,
+                             text='Drag from the left side outward: a stubby arm grows out.')
+    yield from lesson.stroke([(0.4, -0.1), (0.6, -0.04), (0.82, 0.06)], seconds=1.4,
+                             text='And the same on the right side.')
+    lesson.finish(text='Done: Pose for joints, Elastic Grab for soft pulls. Now make a buddy that peeks the other way.')
+
+
+def peeking():
+    clear_scene()
+    obj = snowman('Body')
+    lesson = SculptLesson(
+        module='sculpt', example='peeking-buddy', mode='your-turn', title='Your turn: peeking buddy', variant_of='leaning-buddy',
+        out_dir=os.path.join(OUT, 'sculpt', 'peeking-buddy'), obj=obj, camera=TALL,
+        text='A buddy peeking to the left, with one arm up and one arm down.',
+    )
+    lesson.set_mode('SCULPT', text='Switch to Sculpt Mode.', help='The mode menu at the left of the 3D Viewport header.')
+    lesson.select_brush('Pose', text='Pick the Pose brush.', help='Pose is under Transform.')
+    lesson.set_tool_value('size', 350, step=10, text='Set Size to 350 px.', help='Size is in the header, right of the brush.')
+    yield from lesson.stroke([(0.0, 0.58), (-0.14, 0.57), (-0.28, 0.52)], seconds=1.5,
+                             text='Tilt the head to the left.', help='Start at the top and drag to the left.')
+    lesson.select_brush('Elastic Grab', text='Pick the Elastic Grab brush.', help='Elastic Grab is under Transform.')
+    lesson.set_tool_value('size', 180, step=10, text='Set Size to 180 px.', help='The Size field again.')
+    yield from lesson.stroke([(0.4, 0.0), (0.58, 0.14), (0.74, 0.3)], seconds=1.4,
+                             text='Pull the right arm out and up.', help='Start on the right side, at the middle, and drag up and out.')
+    yield from lesson.stroke([(-0.4, -0.2), (-0.58, -0.28), (-0.76, -0.38)], seconds=1.4,
+                             text='Pull the left arm out and down.', help='Start on the left side, below the middle, and drag down and out.')
+    lesson.finish(text='Peeking buddy finished with the same two brushes as the leaning buddy.')
+
+
+LESSONS = ('buddy', 'sleepy', 'horned', 'bug', 'rock', 'boulder', 'belted', 'seamed', 'leaning', 'peeking', 'bobble', 'antenna')
 
 
 def main():

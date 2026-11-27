@@ -149,6 +149,7 @@ def sculpt_ui():
                 {'id': f'sculpt.direction.{item.identifier.lower()}', 'value': item.identifier, 'label': item.name}
                 for item in direction.enum_items_static if item.identifier in ('ADD', 'SUBTRACT')],
                 'shortcut': truth.shortcut('Sculpt', 'sculpt.brush_stroke', 'hold while sculpting', mode='INVERT')},
+            'remesh': remesh_ui(),
             'symmetry': {'id': 'sculpt.symmetry', 'items': [
                 {'id': f'sculpt.symmetry.{axis.lower()}', 'axis': axis, 'label': axis} for axis in 'XYZ']},
         },
@@ -156,10 +157,49 @@ def sculpt_ui():
     }
 
 
+def remesh_ui():
+    """The tool header's Remesh popover (VIEW3D_PT_sculpt_voxel_remesh in bl_ui/space_view3d_toolbar.py)."""
+    mesh = bpy.types.Mesh.bl_rna.properties
+
+    def field(rna, kind, text=None, heading=None):
+        prop = mesh[rna]
+        entry = {'id': f"sculpt.{rna.replace('use_remesh_', '').replace('remesh_', '')}", 'rna': rna, 'label': text or prop.name, 'description': prop.description,
+                 'kind': kind, 'default': prop.default}
+        if heading:
+            entry['heading'] = heading
+        if kind == 'float':
+            entry.update(unit='m' if prop.subtype == 'DISTANCE' else '', precision=prop.precision,
+                         softMin=prop.soft_min, softMax=prop.soft_max)
+        return entry
+
+    return {
+        'id': 'sculpt.remesh', 'label': 'Remesh',
+        'fields': [field('remesh_voxel_size', 'float'), field('remesh_voxel_adaptivity', 'float'),
+                   field('use_remesh_fix_poles', 'bool'),
+                   field('use_remesh_preserve_volume', 'bool', 'Volume', 'Preserve'),
+                   field('use_remesh_preserve_attributes', 'bool', 'Attributes')],
+        'button': {'id': 'sculpt.remesh.apply', 'label': 'Remesh',
+                   'shortcut': truth.shortcut('Sculpt', 'object.voxel_remesh', '3D Viewport · Sculpt Mode')},
+    }
+
+
 # ---------------------------------------------------------------- the recorder
 
+MASK = '_MASK'
+
+
+def mask_values(mesh):
+    """Blender's sculpt mask per vertex (0 = free, 1 = protected); zeros before anything is masked."""
+    values = np.zeros(len(mesh.vertices))
+    if '.sculpt_mask' in mesh.attributes:
+        mesh.attributes['.sculpt_mask'].data.foreach_get('value', values)
+    return values
+
+
 class SculptLesson(Lesson):
-    def __init__(self, **kwargs):
+    def __init__(self, *, mask=False, **kwargs):
+        # A lesson that uses the Mask brush exports the mask with every mesh, so the app can shade it.
+        self.export_attributes = mask
         super().__init__(panel='TOOL', **kwargs)
         self.data['initial'].pop('panel')
         self.data['initial']['mode'] = 'OBJECT'
@@ -170,10 +210,25 @@ class SculptLesson(Lesson):
     def _capture(self, index, camera):
         mode = self.obj.mode
         mode_set(self.obj, 'OBJECT')
+        mesh = self.obj.data
+        if self.export_attributes:
+            mesh.attributes.new(MASK, 'FLOAT', 'POINT').data.foreach_set('value', mask_values(mesh))
+        # The glTF exporter splits each quad along its shorter diagonal, so a stroke can flip a
+        # few triangles and break the shared topology the app morphs across. A fixed diagonal
+        # (export and reference render alike) keeps every step's triangles the same.
+        triangulate = self.obj.modifiers.new('Export triangles', 'TRIANGULATE')
+        triangulate.quad_method = 'FIXED'
         try:
             return super()._capture(index, camera)
         finally:
+            self.obj.modifiers.remove(triangulate)
+            if self.export_attributes:
+                mesh.attributes.remove(mesh.attributes[MASK])
             mode_set(self.obj, mode)
+
+    def _signature(self):
+        signature = super()._signature()
+        return (*signature, tuple(np.round(self._mask(), 3))) if self.export_attributes else signature
 
     def _tool_state(self):
         paint = bpy.context.tool_settings.sculpt
@@ -187,6 +242,8 @@ class SculptLesson(Lesson):
             'strength': round(strength_owner.strength, 3),
             'direction': brush.direction if brush.sculpt_capabilities.has_direction else None,
             'symmetry': [axis for axis in 'XYZ' if getattr(self.obj.data, f'use_mirror_{axis.lower()}')],
+            # The Remesh popover's Voxel Size lives on the mesh, not the brush.
+            'voxel_size': round(self.obj.data.remesh_voxel_size, 4),
         }
 
     def _step(self, step, *, changes_mesh=False, camera=None):
@@ -234,6 +291,28 @@ class SculptLesson(Lesson):
         setattr(self.obj.data, f'use_mirror_{axis.lower()}', enabled)
         self._step({'id': f'sculpt.symmetry.{axis.lower()}', 'action': 'set_symmetry', 'value': enabled, 'value_type': 'bool',
                     'duration': 1.6, 'autoAdvance': False, 'text': text, 'help': help}, camera=camera)
+
+    def set_voxel_size(self, value, *, step, text, help=None, camera=None):
+        self.obj.data.remesh_voxel_size = value
+        if abs(self.obj.data.remesh_voxel_size - value) > 1e-6:
+            raise ValueError(f'Blender clamped Voxel Size to {self.obj.data.remesh_voxel_size}')
+        self._step({'id': 'sculpt.voxel_size', 'action': 'set_value', 'value': value, 'value_type': 'number', 'step': step,
+                    'shortcut': truth.shortcut('Sculpt', 'object.voxel_size_edit', '3D Viewport · Sculpt Mode'),
+                    'duration': 2.0, 'autoAdvance': False, 'text': text, 'help': help}, camera=camera)
+
+    def remesh(self, *, text, help=None, camera=None):
+        """The Remesh button: Blender rebuilds the surface from voxels, so every vertex is new."""
+        before = len(self.obj.data.vertices)
+        with override():
+            result = bpy.ops.object.voxel_remesh()
+        mode_set(self.obj, 'OBJECT')
+        mode_set(self.obj, 'SCULPT')
+        if result != {'FINISHED'} or len(self.obj.data.vertices) == before:
+            raise RuntimeError(f'Voxel Remesh did not rebuild the mesh ({result})')
+        self._step({'id': 'sculpt.remesh.apply', 'action': 'remesh', 'value': None, 'value_type': None,
+                    'shortcut': truth.shortcut('Sculpt', 'object.voxel_remesh', '3D Viewport · Sculpt Mode'),
+                    'duration': 2.0, 'autoAdvance': False, 'text': text, 'help': help,
+                    'remesh': {'vertices': len(self.obj.data.vertices), 'before': before}}, changes_mesh=True, camera=camera)
 
     # -------------------------------------------------------- strokes
 
@@ -310,7 +389,8 @@ class SculptLesson(Lesson):
         on_surface = [] if drag else [self._surface(region, r3d, p) for p in dense]
         trail = [s if s is not None else w for s, w in zip(on_surface, world)] if on_surface else world
 
-        before = self._positions()
+        masking = brush.sculpt_brush_type == 'MASK'
+        before = self._mask() if masking else self._positions()
         if os.environ.get('LEARN_DEBUG'):
             shot = os.path.join(self.out_dir, f'debug-{len(self.steps) + 1:02d}.png')
             subprocess.run(['import', '-window', 'root', shot], check=False)
@@ -325,7 +405,10 @@ class SculptLesson(Lesson):
         command += ['sleep', '0.1', 'mouseup', '1', 'sleep', '0.4']
         yield command
         yield None
-        moved = np.linalg.norm(self._positions() - before, axis=1)
+        if masking:
+            moved = np.abs(self._mask() - before)
+        else:
+            moved = np.linalg.norm(self._positions() - before, axis=1)
         if moved.max() < 1e-5:
             raise RuntimeError('Blender did not change the mesh: the stroke missed or was not delivered')
         keep = max(2, len(trail) // 24)
@@ -336,9 +419,16 @@ class SculptLesson(Lesson):
                 'brush': brush.name, 'brushType': brush.sculpt_brush_type, 'drag': drag,
                 'path': [[round(c, 4) for c in uv] for uv in path],
                 'points': [[round(c, 4) for c in p] for p in trail[::keep] + [trail[-1]]],
-                'radius': round(radius, 4), 'movedVertices': int((moved > 1e-5).sum()),
+                'radius': round(radius, 4), ('maskedVertices' if masking else 'movedVertices'): int((moved > 1e-5).sum()),
             },
         }, changes_mesh=True, camera=camera)
+
+    def _mask(self):
+        mode = self.obj.mode
+        mode_set(self.obj, 'OBJECT')
+        values = mask_values(self.obj.data)
+        mode_set(self.obj, mode)
+        return values
 
     def _positions(self):
         mode = self.obj.mode

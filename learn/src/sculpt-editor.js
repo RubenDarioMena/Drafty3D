@@ -43,8 +43,14 @@ export class SculptEditor extends PropertiesEditor {
   }
 
   field(id) {
-    const { size, strength } = this.sculpt.header;
-    return [size, strength].find(field => field.id === id);
+    const { size, strength, remesh } = this.sculpt.header;
+    return [size, strength, ...(remesh?.fields ?? [])].find(field => field.id === id);
+  }
+
+  /** The popover holding a control, if it lives in one (Voxel Size and the Remesh button). */
+  popoverOf(id) {
+    const remesh = this.sculpt.header.remesh;
+    return remesh && (id === remesh.button.id || remesh.fields.some(field => field.id === id)) ? remesh.id : null;
   }
 
   showValue(id, value) {
@@ -129,7 +135,45 @@ export class SculptEditor extends PropertiesEditor {
     }
     toggles.append(symmetry);
     header.append(brush, numbers, toggles);
+    if (this.sculpt.header.remesh) this.renderRemesh(header, tool);
     return header;
+  }
+
+  /** The header's Remesh popover: Voxel Size and its options, and the button that rebuilds the mesh. */
+  renderRemesh(header, tool) {
+    const remesh = this.sculpt.header.remesh;
+    const open = this.openList === remesh.id;
+    const usable = this.enabled('remesh');
+    const toggle = button('dropdown remesh-toggle', '', remesh.id);
+    toggle.append(el('span', '', remesh.label), el('span', 'caret', '▾'));
+    toggle.setAttribute('aria-expanded', String(open));
+    toggle.disabled = !usable;
+    toggle.addEventListener('click', () => this.toggleList(remesh.id));
+    header.append(toggle);
+    if (!open) return;
+    const popover = el('div', 'remesh-popover');
+    popover.setAttribute('role', 'dialog');
+    popover.setAttribute('aria-label', remesh.label);
+    for (const field of remesh.fields) {
+      const key = field.id.slice('sculpt.'.length);
+      const row = el('div', 'field');
+      const value = tool[key] ?? field.default;
+      if (field.kind === 'bool') {
+        row.append(el('span', 'label', field.heading ?? ''), this.renderCheck(field, value, false));
+      } else {
+        const control = this.renderNumber(field, value, this.options.interactive.has(field.id));
+        control.dataset.control = field.id;
+        row.classList.toggle('disabled', !this.options.interactive.has(field.id));
+        row.append(el('span', 'label', field.label), control);
+      }
+      popover.append(row);
+    }
+    const apply = button('remesh-apply', remesh.button.label, remesh.button.id);
+    apply.title = `${remesh.button.label} (${remesh.button.shortcut.keys.join(' ')})`;
+    apply.disabled = !this.options.onRemesh;
+    apply.addEventListener('click', () => this.options.onRemesh?.());
+    popover.append(apply);
+    header.append(popover);
   }
 
   colorOf(name) {

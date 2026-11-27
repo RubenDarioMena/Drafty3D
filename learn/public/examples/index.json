@@ -175,6 +175,54 @@
       "title": "Your turn: split boulder",
       "variantOf": "rock",
       "timeline": "sculpt/boulder/timeline.json"
+    },
+    {
+      "module": "sculpt",
+      "example": "belted-pebble",
+      "mode": "watch",
+      "title": "Belted pebble",
+      "variantOf": null,
+      "timeline": "sculpt/belted-pebble/timeline.json"
+    },
+    {
+      "module": "sculpt",
+      "example": "seamed-pebble",
+      "mode": "your-turn",
+      "title": "Your turn: seamed pebble",
+      "variantOf": "belted-pebble",
+      "timeline": "sculpt/seamed-pebble/timeline.json"
+    },
+    {
+      "module": "sculpt",
+      "example": "leaning-buddy",
+      "mode": "watch",
+      "title": "Leaning buddy",
+      "variantOf": null,
+      "timeline": "sculpt/leaning-buddy/timeline.json"
+    },
+    {
+      "module": "sculpt",
+      "example": "peeking-buddy",
+      "mode": "your-turn",
+      "title": "Your turn: peeking buddy",
+      "variantOf": "leaning-buddy",
+      "timeline": "sculpt/peeking-buddy/timeline.json"
+    },
+    {
+      "module": "sculpt",
+      "example": "bobble-pebble",
+      "mode": "watch",
+      "title": "Remesh an antenna",
+      "variantOf": null,
+      "timeline": "sculpt/bobble-pebble/timeline.json"
+    },
+    {
+      "module": "sculpt",
+      "example": "side-antenna",
+      "mode": "your-turn",
+      "title": "Your turn: side antenna",
+      "variantOf": "bobble-pebble",
+      "timeline": "sculpt/side-antenna/timeline.json"
     }
   ]
 }

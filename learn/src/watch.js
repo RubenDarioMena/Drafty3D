@@ -83,6 +83,10 @@ export class WatchMode {
     this.menu.close();
     this.modeMenu.close();
     this.viewer.clearOverlay();
+    // A value just set inside a popover (Voxel Size) stays in view; anything else closes it.
+    const done = this.timeline.steps[index];
+    const keepOpen = done?.action === 'set_value' && this.editor.popoverOf?.(done.id);
+    this.editor.openList = keepOpen || null;
     const state = stateAt(this.timeline, this.ui, index);
     this.render(state);
     this.viewer.showCamera(state.camera, cameraDuration);
@@ -156,6 +160,7 @@ export class WatchMode {
   stagesOf(step) {
     if (step.action === 'add_modifier') return ['menu', 'submenu'];
     if (step.action === 'set_mode') return ['menu', 'item'];
+    if (this.editor.popoverOf?.(step.id)) return ['popover', 'target'];
     return ['target'];
   }
 
@@ -191,6 +196,8 @@ export class WatchMode {
     const index = this.index + 1;
     const step = this.timeline.steps[index];
     const stage = this.stagesOf(step)[this.stage];
+    const popover = this.editor.popoverOf?.(step.id);
+    if (popover) this.editor.openList = stage === 'target' ? popover : null;
     this.render(stateAt(this.timeline, this.ui, this.index));
     this.menu.close();
     this.modeMenu.close();
@@ -222,6 +229,8 @@ export class WatchMode {
         this.modeMenu.open(button, stateAt(this.timeline, this.ui, this.index).mode);
         target = this.modeMenu.element(step.id);
       }
+    } else if (popover) {
+      target = this.editor.element(stage === 'target' ? step.id : popover);
     } else if (stage === 'target') {
       target = step.action === 'select_brush' ? this.editor.reveal(step.id) : this.editor.element(step.id);
     } else {

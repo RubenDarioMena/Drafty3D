@@ -98,6 +98,25 @@ export async function animateStep({ step, to, editor, menu, modeMenu, cursor, re
     return card;
   }
 
+  // Voxel Size and the Remesh button live in the header's Remesh popover: open it first.
+  const popover = editor.popoverOf?.(step.id);
+  if (popover && editor.openList !== popover) {
+    await cursor.moveTo(editor.element(popover), fly);
+    await cursor.tap();
+    editor.openList = popover;
+    editor.render(editor.state, editor.options);
+    await wait(0.25 * scale);
+  }
+
+  if (step.action === 'remesh') {
+    const apply = editor.element(step.id);
+    await cursor.moveTo(apply, fly * 0.8);
+    await cursor.tap();
+    editor.openList = null;
+    render(to);
+    return editor.element(popover);
+  }
+
   // An Object field or an enum dropdown (Deform Axis): open its list, then pick the item.
   if (step.action === 'set_value' && editor.element(step.id)?.classList.contains('dropdown')) {
     await cursor.moveTo(editor.element(step.id), fly);

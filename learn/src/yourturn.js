@@ -76,10 +76,13 @@ export class YourTurnMode {
     const idle = !this.busy && step;
     if (this.sculpt) {
       const sculptValue = idle && step.action === 'set_value' && !step.modifier;
+      const { size, strength } = this.ui.sculpt.header;
+      const enabled = [idle && SCULPT_CONTROLS[step.action], idle && this.editor.popoverOf(step.id) && 'remesh'].filter(Boolean);
       return {
         objectName: this.timeline.object,
-        interactive: new Set(sculptValue ? [this.ui.sculpt.header.size.id, this.ui.sculpt.header.strength.id] : []),
-        enabled: new Set(idle && SCULPT_CONTROLS[step.action] ? [SCULPT_CONTROLS[step.action]] : []),
+        interactive: new Set(sculptValue ? [size.id, strength.id, step.id] : []),
+        enabled: new Set(enabled),
+        onRemesh: idle && step.action === 'remesh' ? () => this.remesh() : null,
         steps: this.steps,
         onModeMenu: idle && step.action === 'set_mode' ? button => this.modeMenu.open(button, this.live.mode) : null,
         onBrush: name => this.pickBrush(name),
@@ -244,6 +247,13 @@ export class YourTurnMode {
     }
   }
 
+  /** The Remesh button: Blender's remeshed surface replaces the mesh. */
+  remesh() {
+    if (this.busy || this.current()?.action !== 'remesh') return;
+    this.editor.openList = null;
+    this.succeed(false);
+  }
+
   pickMode(mode) {
     const step = this.current();
     if (step?.action === 'set_mode' && step.value === mode) this.succeed(false);
@@ -273,11 +283,12 @@ export class YourTurnMode {
       case 'stroke': return '✓ Stroke done. This is the surface Blender sculpted.';
       case 'toggle_modifier': return `✓ ${this.ui.modifiers[step.modifier].defaultName} ${step.value ? 'shown' : 'hidden'} in the viewport.`;
       case 'move_modifier': return `✓ ${this.ui.modifiers[step.modifier].defaultName} moved to the ${step.value === 'FIRST' ? 'top' : 'bottom'} of the stack.`;
+      case 'remesh': return `✓ Remeshed: ${step.remesh.before.toLocaleString('en')} → ${step.remesh.vertices.toLocaleString('en')} vertices, all about ${formatValue(this.editor.field('sculpt.voxel_size'), step.tool.voxel_size)} apart.`;
       case 'apply_modifier': return `✓ ${this.ui.modifiers[step.modifier].defaultName} applied: it is part of the mesh now.`;
       default: break;
     }
     if (!step.modifier) {
-      const field = this.ui.sculpt.header[toolField(step)];
+      const field = this.ui.sculpt.header[toolField(step)] ?? this.editor.field(step.id);
       return `✓ ${field.label}: ${formatValue(field, step.value)}.`;
     }
     const field = this.ui.modifiers[step.modifier].fields.find(candidate => candidate.id === step.id);

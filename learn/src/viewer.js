@@ -19,9 +19,22 @@ export async function loadGeometries(loader, folderUrl, names) {
     gltf.scene.traverse(node => {
       if (node.isMesh && !geometry) geometry = node.geometry.clone().applyMatrix4(node.matrixWorld);
     });
+    shadeMask(geometry);
     return [name, geometry];
   }));
   return new Map(entries);
+}
+
+// Blender draws masked surface darker (Sculpt Mode's mask overlay, opacity 0.75).
+const MASK_SHADE = 0.75;
+
+/** A sculpt mask exported from Blender (`_MASK`, 0 free to 1 protected) becomes vertex colors. */
+function shadeMask(geometry) {
+  const mask = geometry?.getAttribute('_mask');
+  if (!mask) return;
+  const colors = new Float32Array(mask.count * 3);
+  for (let i = 0; i < mask.count; i += 1) colors.fill(1 - MASK_SHADE * mask.getX(i), i * 3, i * 3 + 3);
+  geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
 }
 
 export class Viewer {
@@ -124,6 +137,9 @@ export class Viewer {
     const normal = geometry.getAttribute('normal');
     const startNormal = from.getAttribute('normal');
     const endNormal = to.getAttribute('normal');
+    const color = geometry.getAttribute('color');
+    const startColor = from.getAttribute('color');
+    const endColor = to.getAttribute('color');
     const moving = [];
     const timing = [];
     const drag = stroke.drag ?? stroke.brushType === 'GRAB';
@@ -133,7 +149,8 @@ export class Viewer {
       const dx = end.getX(i) - start.getX(i);
       const dy = end.getY(i) - start.getY(i);
       const dz = end.getZ(i) - start.getZ(i);
-      if (dx * dx + dy * dy + dz * dz < 1e-12) continue;
+      const shaded = color && endColor && Math.abs(endColor.getX(i) - startColor.getX(i)) > 1e-6;
+      if (dx * dx + dy * dy + dz * dz < 1e-12 && !shaded) continue;
       moving.push(i);
       if (drag) {
         timing.push(0);
@@ -167,9 +184,14 @@ export class Viewer {
             startNormal.getY(i) + (endNormal.getY(i) - startNormal.getY(i)) * local,
             startNormal.getZ(i) + (endNormal.getZ(i) - startNormal.getZ(i)) * local);
         }
+        if (color) {
+          const shade = startColor.getX(i) + (endColor.getX(i) - startColor.getX(i)) * local;
+          color.setXYZ(i, shade, shade, shade);
+        }
       });
       position.needsUpdate = true;
       if (normal) normal.needsUpdate = true;
+      if (color) color.needsUpdate = true;
       this.needsRender = true;
       if (t >= 1) {
         this.setGeometry(to);
@@ -208,6 +230,11 @@ export class Viewer {
   setGeometry(geometry) {
     if (geometry && this.mesh.geometry !== geometry) {
       this.mesh.geometry = geometry;
+      const shaded = Boolean(geometry.getAttribute('color'));
+      if (this.mesh.material.vertexColors !== shaded) {
+        this.mesh.material.vertexColors = shaded;
+        this.mesh.material.needsUpdate = true;
+      }
       this.needsRender = true;
     }
   }

@@ -36,7 +36,8 @@ if (record('sculpt')) {
   for (const tool of ['xvfb-run', 'xdotool']) {
     try { execFileSync('which', [tool]); } catch { throw new Error(`Falta ${tool}: apt-get install -y xvfb xdotool`); }
   }
-  await rm(join(out, 'sculpt'), { recursive: true, force: true });
+  // LEARN_SCULPT_ONLY=<lesson> records that lesson again and keeps the others.
+  if (!process.env.LEARN_SCULPT_ONLY) await rm(join(out, 'sculpt'), { recursive: true, force: true });
   await mkdir(out, { recursive: true });
   const start = join(out, 'start.blend');
   execFileSync(blenderApp, ['-b', '--factory-startup', '--python-expr',
@@ -103,14 +104,14 @@ for (const module of await readdir(join(out), { withFileTypes: true })) {
 }
 // Home lists modules in this order, then each Watch lesson (easiest first) followed by its Your turn variant.
 const MODULE_ORDER = ['modifiers', 'sculpt'];
-const WATCH_ORDER = ['cup', 'twisted-column', 'mirror-table', 'array-stairs', 'boolean-birdhouse', 'curve-garden-path', 'stack-block', 'project-ladder', 'pebble-buddy', 'horned-buddy', 'rock'];
+const WATCH_ORDER = ['cup', 'twisted-column', 'mirror-table', 'array-stairs', 'boolean-birdhouse', 'curve-garden-path', 'stack-block', 'project-ladder', 'pebble-buddy', 'horned-buddy', 'rock', 'belted-pebble', 'leaning-buddy', 'bobble-pebble'];
 const rank = (list, item) => (list.indexOf(item) + list.length + 1) % (list.length + 1);
 lessons.sort((a, b) => (rank(MODULE_ORDER, a.module) - rank(MODULE_ORDER, b.module))
   || (rank(WATCH_ORDER, a.variantOf ?? a.example) - rank(WATCH_ORDER, b.variantOf ?? b.example))
   || (a.mode === b.mode ? 0 : a.mode === 'watch' ? -1 : 1));
 await writeFile(join(examples, 'index.json'), JSON.stringify({ lessons }, null, 2) + '\n');
 
-// Sculpting moves vertices but never changes the mesh's connectivity (no Dyntopo, no Remesh),
+// Sculpting moves vertices but never changes the mesh's connectivity (no Dyntopo; Remesh starts over),
 // so the app can play a stroke as a morph between two of Blender's results. Prove it holds
 // after Draco, which is free to reorder vertices.
 async function checkSharedTopology(folder, timeline) {
@@ -119,9 +120,15 @@ async function checkSharedTopology(folder, timeline) {
     const primitive = (await io.read(join(folder, name))).getRoot().listMeshes()[0].listPrimitives()[0];
     return [primitive.getAttribute('POSITION').getCount(), Array.from(primitive.getIndices().getArray()).join(',')];
   };
-  const [count, indices] = await signature(meshes[0]);
+  // Remesh rebuilds the mesh on purpose: the shared topology starts over after it.
+  const remeshed = new Set(timeline.steps.filter(step => step.action === 'remesh').map(step => step.mesh));
+  let [count, indices] = await signature(meshes[0]);
   for (const name of meshes.slice(1)) {
     const [otherCount, otherIndices] = await signature(name);
+    if (remeshed.has(name)) {
+      [count, indices] = [otherCount, otherIndices];
+      continue;
+    }
     if (otherCount !== count || otherIndices !== indices) throw new Error(`${folder}/${name}: Draco cambió el orden de los vértices`);
   }
 }

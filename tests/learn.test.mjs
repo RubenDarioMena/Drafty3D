@@ -5,6 +5,9 @@ import { applyCamera, toThree, verticalFov } from '../learn/src/camera.js';
 import { formatValue, roundToStep } from '../learn/src/format.js';
 import { applyStep, initialState, interactiveFields, isSolved, stateAt, ticks, toolField } from '../learn/src/state.js';
 import { resample, traceMatches } from '../learn/src/trace.js';
+import { NodeIO } from '@gltf-transform/core';
+import { ALL_EXTENSIONS } from '@gltf-transform/extensions';
+import draco3d from 'draco3dgltf';
 
 const examples = new URL('../learn/public/examples/', import.meta.url);
 const readJson = async path => JSON.parse(await readFile(new URL(path, examples), 'utf8'));
@@ -53,7 +56,8 @@ test('sculpt timelines only name controls of Blender\'s Sculpt Mode header, mode
   const known = {
     set_mode: new Set(modeMenu.items.map(item => item.id)),
     select_brush: new Set(brushes.keys()),
-    set_value: new Set([header.size.id, header.strength.id]),
+    set_value: new Set([header.size.id, header.strength.id, ...header.remesh.fields.filter(field => field.kind === 'float').map(field => field.id)]),
+    remesh: new Set([header.remesh.button.id]),
     set_direction: new Set(header.direction.items.map(item => item.id)),
     set_symmetry: new Set(header.symmetry.items.map(item => item.id)),
     stroke: new Set(['sculpt.stroke']),
@@ -70,7 +74,7 @@ test('sculpt timelines only name controls of Blender\'s Sculpt Mode header, mode
       if (step.action === 'stroke') {
         assert.ok(step.mesh, 'a stroke changes the mesh');
         assert.ok(step.stroke.points.length >= 2 && step.stroke.radius > 0);
-        assert.ok(step.stroke.movedVertices > 0, 'Blender really moved vertices');
+        assert.ok((step.stroke.movedVertices ?? step.stroke.maskedVertices) > 0, 'Blender really moved (or masked) vertices');
         assert.equal(step.stroke.brush, step.tool.brush);
       }
     }
@@ -107,6 +111,53 @@ test('no step is already done when the lesson reaches it (each lesson starts fro
     timeline.steps.forEach((step, index) => {
       assert.equal(isSolved(stateAt(timeline, ui, index - 1), step), false, `${timeline.example} step ${index + 1} (${step.id})`);
     });
+  }
+});
+
+test('a Mask stroke changes only Blender\'s mask: same shape, more of it protected, and the mesh ships the mask', async () => {
+  const io = new NodeIO().registerExtensions(ALL_EXTENSIONS).registerDependencies({ 'draco3d.decoder': await draco3d.createDecoderModule() });
+  const read = async (timeline, mesh) => {
+    const primitive = (await io.read(new URL(`sculpt/${timeline.example}/${mesh}`, examples).pathname)).getRoot().listMeshes()[0].listPrimitives()[0];
+    return { position: primitive.getAttribute('POSITION').getArray(), mask: primitive.getAttribute('_MASK')?.getArray() };
+  };
+  const masked = byModule('sculpt').filter(timeline => timeline.steps.some(step => step.stroke?.brushType === 'MASK'));
+  assert.ok(masked.length >= 2);
+  for (const timeline of masked) {
+    let previous = timeline.initial.mesh;
+    for (const step of timeline.steps.filter(candidate => candidate.mesh)) {
+      if (step.stroke?.brushType === 'MASK') {
+        assert.ok(step.stroke.maskedVertices > 0, `${timeline.example}: Blender reports masked vertices`);
+        const [before, after] = [await read(timeline, previous), await read(timeline, step.mesh)];
+        assert.ok(after.mask, `${step.mesh} carries the mask`);
+        assert.deepEqual(after.position, before.position, `${step.mesh}: masking does not move the surface`);
+        const changed = after.mask.filter((value, i) => Math.abs(value - before.mask[i]) > 1e-3).length;
+        assert.ok(changed > 0.5 * step.stroke.maskedVertices, `${step.mesh}: ${changed} vertices masked in the shipped mesh`);
+      }
+      previous = step.mesh;
+    }
+  }
+});
+
+test('Remesh rebuilds the mesh: the shipped mesh has the vertex count Blender reported, and the Voxel Size set before it', async () => {
+  const io = new NodeIO().registerExtensions(ALL_EXTENSIONS).registerDependencies({ 'draco3d.decoder': await draco3d.createDecoderModule() });
+  const count = async (timeline, mesh) => (await io.read(new URL(`sculpt/${timeline.example}/${mesh}`, examples).pathname))
+    .getRoot().listMeshes()[0].listPrimitives()[0].getAttribute('POSITION').getCount();
+  const remeshed = byModule('sculpt').filter(timeline => timeline.steps.some(step => step.action === 'remesh'));
+  assert.ok(remeshed.length >= 2);
+  for (const timeline of remeshed) {
+    let previous = timeline.initial.mesh;
+    let voxel = null;
+    for (const step of timeline.steps) {
+      if (step.id === 'sculpt.voxel_size') voxel = step.value;
+      if (step.action === 'remesh') {
+        assert.ok(step.mesh, 'Remesh changes the mesh');
+        assert.equal(step.tool.voxel_size, voxel, 'Remesh uses the Voxel Size the lesson set');
+        assert.equal(await count(timeline, previous), step.remesh.before);
+        assert.equal(await count(timeline, step.mesh), step.remesh.vertices);
+        assert.ok(step.remesh.vertices > 4 * step.remesh.before, `${timeline.example}: ${step.remesh.before} → ${step.remesh.vertices}`);
+      }
+      if (step.mesh) previous = step.mesh;
+    }
   }
 });
 
