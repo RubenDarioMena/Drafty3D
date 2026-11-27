@@ -223,6 +223,22 @@
       "title": "Your turn: side antenna",
       "variantOf": "bobble-pebble",
       "timeline": "sculpt/side-antenna/timeline.json"
+    },
+    {
+      "module": "sculpt",
+      "example": "wrinkled-pebble",
+      "mode": "watch",
+      "title": "Fine wrinkles",
+      "variantOf": null,
+      "timeline": "sculpt/wrinkled-pebble/timeline.json"
+    },
+    {
+      "module": "sculpt",
+      "example": "scarred-pebble",
+      "mode": "your-turn",
+      "title": "Your turn: scarred pebble",
+      "variantOf": "wrinkled-pebble",
+      "timeline": "sculpt/scarred-pebble/timeline.json"
     }
   ]
 }
