@@ -97,6 +97,39 @@ export class Mesh {
   edgeBetween(a, b) { return this.edgeIds.get(key(a, b)); }
 
   facesOfEdge(id) { return this.edgeFaces.get(id); }
+
+  edgeRing(edgeId) {
+    if (!this.edges.has(edgeId)) throw new RangeError('Unknown edge');
+    const ring = new Set([edgeId]);
+    for (const edge of ring) {
+      const faces = this.facesOfEdge(edge);
+      if (faces.size > 2) continue;
+      for (const face of faces) {
+        const cycle = this.faces.get(face);
+        if (cycle.length !== 4) continue;
+        const i = cycle.findIndex((v, j) => this.edgeBetween(v, cycle[(j + 1) % 4]) === edge);
+        ring.add(this.edgeBetween(cycle[(i + 2) % 4], cycle[(i + 3) % 4]));
+      }
+    }
+    return ring;
+  }
+
+  edgeLoop(edgeId) {
+    if (!this.edges.has(edgeId)) throw new RangeError('Unknown edge');
+    const loop = new Set([edgeId]);
+    for (const edge of loop) {
+      for (const v of this.edges.get(edge)) {
+        const spokes = this.vertexEdges.get(v);
+        if (spokes.size !== 4 || ![...spokes].every(e => this.facesOfEdge(e).size === 2 &&
+          [...this.facesOfEdge(e)].every(f => this.faces.get(f).length === 4))) continue;
+        // The opposite spoke shares neither of the incoming edge's two quads.
+        const opposite = [...spokes].filter(e =>
+          [...this.facesOfEdge(e)].every(f => !this.facesOfEdge(edge).has(f)));
+        if (opposite.length === 1) loop.add(opposite[0]);
+      }
+    }
+    return loop;
+  }
 }
 
 export function fromEdit(edit, transform = {}) {
