@@ -22,11 +22,76 @@ function coordinates({ location = [0, 0, 0], rotation = [0, 0, 0], scale = [1, 1
 export class Mesh {
   constructor() {
     for (const kind of kinds) this[kind] = new Map();
+    this.nextId = { verts: 0, edges: 0, faces: 0 };
+    // Maps indices in the imported snapshot to stable IDs.
     this.indexMap = { verts: [], edges: [], faces: [] };
     this.vertexEdges = new Map();
     this.edgeFaces = new Map();
     this.edgeIds = new Map();
     this.selection = { verts: new Set(), edges: new Set(), faces: new Set() };
+  }
+
+  addVert(point) {
+    if (point.length !== 3 || !point.every(Number.isFinite)) throw new RangeError('Invalid vertex');
+    const id = this.nextId.verts++;
+    this.verts.set(id, new Float64Array(point));
+    this.vertexEdges.set(id, new Set());
+    return id;
+  }
+
+  addEdge(a, b) {
+    if (!this.verts.has(a) || !this.verts.has(b) || a === b) throw new RangeError('Invalid endpoints');
+    const existing = this.edgeBetween(a, b);
+    if (existing !== undefined) return existing;
+    const id = this.nextId.edges++;
+    this.edges.set(id, [a, b]);
+    this.edgeIds.set(key(a, b), id);
+    this.edgeFaces.set(id, new Set());
+    this.vertexEdges.get(a).add(id);
+    this.vertexEdges.get(b).add(id);
+    return id;
+  }
+
+  addFace(cycle) {
+    if (cycle.length < 3 || new Set(cycle).size !== cycle.length || !cycle.every(v => this.verts.has(v))) {
+      throw new RangeError('Invalid face cycle');
+    }
+    const id = this.nextId.faces++;
+    this.faces.set(id, Array.from(cycle));
+    cycle.forEach((a, i) => {
+      const edge = this.addEdge(a, cycle[(i + 1) % cycle.length]);
+      this.edgeFaces.get(edge).add(id);
+    });
+    return id;
+  }
+
+  // Remove one element at a time, from faces down to unused edges and vertices.
+  removeFace(id) {
+    const cycle = this.faces.get(id);
+    if (!cycle) throw new RangeError('Unknown face');
+    cycle.forEach((a, i) => {
+      this.edgeFaces.get(this.edgeBetween(a, cycle[(i + 1) % cycle.length])).delete(id);
+    });
+    this.faces.delete(id);
+    this.selection.faces.delete(id);
+  }
+
+  removeEdge(id) {
+    if (this.edgeFaces.get(id)?.size !== 0) throw new RangeError('Expected an unused edge');
+    const [a, b] = this.edges.get(id);
+    this.vertexEdges.get(a).delete(id);
+    this.vertexEdges.get(b).delete(id);
+    this.edgeIds.delete(key(a, b));
+    this.edgeFaces.delete(id);
+    this.edges.delete(id);
+    this.selection.edges.delete(id);
+  }
+
+  removeVert(id) {
+    if (this.vertexEdges.get(id)?.size !== 0) throw new RangeError('Expected an isolated vertex');
+    this.vertexEdges.delete(id);
+    this.verts.delete(id);
+    this.selection.verts.delete(id);
   }
 
   edgeBetween(a, b) { return this.edgeIds.get(key(a, b)); }
@@ -39,31 +104,12 @@ export function fromEdit(edit, transform = {}) {
   mesh.object = edit.object;
   mesh.transform = transform;
   const local = coordinates(transform, true);
-  function add(kind, value) {
-    const id = mesh[kind].size;
-    mesh[kind].set(id, value);
-    mesh.indexMap[kind].push(id);
-    return id;
-  }
-  for (const point of edit.verts) {
-    const id = add('verts', new Float64Array(local(point)));
-    mesh.vertexEdges.set(id, new Set());
-  }
-  for (const edge of edit.edges) {
-    const [a, b] = edge.map(i => mesh.indexMap.verts[i]);
-    const id = add('edges', [a, b]);
-    mesh.edgeIds.set(key(a, b), id);
-    mesh.edgeFaces.set(id, new Set());
-    mesh.vertexEdges.get(a).add(id);
-    mesh.vertexEdges.get(b).add(id);
+  for (const point of edit.verts) mesh.indexMap.verts.push(mesh.addVert(local(point)));
+  for (const [a, b] of edit.edges) {
+    mesh.indexMap.edges.push(mesh.addEdge(mesh.indexMap.verts[a], mesh.indexMap.verts[b]));
   }
   for (const face of edit.faces) {
-    const cycle = face.map(i => mesh.indexMap.verts[i]);
-    const id = add('faces', cycle);
-    cycle.forEach((a, i) => {
-      const edge = mesh.edgeBetween(a, cycle[(i + 1) % cycle.length]);
-      mesh.edgeFaces.get(edge).add(id);
-    });
+    mesh.indexMap.faces.push(mesh.addFace(face.map(i => mesh.indexMap.verts[i])));
   }
   if (edit.selection) applySelection(mesh, edit.selection);
   return mesh;
