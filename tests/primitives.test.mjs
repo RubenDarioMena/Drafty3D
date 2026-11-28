@@ -21,7 +21,7 @@ for (const path of ['basics/modes', 'basics/modes-tower', 'modeling/project-mug'
         return;
       }
       state = step.action === 'redo_value' ? state.redo(step.id, step.value)
-        : beginOperator(state.scene, step.operator, step.after.redo.values);
+        : beginOperator(state.scene, step.operator);
     }
     assert.fail('Missing edit capture');
   });
@@ -46,7 +46,7 @@ for (const [lesson, vertices, segments, rings, size] of [
     let state = { scene: createScene(initial.scene) };
     for (const [index, step] of steps.entries()) {
       state = step.action === 'redo_value' ? state.redo(step.id, step.value)
-        : beginOperator(state.scene, step.operator, step.after.redo.values);
+        : beginOperator(state.scene, step.operator);
       const mesh = state.scene.objects.find(o => o.name === state.scene.active).mesh;
       const counts = [mesh.verts.length, mesh.edges.length, mesh.faces.length];
       if (index < 2) {

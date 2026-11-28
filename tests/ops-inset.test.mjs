@@ -1,3 +1,5 @@
+import { lessonGesture } from './operators.test.mjs';
+import { invoke, adjust } from '../learn/src/operators.js';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
@@ -10,9 +12,7 @@ import { extrudeRegion } from '../learn/src/ops/extrude.js';
 const inset = 'redo.mesh.inset.';
 const translate = 'redo.mesh.extrude_region_move.TRANSFORM_OT_translate.';
 
-function evaluate(base, step) {
-  const values = step.after.redo.values;
-  if (step.action === 'redo_value') assert.equal(values[step.id], step.value);
+function evaluate(base, values) {
   if (inset + 'thickness' in values) {
     for (const [name, expected] of Object.entries({
       use_boundary: true, use_even_offset: true, use_relative_offset: false,
@@ -44,8 +44,10 @@ for (const lesson of ['inset-planter', 'inset-drawer']) {
       const base = fromEdit(edit, transform);
       applySelection(base, steps[i - 1].after.selection);
       const snapshot = toEdit(base);
+      let values;
       for (const step of steps.slice(i, i + 2)) {
-        check(evaluate(base, step), step.edit, step);
+        values = step.action === 'menu' ? invoke(step.operator, lessonGesture(lesson, i + 1)) : adjust(values, step.id, step.value);
+        check(evaluate(base, values), step.edit, step);
         assert.deepEqual(toEdit(base), snapshot);
       }
     });
@@ -55,8 +57,8 @@ for (const lesson of ['inset-planter', 'inset-drawer']) {
     let edit = steps[0].edit;
     let mesh = fromEdit(edit, transform);
     applySelection(mesh, steps[0].after.selection);
-    let base;
-    for (const step of steps) {
+    let base, values;
+    for (const [i, step] of steps.entries()) {
       if (step.action === 'tap') {
         const matches = [...mesh.faces.keys()].filter(face => faceCenter(mesh, face).every((x, i) =>
           Math.abs(x * transform.scale[i] + transform.location[i] - step.value[i]) < 1e-4));
@@ -66,9 +68,11 @@ for (const lesson of ['inset-planter', 'inset-drawer']) {
           edges: new Set(cycle.map((a, i) => mesh.edgeBetween(a, cycle[(i + 1) % cycle.length]))) };
       } else if (step.id.startsWith('menu.')) {
         base = mesh;
-        mesh = evaluate(base, step);
+        values = invoke(step.operator, lessonGesture(lesson, i + 1));
+        mesh = evaluate(base, values);
       } else if (step.action === 'redo_value') {
-        mesh = evaluate(base, step);
+        values = adjust(values, step.id, step.value);
+        mesh = evaluate(base, values);
       } else {
         assert.ok(['set_mode', 'select_mode'].includes(step.action));
       }

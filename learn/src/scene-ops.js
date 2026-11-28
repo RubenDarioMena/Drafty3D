@@ -1,3 +1,4 @@
+import { invoke, adjust } from './operators.js';
 import { Euler, Quaternion, Vector3 } from 'three';
 import { cube, cylinder, grid, plane, uvSphere } from './primitives.js';
 
@@ -134,7 +135,7 @@ export function compareScene(actual, expected, { tol = 1e-4 } = {}) {
 export function objectOperator(base, operator, values) {
   const params = {};
   const prefix = 'redo.' + operator + '.';
-  for (const [id, value] of Object.entries(values)) {
+  for (const [id, value] of Object.entries(values ?? {})) {
     const path = id.slice(prefix.length).replace(/^TRANSFORM_OT_translate\./, '');
     const [key, axis] = path.split('.');
     if (axis && 'xyz'.includes(axis) && axis.length === 1) {
@@ -155,9 +156,9 @@ export function objectOperator(base, operator, values) {
   }
 }
 
-export function beginOperator(scene, operator, values = {}) {
+export function beginOperator(scene, operator, context) {
   function evaluate(fields) {
-    return { scene: objectOperator(scene, operator, fields), redo: (id, value) => evaluate({ ...fields, [id]: value }) };
+    return { scene: objectOperator(scene, operator, fields), redo: (id, value) => evaluate(adjust(fields, id, value)) };
   }
-  return evaluate(values);
+  return evaluate(invoke(operator, context));
 }
