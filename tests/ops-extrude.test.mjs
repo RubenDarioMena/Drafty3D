@@ -1,3 +1,5 @@
+import { lessonGesture } from './operators.test.mjs';
+import { invoke, adjust } from '../learn/src/operators.js';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
@@ -13,16 +15,11 @@ function check(mesh, edit, selection, label) {
   assert.ok(result.ok, label + ' ' + result.reason);
 }
 
-function params(mesh, step) {
-  const values = step.after.redo.values;
+function params(mesh, values) {
   assert.equal(values[field + 'orient_type'], 'NORMAL');
   assert.equal(values[field + 'value.x'], 0);
   assert.equal(values[field + 'value.y'], 0);
   const distance = values[field + 'value.z'];
-  if (step.action === 'redo_value') {
-    assert.equal(step.id, field + 'value.z');
-    assert.equal(distance, step.value);
-  }
   // Both objects have unit scale and no rotation. NORMAL Z follows the selected
   // quad: +Z on the column, then +X on the arm or -Y on the crane boom.
   const faces = mesh.selection.faces;
@@ -66,12 +63,13 @@ for (const lesson of ['extrude-arm', 'extrude-crane']) {
       const base = fromEdit(edit, previous.scene.objects.find(o => o.name === edit.object));
       applySelection(base, previous.selection);
       const snapshot = toEdit(base);
-      const mesh = extrudeRegion(base, params(base, step));
+      const values = invoke(step.operator, lessonGesture(lesson, i + 1));
+      const mesh = extrudeRegion(base, params(base, values));
       check(mesh, step.edit, step.after.selection, 'menu');
-      const adjust = steps[i + 1];
-      assert.equal(adjust.action, 'redo_value');
-      const adjusted = redo(base, params(base, adjust));
-      check(adjusted, adjust.edit, adjust.after.selection, 'redo');
+      const next = steps[i + 1];
+      assert.equal(next.action, 'redo_value');
+      const adjusted = redo(base, params(base, adjust(values, next.id, next.value)));
+      check(adjusted, next.edit, next.after.selection, 'redo');
       assert.deepEqual(counts(adjusted), counts(mesh));
       assert.deepEqual(toEdit(base), snapshot);
     });
@@ -79,8 +77,8 @@ for (const lesson of ['extrude-arm', 'extrude-crane']) {
 
   test(lesson + ' from initial through the final adjustment', () => {
     assert.equal(initial.edit, null);
-    let mesh, base, reference = initial.edit;
-    for (const step of steps) {
+    let mesh, base, values, reference = initial.edit;
+    for (const [i, step] of steps.entries()) {
       if (step.action === 'set_mode') {
         // The first Edit Mode snapshot supplies the cage of the prebuilt object.
         mesh = fromEdit(step.edit, initial.scene.objects.find(o => o.name === step.edit.object));
@@ -89,9 +87,11 @@ for (const lesson of ['extrude-arm', 'extrude-crane']) {
         tap(mesh, step.value);
       } else if (step.id === menu) {
         base = mesh;
-        mesh = extrudeRegion(base, params(base, step));
+        values = invoke(step.operator, lessonGesture(lesson, i + 1));
+        mesh = extrudeRegion(base, params(base, values));
       } else if (step.action === 'redo_value') {
-        mesh = redo(base, params(base, step));
+        values = adjust(values, step.id, step.value);
+        mesh = redo(base, params(base, values));
       } else {
         assert.equal(step.action, 'select_mode');
       }

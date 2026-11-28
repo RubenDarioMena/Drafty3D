@@ -1,13 +1,14 @@
+import { lessonGesture } from './operators.test.mjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { beginOperator, compareScene, createScene, select, rename, toggleCollection,
   addPrimitive, rotate, duplicate } from '../learn/src/scene-ops.js';
 
-function apply(state, step) {
+function apply(state, step, gesture) {
   const scene = state.scene;
   switch (step.action) {
-    case 'menu': return beginOperator(scene, step.operator, step.after.redo?.values);
+    case 'menu': return beginOperator(scene, step.operator, gesture);
     case 'redo_value': return state.redo(step.id, step.value);
     case 'rename': return { scene: rename(scene, step.target, step.value) };
     case 'outliner_select': return { scene: select(scene, step.value) };
@@ -30,8 +31,9 @@ for (const lesson of ['move-rotate-scale', 'arrange-blocks', 'fence', 'pillars',
     let chain = { scene: createScene(initial.scene) }, isolated;
     for (const [i, step] of steps.entries()) {
       if (step.action !== 'redo_value') isolated = { scene: createScene(i ? steps[i-1].after.scene : initial.scene) };
-      isolated = apply(isolated, step);
-      chain = apply(chain, step);
+      const drag = lessonGesture(lesson, i + 1);
+      isolated = apply(isolated, step, drag);
+      chain = apply(chain, step, drag);
       await t.test('Step ' + (i + 1) + ' ' + step.id, () => {
         for (const state of [chain, isolated]) {
           const result = compareScene(state.scene, step.after.scene);
