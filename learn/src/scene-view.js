@@ -128,6 +128,9 @@ export function navigationDone(action, before, after, recorded) {
 /** Whether a lesson Shift-clicks anywhere (only those show the ⇧ Shift key). */
 export const usesShift = timeline => timeline.steps.some(step => step.toggle);
 
+/** Lessons that teach Proportional Editing show its header button; elsewhere it would only be a puzzle. */
+export const usesProportional = timeline => timeline.steps.some(step => step.action === 'proportional' || step.after?.proportional);
+
 /** The ⇧ Shift and ⏎ Enter keys over the 3D Viewport (phones have no keyboard). */
 export class Keys {
   constructor() {

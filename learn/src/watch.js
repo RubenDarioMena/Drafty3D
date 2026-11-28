@@ -1,7 +1,7 @@
 import { animateStep } from './animate.js';
 import { wait } from './cursor.js';
 import { lessonProgress, saveLessonProgress } from './progress.js';
-import { NAVIGATION, VIEWPORT_ACTIONS, controlOf, showState, usesShift } from './scene-view.js';
+import { NAVIGATION, VIEWPORT_ACTIONS, controlOf, showState, usesProportional, usesShift } from './scene-view.js';
 import { fieldSteps, isSceneLesson, stateAt } from './state.js';
 
 const TABS = new Set(['panel.properties.object', 'panel.properties.modifier']);
@@ -28,7 +28,9 @@ export class WatchMode {
       hint: document.getElementById('orbit-hint'),
       fineNext: document.getElementById('fine-next'),
       finePrev: document.getElementById('fine-prev'),
+      reset: document.getElementById('view-reset'),
     };
+    this.onUserView = () => { this.dom.reset.hidden = false; };
     // Position inside the next step's actions (null = resting on a completed step).
     this.stage = null;
   }
@@ -49,6 +51,12 @@ export class WatchMode {
       this.autoplay = autoplay.checked;
       if (this.autoplay && !this.busy) this.next();
     }, { signal });
+    this.dom.reset.addEventListener('click', () => this.resetView(), { signal });
+    // Once the learner turns the view, it stays theirs (Next, Autoplay, the scrubber) until Reset view
+    // or a step whose lesson is the camera itself (orbit, View ▸ Viewpoint, Frame All).
+    this.viewer.holdView = true;
+    this.viewer.userView = false;
+    this.viewer.controls.addEventListener('start', this.onUserView);
     const saved = lessonProgress(this.key).lastStep ?? -1;
     this.jump(Math.min(saved, this.last), 0);
   }
@@ -56,6 +64,10 @@ export class WatchMode {
   stop() {
     this.token += 1;
     this.listeners.abort();
+    this.viewer.controls.removeEventListener('start', this.onUserView);
+    this.viewer.holdView = false;
+    this.viewer.userView = false;
+    this.dom.reset.hidden = true;
     this.dom.controls.hidden = true;
     this.closeMenus();
     this.viewer.clearOverlay();
@@ -73,6 +85,7 @@ export class WatchMode {
   render(state) {
     this.editor.render(state, {
       objectName: this.timeline.object, enabledTabs: TABS, interactive: new Set(), steps: this.steps, showAllEnabled: true,
+      showProportional: usesProportional(this.timeline),
       enabled: new Set(),
     });
     showState(this.viewer, this.geometries, state);
@@ -88,7 +101,28 @@ export class WatchMode {
     return step.id;
   }
 
+  /** Steps of a scene lesson that move the camera: there the camera is what the step shows. */
+  movesCamera(index) {
+    if (!this.scene || index < 0) return false;
+    const before = stateAt(this.timeline, this.ui, index - 1).camera;
+    return JSON.stringify(this.timeline.steps[index].camera) !== JSON.stringify(before);
+  }
+
+  releaseView() {
+    this.viewer.userView = false;
+    this.dom.reset.hidden = true;
+  }
+
+  resetView() {
+    this.releaseView();
+    const state = stateAt(this.timeline, this.ui, this.index);
+    const step = this.timeline.steps[this.index + 1];
+    // Paused inside a scene step the view is still the one before its click.
+    this.viewer.showCamera(this.stage !== null && step && !step.after ? step.camera : state.camera, 0.5);
+  }
+
   jump(index, cameraDuration = 0.35) {
+    if (this.movesCamera(index)) this.releaseView();
     this.index = index;
     this.stage = null;
     this.closeMenus();
@@ -146,6 +180,7 @@ export class WatchMode {
     this.bar.show({ count: `Step ${index + 1} of ${this.timeline.steps.length}`, text: step.text, shortcut: step.shortcut });
     this.bar.showClue('');
     this.editor.focus?.(step);
+    if (this.movesCamera(index)) this.releaseView();
     // A stroke moves the camera itself before the brush starts; scene steps move it after the click.
     const camera = step.action === 'stroke' || step.after ? null : this.viewer.showCamera(step.camera, 0.8);
     await animateStep({

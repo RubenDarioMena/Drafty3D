@@ -117,10 +117,12 @@ export class SceneEditor extends PropertiesEditor {
     }
     header.append(menus);
 
+    if (!this.options.showProportional) return header;
+    // Blender draws only the icon; a learner needs the name too (and On/Off), so the label stays visible.
     const proportional = this.view3d.proportional;
     const toggle = button(`icon-toggle${state.proportional ? ' on' : ''}`, '', proportional.id);
-    toggle.innerHTML = PROPORTIONAL;
-    toggle.title = `${proportional.label} (${proportional.shortcut.keys.join(' ')})`;
+    toggle.innerHTML = `${PROPORTIONAL}<span>Proportional</span><span class="state">${state.proportional ? 'On' : 'Off'}</span>`;
+    toggle.title = `${proportional.label}: moved points drag their neighbours along (${proportional.shortcut.keys.join(' ')})`;
     toggle.setAttribute('aria-label', proportional.label);
     toggle.setAttribute('aria-pressed', String(Boolean(state.proportional)));
     toggle.disabled = !this.enabled('proportional');

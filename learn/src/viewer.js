@@ -96,7 +96,14 @@ export class Viewer {
     this.controls.enabled = false;
     this.controls.addEventListener('change', () => { this.needsRender = true; });
     // A finger on the view wins over a camera still gliding to Blender's view: the gesture is the learner's.
-    this.controls.addEventListener('start', () => this.cameraTween?.kill());
+    this.controls.addEventListener('start', () => {
+      this.cameraTween?.kill();
+      this.userView = true;
+    });
+    // `userView`: the learner turned the view since the last reset. While `holdView` is on (Watch),
+    // recorded cameras leave such a view alone, so a change can be watched from the learner's angle.
+    this.userView = false;
+    this.holdView = false;
 
     this.overlay = new StrokeOverlay(canvas.parentElement);
     this.objects = new THREE.Group();
@@ -403,6 +410,7 @@ export class Viewer {
    * back to perspective first, as Blender's Auto Perspective does when you orbit.
    */
   showCamera(record, duration = 0) {
+    if (this.holdView && this.userView) return Promise.resolve();
     this.cameraTween?.kill();
     const pose = cameraPose(record);
     const ortho = Boolean(record.ortho);

@@ -3,7 +3,7 @@ import { animateStep } from './animate.js';
 import { formatValue } from './format.js';
 import { lessonProgress, saveLessonProgress } from './progress.js';
 import {
-  NAVIGATION, controlOf, editTarget, hitsElement, hitsPoint, hitsRing, menuLabels, navigationDone, redoField, showState, usesShift,
+  NAVIGATION, controlOf, editTarget, hitsElement, hitsPoint, hitsRing, menuLabels, navigationDone, redoField, showState, usesProportional, usesShift,
 } from './scene-view.js';
 import {
   STACK_ACTIONS, applyStep, fieldSteps, interactiveFields, isSceneLesson, isSolved, lessonMenuItems, lessonModifierTypes,
@@ -153,6 +153,7 @@ export class YourTurnMode {
       // The same field can come back with a finer step (Location Z 0.75 m, later 0.225 m): use this step's.
       steps: is('redo_value') ? { ...this.steps, [step.id]: step.step } : this.steps,
       interactive: new Set(is('redo_value') ? [step.id] : []),
+      showProportional: usesProportional(this.timeline),
       enabled: new Set([is('select_mode') && 'selectMode', is('proportional') && 'proportional'].filter(Boolean)),
       onModeMenu: idle ? button => this.modeMenu.open(button, this.live.mode) : null,
       onHeaderMenu: idle ? (button, id) => this.headerMenu.open(button, id) : null,

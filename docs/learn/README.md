@@ -143,6 +143,9 @@ Tomadas con los principios del registro de decisiones. Para el modo práctica, l
 | Teclas en pantalla | ⇧ Shift y ⏎ Enter solo aparecen en las lecciones que los usan. | 4 |
 | Valores exactos | Cada número de Adjust Last Operation cae en el paso más grueso posible (0.1, 0.05, 0.01…) para que ◀ ▶ llegue a él; el grabador falla si un valor no cae en su paso. | 2 |
 | Objetos ocultos | El render de Blender ignora el ojo del Outliner; el grabador quita del render lo que la vista oculta, igual que del glb. La prueba Blender vs three.js lo encontró. | 2 |
+| Cámara en Ver | Si el usuario gira, mueve o acerca la vista, se queda así con Next, Autoplay y la barra: puede mirar un cambio desde otro ángulo. ⟲ Reset view (arriba a la derecha) vuelve a la vista de Blender. Los pasos que enseñan la cámara (Orbit, Zoom, Pan, View ▸ Viewpoint, Frame All) sí la mueven, porque ahí la cámara es la lección. | 1, 4 |
+| Botón Proportional Editing | Blender solo muestra un ícono; la app agrega el nombre y On/Off, y solo lo muestra en las lecciones que lo enseñan. Antes aparecía gris en todas y no se entendía. | 4 |
+| Zona segura de Android | El contenido queda dentro de `env(safe-area-inset-*)`. Los menús del header respetan también los lados (muesca en horizontal); una prueba simula los márgenes. El APK se revisa en el workflow: si pide INTERNET, la compilación falla. La llave de firma se borra del runner al terminar. | 4 |
 
 ## Cómo se verifica
 

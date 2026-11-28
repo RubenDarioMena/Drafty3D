@@ -635,3 +635,75 @@ test('Level 2 Watch: the Knife\'s numbered points, the cut, and Enter, as Blende
   await expect(page.locator('.knife-mark')).toHaveCount(0);
   await expect(page.locator('#key-enter')).toBeHidden();
 });
+
+test('Watch keeps the view the learner turned to through Next, until Reset view or a step that teaches the camera', async ({ page }) => {
+  await page.goto('/learn/#/lesson/modeling/proportional-hill');
+  await page.locator('#next').click();
+  await expect(page.locator('#step-count')).toHaveText('Step 1 of 10', { timeout: 15000 });
+  await expect(page.locator('#next')).toBeEnabled();
+  await expect(page.locator('#view-reset')).toBeHidden();
+  const canvas = page.locator('#viewport-canvas');
+  const box = await canvas.boundingBox();
+  await page.mouse.move(box.x + box.width * 0.3, box.y + box.height * 0.4);
+  await page.mouse.down();
+  await page.mouse.move(box.x + box.width * 0.7, box.y + box.height * 0.55, { steps: 10 });
+  await page.mouse.up();
+  await expect(page.locator('#view-reset')).toBeVisible();
+  await page.locator('#next').click();
+  await expect(page.locator('#step-count')).toHaveText('Step 2 of 10', { timeout: 15000 });
+  await expect(page.locator('#next')).toBeEnabled();
+  // Still the learner's angle: Reset view is offered, and pressing it changes the picture back to Blender's.
+  await expect(page.locator('#view-reset')).toBeVisible();
+  await page.waitForTimeout(600);
+  const theirs = await canvas.screenshot();
+  await page.locator('#view-reset').click();
+  await expect(page.locator('#view-reset')).toBeHidden();
+  await page.waitForTimeout(800);
+  expect((await canvas.screenshot()).equals(theirs)).toBe(false);
+
+  // In Look around the camera is the lesson: Orbit takes the view back even after the learner turned it.
+  await page.goto('/learn/#/lesson/basics/look-around');
+  await page.locator('#scrubber').fill('-1');
+  const look = await canvas.boundingBox();
+  await page.mouse.move(look.x + look.width * 0.3, look.y + look.height * 0.4);
+  await page.mouse.down();
+  await page.mouse.move(look.x + look.width * 0.6, look.y + look.height * 0.5, { steps: 10 });
+  await page.mouse.up();
+  await expect(page.locator('#view-reset')).toBeVisible();
+  await page.locator('#next').click();
+  await expect(page.locator('#view-reset')).toBeHidden();
+});
+
+test('Proportional Editing is a labelled On/Off button, shown only in the lessons that teach it', async ({ page }) => {
+  await page.goto('/learn/#/lesson/basics/modes');
+  await expect(page.locator('.scene-header')).toBeVisible();
+  await expect(page.locator('.icon-toggle')).toHaveCount(0);
+  await page.goto('/learn/#/lesson/modeling/proportional-hill');
+  const toggle = page.locator('.icon-toggle');
+  await expect(toggle).toContainText('Proportional');
+  await expect(toggle).toContainText('Off');
+  await page.locator('#scrubber').fill('9');
+  await expect(toggle).toContainText('On');
+  await expect(toggle).toHaveAttribute('aria-pressed', 'true');
+});
+
+test('header menus stay inside Android\'s safe area, sideways too (notch and gesture bar)', async ({ page }) => {
+  await page.goto('/learn/#/lesson/basics/pillars');
+  await expect(page.locator('#step-count')).toHaveText('Step 1 of 10');
+  // What env(safe-area-inset-*) gives #app on a phone with a notch on the left and a gesture bar.
+  const inset = { top: 32, right: 24, bottom: 28, left: 48 };
+  await page.evaluate(({ top, right, bottom, left }) => {
+    document.getElementById('app').style.padding = `${top}px ${right}px ${bottom}px ${left}px`;
+  }, inset);
+  const size = page.viewportSize();
+  for (const id of ['menu.view', 'menu.object']) {
+    await page.locator(`.scene-header [data-control="${id}"]`).click();
+    const box = await page.locator('.header-menu').boundingBox();
+    expect(box.x).toBeGreaterThanOrEqual(inset.left);
+    expect(box.x + box.width).toBeLessThanOrEqual(size.width - inset.right);
+    expect(box.y).toBeGreaterThanOrEqual(inset.top);
+    expect(box.y + box.height).toBeLessThanOrEqual(size.height - inset.bottom);
+    await page.mouse.click(size.width / 2, inset.top + 4);
+    await expect(page.locator('.header-menu')).toHaveCount(0);
+  }
+});

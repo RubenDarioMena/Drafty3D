@@ -85,6 +85,21 @@ jobs:
           mkdir -p ../out
           cp "$(find app/build/outputs/apk/$VARIANT -name '*.apk' | head -1)" ../out/drafty3d-learn.apk
 
+      - name: The signing key leaves the runner
+        if: always() && github.event_name == 'workflow_dispatch'
+        run: rm -f android/release.jks android/keystore.properties
+
+      - name: Check the APK stays offline (no INTERNET permission, even from a plugin)
+        if: github.event_name == 'workflow_dispatch'
+        run: |
+          aapt2="$(ls -d "$ANDROID_HOME"/build-tools/*/ | sort -V | tail -1)aapt2"
+          permissions="$("$aapt2" dump permissions out/drafty3d-learn.apk)"
+          echo "$permissions"
+          if echo "$permissions" | grep -q 'android.permission.INTERNET'; then
+            echo "::error::The APK asks for INTERNET; Drafty3D Learn must work fully offline."
+            exit 1
+          fi
+
       - name: Publish to GitHub Releases (rolling ${{ env.CHANNEL }} release)
         if: github.event_name == 'workflow_dispatch'
         env:

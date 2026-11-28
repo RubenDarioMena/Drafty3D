@@ -78,9 +78,12 @@ export function placeMenu(menu, anchorNode) {
   const style = getComputedStyle(document.getElementById('app'));
   const bottom = Math.min(window.visualViewport?.height ?? window.innerHeight, bounds.bottom - parseFloat(style.paddingBottom || 0)) - 8;
   const top = bounds.top + parseFloat(style.paddingTop || 0) + 8;
-  const width = Math.min(260, window.innerWidth - 16);
+  // Sideways too: a landscape phone's notch or rounded corner sits in #app's safe-area padding.
+  const left = bounds.left + parseFloat(style.paddingLeft || 0) + 8;
+  const right = Math.min(window.innerWidth, bounds.right - parseFloat(style.paddingRight || 0)) - 8;
+  const width = Math.min(260, right - left);
   menu.style.width = `${width}px`;
-  menu.style.left = `${Math.max(8, Math.min(anchor.left, window.innerWidth - width - 8))}px`;
+  menu.style.left = `${Math.max(left, Math.min(anchor.left, right - width))}px`;
   const below = bottom - anchor.bottom - 4;
   const above = anchor.top - top - 4;
   const height = menu.offsetHeight;
